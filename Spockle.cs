@@ -21,13 +21,6 @@ namespace Speckle.ConnectorUnity
 
     async void Start()
     {
-
-      var items = new List<string> { "aa", "bb", "cc" };
-
-      var gg = items.Select(x => x + "00");
-
-      var dd = gg.ToList();
-
       await GetStreamLatestCommit("cd83745025");
     }
 
@@ -55,7 +48,7 @@ namespace Speckle.ConnectorUnity
 
 
 
-        var data = ConvertRecursivelyToNative(@base);
+        var data = ConvertRecursivelyToNative(@base, commit.id);
 
 
       }
@@ -70,46 +63,70 @@ namespace Speckle.ConnectorUnity
     /// </summary>
     /// <param name="base"></param>
     /// <returns></returns>
-    public object ConvertRecursivelyToNative(Base @base)
+    public GameObject ConvertRecursivelyToNative(Base @base, string name)
     {
+      var go = new GameObject();
+      go.name = name;
+
+      var convertedObjects = new List<GameObject>();
       // case 1: it's an item that has a direct conversion method, eg a point
       if (_converter.CanConvertToNative(@base))
-        return TryConvertItemToNative(@base);
-
-      // case 2: it's a wrapper Base
-      //       2a: if there's only one member unpack it
-      //       2b: otherwise return dictionary of unpacked members
-      var members = @base.GetDynamicMembers().ToList();
-
-      if (members.Count() == 1)
       {
-        return RecurseTreeToNative(@base[members.First()]);
+        convertedObjects = TryConvertItemToNative(@base);
+      }
+      else
+      {
+        // case 2: it's a wrapper Base
+        //       2a: if there's only one member unpack it
+        //       2b: otherwise return dictionary of unpacked members
+        var members = @base.GetDynamicMembers().ToList();
+
+
+        if (members.Count() == 1)
+        {
+          convertedObjects = RecurseTreeToNative(@base[members.First()]);
+        }
+        else
+        {
+          convertedObjects = members.SelectMany(x => RecurseTreeToNative(@base[x])).ToList();
+        }
       }
 
-      return members.Select(x => RecurseTreeToNative(@base[x])).ToList();
+
+      convertedObjects.Where(x => x != null).ToList().ForEach(x => x.transform.parent = go.transform);
+
+      return go;
     }
 
 
-    private object RecurseTreeToNative(object @object)
+    private List<GameObject> RecurseTreeToNative(object @object)
     {
+      var objects = new List<GameObject>();
       if (IsList(@object))
       {
         var list = ((IEnumerable)@object).Cast<object>();
-        return list.Select(x => RecurseTreeToNative(x)).ToList();
+        objects = list.SelectMany(x => RecurseTreeToNative(x)).ToList();
+
+      }
+      else
+      {
+        objects = TryConvertItemToNative(@object);
       }
 
-      return TryConvertItemToNative(@object);
+      return objects;
     }
 
-    private object TryConvertItemToNative(object value)
+    private List<GameObject> TryConvertItemToNative(object value)
     {
+      var objects = new List<GameObject>();
+
       if (value == null)
-        return value;
+        return objects;
 
       //it's a simple type or not a Base
       if (value.GetType().IsSimpleType() || !(value is Base))
       {
-        return value;
+        return objects;
       }
 
       var @base = (Base)value;
@@ -120,29 +137,32 @@ namespace Speckle.ConnectorUnity
         var members = @base.GetMembers().Values.ToList();
 
 
-        return members.Select(x => RecurseTreeToNative(x)).ToList();
+        objects = members.SelectMany(x => RecurseTreeToNative(x)).ToList();
       }
-
-      try
+      else
       {
-        var converted = _converter.ConvertToNative(@base) as UnityGeometry;
-
-        if (converted is UnityMesh)
+        try
         {
-          MeshRenderer mr = converted.gameObject.GetComponent<MeshRenderer>();
-          mr.material = new Material(Shader.Find("Diffuse"));
+          var converted = _converter.ConvertToNative(@base) as GameObject;
+
+          //if (converted is UnityMesh)
+          //{
+          //  MeshRenderer mr = converted.gameObject.GetComponent<MeshRenderer>();
+          //  mr.material = new Material(Shader.Find("Diffuse"));
+          //}
+
+
+          objects.Add(converted);
         }
-
-
-
-        return converted;
-      }
-      catch (Exception ex)
-      {
-        Core.Logging.Log.CaptureAndThrow(ex);
+        catch (Exception ex)
+        {
+          Core.Logging.Log.CaptureAndThrow(ex);
+        }
       }
 
-      return null;
+
+
+      return objects;
     }
 
 

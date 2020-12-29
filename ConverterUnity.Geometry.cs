@@ -11,6 +11,7 @@ namespace Objects.Converter.Unity
 {
   public partial class ConverterUnity
   {
+    #region helper methods
     /// <summary>
     /// 
     /// </summary>
@@ -55,6 +56,10 @@ namespace Objects.Converter.Unity
       return points;
     }
 
+    #endregion
+
+    #region ToSpeckle
+    //TODO: more of these
 
 
     /// <summary>
@@ -62,83 +67,100 @@ namespace Objects.Converter.Unity
     /// </summary>
     /// <param name="obj"></param>
     /// <returns></returns>
-    public Point PointToSpeckle(UnityPoint obj)
+    public Point PointToSpeckle(Vector3 p)
     {
-      Vector3 p = obj.point;
-
       //switch y and z
       return new Point(p.x, p.z, p.y);
     }
 
+    #endregion
+
+    #region ToNative
+
+    private GameObject NewPointBasedGameObject(Vector3[] points, string name)
+    {
+      if (points.Length == 0) return null;
+
+      float pointDiameter = 1; //TODO: figure out how best to change this?
+
+      var go = new GameObject();
+      go.name = name;
+
+      var lineRenderer = go.AddComponent<LineRenderer>();
+
+      lineRenderer.positionCount = points.Length;
+      lineRenderer.SetPositions(points);
+      lineRenderer.numCornerVertices = lineRenderer.numCapVertices = 8;
+      lineRenderer.startWidth = lineRenderer.endWidth = pointDiameter;
+
+      return go;
+    }
+
     /// <summary>
-    /// 
+    /// Converts a Speckle ioint to a GameObject with a line renderer
     /// </summary>
     /// <param name="point"></param>
     /// <returns></returns>
-    public UnityPoint PointToNative(Point point)
+    public GameObject PointToNative(Point point)
     {
 
       Vector3 newPt = ArrayToPoint(point.value.ToArray());
-      return new UnityPoint(point.speckle_type, newPt);
+      return NewPointBasedGameObject(new Vector3[2] { newPt, newPt }, point.speckle_type);
     }
 
+
     /// <summary>
-    /// 
+    /// Converts a Speckle line to a GameObject with a line renderer
     /// </summary>
     /// <param name="line"></param>
     /// <returns></returns>
-    public UnityPolyline LineToNative(Line line)
+    public GameObject LineToNative(Line line)
     {
       Vector3[] points = ArrayToPoints(line.value);
 
-      if (points.Length == 0) return null;
-
-      return new UnityPolyline(line.speckle_type, points);
+      return NewPointBasedGameObject(points, line.speckle_type);
     }
 
     /// <summary>
-    /// 
+    /// Converts a Speckle polyline to a GameObject with a line renderer
     /// </summary>
     /// <param name="polyline"></param>
     /// <returns></returns>
-    public UnityPolyline PolylineToNative(Polyline polyline)
+    public GameObject PolylineToNative(Polyline polyline)
     {
       Vector3[] points = ArrayToPoints(polyline.value);
 
-      if (points.Length == 0) return null;
-
-
-      return new UnityPolyline(polyline.speckle_type, points);
+      return NewPointBasedGameObject(points, polyline.speckle_type);
     }
 
     /// <summary>
-    /// 
+    /// Converts a Speckle curve to a GameObject with a line renderer
     /// </summary>
     /// <param name="curve"></param>
     /// <returns></returns>
-    public UnityPolyline CurveToNative(Curve curve)
+    public GameObject CurveToNative(Curve curve)
     {
       Vector3[] points = ArrayToPoints(curve.displayValue.value);
 
-      if (points.Length == 0) return null;
-
-
-      return new UnityPolyline(curve.speckle_type, points);
+      return NewPointBasedGameObject(points, curve.speckle_type);
     }
 
 
     /// <summary>
-    /// 
+    /// Converts a Speckle mesh to a GameObject with a mesh renderer
     /// </summary>
     /// <param name="speckleMesh"></param>
     /// <returns></returns>
-    public UnityMesh MeshToNative(Mesh speckleMesh)
+    public GameObject MeshToNative(Mesh speckleMesh)
     {
       if (speckleMesh.vertices.Count == 0 || speckleMesh.faces.Count == 0)
       {
         return null;
       }
 
+      var recentreMeshTransforms = false; //TODO: figure out how best to change this?
+
+      var verts = ArrayToPoints(speckleMesh.vertices).ToList();
       //convert speckleMesh.faces into triangle array           
       List<int> tris = new List<int>();
       int i = 0;
@@ -167,8 +189,52 @@ namespace Objects.Converter.Unity
         }
       }
 
-      return new UnityMesh(speckleMesh.speckle_type, ArrayToPoints(speckleMesh.vertices), tris.ToArray());
+
+
+      var go = new GameObject();
+      go.name = speckleMesh.speckle_type;
+
+      var mesh = go.AddComponent<MeshFilter>().mesh;
+      var meshRenderer = go.AddComponent<MeshRenderer>();
+
+      if (verts.Count >= 65535)
+        mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
+
+      // center transform pivot according to the bounds of the model
+      if (recentreMeshTransforms)
+      {
+        Bounds meshBounds = new Bounds();
+        meshBounds.center = verts[0];
+
+        verts.ForEach(x => meshBounds.Encapsulate(x));
+
+        go.transform.position = meshBounds.center;
+
+        // offset mesh vertices
+        for (int l = 0; l < verts.Count; l++)
+        {
+          verts[l] -= meshBounds.center;
+        }
+      }
+
+      // assign mesh properties
+      mesh.vertices = verts.ToArray();
+      mesh.triangles = tris.ToArray();
+
+      mesh.RecalculateNormals();
+      mesh.RecalculateTangents();
+
+      //generate uvs doesn't work as intended. Leaving out for now
+      //GenerateUVs (ref mesh);
+
+      //Add mesh collider
+      MeshCollider mc = go.AddComponent<MeshCollider>();
+      mc.sharedMesh = mesh;
+
+      return go;
     }
+
+    #endregion
 
     /// <summary>
     /// 
