@@ -1,0 +1,351 @@
+{
+  "runtimeTarget": {
+    "name": ".NETStandard,Version=v2.0/",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETStandard,Version=v2.0": {},
+    ".NETStandard,Version=v2.0/": {
+      "Objects/1.0.0": {
+        "dependencies": {
+          "NETStandard.Library": "2.0.3",
+          "SpeckleCore": "1.0.0"
+        },
+        "runtime": {
+          "Objects.dll": {}
+        }
+      },
+      "GraphQL.Client/3.2.0": {
+        "dependencies": {
+          "GraphQL.Client.Abstractions": "3.2.0",
+          "GraphQL.Client.Abstractions.Websocket": "3.2.0"
+        },
+        "runtime": {
+          "lib/netstandard2.0/GraphQL.Client.dll": {
+            "assemblyVersion": "3.2.0.0",
+            "fileVersion": "3.2.0.0"
+          }
+        }
+      },
+      "GraphQL.Client.Abstractions/3.2.0": {
+        "dependencies": {
+          "GraphQL.Primitives": "3.2.0",
+          "System.Reactive": "4.3.2"
+        },
+        "runtime": {
+          "lib/netstandard2.0/GraphQL.Client.Abstractions.dll": {
+            "assemblyVersion": "3.2.0.0",
+            "fileVersion": "3.2.0.0"
+          }
+        }
+      },
+      "GraphQL.Client.Abstractions.Websocket/3.2.0": {
+        "dependencies": {
+          "GraphQL.Client.Abstractions": "3.2.0"
+        },
+        "runtime": {
+          "lib/netstandard2.0/GraphQL.Client.Abstractions.Websocket.dll": {
+            "assemblyVersion": "3.2.0.0",
+            "fileVersion": "3.2.0.0"
+          }
+        }
+      },
+      "GraphQL.Client.Serializer.Newtonsoft/3.2.0": {
+        "dependencies": {
+          "GraphQL.Client.Abstractions.Websocket": "3.2.0",
+          "Newtonsoft.Json": "12.0.3"
+        },
+        "runtime": {
+          "lib/netstandard2.0/GraphQL.Client.Serializer.Newtonsoft.dll": {
+            "assemblyVersion": "3.2.0.0",
+            "fileVersion": "3.2.0.0"
+          }
+        }
+      },
+      "GraphQL.Primitives/3.2.0": {
+        "runtime": {
+          "lib/netstandard2.0/GraphQL.Primitives.dll": {
+            "assemblyVersion": "3.2.0.0",
+            "fileVersion": "3.2.0.0"
+          }
+        }
+      },
+      "Microsoft.CSharp/4.7.0": {
+        "runtime": {
+          "lib/netstandard2.0/Microsoft.CSharp.dll": {
+            "assemblyVersion": "4.0.5.0",
+            "fileVersion": "4.700.19.56404"
+          }
+        }
+      },
+      "Microsoft.NETCore.Platforms/1.1.0": {},
+      "Microsoft.NETCore.Targets/1.1.0": {},
+      "NETStandard.Library/2.0.3": {
+        "dependencies": {
+          "Microsoft.NETCore.Platforms": "1.1.0"
+        }
+      },
+      "Newtonsoft.Json/12.0.3": {
+        "runtime": {
+          "lib/netstandard2.0/Newtonsoft.Json.dll": {
+            "assemblyVersion": "12.0.0.0",
+            "fileVersion": "12.0.3.23909"
+          }
+        }
+      },
+      "Piwik.Tracker/3.0.0": {
+        "runtime": {
+          "lib/net40/Piwik.Tracker.dll": {
+            "assemblyVersion": "3.0.0.0",
+            "fileVersion": "3.0.0.0"
+          }
+        }
+      },
+      "Sentry/2.1.6": {
+        "dependencies": {
+          "Newtonsoft.Json": "12.0.3",
+          "Sentry.PlatformAbstractions": "1.1.1",
+          "Sentry.Protocol": "2.1.6"
+        },
+        "runtime": {
+          "lib/netstandard2.0/Sentry.dll": {
+            "assemblyVersion": "2.1.6.0",
+            "fileVersion": "2.1.6.0"
+          }
+        }
+      },
+      "Sentry.PlatformAbstractions/1.1.1": {
+        "runtime": {
+          "lib/netstandard2.0/Sentry.PlatformAbstractions.dll": {
+            "assemblyVersion": "1.1.1.0",
+            "fileVersion": "1.1.1.0"
+          }
+        }
+      },
+      "Sentry.Protocol/2.1.6": {
+        "runtime": {
+          "lib/netstandard2.0/Sentry.Protocol.dll": {
+            "assemblyVersion": "2.1.6.0",
+            "fileVersion": "2.1.6.0"
+          }
+        }
+      },
+      "Stub.System.Data.SQLite.Core.NetStandard/1.0.113.1": {
+        "runtime": {
+          "lib/netstandard2.0/System.Data.SQLite.dll": {
+            "assemblyVersion": "1.0.113.0",
+            "fileVersion": "1.0.113.0"
+          }
+        }
+      },
+      "System.Data.SQLite.Core/1.0.113.6": {
+        "dependencies": {
+          "Stub.System.Data.SQLite.Core.NetStandard": "1.0.113.1"
+        }
+      },
+      "System.Reactive/4.3.2": {
+        "dependencies": {
+          "System.Runtime.InteropServices.WindowsRuntime": "4.3.0",
+          "System.Threading.Tasks.Extensions": "4.5.3"
+        },
+        "runtime": {
+          "lib/netstandard2.0/System.Reactive.dll": {
+            "assemblyVersion": "4.3.0.0",
+            "fileVersion": "4.3.2.55399"
+          }
+        }
+      },
+      "System.Runtime/4.3.0": {
+        "dependencies": {
+          "Microsoft.NETCore.Platforms": "1.1.0",
+          "Microsoft.NETCore.Targets": "1.1.0"
+        }
+      },
+      "System.Runtime.CompilerServices.Unsafe/4.5.2": {
+        "runtime": {
+          "lib/netstandard2.0/System.Runtime.CompilerServices.Unsafe.dll": {
+            "assemblyVersion": "4.0.4.1",
+            "fileVersion": "4.6.26919.2"
+          }
+        }
+      },
+      "System.Runtime.InteropServices.WindowsRuntime/4.3.0": {
+        "dependencies": {
+          "System.Runtime": "4.3.0"
+        },
+        "runtime": {
+          "lib/netstandard1.3/System.Runtime.InteropServices.WindowsRuntime.dll": {
+            "assemblyVersion": "4.0.2.0",
+            "fileVersion": "4.6.24705.1"
+          }
+        }
+      },
+      "System.Threading.Tasks.Extensions/4.5.3": {
+        "dependencies": {
+          "System.Runtime.CompilerServices.Unsafe": "4.5.2"
+        },
+        "runtime": {
+          "lib/netstandard2.0/System.Threading.Tasks.Extensions.dll": {
+            "assemblyVersion": "4.2.0.1",
+            "fileVersion": "4.6.27818.1"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "Objects/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "GraphQL.Client/3.2.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-S0UaSc2EAKY2ELe/LHqEw9j0ic7t5acK7LWX4GHGE+YSQL37+7Zp7GKhJjDdXJ05Tyayw8wII7hI7TBUULwlgA==",
+      "path": "graphql.client/3.2.0",
+      "hashPath": "graphql.client.3.2.0.nupkg.sha512"
+    },
+    "GraphQL.Client.Abstractions/3.2.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-1ZUCG978qlWAHNF+wQdmDJNrFTx/y/zSBTyDlQcrEPWLisLMX6l4rjjU2pC7oZwULE3K4NO/XNUTyPVjzho7Vg==",
+      "path": "graphql.client.abstractions/3.2.0",
+      "hashPath": "graphql.client.abstractions.3.2.0.nupkg.sha512"
+    },
+    "GraphQL.Client.Abstractions.Websocket/3.2.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-3FQRD2QysbLJp/fY0iw1J/cWSrc2wn8JRM6nzeQz+f6mW1jNHMjqCyAhz7FoIO2X/jHLiEZ1+EOrZU//YikCYQ==",
+      "path": "graphql.client.abstractions.websocket/3.2.0",
+      "hashPath": "graphql.client.abstractions.websocket.3.2.0.nupkg.sha512"
+    },
+    "GraphQL.Client.Serializer.Newtonsoft/3.2.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-7fipj8HT5P4vfeTd6RWHZYVNjRGCmi5z6rvYa4p5odMAGqDdnoqRi2/UFVZJr90azo2KtB6OM26HgCqlO6VNEg==",
+      "path": "graphql.client.serializer.newtonsoft/3.2.0",
+      "hashPath": "graphql.client.serializer.newtonsoft.3.2.0.nupkg.sha512"
+    },
+    "GraphQL.Primitives/3.2.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-mHYZECTsq5hclsUJV8mI55XL/85xVpTDdq88k8aLrYVFBwAuPHU4oT7gbzWE41lRWeHEzJeZJ6VdY4Mzoqg3YQ==",
+      "path": "graphql.primitives/3.2.0",
+      "hashPath": "graphql.primitives.3.2.0.nupkg.sha512"
+    },
+    "Microsoft.CSharp/4.7.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-pTj+D3uJWyN3My70i2Hqo+OXixq3Os2D1nJ2x92FFo6sk8fYS1m1WLNTs0Dc1uPaViH0YvEEwvzddQ7y4rhXmA==",
+      "path": "microsoft.csharp/4.7.0",
+      "hashPath": "microsoft.csharp.4.7.0.nupkg.sha512"
+    },
+    "Microsoft.NETCore.Platforms/1.1.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-kz0PEW2lhqygehI/d6XsPCQzD7ff7gUJaVGPVETX611eadGsA3A877GdSlU0LRVMCTH/+P3o2iDTak+S08V2+A==",
+      "path": "microsoft.netcore.platforms/1.1.0",
+      "hashPath": "microsoft.netcore.platforms.1.1.0.nupkg.sha512"
+    },
+    "Microsoft.NETCore.Targets/1.1.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-aOZA3BWfz9RXjpzt0sRJJMjAscAUm3Hoa4UWAfceV9UTYxgwZ1lZt5nO2myFf+/jetYQo4uTP7zS8sJY67BBxg==",
+      "path": "microsoft.netcore.targets/1.1.0",
+      "hashPath": "microsoft.netcore.targets.1.1.0.nupkg.sha512"
+    },
+    "NETStandard.Library/2.0.3": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-st47PosZSHrjECdjeIzZQbzivYBJFv6P2nv4cj2ypdI204DO+vZ7l5raGMiX4eXMJ53RfOIg+/s4DHVZ54Nu2A==",
+      "path": "netstandard.library/2.0.3",
+      "hashPath": "netstandard.library.2.0.3.nupkg.sha512"
+    },
+    "Newtonsoft.Json/12.0.3": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-6mgjfnRB4jKMlzHSl+VD+oUc1IebOZabkbyWj2RiTgWwYPPuaK1H97G1sHqGwPlS5npiF5Q0OrxN1wni2n5QWg==",
+      "path": "newtonsoft.json/12.0.3",
+      "hashPath": "newtonsoft.json.12.0.3.nupkg.sha512"
+    },
+    "Piwik.Tracker/3.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-91mJZeyxFUhA9t2oFTVw+W7p9t7+oZ1KAPfvGUvAkX2m/74xDlPsp8qfs4UIW9XE+TrU7PCBn43QPh0rP9jeOA==",
+      "path": "piwik.tracker/3.0.0",
+      "hashPath": "piwik.tracker.3.0.0.nupkg.sha512"
+    },
+    "Sentry/2.1.6": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-Haii3y9JZX9Z/HrHyy8r0cLj6WvTTFS4xbGI0UtItZ53yB/hGaWeXD5mvk47HAVOHeix8Gg64tguxIBCicoMAQ==",
+      "path": "sentry/2.1.6",
+      "hashPath": "sentry.2.1.6.nupkg.sha512"
+    },
+    "Sentry.PlatformAbstractions/1.1.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-ug99ZPdcQQY2Q2smO5tWfxUdMQF8f90UdCKMSfhucJVOAQtKWM0rXcqLvVZRlXDzeB/xNQWLSuw56I5MuaOS9g==",
+      "path": "sentry.platformabstractions/1.1.1",
+      "hashPath": "sentry.platformabstractions.1.1.1.nupkg.sha512"
+    },
+    "Sentry.Protocol/2.1.6": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-AXVI9e/mYp5NI/r+Tfk//YyXGGCUxq698xnOuJbiDUJ2FYw88BdB1Ewmv29pA8FTh/MLBWTPIwTVBWMouZrQBA==",
+      "path": "sentry.protocol/2.1.6",
+      "hashPath": "sentry.protocol.2.1.6.nupkg.sha512"
+    },
+    "Stub.System.Data.SQLite.Core.NetStandard/1.0.113.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-qFjwuCuZlTz3yT06gaueDJwTykiblNeaLTx3sONXoNlLm2NJwghLvr+W9fvRevKcYcIRiKrq6WJ56QwZJq9fnQ==",
+      "path": "stub.system.data.sqlite.core.netstandard/1.0.113.1",
+      "hashPath": "stub.system.data.sqlite.core.netstandard.1.0.113.1.nupkg.sha512"
+    },
+    "System.Data.SQLite.Core/1.0.113.6": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-8Iyo9b2iG29eYCGjnly6EdF+yw20q83vRTkK9zpJzip5QvQeRSs7rQPmaxg+R2oJKNL8w/6K274F6YHXkEjq5w==",
+      "path": "system.data.sqlite.core/1.0.113.6",
+      "hashPath": "system.data.sqlite.core.1.0.113.6.nupkg.sha512"
+    },
+    "System.Reactive/4.3.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-WhGkScPWxw2pp7UwRW8M1OvYZ3WUDPC2wJ0aiuaB4KRD3bt4wLkgHgYnOUu87WRhsurvv5LN0E63iWOEza2o8g==",
+      "path": "system.reactive/4.3.2",
+      "hashPath": "system.reactive.4.3.2.nupkg.sha512"
+    },
+    "System.Runtime/4.3.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-JufQi0vPQ0xGnAczR13AUFglDyVYt4Kqnz1AZaiKZ5+GICq0/1MH/mO/eAJHt/mHW1zjKBJd7kV26SrxddAhiw==",
+      "path": "system.runtime/4.3.0",
+      "hashPath": "system.runtime.4.3.0.nupkg.sha512"
+    },
+    "System.Runtime.CompilerServices.Unsafe/4.5.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-wprSFgext8cwqymChhrBLu62LMg/1u92bU+VOwyfBimSPVFXtsNqEWC92Pf9ofzJFlk4IHmJA75EDJn1b2goAQ==",
+      "path": "system.runtime.compilerservices.unsafe/4.5.2",
+      "hashPath": "system.runtime.compilerservices.unsafe.4.5.2.nupkg.sha512"
+    },
+    "System.Runtime.InteropServices.WindowsRuntime/4.3.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-J4GUi3xZQLUBasNwZnjrffN8i5wpHrBtZoLG+OhRyGo/+YunMRWWtwoMDlUAIdmX0uRfpHIBDSV6zyr3yf00TA==",
+      "path": "system.runtime.interopservices.windowsruntime/4.3.0",
+      "hashPath": "system.runtime.interopservices.windowsruntime.4.3.0.nupkg.sha512"
+    },
+    "System.Threading.Tasks.Extensions/4.5.3": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-+MvhNtcvIbqmhANyKu91jQnvIRVSTiaOiFNfKWwXGHG48YAb4I/TyH8spsySiPYla7gKal5ZnF3teJqZAximyQ==",
+      "path": "system.threading.tasks.extensions/4.5.3",
+      "hashPath": "system.threading.tasks.extensions.4.5.3.nupkg.sha512"
+    }
+  }
+}
