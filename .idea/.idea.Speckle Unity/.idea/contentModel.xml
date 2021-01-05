@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ContentModelStore">
+    <e p="C:\Code\Speckle-Next\speckle-unity\Speckle Unity" t="IncludeRecursive">
+      <e p="Assembly-CSharp.csproj" t="IncludeRecursive" />
+      <e p="Assets" t="Include">
+        <e p="Extra" t="Include">
+          <e p="PlayerMovement3D.cs" t="Include" />
+          <e p="PlayerTracker.cs" t="Include" />
+          <e p="RosolynDirectoryCreator.cs" t="Include" />
+          <e p="Selectable.cs" t="Include" />
+          <e p="SelectionManager.cs" t="Include" />
+        </e>
+        <e p="Speckle Connector" t="Include">
+          <e p="ConverterUnity.cs" t="Include" />
+          <e p="ConverterUnity.Geometry.cs" t="Include" />
+          <e p="ConverterUnity.Units.cs" t="Include" />
+          <e p="Core" t="Include">
+            <e p="GraphQL.Client.Abstractions.Websocket.xml" t="Include" />
+            <e p="GraphQL.Client.Abstractions.xml" t="Include" />
+            <e p="GraphQL.Client.xml" t="Include" />
+            <e p="GraphQL.Primitives.xml" t="Include" />
+            <e p="LICENSE.txt" t="Include" />
+          </e>
+          <e p="Dispatcher.cs" t="Include" />
+          <e p="Receiver.cs" t="Include" />
+          <e p="Sender.cs" t="Include" />
+        </e>
+        <e p="SpeckleExamples.cs" t="Include" />
+      </e>
+      <e p="obj" t="ExcludeRecursive" />
+      <e p="Packages" t="ExcludeRecursive" />
+      <e p="Speckle Unity.sln" t="IncludeFlat" />
+      <e p="Temp\Bin" t="ExcludeRecursive" />
+    </e>
+    <e p="C:\Users\Admin\AppData\Local\JetBrains\Rider2020.2\extResources" t="IncludeRecursive" />
+    <e p="C:\Users\Admin\AppData\Local\JetBrains\Rider2020.2\resharper-host\Local\Transient\Rider\v202\SolutionCaches\_Speckle Unity.-1593363948.00" t="ExcludeRecursive" />
+  </component>
+</project>
