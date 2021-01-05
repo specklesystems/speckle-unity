@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
+using Mesh = Objects.Geometry.Mesh;
 
 namespace Objects.Converter.Unity
 {
@@ -18,7 +20,7 @@ namespace Objects.Converter.Unity
     public string Author => "Speckle";
     public string WebsiteOrEmail => "https://speckle.systems";
 
-    public IEnumerable<string> GetServicedApplications() => new string[] { Applications.Other }; //TODO: add unity
+    public IEnumerable<string> GetServicedApplications() => new string[] {Applications.Other}; //TODO: add unity
 
     public HashSet<Error> ConversionErrors { get; private set; } = new HashSet<Error>();
 
@@ -28,14 +30,17 @@ namespace Objects.Converter.Unity
 
     public void SetContextObjects(List<ApplicationPlaceholderObject> objects) => ContextObjects = objects;
 
-    public void SetPreviousContextObjects(List<ApplicationPlaceholderObject> objects) => throw new NotImplementedException();
+    public void SetPreviousContextObjects(List<ApplicationPlaceholderObject> objects) =>
+      throw new NotImplementedException();
 
     public Base ConvertToSpeckle(object @object)
     {
       switch (@object)
       {
-
-
+        case GameObject o:
+          if (o.GetComponent<MeshFilter>() != null)
+            return MeshToSpeckle(o);
+          throw new NotSupportedException();
         default:
           throw new NotSupportedException();
       }
@@ -68,14 +73,16 @@ namespace Objects.Converter.Unity
 
     public List<object> ConvertToNative(List<Base> objects)
     {
-      return objects.Select(x => ConvertToNative(x)).ToList(); ;
+      return objects.Select(x => ConvertToNative(x)).ToList();
+      ;
     }
 
     public bool CanConvertToSpeckle(object @object)
     {
       switch (@object)
       {
-
+        case GameObject o:
+          return o.GetComponent<MeshFilter>() != null;
         default:
           return false;
       }

@@ -12,6 +12,7 @@ namespace Objects.Converter.Unity
   public partial class ConverterUnity
   {
     #region helper methods
+
     /// <summary>
     /// 
     /// </summary>
@@ -22,7 +23,8 @@ namespace Objects.Converter.Unity
     public Vector3 PointByCoordinates(double x, double y, double z, string units)
     {
       // switch y and z
-      return new Vector3((float)ScaleToNative(x, units), (float)ScaleToNative(z, units), (float)ScaleToNative(y, units));
+      return new Vector3((float) ScaleToNative(x, units), (float) ScaleToNative(z, units),
+        (float) ScaleToNative(y, units));
     }
 
     /// <summary>
@@ -59,19 +61,58 @@ namespace Objects.Converter.Unity
     #endregion
 
     #region ToSpeckle
-    //TODO: more of these
 
+    //TODO: more of these
 
     /// <summary>
     /// 
     /// </summary>
     /// <param name="obj"></param>
     /// <returns></returns>
-    //public Point PointToSpeckle(Vector3 p)
-    //{
-    //  //switch y and z
-    //  return new Point(p.x, p.z, p.y);
-    //}
+    public Point PointToSpeckle(Vector3 p)
+    {
+      //switch y and z
+      return new Point(p.x, p.z, p.y);
+    }
+
+
+    /// <summary>
+    /// Converts a Speckle mesh to a GameObject with a mesh renderer
+    /// </summary>
+    /// <param name="speckleMesh"></param>
+    /// <returns></returns>
+    public Mesh MeshToSpeckle(GameObject gameObject)
+    {
+      //TODO: support multiple filters?
+      var filter = gameObject.GetComponent<MeshFilter>();
+      if (filter == null)
+      {
+        return null;
+      }
+
+      //convert triangle array into speckleMesh faces     
+      List<int> faces = new List<int>();
+      int i = 0;
+      while (i < filter.mesh.triangles.Length)
+      {
+        faces.Add(0);
+
+        faces.Add(filter.mesh.triangles[i + 0]);
+        faces.Add(filter.mesh.triangles[i + 2]);
+        faces.Add(filter.mesh.triangles[i + 1]);
+        i += 3;
+      }
+
+      var localToWorld = gameObject.transform.localToWorldMatrix;
+
+      var mesh = new Mesh();
+      mesh.units = ModelUnits;
+      mesh.vertices = filter.mesh.vertices
+        .SelectMany(v => PointToSpeckle(localToWorld.MultiplyPoint3x4(v)).value).ToList();
+      mesh.faces = faces;
+
+      return mesh;
+    }
 
     #endregion
 
@@ -103,9 +144,8 @@ namespace Objects.Converter.Unity
     /// <returns></returns>
     public GameObject PointToNative(Point point)
     {
-
       Vector3 newPt = ArrayToPoint(point.value.ToArray(), point.units);
-      return NewPointBasedGameObject(new Vector3[2] { newPt, newPt }, point.speckle_type);
+      return NewPointBasedGameObject(new Vector3[2] {newPt, newPt}, point.speckle_type);
     }
 
 
@@ -158,7 +198,7 @@ namespace Objects.Converter.Unity
         return null;
       }
 
-      var recentreMeshTransforms = false; //TODO: figure out how best to change this?
+      var recentreMeshTransforms = true; //TODO: figure out how best to change this?
 
       var verts = ArrayToPoints(speckleMesh.vertices, speckleMesh.units).ToList();
       //convert speckleMesh.faces into triangle array           
@@ -188,7 +228,6 @@ namespace Objects.Converter.Unity
           i += 5;
         }
       }
-
 
 
       var go = new GameObject();
@@ -235,18 +274,5 @@ namespace Objects.Converter.Unity
     }
 
     #endregion
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="brep"></param>
-    /// <returns></returns>
-    //public static UnityMesh ToNative(this Brep brep)
-    //{
-    //  Mesh speckleMesh = brep.displayValue;
-    //  return MeshToNative(speckleMesh);
-    //}
-
-
   }
 }

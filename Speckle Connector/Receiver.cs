@@ -44,7 +44,7 @@ namespace Speckle.ConnectorUnity
     }
 
     /// <summary>
-    /// Gets and converts the the data of the last commit on the Stream
+    /// Gets and converts the data of the last commit on the Stream
     /// </summary>
     /// <returns></returns>
     public async Task<GameObject> Receive()

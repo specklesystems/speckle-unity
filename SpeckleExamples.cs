@@ -20,29 +20,89 @@ namespace Speckle.ConnectorUnity
 {
   public class SpeckleExamples : MonoBehaviour
   {
-
     public Button ReceiveBtn;
     public InputField ReceiveText;
+    public Button SendBtn;
+    public InputField SendText;
+
+    private GameObject receivedGo;
+
     void Start()
     {
-      if(ReceiveBtn ==null || ReceiveText==null)
-        return;
+      ReceiveText.text = "4ad65b572e";
+      SendText.text = "cd83745025";
       
+      if (ReceiveBtn == null || ReceiveText == null || SendBtn == null || SendText == null)
+      {
+        Debug.Log("Please set Send/Receive buttons and input fields");
+        return;
+      }
+        
+
       Button btn = ReceiveBtn.GetComponent<Button>();
       btn.onClick.AddListener(CreateReceiver);
+      
+      Button btn2 = SendBtn.GetComponent<Button>();
+      btn2.onClick.AddListener(SendData);
     }
 
-    public async void CreateReceiver()
+    private async void CreateReceiver()
     {
       var receiver = ScriptableObject.CreateInstance<Receiver>();
       receiver.Init(ReceiveText.text);
+      
+      //receive manually
+      receivedGo = await receiver.Receive();
+      AddClasses(receivedGo);
+      
+      //subscribe to new commits
       receiver.OnNewData += ReceiverOnNewData;
-      await receiver.Receive();
+
+      ReceiveBtn.enabled = false;
+      ReceiveText.enabled = false;
     }
 
-    private void ReceiverOnNewData(GameObject data)
+    private void SendData()
     {
-      Debug.Log($"Received {data.name}");
+      if (!SelectionManager.selectedObjects.Any()) 
+        return;
+      
+      var objs = new List<GameObject>();
+      foreach (var index in SelectionManager.selectedObjects)
+      {
+        objs.Add(SelectionManager.selectables[index].gameObject);
+      }
+      Sender.Send(SendText.text, objs);
+
+    }
+
+    private void ReceiverOnNewData(GameObject go)
+    {
+      Debug.Log($"Received {go.name}");
+      
+      if(receivedGo!=null)
+        Destroy(receivedGo);
+      
+      AddClasses(go);
+      receivedGo = go;
+    }
+
+    /// <summary>
+    /// Adds material and selectable script to all children of a GameObject
+    /// </summary>
+    /// <param name="go"></param>
+    private void AddClasses(GameObject go)
+    {
+      var mat = new Material(Shader.Find("Standard"));
+
+      for (var i = 0; i < go.transform.childCount; i++)
+      {
+        var child = go.transform.GetChild(i);
+        var renderer = child.GetComponent<MeshRenderer>();
+        renderer.material = mat;
+        
+        child.gameObject.AddComponent<Selectable>();
+      }
     }
   }
 }
