@@ -97,7 +97,7 @@ namespace Speckle.ConnectorUnity
 
 		public static Dispatcher Instance() {
 			if (!Exists ()) {
-				throw new Exception ("UnityMainThreadDispatcher could not find the UnityMainThreadDispatcher object. Please ensure you have added the MainThreadExecutor Prefab to your scene.");
+				throw new Exception ("Could not find the Dispatcher object. Please ensure you have added a Dispatcher object with this script to your scene.");
 			}
 			return _instance;
 		}

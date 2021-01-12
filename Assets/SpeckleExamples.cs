@@ -29,6 +29,7 @@ namespace Speckle.ConnectorUnity
 
     void Start()
     {
+      //hardcoded cuz I'm lazy, replace with what you need
       ReceiveText.text = "4ad65b572e";
       SendText.text = "cd83745025";
       

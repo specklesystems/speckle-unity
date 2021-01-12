@@ -66,6 +66,7 @@ namespace Speckle.ConnectorUnity
 
     #region private methods
 
+    
     /// <summary>
     /// Fired when a new commit is created on this stream
     /// It receives and converts the objects and then executes the user defined _onCommitCreated action.
@@ -87,6 +88,7 @@ namespace Speckle.ConnectorUnity
       });
     }
 
+    
 
     private async Task<GameObject> GetAndConvertObject(string objectId, string commitId)
     {
