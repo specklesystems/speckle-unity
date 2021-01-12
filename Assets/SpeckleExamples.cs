@@ -47,6 +47,7 @@ namespace Speckle.ConnectorUnity
       btn2.onClick.AddListener(SendData);
     }
 
+    // Shows how to create a new Receiver from code
     private async void CreateReceiver()
     {
       var receiver = ScriptableObject.CreateInstance<Receiver>();

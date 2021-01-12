@@ -11,6 +11,7 @@
           <e p="Selectable.cs" t="Include" />
           <e p="SelectionManager.cs" t="Include" />
         </e>
+        <e p="ScriptableObjectExample.cs" t="Include" />
         <e p="Speckle Connector" t="Include">
           <e p="ConverterUnity.cs" t="Include" />
           <e p="ConverterUnity.Geometry.cs" t="Include" />

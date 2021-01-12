@@ -18,9 +18,10 @@ namespace Speckle.ConnectorUnity
   /// A Speckle Receiver, it's a wrapper around a basic Speckle Client
   /// that handles conversions and subscriptions for you
   /// </summary>
+  [CreateAssetMenu(fileName = "DataReceiver", menuName = "ScriptableObjects/Receiver", order = 1)]
   public class Receiver : ScriptableObject
   {
-    public string StreamId { get; private set; }
+    public string StreamId;
 
     public delegate void DataReceivedHandler(GameObject data);
 
@@ -33,12 +34,28 @@ namespace Speckle.ConnectorUnity
     public Receiver()
     {
     }
-
+  
+    /// <summary>
+    /// Initializes the Receiver manually, with StreamId and Account
+    /// </summary>
+    /// <param name="streamId"></param>
+    /// <param name="account"></param>
     public void Init(string streamId, Account account = null)
     {
       StreamId = streamId;
 
       Client = new Client(account ?? AccountManager.GetDefaultAccount());
+      Client.SubscribeCommitCreated(StreamId);
+      Client.OnCommitCreated += Client_OnCommitCreated;
+    }
+
+    /// <summary>
+    /// Initializes the Receiver automatically, with t
+    /// To be used when the StreamId property is set on the Unity ScriptableObject
+    /// </summary>
+    public void Init()
+    {
+      Client = new Client(AccountManager.GetDefaultAccount());
       Client.SubscribeCommitCreated(StreamId);
       Client.OnCommitCreated += Client_OnCommitCreated;
     }
@@ -66,7 +83,6 @@ namespace Speckle.ConnectorUnity
 
     #region private methods
 
-    
     /// <summary>
     /// Fired when a new commit is created on this stream
     /// It receives and converts the objects and then executes the user defined _onCommitCreated action.
@@ -79,7 +95,7 @@ namespace Speckle.ConnectorUnity
 
       if (OnNewData == null)
         return;
-      
+
       //Run on a dispatcher as GOs can only be created on the main thread
       Dispatcher.Instance().EnqueueAsync(async () =>
       {
@@ -88,7 +104,6 @@ namespace Speckle.ConnectorUnity
       });
     }
 
-    
 
     private async Task<GameObject> GetAndConvertObject(string objectId, string commitId)
     {
