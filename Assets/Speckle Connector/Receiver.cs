@@ -68,8 +68,8 @@ namespace Speckle.ConnectorUnity
     {
       try
       {
-        var res = await Client.StreamGet(StreamId);
-        var mainBranch = res.branches.items.FirstOrDefault(b => b.name == "main");
+        var branches = await Client.StreamGetBranches(StreamId);
+        var mainBranch = branches.FirstOrDefault(b => b.name == "main");
         var commit = mainBranch.commits.items[0];
         return await GetAndConvertObject(commit.referencedObject, commit.id);
       }

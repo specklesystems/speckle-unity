@@ -16,13 +16,6 @@
           <e p="ConverterUnity.cs" t="Include" />
           <e p="ConverterUnity.Geometry.cs" t="Include" />
           <e p="ConverterUnity.Units.cs" t="Include" />
-          <e p="Core" t="Include">
-            <e p="GraphQL.Client.Abstractions.Websocket.xml" t="Include" />
-            <e p="GraphQL.Client.Abstractions.xml" t="Include" />
-            <e p="GraphQL.Client.xml" t="Include" />
-            <e p="GraphQL.Primitives.xml" t="Include" />
-            <e p="LICENSE.txt" t="Include" />
-          </e>
           <e p="Dispatcher.cs" t="Include" />
           <e p="Receiver.cs" t="Include" />
           <e p="Sender.cs" t="Include" />

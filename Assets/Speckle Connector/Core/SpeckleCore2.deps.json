@@ -7,73 +7,60 @@
   "targets": {
     ".NETStandard,Version=v2.0": {},
     ".NETStandard,Version=v2.0/": {
-      "SpeckleCore2/1.0.0": {
+      "SpeckleCore2/2.0.0": {
         "dependencies": {
-          "GraphQL.Client": "3.2.0",
-          "GraphQL.Client.Serializer.Newtonsoft": "3.2.0",
+          "GraphQL.Client": "3.2.1",
           "Microsoft.CSharp": "4.7.0",
           "NETStandard.Library": "2.0.3",
-          "Newtonsoft.Json": "12.0.3",
           "Piwik.Tracker": "3.0.0",
-          "Sentry": "2.1.6",
+          "Sentry": "2.1.8",
+          "Speckle.Newtonsoft.Json": "12.0.3.1",
           "System.Data.SQLite.Core": "1.0.113.6"
         },
         "runtime": {
           "SpeckleCore2.dll": {}
         }
       },
-      "GraphQL.Client/3.2.0": {
+      "GraphQL.Client/3.2.1": {
         "dependencies": {
-          "GraphQL.Client.Abstractions": "3.2.0",
-          "GraphQL.Client.Abstractions.Websocket": "3.2.0"
+          "GraphQL.Client.Abstractions": "3.2.1",
+          "GraphQL.Client.Abstractions.Websocket": "3.2.1"
         },
         "runtime": {
           "lib/netstandard2.0/GraphQL.Client.dll": {
-            "assemblyVersion": "3.2.0.0",
-            "fileVersion": "3.2.0.0"
+            "assemblyVersion": "3.2.1.0",
+            "fileVersion": "3.2.1.0"
           }
         }
       },
-      "GraphQL.Client.Abstractions/3.2.0": {
+      "GraphQL.Client.Abstractions/3.2.1": {
         "dependencies": {
-          "GraphQL.Primitives": "3.2.0",
+          "GraphQL.Primitives": "3.2.1",
           "System.Reactive": "4.3.2"
         },
         "runtime": {
           "lib/netstandard2.0/GraphQL.Client.Abstractions.dll": {
-            "assemblyVersion": "3.2.0.0",
-            "fileVersion": "3.2.0.0"
+            "assemblyVersion": "3.2.1.0",
+            "fileVersion": "3.2.1.0"
           }
         }
       },
-      "GraphQL.Client.Abstractions.Websocket/3.2.0": {
+      "GraphQL.Client.Abstractions.Websocket/3.2.1": {
         "dependencies": {
-          "GraphQL.Client.Abstractions": "3.2.0"
+          "GraphQL.Client.Abstractions": "3.2.1"
         },
         "runtime": {
           "lib/netstandard2.0/GraphQL.Client.Abstractions.Websocket.dll": {
-            "assemblyVersion": "3.2.0.0",
-            "fileVersion": "3.2.0.0"
+            "assemblyVersion": "3.2.1.0",
+            "fileVersion": "3.2.1.0"
           }
         }
       },
-      "GraphQL.Client.Serializer.Newtonsoft/3.2.0": {
-        "dependencies": {
-          "GraphQL.Client.Abstractions.Websocket": "3.2.0",
-          "Newtonsoft.Json": "12.0.3"
-        },
-        "runtime": {
-          "lib/netstandard2.0/GraphQL.Client.Serializer.Newtonsoft.dll": {
-            "assemblyVersion": "3.2.0.0",
-            "fileVersion": "3.2.0.0"
-          }
-        }
-      },
-      "GraphQL.Primitives/3.2.0": {
+      "GraphQL.Primitives/3.2.1": {
         "runtime": {
           "lib/netstandard2.0/GraphQL.Primitives.dll": {
-            "assemblyVersion": "3.2.0.0",
-            "fileVersion": "3.2.0.0"
+            "assemblyVersion": "3.2.1.0",
+            "fileVersion": "3.2.1.0"
           }
         }
       },
@@ -92,11 +79,11 @@
           "Microsoft.NETCore.Platforms": "1.1.0"
         }
       },
-      "Newtonsoft.Json/12.0.3": {
+      "Newtonsoft.Json/11.0.2": {
         "runtime": {
           "lib/netstandard2.0/Newtonsoft.Json.dll": {
-            "assemblyVersion": "12.0.0.0",
-            "fileVersion": "12.0.3.23909"
+            "assemblyVersion": "11.0.0.0",
+            "fileVersion": "11.0.2.21924"
           }
         }
       },
@@ -108,16 +95,16 @@
           }
         }
       },
-      "Sentry/2.1.6": {
+      "Sentry/2.1.8": {
         "dependencies": {
-          "Newtonsoft.Json": "12.0.3",
+          "Newtonsoft.Json": "11.0.2",
           "Sentry.PlatformAbstractions": "1.1.1",
-          "Sentry.Protocol": "2.1.6"
+          "Sentry.Protocol": "2.1.8"
         },
         "runtime": {
           "lib/netstandard2.0/Sentry.dll": {
-            "assemblyVersion": "2.1.6.0",
-            "fileVersion": "2.1.6.0"
+            "assemblyVersion": "2.1.8.0",
+            "fileVersion": "2.1.8.0"
           }
         }
       },
@@ -129,11 +116,19 @@
           }
         }
       },
-      "Sentry.Protocol/2.1.6": {
+      "Sentry.Protocol/2.1.8": {
         "runtime": {
           "lib/netstandard2.0/Sentry.Protocol.dll": {
-            "assemblyVersion": "2.1.6.0",
-            "fileVersion": "2.1.6.0"
+            "assemblyVersion": "2.1.8.0",
+            "fileVersion": "2.1.8.0"
+          }
+        }
+      },
+      "Speckle.Newtonsoft.Json/12.0.3.1": {
+        "runtime": {
+          "lib/netstandard2.0/Speckle.Newtonsoft.Json.dll": {
+            "assemblyVersion": "12.0.3.0",
+            "fileVersion": "11.0.1.0"
           }
         }
       },
@@ -201,45 +196,38 @@
     }
   },
   "libraries": {
-    "SpeckleCore2/1.0.0": {
+    "SpeckleCore2/2.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
     },
-    "GraphQL.Client/3.2.0": {
+    "GraphQL.Client/3.2.1": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-S0UaSc2EAKY2ELe/LHqEw9j0ic7t5acK7LWX4GHGE+YSQL37+7Zp7GKhJjDdXJ05Tyayw8wII7hI7TBUULwlgA==",
-      "path": "graphql.client/3.2.0",
-      "hashPath": "graphql.client.3.2.0.nupkg.sha512"
+      "sha512": "sha512-zo6dQJqLHgg5eOp8BEYJvCx5Eqx4K6v2xxZau4zqA1KxDoN673y5S/HRqHpeLfqiNFjlVJF5IAS5YpZ8RBAJUg==",
+      "path": "graphql.client/3.2.1",
+      "hashPath": "graphql.client.3.2.1.nupkg.sha512"
     },
-    "GraphQL.Client.Abstractions/3.2.0": {
+    "GraphQL.Client.Abstractions/3.2.1": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-1ZUCG978qlWAHNF+wQdmDJNrFTx/y/zSBTyDlQcrEPWLisLMX6l4rjjU2pC7oZwULE3K4NO/XNUTyPVjzho7Vg==",
-      "path": "graphql.client.abstractions/3.2.0",
-      "hashPath": "graphql.client.abstractions.3.2.0.nupkg.sha512"
+      "sha512": "sha512-C8OUqwBQWRgiGilXl74u+QChFJO+wNF5xf12SeQpSvqEQGCJAM5ePFGfExX+nZjrHA01Yve9mc6hBXwlBARdtQ==",
+      "path": "graphql.client.abstractions/3.2.1",
+      "hashPath": "graphql.client.abstractions.3.2.1.nupkg.sha512"
     },
-    "GraphQL.Client.Abstractions.Websocket/3.2.0": {
+    "GraphQL.Client.Abstractions.Websocket/3.2.1": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-3FQRD2QysbLJp/fY0iw1J/cWSrc2wn8JRM6nzeQz+f6mW1jNHMjqCyAhz7FoIO2X/jHLiEZ1+EOrZU//YikCYQ==",
-      "path": "graphql.client.abstractions.websocket/3.2.0",
-      "hashPath": "graphql.client.abstractions.websocket.3.2.0.nupkg.sha512"
+      "sha512": "sha512-eITgPSmMXjdM7Xo7FEm5VwRIIa9mpb0UKOuNtMypP7Ks10l8tsegvwKcNqla+Tb9O0u3nAkq9rGVzbG3+qXIpw==",
+      "path": "graphql.client.abstractions.websocket/3.2.1",
+      "hashPath": "graphql.client.abstractions.websocket.3.2.1.nupkg.sha512"
     },
-    "GraphQL.Client.Serializer.Newtonsoft/3.2.0": {
+    "GraphQL.Primitives/3.2.1": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-7fipj8HT5P4vfeTd6RWHZYVNjRGCmi5z6rvYa4p5odMAGqDdnoqRi2/UFVZJr90azo2KtB6OM26HgCqlO6VNEg==",
-      "path": "graphql.client.serializer.newtonsoft/3.2.0",
-      "hashPath": "graphql.client.serializer.newtonsoft.3.2.0.nupkg.sha512"
-    },
-    "GraphQL.Primitives/3.2.0": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-mHYZECTsq5hclsUJV8mI55XL/85xVpTDdq88k8aLrYVFBwAuPHU4oT7gbzWE41lRWeHEzJeZJ6VdY4Mzoqg3YQ==",
-      "path": "graphql.primitives/3.2.0",
-      "hashPath": "graphql.primitives.3.2.0.nupkg.sha512"
+      "sha512": "sha512-PlGV4S9ft3uZzyR4QYK/Jld1GEtkGpucU0L5IV8jUgPdLpNHvb2EHVJtFGO3/D3cCML34a5NMTPY1a+eIfVgDg==",
+      "path": "graphql.primitives/3.2.1",
+      "hashPath": "graphql.primitives.3.2.1.nupkg.sha512"
     },
     "Microsoft.CSharp/4.7.0": {
       "type": "package",
@@ -269,12 +257,12 @@
       "path": "netstandard.library/2.0.3",
       "hashPath": "netstandard.library.2.0.3.nupkg.sha512"
     },
-    "Newtonsoft.Json/12.0.3": {
+    "Newtonsoft.Json/11.0.2": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-6mgjfnRB4jKMlzHSl+VD+oUc1IebOZabkbyWj2RiTgWwYPPuaK1H97G1sHqGwPlS5npiF5Q0OrxN1wni2n5QWg==",
-      "path": "newtonsoft.json/12.0.3",
-      "hashPath": "newtonsoft.json.12.0.3.nupkg.sha512"
+      "sha512": "sha512-IvJe1pj7JHEsP8B8J8DwlMEx8UInrs/x+9oVY+oCD13jpLu4JbJU2WCIsMRn5C4yW9+DgkaO8uiVE5VHKjpmdQ==",
+      "path": "newtonsoft.json/11.0.2",
+      "hashPath": "newtonsoft.json.11.0.2.nupkg.sha512"
     },
     "Piwik.Tracker/3.0.0": {
       "type": "package",
@@ -283,12 +271,12 @@
       "path": "piwik.tracker/3.0.0",
       "hashPath": "piwik.tracker.3.0.0.nupkg.sha512"
     },
-    "Sentry/2.1.6": {
+    "Sentry/2.1.8": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-Haii3y9JZX9Z/HrHyy8r0cLj6WvTTFS4xbGI0UtItZ53yB/hGaWeXD5mvk47HAVOHeix8Gg64tguxIBCicoMAQ==",
-      "path": "sentry/2.1.6",
-      "hashPath": "sentry.2.1.6.nupkg.sha512"
+      "sha512": "sha512-GiRDS9mUijrtGey0rNP964KhVjb3vDWQzaXnrJFwPdE3obC9wQpOzY1ppMq4LXSxVS2N8+L9hM4jrDgDRduzvQ==",
+      "path": "sentry/2.1.8",
+      "hashPath": "sentry.2.1.8.nupkg.sha512"
     },
     "Sentry.PlatformAbstractions/1.1.1": {
       "type": "package",
@@ -297,12 +285,19 @@
       "path": "sentry.platformabstractions/1.1.1",
       "hashPath": "sentry.platformabstractions.1.1.1.nupkg.sha512"
     },
-    "Sentry.Protocol/2.1.6": {
+    "Sentry.Protocol/2.1.8": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-AXVI9e/mYp5NI/r+Tfk//YyXGGCUxq698xnOuJbiDUJ2FYw88BdB1Ewmv29pA8FTh/MLBWTPIwTVBWMouZrQBA==",
-      "path": "sentry.protocol/2.1.6",
-      "hashPath": "sentry.protocol.2.1.6.nupkg.sha512"
+      "sha512": "sha512-P7f3agNvXqAU+gALpMTeBK8DdfalPXXU62R4yRpFLXd9tVBEkva51HgPvXcuD37rhH6vNxydDzdQbe5+iIIgyA==",
+      "path": "sentry.protocol/2.1.8",
+      "hashPath": "sentry.protocol.2.1.8.nupkg.sha512"
+    },
+    "Speckle.Newtonsoft.Json/12.0.3.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-yM+DdKzI++HY4FYbloGcPGQ0yrfSv5/a5Rd+iYuzj47ATRtb2M5oCEVcxM4Xum5EDq0BMwkIY/cw/DMlRrZFDA==",
+      "path": "speckle.newtonsoft.json/12.0.3.1",
+      "hashPath": "speckle.newtonsoft.json.12.0.3.1.nupkg.sha512"
     },
     "Stub.System.Data.SQLite.Core.NetStandard/1.0.113.1": {
       "type": "package",
