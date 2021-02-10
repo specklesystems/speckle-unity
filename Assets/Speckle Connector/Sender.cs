@@ -21,7 +21,6 @@ namespace Speckle.ConnectorUnity
   public static class Sender
   {
 
-
     /// <summary>
     /// Converts and sends the data of the last commit on the Stream
     /// </summary>

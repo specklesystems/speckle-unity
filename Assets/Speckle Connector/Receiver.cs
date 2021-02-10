@@ -7,6 +7,7 @@ using Speckle.Core.Models;
 using Speckle.Core.Transports;
 using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -22,10 +23,16 @@ namespace Speckle.ConnectorUnity
   public class Receiver : ScriptableObject
   {
     public string StreamId;
+    private bool AutoReceive;
+    private Action<ConcurrentDictionary<string, int>> OnProgressAction;
+    private Action<string, Exception> OnErrorAction;
+    private Action<int> OnTotalChildrenCountKnown;
+    private Action<GameObject> OnDataReceivedAction;
 
-    public delegate void DataReceivedHandler(GameObject data);
 
-    public event DataReceivedHandler OnNewData;
+    // public delegate void DataReceivedHandler(GameObject data);
+    //
+    // public event DataReceivedHandler OnNewData;
 
     private ConverterUnity _converter = new ConverterUnity();
     private Client Client { get; set; }
@@ -34,19 +41,30 @@ namespace Speckle.ConnectorUnity
     public Receiver()
     {
     }
-  
+
     /// <summary>
     /// Initializes the Receiver manually, with StreamId and Account
     /// </summary>
     /// <param name="streamId"></param>
     /// <param name="account"></param>
-    public void Init(string streamId, Account account = null)
+    public void Init(string streamId, bool autoReceive = false, Account account = null,
+      Action<GameObject> onDataReceivedAction = null, Action<ConcurrentDictionary<string, int>> onProgressAction = null,
+      Action<string, Exception> onErrorAction = null, Action<int> onTotalChildrenCountKnown = null)
     {
       StreamId = streamId;
+      AutoReceive = autoReceive;
+      OnDataReceivedAction = onDataReceivedAction;
+      OnErrorAction = onErrorAction;
+      OnProgressAction = onProgressAction;
+      OnTotalChildrenCountKnown = onTotalChildrenCountKnown;
 
       Client = new Client(account ?? AccountManager.GetDefaultAccount());
-      Client.SubscribeCommitCreated(StreamId);
-      Client.OnCommitCreated += Client_OnCommitCreated;
+
+      if (AutoReceive)
+      {
+        Client.SubscribeCommitCreated(StreamId);
+        Client.OnCommitCreated += Client_OnCommitCreated;
+      }
     }
 
     /// <summary>
@@ -56,30 +74,31 @@ namespace Speckle.ConnectorUnity
     public void Init()
     {
       Client = new Client(AccountManager.GetDefaultAccount());
-      Client.SubscribeCommitCreated(StreamId);
-      Client.OnCommitCreated += Client_OnCommitCreated;
     }
 
     /// <summary>
     /// Gets and converts the data of the last commit on the Stream
     /// </summary>
     /// <returns></returns>
-    public async Task<GameObject> Receive()
+    public void Receive()
     {
-      try
+      Task.Run(async () =>
       {
-        var branches = await Client.StreamGetBranches(StreamId);
-        var mainBranch = branches.FirstOrDefault(b => b.name == "main");
-        var commit = mainBranch.commits.items[0];
-        return await GetAndConvertObject(commit.referencedObject, commit.id);
-      }
-      catch (Exception e)
-      {
-        Log.CaptureAndThrow(e);
-      }
-
-      return null;
+        try
+        {
+          var branches = await Client.StreamGetBranches(StreamId);
+          var mainBranch = branches.FirstOrDefault(b => b.name == "main");
+          var commit = mainBranch.commits.items[0];
+          GetAndConvertObject(commit.referencedObject, commit.id);
+        }
+        catch (Exception e)
+        {
+          Log.CaptureAndThrow(e);
+        }
+      });
     }
+    
+    
 
     #region private methods
 
@@ -92,38 +111,32 @@ namespace Speckle.ConnectorUnity
     protected virtual void Client_OnCommitCreated(object sender, CommitInfo e)
     {
       Debug.Log("Commit created");
-
-      if (OnNewData == null)
-        return;
-
-      //Run on a dispatcher as GOs can only be created on the main thread
-      Dispatcher.Instance().EnqueueAsync(async () =>
-      {
-        var go = await GetAndConvertObject(e.objectId, e.id);
-        OnNewData?.Invoke(go);
-      });
+      GetAndConvertObject(e.objectId, e.id);
     }
 
 
-    private async Task<GameObject> GetAndConvertObject(string objectId, string commitId)
+    private async void GetAndConvertObject(string objectId, string commitId)
     {
       try
       {
-        Debug.Log("test");
         var transport = new ServerTransport(Client.Account, StreamId);
         var @base = await Operations.Receive(
           objectId,
-          remoteTransport: transport
+          remoteTransport: transport,
+          onErrorAction: OnErrorAction,
+          onProgressAction: OnProgressAction,
+          onTotalChildrenCountKnown: OnTotalChildrenCountKnown
         );
-
-        return ConvertRecursivelyToNative(@base, commitId);
+        Dispatcher.Instance().Enqueue( () =>
+        {
+          var go = ConvertRecursivelyToNative(@base, commitId);
+          OnDataReceivedAction?.Invoke(go);
+        });
       }
       catch (Exception e)
       {
         Log.CaptureAndThrow(e);
       }
-
-      return null;
     }
 
 

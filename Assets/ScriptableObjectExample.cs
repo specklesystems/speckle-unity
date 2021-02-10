@@ -14,9 +14,10 @@ public class ScriptableObjectExample : MonoBehaviour
 
     void Start()
     {
+        return;
         receiver.Init();
-        receiver.Receive().ConfigureAwait(false);
-        
+        receiver.Receive();
+
         //... do more stuff eg set materials, subscribe to changes etc
     }
 
