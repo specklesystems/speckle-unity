@@ -93,13 +93,15 @@ namespace Objects.Converter.Unity
       //convert triangle array into speckleMesh faces     
       List<int> faces = new List<int>();
       int i = 0;
-      while (i < filter.mesh.triangles.Length)
+      //store them here, makes it like 1000000x faster?
+      var triangles = filter.mesh.triangles; 
+      while (i < triangles.Length)
       {
         faces.Add(0);
 
-        faces.Add(filter.mesh.triangles[i + 0]);
-        faces.Add(filter.mesh.triangles[i + 2]);
-        faces.Add(filter.mesh.triangles[i + 1]);
+        faces.Add(triangles[i + 0]);
+        faces.Add(triangles[i + 2]);
+        faces.Add(triangles[i + 1]);
         i += 3;
       }
 
@@ -107,8 +109,15 @@ namespace Objects.Converter.Unity
 
       var mesh = new Mesh();
       mesh.units = ModelUnits;
-      mesh.vertices = filter.mesh.vertices
-        .SelectMany(v => PointToSpeckle(localToWorld.MultiplyPoint3x4(v)).value).ToList();
+
+      var vertices = filter.mesh.vertices;
+      foreach (var vertex in vertices)
+      {
+        mesh.vertices.Add(PointToSpeckle(localToWorld.MultiplyPoint3x4(vertex)).x);
+        mesh.vertices.Add(PointToSpeckle(localToWorld.MultiplyPoint3x4(vertex)).y);
+        mesh.vertices.Add(PointToSpeckle(localToWorld.MultiplyPoint3x4(vertex)).z);
+      }
+
       mesh.faces = faces;
 
       return mesh;

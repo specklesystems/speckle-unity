@@ -53,7 +53,7 @@ namespace Speckle.ConnectorUnity
     {
       ReceiveBtn.enabled = false;
       ReceiveText.enabled = false;
-      
+
       var receiver = ScriptableObject.CreateInstance<Receiver>();
       receiver.Init(ReceiveText.text, true, onDataReceivedAction: ReceiverOnDataReceivedAction,
         onProgressAction: ReceiverProgressAction);
@@ -73,7 +73,27 @@ namespace Speckle.ConnectorUnity
         objs.Add(SelectionManager.selectables[index].gameObject);
       }
 
-      Sender.Send(SendText.text, objs);
+      Sender.Send(SendText.text, objs, onProgressAction: SenderProgressAction,
+        onDataSentAction: SenderOnDataSentAction);
+    }
+
+    private void SenderProgressAction(ConcurrentDictionary<string, int> dict)
+    {
+      //Run on a dispatcher as GOs can only be retrieved on the main thread
+      Dispatcher.Instance().Enqueue(() =>
+      {
+        var val = dict.Values.Average();
+        SendBtn.GetComponentInChildren<Text>().text = $"Sending object #{val}";
+      });
+    }
+
+    private void SenderOnDataSentAction(string commitId)
+    {
+      Dispatcher.Instance().Enqueue(() =>
+      {
+        Debug.Log($"Sent {commitId}");
+        SendBtn.GetComponentInChildren<Text>().text = "Send";
+      });
     }
 
     private void ReceiverOnDataReceivedAction(GameObject go)
