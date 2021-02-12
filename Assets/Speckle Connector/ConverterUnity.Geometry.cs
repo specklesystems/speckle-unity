@@ -2,8 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Objects.Other;
+using Speckle.ConnectorUnity;
 using UnityEngine;
 using Mesh = Objects.Geometry.Mesh;
 
@@ -94,7 +94,7 @@ namespace Objects.Converter.Unity
       List<int> faces = new List<int>();
       int i = 0;
       //store them here, makes it like 1000000x faster?
-      var triangles = filter.mesh.triangles; 
+      var triangles = filter.mesh.triangles;
       while (i < triangles.Length)
       {
         faces.Add(0);
@@ -244,6 +244,33 @@ namespace Objects.Converter.Unity
 
       var mesh = go.AddComponent<MeshFilter>().mesh;
       var meshRenderer = go.AddComponent<MeshRenderer>();
+
+      //todo support more complex materials
+      var shader = Shader.Find("Standard");
+      var mat = new Material(shader);
+
+      var speckleMaterial = speckleMesh["renderMaterial"];
+      if (speckleMaterial != null && speckleMaterial is RenderMaterial rm)
+      {
+        // 1. match shader by name, if any
+        shader = Shader.Find(rm.name);
+        if (shader != null)
+        {
+          mat = new Material(shader);
+        }
+        else
+        {
+          // 2. re-create material by setting diffuse color and transparency on standard shaders
+          shader = Shader.Find("Transparent/Diffuse");
+          mat = new Material(shader);
+          var c = rm.diffuse.ToUnityColor();
+          mat.color = new Color(c.r, c.g, c.b, Convert.ToSingle(rm.opacity));
+        }
+      }
+      
+      // 3. if not renderMaterial was passed, the default shader will be used 
+      meshRenderer.material = mat;
+
 
       if (verts.Count >= 65535)
         mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;

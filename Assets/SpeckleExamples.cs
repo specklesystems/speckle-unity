@@ -31,7 +31,7 @@ namespace Speckle.ConnectorUnity
     void Start()
     {
       //hardcoded cuz I'm lazy, replace with what you need
-      ReceiveText.text = "4ad65b572e";
+      ReceiveText.text = "d1a4748ba2";//4ad65b572e
       SendText.text = "cd83745025";
 
       if (ReceiveBtn == null || ReceiveText == null || SendBtn == null || SendText == null)
@@ -125,14 +125,9 @@ namespace Speckle.ConnectorUnity
     /// <param name="go"></param>
     private void AddClasses(GameObject go)
     {
-      var mat = new Material(Shader.Find("Standard"));
-
       for (var i = 0; i < go.transform.childCount; i++)
       {
         var child = go.transform.GetChild(i);
-        var renderer = child.GetComponent<MeshRenderer>();
-        renderer.material = mat;
-
         child.gameObject.AddComponent<Selectable>();
       }
     }
