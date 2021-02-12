@@ -5,8 +5,7 @@
       <e p="Assembly-CSharp.csproj" t="IncludeRecursive" />
       <e p="Assets" t="Include">
         <e p="Extra" t="Include">
-          <e p="PlayerMovement3D.cs" t="Include" />
-          <e p="PlayerTracker.cs" t="Include" />
+          <e p="CameraOperate.cs" t="Include" />
           <e p="RosolynDirectoryCreator.cs" t="Include" />
           <e p="Selectable.cs" t="Include" />
           <e p="SelectionManager.cs" t="Include" />
@@ -19,6 +18,7 @@
           <e p="Dispatcher.cs" t="Include" />
           <e p="Receiver.cs" t="Include" />
           <e p="Sender.cs" t="Include" />
+          <e p="SpeckleData.cs" t="Include" />
           <e p="Utils.cs" t="Include" />
         </e>
         <e p="SpeckleExamples.cs" t="Include" />

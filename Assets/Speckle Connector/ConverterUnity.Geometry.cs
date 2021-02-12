@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Objects.Other;
 using Speckle.ConnectorUnity;
+using Speckle.Core.Models;
 using UnityEngine;
 using Mesh = Objects.Geometry.Mesh;
 
@@ -81,10 +82,10 @@ namespace Objects.Converter.Unity
     /// </summary>
     /// <param name="speckleMesh"></param>
     /// <returns></returns>
-    public Mesh MeshToSpeckle(GameObject gameObject)
+    public Mesh MeshToSpeckle(GameObject go)
     {
       //TODO: support multiple filters?
-      var filter = gameObject.GetComponent<MeshFilter>();
+      var filter = go.GetComponent<MeshFilter>();
       if (filter == null)
       {
         return null;
@@ -105,9 +106,13 @@ namespace Objects.Converter.Unity
         i += 3;
       }
 
-      var localToWorld = gameObject.transform.localToWorldMatrix;
+      var localToWorld = go.transform.localToWorldMatrix;
 
       var mesh = new Mesh();
+      // get the speckle data from the go here
+      // so that if the go comes from speckle, typed props will get overridden below
+      GetSpeckleData(mesh, go);
+      
       mesh.units = ModelUnits;
 
       var vertices = filter.mesh.vertices;
@@ -119,7 +124,7 @@ namespace Objects.Converter.Unity
       }
 
       mesh.faces = faces;
-
+      
       return mesh;
     }
 
@@ -154,7 +159,10 @@ namespace Objects.Converter.Unity
     public GameObject PointToNative(Point point)
     {
       Vector3 newPt = ArrayToPoint(point.value.ToArray(), point.units);
-      return NewPointBasedGameObject(new Vector3[2] {newPt, newPt}, point.speckle_type);
+
+      var go = NewPointBasedGameObject(new Vector3[2] {newPt, newPt}, point.speckle_type);
+      SetSpeckleData(go, point);
+      return go;
     }
 
 
@@ -167,7 +175,9 @@ namespace Objects.Converter.Unity
     {
       Vector3[] points = ArrayToPoints(line.value, line.units);
 
-      return NewPointBasedGameObject(points, line.speckle_type);
+      var go = NewPointBasedGameObject(points, line.speckle_type);
+      SetSpeckleData(go, line);
+      return go;
     }
 
     /// <summary>
@@ -179,7 +189,9 @@ namespace Objects.Converter.Unity
     {
       Vector3[] points = ArrayToPoints(polyline.value, polyline.units);
 
-      return NewPointBasedGameObject(points, polyline.speckle_type);
+      var go = NewPointBasedGameObject(points, polyline.speckle_type);
+      SetSpeckleData(go, polyline);
+      return go;
     }
 
     /// <summary>
@@ -190,8 +202,9 @@ namespace Objects.Converter.Unity
     public GameObject CurveToNative(Curve curve)
     {
       Vector3[] points = ArrayToPoints(curve.displayValue.value, curve.units);
-
-      return NewPointBasedGameObject(points, curve.speckle_type);
+      var go = NewPointBasedGameObject(points, curve.speckle_type);
+      SetSpeckleData(go, curve);
+      return go;
     }
 
 
@@ -267,7 +280,7 @@ namespace Objects.Converter.Unity
           mat.color = new Color(c.r, c.g, c.b, Convert.ToSingle(rm.opacity));
         }
       }
-      
+
       // 3. if not renderMaterial was passed, the default shader will be used 
       meshRenderer.material = mat;
 
@@ -306,9 +319,28 @@ namespace Objects.Converter.Unity
       MeshCollider mc = go.AddComponent<MeshCollider>();
       mc.sharedMesh = mesh;
 
+
+      SetSpeckleData(go, speckleMesh);
       return go;
     }
 
     #endregion
+
+    private void SetSpeckleData(GameObject go, Base @base)
+    {
+      var sd = go.AddComponent<SpeckleData>();
+      sd.Data = @base.GetMembers();
+    }
+
+    private void GetSpeckleData(Base @base, GameObject go)
+    {
+      var sd = go.GetComponent<SpeckleData>();
+      if (sd == null)
+        return;
+      foreach (var key in sd.Data.Keys)
+      {
+        @base[key] = sd.Data[key];
+      }
+    }
   }
 }
