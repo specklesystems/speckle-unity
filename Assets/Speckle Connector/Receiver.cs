@@ -23,6 +23,7 @@ namespace Speckle.ConnectorUnity
   public class Receiver : ScriptableObject
   {
     public string StreamId;
+    public int TotalChildrenCount = 0;
     private bool AutoReceive;
     private Action<ConcurrentDictionary<string, int>> OnProgressAction;
     private Action<string, Exception> OnErrorAction;
@@ -119,6 +120,8 @@ namespace Speckle.ConnectorUnity
     {
       try
       {
+        Tracker.TrackPageview(Tracker.RECEIVE);
+        
         var transport = new ServerTransport(Client.Account, StreamId);
         var @base = await Operations.Receive(
           objectId,

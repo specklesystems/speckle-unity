@@ -48,6 +48,7 @@ namespace Speckle.ConnectorUnity
 
           var branchName = "main";
 
+          Tracker.TrackPageview(Tracker.SEND);
           var res = await client.CommitCreate(
             new CommitCreateInput
             {

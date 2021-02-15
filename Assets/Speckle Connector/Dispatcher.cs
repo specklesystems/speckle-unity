@@ -15,6 +15,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Speckle.Core.Kits;
+using Speckle.Core.Logging;
 using UnityEngine;
 
 namespace Speckle.ConnectorUnity
@@ -104,6 +106,8 @@ namespace Speckle.ConnectorUnity
 
 
 		void Awake() {
+			Setup.Init(Applications.Unity);
+			
 			if (_instance == null) {
 				_instance = this;
 				DontDestroyOnLoad(this.gameObject);

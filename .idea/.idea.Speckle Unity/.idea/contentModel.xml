@@ -19,6 +19,7 @@
           <e p="Receiver.cs" t="Include" />
           <e p="Sender.cs" t="Include" />
           <e p="SpeckleData.cs" t="Include" />
+          <e p="Streams.cs" t="Include" />
           <e p="Utils.cs" t="Include" />
         </e>
         <e p="SpeckleExamples.cs" t="Include" />

@@ -7,6 +7,7 @@ using Speckle.Core.Api;
 using Speckle.Core.Credentials;
 using System;
 using System.Collections.Concurrent;
+using System.Data;
 using System.Threading.Tasks;
 using System.Linq;
 using Speckle.Core.Transports;
@@ -16,50 +17,128 @@ using UnityEditor;
 using System.Text.RegularExpressions;
 using System.IO;
 using UnityEngine.UI;
+using Stream = Speckle.Core.Api.Stream;
 
 namespace Speckle.ConnectorUnity
 {
   public class SpeckleExamples : MonoBehaviour
   {
+    public Text SelectStreamText;
+    public Text DetailsStreamText;
+    public Dropdown StreamSelectionDropdown;
     public Button ReceiveBtn;
-    public InputField ReceiveText;
+    public Toggle AutoReceiveToggle;
     public Button SendBtn;
-    public InputField SendText;
 
+    private Slider ReceiveProgress;
+    private Slider SendProgress;
+    private Text SendText;
     private GameObject receivedGo;
+    private List<Stream> StreamList = null;
+    private Stream SelectedStream = null;
+    private List<Receiver> Receivers = new List<Receiver>();
 
-    void Start()
+    async void Start()
     {
-      //hardcoded cuz I'm lazy, replace with what you need
-      ReceiveText.text = "d1a4748ba2";//4ad65b572e
-      SendText.text = "cd83745025";
-
-      if (ReceiveBtn == null || ReceiveText == null || SendBtn == null || SendText == null)
+      if (SelectStreamText == null || StreamSelectionDropdown == null)
       {
-        Debug.Log("Please set Send/Receive buttons and input fields");
+        Debug.Log("Please set all input fields on _SpeckleExamples");
         return;
       }
 
+      var defaultAccount = AccountManager.GetDefaultAccount();
+      if (defaultAccount == null)
+      {
+        Debug.Log("Please set a default account in SpeckleManager");
+        return;
+      }
 
-      Button btn = ReceiveBtn.GetComponent<Button>();
-      btn.onClick.AddListener(CreateReceiver);
+      SelectStreamText.text = $"Select a stream on {defaultAccount.serverInfo.name}:";
 
-      Button btn2 = SendBtn.GetComponent<Button>();
-      btn2.onClick.AddListener(SendData);
+      StreamList = await Streams.List();
+      if (!StreamList.Any())
+      {
+        Debug.Log("There are no streams in your account, please create one online.");
+        return;
+      }
+
+      StreamSelectionDropdown.options.Clear();
+      foreach (var stream in StreamList)
+      {
+        StreamSelectionDropdown.options.Add(new Dropdown.OptionData(stream.name + " - " + stream.id));
+      }
+
+      StreamSelectionDropdown.onValueChanged.AddListener(StreamSelectionChanged);
+      //trigger ui refresh, maybe there's a better method
+      StreamSelectionDropdown.value = -1;
+      StreamSelectionDropdown.value = 0;
+
+      ReceiveProgress = ReceiveBtn.GetComponentInChildren<Slider>();
+      ReceiveProgress.gameObject.SetActive(false); //hide
+      ReceiveBtn.onClick.AddListener(CreateReceiver);
+
+      SendText = SendBtn.GetComponentInChildren<Text>();
+      SendProgress = SendBtn.GetComponentInChildren<Slider>();
+      SendProgress.gameObject.SetActive(false); //hide
+      SendBtn.onClick.AddListener(SendData);
+    }
+
+    private void Update()
+    {
+      if (!SelectionManager.selectedObjects.Any())
+      {
+        SendBtn.interactable = false;
+        SendText.text = "Send";
+      }
+      else
+      {
+        SendBtn.interactable = true;
+        var s = SelectionManager.selectedObjects.Count == 1 ? "" : "s";
+        SendText.text = $"Send {SelectionManager.selectedObjects.Count} object{s}";
+      }
+    }
+
+    public void StreamSelectionChanged(int index)
+    {
+      if (index == -1)
+        return;
+
+      SelectedStream = StreamList[index];
+      DetailsStreamText.text =
+        $"Description: {SelectedStream.description}\n" +
+        $"Link sharing on: {SelectedStream.isPublic}\n" +
+        $"Role: {SelectedStream.role}\n" +
+        $"Collaborators: {SelectedStream.collaborators.Count}\n" +
+        $"Id: {SelectedStream.id}";
     }
 
     // Shows how to create a new Receiver from code and then pull data manually
+    // Created receivers are added to a List of Receivers for future use
     private void CreateReceiver()
     {
-      ReceiveBtn.enabled = false;
-      ReceiveText.enabled = false;
+      ReceiveBtn.interactable = false;
+      var streamId = SelectedStream.id;
+      var autoReceive = AutoReceiveToggle.isOn;
 
       var receiver = ScriptableObject.CreateInstance<Receiver>();
-      receiver.Init(ReceiveText.text, true, onDataReceivedAction: ReceiverOnDataReceivedAction,
-        onProgressAction: ReceiverProgressAction);
+      receiver.Init(streamId, autoReceive,
+        onDataReceivedAction: ReceiverOnDataReceivedAction,
+        onTotalChildrenCountKnown: (count) => { receiver.TotalChildrenCount = count; },
+        onProgressAction: (dict) =>
+        {
+          //Run on a dispatcher as GOs can only be retrieved on the main thread
+          Dispatcher.Instance().Enqueue(() =>
+          {
+            var val = dict.Values.Average() / receiver.TotalChildrenCount;
+            ReceiveProgress.gameObject.SetActive(true);
+            ReceiveProgress.value = (float) val;
+          });
+        });
 
       //receive manually once
       receiver.Receive();
+
+      Receivers.Add(receiver);
     }
 
     private void SendData()
@@ -73,18 +152,18 @@ namespace Speckle.ConnectorUnity
         objs.Add(SelectionManager.selectables[index].gameObject);
       }
 
-      Sender.Send(SendText.text, objs, onProgressAction: SenderProgressAction,
+      Sender.Send(SelectedStream.id, objs,
+        onProgressAction: (dict) =>
+        {
+          //Run on a dispatcher as GOs can only be retrieved on the main thread
+          Dispatcher.Instance().Enqueue(() =>
+          {
+            var val = dict.Values.Average() / objs.Count;
+            SendProgress.gameObject.SetActive(true);
+            SendProgress.value = (float) val;
+          });
+        },
         onDataSentAction: SenderOnDataSentAction);
-    }
-
-    private void SenderProgressAction(ConcurrentDictionary<string, int> dict)
-    {
-      //Run on a dispatcher as GOs can only be retrieved on the main thread
-      Dispatcher.Instance().Enqueue(() =>
-      {
-        var val = dict.Values.Average();
-        SendBtn.GetComponentInChildren<Text>().text = $"Sending object #{val}";
-      });
     }
 
     private void SenderOnDataSentAction(string commitId)
@@ -92,38 +171,30 @@ namespace Speckle.ConnectorUnity
       Dispatcher.Instance().Enqueue(() =>
       {
         Debug.Log($"Sent {commitId}");
-        SendBtn.GetComponentInChildren<Text>().text = "Send";
+        SendProgress.gameObject.SetActive(false); //hide
       });
     }
 
     private void ReceiverOnDataReceivedAction(GameObject go)
     {
       Debug.Log($"Received {go.name}");
-
-      ReceiveBtn.GetComponentInChildren<Text>().text = "Receive";
+      ReceiveBtn.interactable = true;
+      ReceiveProgress.value = 0;
+      ReceiveProgress.gameObject.SetActive(false);
 
       if (receivedGo != null)
         Destroy(receivedGo);
 
-      AddClasses(go);
+      AddSelectable(go);
       receivedGo = go;
     }
 
-    private void ReceiverProgressAction(ConcurrentDictionary<string, int> dict)
-    {
-      //Run on a dispatcher as GOs can only be retrieved on the main thread
-      Dispatcher.Instance().Enqueue(() =>
-      {
-        var val = dict.Values.Average();
-        ReceiveBtn.GetComponentInChildren<Text>().text = $"Receiving object #{val}";
-      });
-    }
 
     /// <summary>
     /// Adds material and selectable script to all children of a GameObject
     /// </summary>
     /// <param name="go"></param>
-    private void AddClasses(GameObject go)
+    private void AddSelectable(GameObject go)
     {
       for (var i = 0; i < go.transform.childCount; i++)
       {
