@@ -10,7 +10,6 @@
           <e p="Selectable.cs" t="Include" />
           <e p="SelectionManager.cs" t="Include" />
         </e>
-        <e p="ScriptableObjectExample.cs" t="Include" />
         <e p="Speckle Connector" t="Include">
           <e p="ConverterUnity.cs" t="Include" />
           <e p="ConverterUnity.Geometry.cs" t="Include" />
@@ -19,6 +18,7 @@
           <e p="Receiver.cs" t="Include" />
           <e p="Sender.cs" t="Include" />
           <e p="SpeckleData.cs" t="Include" />
+          <e p="Streams.cs" t="Include" />
           <e p="Utils.cs" t="Include" />
         </e>
         <e p="SpeckleExamples.cs" t="Include" />

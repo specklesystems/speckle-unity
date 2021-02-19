@@ -60,7 +60,8 @@ namespace Objects.Converter.Unity
           return CurveToNative(o);
         case Mesh o:
           return MeshToNative(o);
-
+        case Brep o:
+          return MeshToNative(o.displayValue);
         default:
           throw new NotSupportedException();
       }
@@ -102,6 +103,10 @@ namespace Objects.Converter.Unity
           return true;
         case Mesh _:
           return true;
+        case Brep o:
+          if (o.displayValue != null) ;
+          return true;
+          return false;
         default:
           return false;
       }

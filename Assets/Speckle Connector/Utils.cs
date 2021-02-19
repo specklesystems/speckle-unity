@@ -18,5 +18,6 @@ namespace Speckle.ConnectorUnity
       var argb = System.Drawing.Color.FromArgb(c);
       return new Color(argb.R / 255.0f, argb.G / 255.0f, argb.B / 255.0f);
     }
+    
   }
 }
