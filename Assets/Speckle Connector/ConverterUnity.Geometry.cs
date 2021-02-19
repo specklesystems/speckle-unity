@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Objects.Other;
 using Speckle.ConnectorUnity;
 using Speckle.Core.Models;
@@ -106,25 +107,25 @@ namespace Objects.Converter.Unity
         i += 3;
       }
 
-      var localToWorld = go.transform.localToWorldMatrix;
-
       var mesh = new Mesh();
       // get the speckle data from the go here
       // so that if the go comes from speckle, typed props will get overridden below
       GetSpeckleData(mesh, go);
-      
-      mesh.units = ModelUnits;
 
+      mesh.units = ModelUnits;
+      
       var vertices = filter.mesh.vertices;
       foreach (var vertex in vertices)
       {
-        mesh.vertices.Add(PointToSpeckle(localToWorld.MultiplyPoint3x4(vertex)).x);
-        mesh.vertices.Add(PointToSpeckle(localToWorld.MultiplyPoint3x4(vertex)).y);
-        mesh.vertices.Add(PointToSpeckle(localToWorld.MultiplyPoint3x4(vertex)).z);
+        var p = go.transform.TransformPoint(vertex);
+        var sp = PointToSpeckle(p);
+        mesh.vertices.Add(sp.x);
+        mesh.vertices.Add(sp.y);
+        mesh.vertices.Add(sp.z);
       }
-
-      mesh.faces = faces;
       
+      mesh.faces = faces;
+
       return mesh;
     }
 
@@ -318,6 +319,7 @@ namespace Objects.Converter.Unity
       //Add mesh collider
       MeshCollider mc = go.AddComponent<MeshCollider>();
       mc.sharedMesh = mesh;
+      mc.convex = true;
 
 
       SetSpeckleData(go, speckleMesh);
@@ -329,13 +331,18 @@ namespace Objects.Converter.Unity
     private void SetSpeckleData(GameObject go, Base @base)
     {
       var sd = go.AddComponent<SpeckleData>();
-      sd.Data = @base.GetMembers();
+      var meshprops = typeof(Mesh).GetProperties(BindingFlags.Instance | BindingFlags.Public).Select(x=>x.Name).ToList();
+      
+      //get members, but exclude mesh props to avoid issues down the line 
+      sd.Data = @base.GetMembers()
+        .Where(x=> !meshprops.Contains(x.Key))
+        .ToDictionary(x=>x.Key, x=>x.Value);
     }
 
     private void GetSpeckleData(Base @base, GameObject go)
     {
       var sd = go.GetComponent<SpeckleData>();
-      if (sd == null)
+      if (sd == null || sd.Data == null)
         return;
       foreach (var key in sd.Data.Keys)
       {
