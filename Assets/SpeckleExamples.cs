@@ -1,21 +1,7 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Speckle.Core;
-using Speckle.Core.Models;
-using Speckle.Core.Api;
 using Speckle.Core.Credentials;
-using System;
-using System.Collections.Concurrent;
-using System.Data;
-using System.Threading.Tasks;
 using System.Linq;
-using Speckle.Core.Transports;
-using Objects.Converter.Unity;
-using Objects.Geometry;
-using UnityEditor;
-using System.Text.RegularExpressions;
-using System.IO;
 using UnityEngine.UI;
 using Stream = Speckle.Core.Api.Stream;
 
@@ -33,7 +19,6 @@ namespace Speckle.ConnectorUnity
     private Slider ReceiveProgress;
     private Slider SendProgress;
     private Text SendText;
-    private GameObject receivedGo;
     private List<Stream> StreamList = null;
     private Stream SelectedStream = null;
     private List<Receiver> Receivers = new List<Receiver>();
@@ -85,6 +70,8 @@ namespace Speckle.ConnectorUnity
 
     private void Update()
     {
+      if(SendText==null)
+        return;
       if (!SelectionManager.selectedObjects.Any())
       {
         SendBtn.interactable = false;
@@ -121,7 +108,7 @@ namespace Speckle.ConnectorUnity
       var autoReceive = AutoReceiveToggle.isOn;
 
       var receiver = ScriptableObject.CreateInstance<Receiver>();
-      receiver.Init(streamId, autoReceive,
+      receiver.Init(streamId, autoReceive, false,
         onDataReceivedAction: ReceiverOnDataReceivedAction,
         onTotalChildrenCountKnown: (count) => { receiver.TotalChildrenCount = count; },
         onProgressAction: (dict) =>
@@ -181,25 +168,23 @@ namespace Speckle.ConnectorUnity
       ReceiveBtn.interactable = true;
       ReceiveProgress.value = 0;
       ReceiveProgress.gameObject.SetActive(false);
-
-      if (receivedGo != null)
-        Destroy(receivedGo);
-
-      AddSelectable(go);
-      receivedGo = go;
+      
+      AddComponents(go);
     }
 
 
     /// <summary>
-    /// Adds material and selectable script to all children of a GameObject
+    /// Adds custom components to all children of a GameObject
     /// </summary>
     /// <param name="go"></param>
-    private void AddSelectable(GameObject go)
+    private void AddComponents(GameObject go)
     {
       for (var i = 0; i < go.transform.childCount; i++)
       {
         var child = go.transform.GetChild(i);
         child.gameObject.AddComponent<Selectable>();
+        var rigidbody = child.gameObject.AddComponent<Rigidbody>();
+        rigidbody.mass = 10;
       }
     }
   }

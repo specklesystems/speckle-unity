@@ -23,17 +23,16 @@ namespace Speckle.ConnectorUnity
   public class Receiver : ScriptableObject
   {
     public string StreamId;
-    public int TotalChildrenCount = 0;
+    public int TotalChildrenCount = 0; 
+    private GameObject ReceivedData;
+    
     private bool AutoReceive;
+    private bool DeleteOld;
     private Action<ConcurrentDictionary<string, int>> OnProgressAction;
     private Action<string, Exception> OnErrorAction;
     private Action<int> OnTotalChildrenCountKnown;
     private Action<GameObject> OnDataReceivedAction;
-
-
-    // public delegate void DataReceivedHandler(GameObject data);
-    //
-    // public event DataReceivedHandler OnNewData;
+    
 
     private ConverterUnity _converter = new ConverterUnity();
     private Client Client { get; set; }
@@ -44,16 +43,23 @@ namespace Speckle.ConnectorUnity
     }
 
     /// <summary>
-    /// Initializes the Receiver manually, with StreamId and Account
+    /// Initializes the Receiver manually
     /// </summary>
-    /// <param name="streamId"></param>
-    /// <param name="account"></param>
-    public void Init(string streamId, bool autoReceive = false, Account account = null,
+    /// <param name="streamId">Id of the stream to receive</param>
+    /// <param name="autoReceive">If true, it will automatically receive updates sent to this stream</param>
+    /// <param name="deleteOld">If true, it will delete previously received objects when new one are received</param>
+    /// <param name="account">Account to use, if null the default account will be used</param>
+    /// <param name="onDataReceivedAction">Action to run after new data has been received and converted</param>
+    /// <param name="onProgressAction">Action to run when there is download/conversion progress</param>
+    /// <param name="onErrorAction">Action to run on error</param>
+    /// <param name="onTotalChildrenCountKnown">Action to run when the TotalChildrenCount is known</param>
+    public void Init(string streamId, bool autoReceive = false, bool deleteOld = true, Account account = null,
       Action<GameObject> onDataReceivedAction = null, Action<ConcurrentDictionary<string, int>> onProgressAction = null,
       Action<string, Exception> onErrorAction = null, Action<int> onTotalChildrenCountKnown = null)
     {
       StreamId = streamId;
       AutoReceive = autoReceive;
+      DeleteOld = deleteOld;
       OnDataReceivedAction = onDataReceivedAction;
       OnErrorAction = onErrorAction;
       OnProgressAction = onProgressAction;
@@ -133,6 +139,10 @@ namespace Speckle.ConnectorUnity
         Dispatcher.Instance().Enqueue( () =>
         {
           var go = ConvertRecursivelyToNative(@base, commitId);
+          //remove previously received object
+          if (DeleteOld && ReceivedData != null)
+            Destroy(ReceivedData);
+          ReceivedData = go;
           OnDataReceivedAction?.Invoke(go);
         });
       }
