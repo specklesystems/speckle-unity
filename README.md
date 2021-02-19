@@ -1,22 +1,26 @@
 
 
-# Connector Unity WIP
+# Connector Unity
 
-[![Twitter Follow](https://img.shields.io/twitter/follow/SpeckleSystems?style=social)](https://twitter.com/SpeckleSystems) [![Discourse users](https://img.shields.io/discourse/users?server=https%3A%2F%2Fdiscourse.speckle.works&style=flat-square)](https://discourse.speckle.works) [![website](https://img.shields.io/badge/www-speckle.systems-royalblue?style=flat-square)](https://speckle.systems)
+[![Twitter Follow](https://img.shields.io/twitter/follow/SpeckleSystems?style=social)](https://twitter.com/SpeckleSystems) [![Community forum users](https://img.shields.io/discourse/users?server=https%3A%2F%2Fdiscourse.speckle.works&style=flat-square&logo=discourse&logoColor=white)](https://discourse.speckle.works) [![website](https://img.shields.io/badge/https://-speckle.systems-royalblue?style=flat-square)](https://speckle.systems) [![docs](https://img.shields.io/badge/docs-speckle.guide-orange?style=flat-square&logo=read-the-docs&logoColor=white)](https://speckle.guide/dev/)
 
 
 
 ## Introduction
 
-This repo holds Speckle's Unity Connector, it currently is ⚠ **WORK IN PROGRESS** ⚠, please use at your own risk!
+This repo holds Speckle's Unity Connector, it's currently released as early alpha.
 
-This connector is meant to be used by developers, it doesn't have a UI but it offers convenience methods to send and receive data. The connector currently only supports a subset of all the features and methods in the [Speckle .NET SDK](https://github.com/specklesystems/speckle-sharp).
-
-
-
-![unity](https://user-images.githubusercontent.com/2679513/103669743-a3ebc080-4f70-11eb-8248-dfee18395679.gif)
+This connector is meant to be used by developers, it doesn't have an elaborated UI but it offers convenience methods to send and receive data. The connector uses our [Speckle .NET SDK](https://github.com/specklesystems/speckle-sharp).
 
 
+
+![unity](https://user-images.githubusercontent.com/2679513/108543628-3a83ff00-72dd-11eb-8792-3d43ce54e6af.gif)
+
+
+
+## Documentation
+
+More comprehensive developer documentation can be found in the [Speckle Docs website](https://speckle.guide/dev/).
 
 
 
@@ -66,67 +70,6 @@ After installing it, you can use it to add/create an account on the Server.
 ### Debugging
 
 Open your IDE and click "Attach to Unity and Debug".
-
-
-
-## How to use
-
-The project showcases how to send and receive data with Speckle in Unity. 
-
-In order to run it make sure to first **add an account via the Speckle manager.**
-
-### Accounts
-
-#### Default account
-
-If you only add one account in the Manager, **that will also be your default account**. If you have multiple accounts, you can **switch default account using the Manager**.
-
-![image](https://user-images.githubusercontent.com/2679513/97778543-c4159280-1b6f-11eb-924e-04b3fb1ed3e0.png)
-
-
-
-Some nodes accept an optional "account" input, **if not provided the default account will be used.**
-
-![image-20201031111912748](https://user-images.githubusercontent.com/2679513/97778555-da235300-1b6f-11eb-9c24-aa50908fcacf.png)
-
-
-
-### Sending and Receiving
-
-This connector is meant to be used by developers, it doesn't have a UI but it offers convenience methods to send and receive data. The connector currently only supports a subset of all the features in the [Speckle .NET SDK](https://github.com/specklesystems/speckle-sharp).
-
-#### Sending
-
-To Send data simply call the `Sender.Send(string streamId, List<GameObject> gameObjects, Account account = null)` method, it's on a static class so you don't need to initialize it.
-
-**Currently only GameObjects with a `MeshFilter` on them can be sent.**
-
-#### Receiving
-
-To Receive data instantiate a `Receiver.cs` like so:
-
-```c#
-var receiver = ScriptableObject.CreateInstance<Receiver>();
-receiver.Init(ReceiveText.text);
-```
-
-To receive the data on its last commit and convert it automatically call `await receiver.Receive();` .
-
-To automatically receive all new data being sent to the stream, subscribe to new data events like so:
-
-```c#
-receiver.OnNewData += ReceiverOnNewData;
-...
-...
-private void ReceiverOnNewData(GameObject go)
-{
-   ...
-}
-```
-
-The received GameObject will contain as children a flattened list of all the converted objects.
-
-**Currently only Mesh, Lines and points can be received.**
 
 
 
