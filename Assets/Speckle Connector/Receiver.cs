@@ -19,20 +19,19 @@ namespace Speckle.ConnectorUnity
   /// A Speckle Receiver, it's a wrapper around a basic Speckle Client
   /// that handles conversions and subscriptions for you
   /// </summary>
-  [CreateAssetMenu(fileName = "DataReceiver", menuName = "ScriptableObjects/Receiver", order = 1)]
-  public class Receiver : ScriptableObject
+  public class Receiver : MonoBehaviour
   {
     public string StreamId;
-    public int TotalChildrenCount = 0; 
+    public int TotalChildrenCount = 0;
     private GameObject ReceivedData;
-    
+
     private bool AutoReceive;
     private bool DeleteOld;
     private Action<ConcurrentDictionary<string, int>> OnProgressAction;
     private Action<string, Exception> OnErrorAction;
     private Action<int> OnTotalChildrenCountKnown;
     private Action<GameObject> OnDataReceivedAction;
-    
+
 
     private ConverterUnity _converter = new ConverterUnity();
     private Client Client { get; set; }
@@ -104,8 +103,7 @@ namespace Speckle.ConnectorUnity
         }
       });
     }
-    
-    
+
 
     #region private methods
 
@@ -127,7 +125,7 @@ namespace Speckle.ConnectorUnity
       try
       {
         Tracker.TrackPageview(Tracker.RECEIVE);
-        
+
         var transport = new ServerTransport(Client.Account, StreamId);
         var @base = await Operations.Receive(
           objectId,
@@ -136,7 +134,7 @@ namespace Speckle.ConnectorUnity
           onProgressAction: OnProgressAction,
           onTotalChildrenCountKnown: OnTotalChildrenCountKnown
         );
-        Dispatcher.Instance().Enqueue( () =>
+        Dispatcher.Instance().Enqueue(() =>
         {
           var go = ConvertRecursivelyToNative(@base, commitId);
           //remove previously received object
@@ -154,43 +152,46 @@ namespace Speckle.ConnectorUnity
 
 
     /// <summary>
-    /// Converts a Base object to a parent GameObject
+    /// Converts a Base object to a GameObject Recursively
     /// </summary>
     /// <param name="base"></param>
     /// <returns></returns>
     private GameObject ConvertRecursivelyToNative(Base @base, string name)
     {
-      var go = new GameObject();
-      go.name = name;
-
-      var convertedObjects = new List<GameObject>();
       // case 1: it's an item that has a direct conversion method, eg a point
       if (_converter.CanConvertToNative(@base))
       {
-        convertedObjects = TryConvertItemToNative(@base);
+        var go = TryConvertItemToNative(@base);
+        return go;
+      }
+
+      // case 2: it's a wrapper Base
+      //       2a: if there's only one member unpack it
+      //       2b: otherwise return dictionary of unpacked members
+      var members = @base.GetMemberNames().ToList();
+      if (members.Count() == 1)
+      {
+        var go = RecurseTreeToNative(@base[members.First()]);
+        go.name = members.First();
+        return go;
       }
       else
       {
-        // case 2: it's a wrapper Base
-        //       2a: if there's only one member unpack it
-        //       2b: otherwise return dictionary of unpacked members
-        var members = @base.GetDynamicMembers().ToList();
-
-
-        if (members.Count() == 1)
+        //empty game object with the commit id as name, used to contain all the rest
+        var go = new GameObject();
+        go.name = name;
+        foreach (var member in members)
         {
-          convertedObjects = RecurseTreeToNative(@base[members.First()]);
+          var goo = RecurseTreeToNative(@base[member]);
+          if (goo != null)
+          {
+            goo.name = member;
+            goo.transform.parent = go.transform;
+          }
         }
-        else
-        {
-          convertedObjects = members.SelectMany(x => RecurseTreeToNative(@base[x])).ToList();
-        }
+
+        return go;
       }
-
-
-      convertedObjects.Where(x => x != null).ToList().ForEach(x => x.transform.parent = go.transform);
-
-      return go;
     }
 
 
@@ -199,51 +200,67 @@ namespace Speckle.ConnectorUnity
     /// </summary>
     /// <param name="object"></param>
     /// <returns></returns>
-    private List<GameObject> RecurseTreeToNative(object @object)
+    private GameObject RecurseTreeToNative(object @object)
     {
-      var objects = new List<GameObject>();
       if (IsList(@object))
       {
         var list = ((IEnumerable) @object).Cast<object>();
-        objects = list.SelectMany(x => RecurseTreeToNative(x)).ToList();
+        var objects = list.Select(x => RecurseTreeToNative(x)).Where(x => x != null).ToList();
+        if (objects.Any())
+        {
+          var go = new GameObject();
+          go.name = "List";
+          objects.ForEach(x => x.transform.parent = go.transform);
+          return go;
+        }
       }
       else
       {
-        objects = TryConvertItemToNative(@object);
+        return TryConvertItemToNative(@object);
       }
 
-      return objects;
+      return null;
     }
 
-    private List<GameObject> TryConvertItemToNative(object value)
+    private GameObject TryConvertItemToNative(object value)
     {
-      var objects = new List<GameObject>();
-
       if (value == null)
-        return objects;
+        return null;
 
       //it's a simple type or not a Base
       if (value.GetType().IsSimpleType() || !(value is Base))
       {
-        return objects;
+        return null;
       }
 
       var @base = (Base) value;
 
-      //it's an unsupported Base, return a dictionary
+      //it's an unsupported Base, go through each of its property and try convert that
       if (!_converter.CanConvertToNative(@base))
       {
-        var members = @base.GetMembers().Values.ToList();
+        var members = @base.GetMemberNames().ToList();
+        
+        //empty game object with the commit id as name, used to contain all the rest
+        var go = new GameObject();
+        go.name = @base.speckle_type;
+        foreach (var member in members)
+        {
+          var goo = RecurseTreeToNative(@base[member]);
+          if (goo != null)
+          {
+            goo.name = member;
+            goo.transform.parent = go.transform;
+          }
+        }
 
-
-        objects = members.SelectMany(x => RecurseTreeToNative(x)).ToList();
+        return go;
+        
       }
       else
       {
         try
         {
-          var converted = _converter.ConvertToNative(@base) as GameObject;
-          objects.Add(converted);
+          return _converter.ConvertToNative(@base) as GameObject;
         }
         catch (Exception ex)
         {
@@ -251,7 +268,7 @@ namespace Speckle.ConnectorUnity
         }
       }
 
-      return objects;
+      return null;
     }
 
 

@@ -22,11 +22,18 @@ namespace Objects.Converter.Unity
     /// <param name="y"></param>
     /// <param name="z"></param>
     /// <returns></returns>
-    public Vector3 PointByCoordinates(double x, double y, double z, string units)
+    public Vector3 VectorByCoordinates(double x, double y, double z, string units)
     {
       // switch y and z
       return new Vector3((float) ScaleToNative(x, units), (float) ScaleToNative(z, units),
         (float) ScaleToNative(y, units));
+    }
+    
+        public Vector3 VectorFromPoint(Point p)
+    {
+      // switch y and z
+      return new Vector3((float) ScaleToNative(p.x, p.units), (float) ScaleToNative(p.z, p.units),
+        (float) ScaleToNative(p.y, p.units));
     }
 
     /// <summary>
@@ -34,14 +41,14 @@ namespace Objects.Converter.Unity
     /// </summary>
     /// <param name="ptValues"></param>
     /// <returns></returns>
-    public Vector3 ArrayToPoint(double[] ptValues, string units)
-    {
-      double x = ptValues[0];
-      double y = ptValues[1];
-      double z = ptValues[2];
-
-      return PointByCoordinates(x, y, z, units);
-    }
+    // public Vector3 ArrayToPoint(double[] ptValues, string units)
+    // {
+    //   double x = ptValues[0];
+    //   double y = ptValues[1];
+    //   double z = ptValues[2];
+    //
+    //   return PointByCoordinates(x, y, z, units);
+    // }
 
     /// <summary>
     /// 
@@ -51,12 +58,12 @@ namespace Objects.Converter.Unity
     public Vector3[] ArrayToPoints(IEnumerable<double> arr, string units)
     {
       if (arr.Count() % 3 != 0) throw new Exception("Array malformed: length%3 != 0.");
-
+    
       Vector3[] points = new Vector3[arr.Count() / 3];
       var asArray = arr.ToArray();
       for (int i = 2, k = 0; i < arr.Count(); i += 3)
-        points[k++] = PointByCoordinates(asArray[i - 2], asArray[i - 1], asArray[i], units);
-
+        points[k++] = VectorByCoordinates(asArray[i - 2], asArray[i - 1], asArray[i], units);
+    
       return points;
     }
 
@@ -159,13 +166,13 @@ namespace Objects.Converter.Unity
     /// <returns></returns>
     public GameObject PointToNative(Point point)
     {
-      Vector3 newPt = ArrayToPoint(point.value.ToArray(), point.units);
+      Vector3 newPt = VectorByCoordinates(point.x, point.y, point.z, point.units);
 
       var go = NewPointBasedGameObject(new Vector3[2] {newPt, newPt}, point.speckle_type);
       SetSpeckleData(go, point);
       return go;
     }
-
+    
 
     /// <summary>
     /// Converts a Speckle line to a GameObject with a line renderer
@@ -174,9 +181,9 @@ namespace Objects.Converter.Unity
     /// <returns></returns>
     public GameObject LineToNative(Line line)
     {
-      Vector3[] points = ArrayToPoints(line.value, line.units);
+      var points = new List<Vector3> {VectorFromPoint(line.start), VectorFromPoint(line.end)};
 
-      var go = NewPointBasedGameObject(points, line.speckle_type);
+      var go = NewPointBasedGameObject(points.ToArray(), line.speckle_type);
       SetSpeckleData(go, line);
       return go;
     }
@@ -188,9 +195,9 @@ namespace Objects.Converter.Unity
     /// <returns></returns>
     public GameObject PolylineToNative(Polyline polyline)
     {
-      Vector3[] points = ArrayToPoints(polyline.value, polyline.units);
+      var points = polyline.points.Select(x => VectorFromPoint(x));
 
-      var go = NewPointBasedGameObject(points, polyline.speckle_type);
+      var go = NewPointBasedGameObject(points.ToArray(), polyline.speckle_type);
       SetSpeckleData(go, polyline);
       return go;
     }
@@ -202,8 +209,8 @@ namespace Objects.Converter.Unity
     /// <returns></returns>
     public GameObject CurveToNative(Curve curve)
     {
-      Vector3[] points = ArrayToPoints(curve.displayValue.value, curve.units);
-      var go = NewPointBasedGameObject(points, curve.speckle_type);
+      var points = ArrayToPoints(curve.points, curve.units);
+      var go = NewPointBasedGameObject(points.ToArray(), curve.speckle_type);
       SetSpeckleData(go, curve);
       return go;
     }

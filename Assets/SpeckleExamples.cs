@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Speckle.Core.Credentials;
 using System.Linq;
+using UnityEngine.Events;
 using UnityEngine.UI;
 using Stream = Speckle.Core.Api.Stream;
 
@@ -12,16 +13,15 @@ namespace Speckle.ConnectorUnity
     public Text SelectStreamText;
     public Text DetailsStreamText;
     public Dropdown StreamSelectionDropdown;
-    public Button ReceiveBtn;
+    public Button AddReceiverBtn;
     public Toggle AutoReceiveToggle;
-    public Button SendBtn;
+    public Button AddSenderBtn;
+    public GameObject StreamPrefab;
+    public Canvas StreamsCanvas;
 
-    private Slider ReceiveProgress;
-    private Slider SendProgress;
-    private Text SendText;
     private List<Stream> StreamList = null;
     private Stream SelectedStream = null;
-    private List<Receiver> Receivers = new List<Receiver>();
+    private List<GameObject> StreamPrefabs = new List<GameObject>();
 
     async void Start()
     {
@@ -58,31 +58,9 @@ namespace Speckle.ConnectorUnity
       StreamSelectionDropdown.value = -1;
       StreamSelectionDropdown.value = 0;
 
-      ReceiveProgress = ReceiveBtn.GetComponentInChildren<Slider>();
-      ReceiveProgress.gameObject.SetActive(false); //hide
-      ReceiveBtn.onClick.AddListener(CreateReceiver);
 
-      SendText = SendBtn.GetComponentInChildren<Text>();
-      SendProgress = SendBtn.GetComponentInChildren<Slider>();
-      SendProgress.gameObject.SetActive(false); //hide
-      SendBtn.onClick.AddListener(SendData);
-    }
-
-    private void Update()
-    {
-      if(SendText==null)
-        return;
-      if (!SelectionManager.selectedObjects.Any())
-      {
-        SendBtn.interactable = false;
-        SendText.text = "Send";
-      }
-      else
-      {
-        SendBtn.interactable = true;
-        var s = SelectionManager.selectedObjects.Count == 1 ? "" : "s";
-        SendText.text = $"Send {SelectionManager.selectedObjects.Count} object{s}";
-      }
+      AddReceiverBtn.onClick.AddListener(AddReceiver);
+      AddSenderBtn.onClick.AddListener(AddSender);
     }
 
     public void StreamSelectionChanged(int index)
@@ -101,15 +79,36 @@ namespace Speckle.ConnectorUnity
 
     // Shows how to create a new Receiver from code and then pull data manually
     // Created receivers are added to a List of Receivers for future use
-    private void CreateReceiver()
+    private void AddReceiver()
     {
-      ReceiveBtn.interactable = false;
       var streamId = SelectedStream.id;
       var autoReceive = AutoReceiveToggle.isOn;
 
-      var receiver = ScriptableObject.CreateInstance<Receiver>();
+      var streamPrefab = Instantiate(StreamPrefab, new Vector3(0, 0, 0),
+        Quaternion.identity);
+      streamPrefab.name = $"receiver-{streamId}";
+      streamPrefab.transform.SetParent(StreamsCanvas.transform);
+      var rt = streamPrefab.GetComponent<RectTransform>();
+      rt.anchoredPosition = new Vector3(-10, -110 - StreamPrefabs.Count * 110, 0);
+
+      var receiver = streamPrefab.AddComponent<Receiver>();
+
+      var btn = streamPrefab.transform.Find("Btn").GetComponentInChildren<Button>();
+      var streamText = streamPrefab.transform.Find("StreamText").GetComponentInChildren<Text>();
+      var statusText = streamPrefab.transform.Find("StatusText").GetComponentInChildren<Text>();
+      var receiveProgress = btn.GetComponentInChildren<Slider>();
+      receiveProgress.gameObject.SetActive(false); //hide
+
       receiver.Init(streamId, autoReceive, false,
-        onDataReceivedAction: ReceiverOnDataReceivedAction,
+        onDataReceivedAction: (go) =>
+        {
+          statusText.text = $"Received {go.name}";
+          btn.interactable = true;
+          receiveProgress.value = 0;
+          receiveProgress.gameObject.SetActive(false);
+
+          AddComponents(go);
+        },
         onTotalChildrenCountKnown: (count) => { receiver.TotalChildrenCount = count; },
         onProgressAction: (dict) =>
         {
@@ -117,64 +116,96 @@ namespace Speckle.ConnectorUnity
           Dispatcher.Instance().Enqueue(() =>
           {
             var val = dict.Values.Average() / receiver.TotalChildrenCount;
-            ReceiveProgress.gameObject.SetActive(true);
-            ReceiveProgress.value = (float) val;
+            receiveProgress.gameObject.SetActive(true);
+            receiveProgress.value = (float) val;
           });
         });
 
-      //receive manually once
-      receiver.Receive();
 
-      Receivers.Add(receiver);
-    }
-
-    private void SendData()
-    {
-      if (!SelectionManager.selectedObjects.Any())
-        return;
-
-      var objs = new List<GameObject>();
-      foreach (var index in SelectionManager.selectedObjects)
+      streamText.text = $"Stream: {SelectedStream.name}\nId: {SelectedStream.id} - Auto: {autoReceive}";
+      btn.onClick.AddListener(() =>
       {
-        objs.Add(SelectionManager.selectables[index].gameObject);
-      }
-
-      Sender.Send(SelectedStream.id, objs,
-        onProgressAction: (dict) =>
-        {
-          //Run on a dispatcher as GOs can only be retrieved on the main thread
-          Dispatcher.Instance().Enqueue(() =>
-          {
-            var val = dict.Values.Average() / objs.Count;
-            SendProgress.gameObject.SetActive(true);
-            SendProgress.value = (float) val;
-          });
-        },
-        onDataSentAction: SenderOnDataSentAction);
-    }
-
-    private void SenderOnDataSentAction(string commitId)
-    {
-      Dispatcher.Instance().Enqueue(() =>
-      {
-        Debug.Log($"Sent {commitId}");
-        SendProgress.gameObject.SetActive(false); //hide
+        statusText.text = "Receiving...";
+        btn.interactable = false;
+        receiver.Receive();
       });
+
+
+      StreamPrefabs.Add(streamPrefab);
     }
 
-    private void ReceiverOnDataReceivedAction(GameObject go)
+    private void AddSender()
     {
-      Debug.Log($"Received {go.name}");
-      ReceiveBtn.interactable = true;
-      ReceiveProgress.value = 0;
-      ReceiveProgress.gameObject.SetActive(false);
-      
-      AddComponents(go);
+      var streamId = SelectedStream.id;
+
+      var streamPrefab = Instantiate(StreamPrefab, new Vector3(0, 0, 0),
+        Quaternion.identity);
+      streamPrefab.name = $"sender-{streamId}";
+      streamPrefab.transform.SetParent(StreamsCanvas.transform);
+      var rt = streamPrefab.GetComponent<RectTransform>();
+      rt.anchoredPosition = new Vector3(-10, -110 - StreamPrefabs.Count * 110, 0);
+
+      var sender = streamPrefab.AddComponent<Sender>();
+
+      var btn = streamPrefab.transform.Find("Btn").GetComponentInChildren<Button>();
+      var streamText = streamPrefab.transform.Find("StreamText").GetComponentInChildren<Text>();
+      var statusText = streamPrefab.transform.Find("StatusText").GetComponentInChildren<Text>();
+
+      btn.GetComponentInChildren<Text>().text = "Send";
+      statusText.text = "Ready to send";
+
+      var sendProgress = btn.GetComponentInChildren<Slider>();
+      sendProgress.gameObject.SetActive(false); //hide
+
+      streamText.text = $"Stream: {SelectedStream.name}\nId: {SelectedStream.id}";
+
+
+      btn.onClick.AddListener(() =>
+        {
+          var objs = new List<GameObject>();
+          foreach (var index in SelectionManager.selectedObjects)
+          {
+            objs.Add(SelectionManager.selectables[index].gameObject);
+          }
+
+          if (!objs.Any())
+          {
+            statusText.text = $"No objects selected";
+            return;
+          }
+
+          btn.interactable = false;
+          statusText.text = "Sending...";
+          sender.Send(SelectedStream.id, objs,
+            onProgressAction: (dict) =>
+            {
+              //Run on a dispatcher as GOs can only be retrieved on the main thread
+              Dispatcher.Instance().Enqueue(() =>
+              {
+                var val = dict.Values.Average() / objs.Count;
+                sendProgress.gameObject.SetActive(true);
+                sendProgress.value = (float) val;
+              });
+            },
+            onDataSentAction: (commitId) =>
+            {
+              Dispatcher.Instance().Enqueue(() =>
+              {
+                btn.interactable = true;
+                statusText.text = $"Sent {commitId}";
+                sendProgress.gameObject.SetActive(false); //hide
+              });
+            });
+
+
+          StreamPrefabs.Add(streamPrefab);
+        }
+      );
     }
 
 
     /// <summary>
-    /// Adds custom components to all children of a GameObject
+    /// Recursively adds custom components to all children of a GameObject
     /// </summary>
     /// <param name="go"></param>
     private void AddComponents(GameObject go)
@@ -182,9 +213,16 @@ namespace Speckle.ConnectorUnity
       for (var i = 0; i < go.transform.childCount; i++)
       {
         var child = go.transform.GetChild(i);
-        child.gameObject.AddComponent<Selectable>();
-        var rigidbody = child.gameObject.AddComponent<Rigidbody>();
-        rigidbody.mass = 10;
+
+        if (child.childCount > 0)
+        {
+          AddComponents(child.gameObject);
+        }
+        else {
+          child.gameObject.AddComponent<Selectable>();
+          var rigidbody = child.gameObject.AddComponent<Rigidbody>();
+          rigidbody.mass = 10;
+        }
       }
     }
   }
