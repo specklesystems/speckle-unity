@@ -160,7 +160,7 @@ namespace Objects.Converter.Unity
     }
 
     /// <summary>
-    /// Converts a Speckle ioint to a GameObject with a line renderer
+    /// Converts a Speckle point to a GameObject with a line renderer
     /// </summary>
     /// <param name="point"></param>
     /// <returns></returns>
@@ -172,6 +172,8 @@ namespace Objects.Converter.Unity
       SetSpeckleData(go, point);
       return go;
     }
+    
+
     
 
     /// <summary>

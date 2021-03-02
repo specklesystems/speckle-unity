@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Objects.BuiltElements;
 using UnityEngine;
 using Mesh = Objects.Geometry.Mesh;
 
@@ -62,6 +63,8 @@ namespace Objects.Converter.Unity
           return MeshToNative(o);
         case Brep o:
           return MeshToNative(o.displayValue);
+        case View3D o:
+          return View3DToNative(o);
         default:
           throw new NotSupportedException();
       }
@@ -106,6 +109,10 @@ namespace Objects.Converter.Unity
         case Brep o:
           if (o.displayValue != null) ;
           return true;
+          return false;
+        case View3D _:
+          return true;
+        case View2D _:
           return false;
         default:
           return false;

@@ -241,8 +241,9 @@ namespace Speckle.ConnectorUnity
         var members = @base.GetMemberNames().ToList();
         
         //empty game object with the commit id as name, used to contain all the rest
-        var go = new GameObject();
-        go.name = @base.speckle_type;
+          var go = new GameObject();
+          go.name = @base.speckle_type;
+        var goos = new List<GameObject>();
         foreach (var member in members)
         {
           var goo = RecurseTreeToNative(@base[member]);
@@ -250,7 +251,14 @@ namespace Speckle.ConnectorUnity
           {
             goo.name = member;
             goo.transform.parent = go.transform;
+            goos.Add(goo);
           }
+        }
+        //if no children is valid, return null
+        if (!goos.Any())
+        {
+          Destroy(go);
+          return null;
         }
 
         return go;
