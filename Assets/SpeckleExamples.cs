@@ -220,8 +220,10 @@ namespace Speckle.ConnectorUnity
         }
         else {
           child.gameObject.AddComponent<Selectable>();
-          var rigidbody = child.gameObject.AddComponent<Rigidbody>();
-          rigidbody.mass = 10;
+          
+          //Add extra Components
+          //var rigidbody = child.gameObject.AddComponent<Rigidbody>();
+          //rigidbody.mass = 10;
         }
       }
     }
