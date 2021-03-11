@@ -11,6 +11,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Sentry.Protocol;
 using UnityEngine;
 
 namespace Speckle.ConnectorUnity
@@ -60,7 +61,7 @@ namespace Speckle.ConnectorUnity
       }
       catch (Exception e)
       {
-        Log.CaptureAndThrow(e);
+         throw new SpeckleException(e.Message, e, true, SentryLevel.Error);
       }
     }
 

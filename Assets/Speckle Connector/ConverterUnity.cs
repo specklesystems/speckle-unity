@@ -51,20 +51,20 @@ namespace Objects.Converter.Unity
     {
       switch (@object)
       {
-        case Point o:
-          return PointToNative(o);
-        case Line o:
-          return LineToNative(o);
-        case Polyline o:
-          return PolylineToNative(o);
-        case Curve o:
-          return CurveToNative(o);
+        // case Point o:
+        //   return PointToNative(o);
+        // case Line o:
+        //   return LineToNative(o);
+        // case Polyline o:
+        //   return PolylineToNative(o);
+        // case Curve o:
+        //   return CurveToNative(o);
         case Mesh o:
           return MeshToNative(o);
         case Brep o:
           return MeshToNative(o.displayValue);
-        case View3D o:
-          return View3DToNative(o);
+        // case View3D o:
+        //   return View3DToNative(o);
         default:
           throw new NotSupportedException();
       }
@@ -96,24 +96,24 @@ namespace Objects.Converter.Unity
     {
       switch (@object)
       {
-        case Point _:
-          return true;
-        case Line _:
-          return true;
-        case Polyline _:
-          return true;
-        case Curve _:
-          return true;
+        // case Point _:
+        //   return true;
+        // case Line _:
+        //   return true;
+        // case Polyline _:
+        //   return true;
+        // case Curve _:
+        //   return true;
         case Mesh _:
           return true;
         case Brep o:
           if (o.displayValue != null) ;
           return true;
           return false;
-        case View3D _:
-          return true;
-        case View2D _:
-          return false;
+        // case View3D _:
+        //   return true;
+        // case View2D _:
+        //   return false;
         default:
           return false;
       }
