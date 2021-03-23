@@ -22,7 +22,7 @@ namespace Objects.Converter.Unity
       camera.transform.up = VectorByCoordinates(speckleView.upDirection.x, speckleView.upDirection.y,
         speckleView.upDirection.z, speckleView.upDirection.units);
 
-      SetSpeckleData(go, speckleView);
+      AttachSpeckleProperties(go, speckleView.GetMembers());
       return go;
     }
   }

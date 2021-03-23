@@ -65,7 +65,7 @@ namespace Objects.Converter.Unity
           return MeshToNative(o);
         //Built elements with a mesh representation implement this interface
         case IDisplayMesh o: 
-          return MeshToNative(o.displayMesh);
+          return MeshToNative((Base)o);
         default:
           //capture any other object that might have a mesh representation
           if (@object["displayMesh"] is Mesh)

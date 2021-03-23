@@ -28,8 +28,8 @@ namespace Objects.Converter.Unity
       return new Vector3((float) ScaleToNative(x, units), (float) ScaleToNative(z, units),
         (float) ScaleToNative(y, units));
     }
-    
-        public Vector3 VectorFromPoint(Point p)
+
+    public Vector3 VectorFromPoint(Point p)
     {
       // switch y and z
       return new Vector3((float) ScaleToNative(p.x, p.units), (float) ScaleToNative(p.z, p.units),
@@ -58,12 +58,12 @@ namespace Objects.Converter.Unity
     public Vector3[] ArrayToPoints(IEnumerable<double> arr, string units)
     {
       if (arr.Count() % 3 != 0) throw new Exception("Array malformed: length%3 != 0.");
-    
+
       Vector3[] points = new Vector3[arr.Count() / 3];
       var asArray = arr.ToArray();
       for (int i = 2, k = 0; i < arr.Count(); i += 3)
         points[k++] = VectorByCoordinates(asArray[i - 2], asArray[i - 1], asArray[i], units);
-    
+
       return points;
     }
 
@@ -117,10 +117,10 @@ namespace Objects.Converter.Unity
       var mesh = new Mesh();
       // get the speckle data from the go here
       // so that if the go comes from speckle, typed props will get overridden below
-      GetSpeckleData(mesh, go);
+      AttachUnityProperties(mesh, go);
 
       mesh.units = ModelUnits;
-      
+
       var vertices = filter.mesh.vertices;
       foreach (var vertex in vertices)
       {
@@ -130,7 +130,7 @@ namespace Objects.Converter.Unity
         mesh.vertices.Add(sp.y);
         mesh.vertices.Add(sp.z);
       }
-      
+
       mesh.faces = faces;
 
       return mesh;
@@ -169,12 +169,9 @@ namespace Objects.Converter.Unity
       Vector3 newPt = VectorByCoordinates(point.x, point.y, point.z, point.units);
 
       var go = NewPointBasedGameObject(new Vector3[2] {newPt, newPt}, point.speckle_type);
-      SetSpeckleData(go, point);
       return go;
     }
-    
 
-    
 
     /// <summary>
     /// Converts a Speckle line to a GameObject with a line renderer
@@ -186,7 +183,6 @@ namespace Objects.Converter.Unity
       var points = new List<Vector3> {VectorFromPoint(line.start), VectorFromPoint(line.end)};
 
       var go = NewPointBasedGameObject(points.ToArray(), line.speckle_type);
-      SetSpeckleData(go, line);
       return go;
     }
 
@@ -200,7 +196,6 @@ namespace Objects.Converter.Unity
       var points = polyline.points.Select(x => VectorFromPoint(x));
 
       var go = NewPointBasedGameObject(points.ToArray(), polyline.speckle_type);
-      SetSpeckleData(go, polyline);
       return go;
     }
 
@@ -213,17 +208,24 @@ namespace Objects.Converter.Unity
     {
       var points = ArrayToPoints(curve.points, curve.units);
       var go = NewPointBasedGameObject(points.ToArray(), curve.speckle_type);
-      SetSpeckleData(go, curve);
       return go;
     }
 
+    public GameObject MeshToNative(Base speckleMeshObject)
+    {
+      if (!(speckleMeshObject["displayMesh"] is Mesh))
+        return null;
+
+      return MeshToNative(speckleMeshObject["displayMesh"] as Mesh, speckleMeshObject.GetMembers());
+    }
+    
 
     /// <summary>
     /// Converts a Speckle mesh to a GameObject with a mesh renderer
     /// </summary>
     /// <param name="speckleMesh"></param>
     /// <returns></returns>
-    public GameObject MeshToNative(Mesh speckleMesh)
+    public GameObject MeshToNative(Mesh speckleMesh, Dictionary<string, object> properties = null)
     {
       if (speckleMesh.vertices.Count == 0 || speckleMesh.faces.Count == 0)
       {
@@ -331,26 +333,33 @@ namespace Objects.Converter.Unity
       mc.convex = true;
 
 
-      SetSpeckleData(go, speckleMesh);
+      //attach properties on this very mesh
+      //means the mesh originated in Rhino or similar
+      if (properties == null)
+      {
+        var meshprops = typeof(Mesh).GetProperties(BindingFlags.Instance | BindingFlags.Public).Select(x => x.Name)
+          .ToList();
+        properties = speckleMesh.GetMembers()
+          .Where(x => !meshprops.Contains(x.Key))
+          .ToDictionary(x => x.Key, x => x.Value);
+      }
+
+      AttachSpeckleProperties(go, properties);
       return go;
     }
 
     #endregion
 
-    private void SetSpeckleData(GameObject go, Base @base)
+    private void AttachSpeckleProperties(GameObject go, Dictionary<string, object> properties)
     {
-      var sd = go.AddComponent<SpeckleData>();
-      var meshprops = typeof(Mesh).GetProperties(BindingFlags.Instance | BindingFlags.Public).Select(x=>x.Name).ToList();
-      
-      //get members, but exclude mesh props to avoid issues down the line 
-      sd.Data = @base.GetMembers()
-        .Where(x=> !meshprops.Contains(x.Key))
-        .ToDictionary(x=>x.Key, x=>x.Value);
+      var sd = go.AddComponent<SpeckleProperties>();
+      sd.Data = properties;
     }
 
-    private void GetSpeckleData(Base @base, GameObject go)
+
+    private void AttachUnityProperties(Base @base, GameObject go)
     {
-      var sd = go.GetComponent<SpeckleData>();
+      var sd = go.GetComponent<SpeckleProperties>();
       if (sd == null || sd.Data == null)
         return;
       foreach (var key in sd.Data.Keys)
