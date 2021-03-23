@@ -23,7 +23,7 @@ namespace Objects.Converter.Unity
 
     public IEnumerable<string> GetServicedApplications() => new string[] {Applications.Other}; //TODO: add unity
 
-    public HashSet<Error> ConversionErrors { get; private set; } = new HashSet<Error>();
+    public HashSet<Exception> ConversionErrors { get; private set; } = new HashSet<Exception>();
 
 
     public List<ApplicationPlaceholderObject> ContextObjects { get; set; } = new List<ApplicationPlaceholderObject>();
@@ -59,13 +59,17 @@ namespace Objects.Converter.Unity
         //   return PolylineToNative(o);
         // case Curve o:
         //   return CurveToNative(o);
-        case Mesh o:
-          return MeshToNative(o);
-        case Brep o:
-          return MeshToNative(o.displayValue);
         // case View3D o:
         //   return View3DToNative(o);
+        case Mesh o:
+          return MeshToNative(o);
+        //Built elements with a mesh representation implement this interface
+        case IDisplayMesh o: 
+          return MeshToNative(o.displayMesh);
         default:
+          //capture any other object that might have a mesh representation
+          if (@object["displayMesh"] is Mesh)
+            return MeshToNative(@object["displayMesh"] as Mesh);
           throw new NotSupportedException();
       }
     }
@@ -104,18 +108,16 @@ namespace Objects.Converter.Unity
         //   return true;
         // case Curve _:
         //   return true;
-        case Mesh _:
-          return true;
-        case Brep o:
-          if (o.displayValue != null) ;
-          return true;
-          return false;
         // case View3D _:
         //   return true;
         // case View2D _:
         //   return false;
+        case IDisplayMesh _:
+          return true;
+        case Mesh _:
+          return true;
         default:
-          return false;
+          return @object["displayMesh"] is Mesh;
       }
     }
 
