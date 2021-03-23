@@ -100,7 +100,7 @@ namespace Speckle.ConnectorUnity
         }
         catch (Exception e)
         {
-           throw new SpeckleException(e.Message, e, true, SentryLevel.Error);
+          throw new SpeckleException(e.Message, e, true, SentryLevel.Error);
         }
       });
     }
@@ -240,10 +240,10 @@ namespace Speckle.ConnectorUnity
       if (!_converter.CanConvertToNative(@base))
       {
         var members = @base.GetMemberNames().ToList();
-        
+
         //empty game object with the commit id as name, used to contain all the rest
-          var go = new GameObject();
-          go.name = @base.speckle_type;
+        var go = new GameObject();
+        go.name = @base.speckle_type;
         var goos = new List<GameObject>();
         foreach (var member in members)
         {
@@ -255,6 +255,7 @@ namespace Speckle.ConnectorUnity
             goos.Add(goo);
           }
         }
+
         //if no children is valid, return null
         if (!goos.Any())
         {
@@ -263,17 +264,29 @@ namespace Speckle.ConnectorUnity
         }
 
         return go;
-        
       }
       else
       {
         try
         {
-          return _converter.ConvertToNative(@base) as GameObject;
+          var go = _converter.ConvertToNative(@base) as GameObject;
+          // Some revit elements have nested elements in a "elements" property
+          // for instance hosted families on a wall
+          if (go != null && @base["elements"] is List<Base> l && l.Any())
+          {
+            var goo = RecurseTreeToNative(l);
+            if (goo != null)
+            {
+              goo.name = "elements";
+              goo.transform.parent = go.transform;
+            }
+          }
+
+          return go;
         }
         catch (Exception e)
         {
-           throw new SpeckleException(e.Message, e, true, SentryLevel.Error);
+          throw new SpeckleException(e.Message, e, true, SentryLevel.Error);
         }
       }
 
