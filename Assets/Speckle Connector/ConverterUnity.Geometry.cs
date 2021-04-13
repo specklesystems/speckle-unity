@@ -211,21 +211,26 @@ namespace Objects.Converter.Unity
       return go;
     }
 
+
     public GameObject MeshToNative(Base speckleMeshObject)
     {
       if (!(speckleMeshObject["displayMesh"] is Mesh))
         return null;
 
-      return MeshToNative(speckleMeshObject["displayMesh"] as Mesh, speckleMeshObject.GetMembers());
+      return MeshToNative(speckleMeshObject["displayMesh"] as Mesh,
+        speckleMeshObject["renderMaterial"] as RenderMaterial, speckleMeshObject.GetMembers());
     }
-    
+
 
     /// <summary>
     /// Converts a Speckle mesh to a GameObject with a mesh renderer
     /// </summary>
-    /// <param name="speckleMesh"></param>
+    /// <param name="speckleMesh">Mesh to convert</param>
+    /// <param name="renderMaterial">If provided will override the renderMaterial on the mesh itself</param>
+    /// <param name="properties">If provided will override the properties on the mesh itself</param>
     /// <returns></returns>
-    public GameObject MeshToNative(Mesh speckleMesh, Dictionary<string, object> properties = null)
+    public GameObject MeshToNative(Mesh speckleMesh, RenderMaterial renderMaterial = null,
+      Dictionary<string, object> properties = null)
     {
       if (speckleMesh.vertices.Count == 0 || speckleMesh.faces.Count == 0)
       {
@@ -255,9 +260,9 @@ namespace Objects.Converter.Unity
           tris.Add(speckleMesh.faces[i + 3]);
           tris.Add(speckleMesh.faces[i + 2]);
 
-          tris.Add(speckleMesh.faces[i + 3]);
           tris.Add(speckleMesh.faces[i + 1]);
           tris.Add(speckleMesh.faces[i + 4]);
+          tris.Add(speckleMesh.faces[i + 3]);
 
           i += 5;
         }
@@ -270,31 +275,8 @@ namespace Objects.Converter.Unity
       var mesh = go.AddComponent<MeshFilter>().mesh;
       var meshRenderer = go.AddComponent<MeshRenderer>();
 
-      //todo support more complex materials
-      var shader = Shader.Find("Standard");
-      var mat = new Material(shader);
-
-      var speckleMaterial = speckleMesh["renderMaterial"];
-      if (speckleMaterial != null && speckleMaterial is RenderMaterial rm)
-      {
-        // 1. match shader by name, if any
-        shader = Shader.Find(rm.name);
-        if (shader != null)
-        {
-          mat = new Material(shader);
-        }
-        else
-        {
-          // 2. re-create material by setting diffuse color and transparency on standard shaders
-          shader = Shader.Find("Transparent/Diffuse");
-          mat = new Material(shader);
-          var c = rm.diffuse.ToUnityColor();
-          mat.color = new Color(c.r, c.g, c.b, Convert.ToSingle(rm.opacity));
-        }
-      }
-
-      // 3. if not renderMaterial was passed, the default shader will be used 
-      meshRenderer.material = mat;
+      var speckleMaterial = renderMaterial ?? (RenderMaterial)speckleMesh["renderMaterial"];
+      meshRenderer.material = GetMaterial(speckleMaterial);
 
 
       if (verts.Count >= 65535)
@@ -321,8 +303,11 @@ namespace Objects.Converter.Unity
       mesh.vertices = verts.ToArray();
       mesh.triangles = tris.ToArray();
 
+
+      mesh.Optimize();
       mesh.RecalculateNormals();
       mesh.RecalculateTangents();
+
 
       //generate uvs doesn't work as intended. Leaving out for now
       //GenerateUVs (ref mesh);
@@ -349,6 +334,40 @@ namespace Objects.Converter.Unity
     }
 
     #endregion
+
+    private Material GetMaterial(RenderMaterial renderMaterial)
+    {
+      //todo support more complex materials
+      var shader = Shader.Find("Standard");
+      Material mat = new Material(shader);
+
+      //if a renderMaterial is passed use that, otherwise try get it from the mesh itself
+
+      if (renderMaterial != null)
+      {
+        // 1. match shader by name, if any
+        shader = Shader.Find(renderMaterial.name);
+        if (shader != null)
+        {
+          return new Material(shader);
+        }
+        
+        // 2. re-create material by setting diffuse color and transparency on standard shaders
+        if (renderMaterial.opacity < 1)
+        {
+          shader = Shader.Find("Transparent/Diffuse");
+          mat = new Material(shader);
+        }
+
+        var c = renderMaterial.diffuse.ToUnityColor();
+        mat.color = new Color(c.r, c.g, c.b, Convert.ToSingle(renderMaterial.opacity));
+
+        return mat;
+      }
+
+      // 3. if not renderMaterial was passed, the default shader will be used 
+      return mat;
+    }
 
     private void AttachSpeckleProperties(GameObject go, Dictionary<string, object> properties)
     {

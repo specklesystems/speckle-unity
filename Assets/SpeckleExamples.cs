@@ -218,13 +218,12 @@ namespace Speckle.ConnectorUnity
         {
           AddComponents(child.gameObject);
         }
-        else {
-          child.gameObject.AddComponent<Selectable>();
-          
-          //Add extra Components
-          //var rigidbody = child.gameObject.AddComponent<Rigidbody>();
-          //rigidbody.mass = 10;
-        }
+
+        child.gameObject.AddComponent<Selectable>();
+
+        //Add extra Components
+        //var rigidbody = child.gameObject.AddComponent<Rigidbody>();
+        //rigidbody.mass = 10;
       }
     }
   }
