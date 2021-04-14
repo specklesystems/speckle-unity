@@ -11,6 +11,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Sentry;
 using Sentry.Protocol;
 using UnityEngine;
 
@@ -74,14 +75,6 @@ namespace Speckle.ConnectorUnity
       }
     }
 
-    /// <summary>
-    /// Initializes the Receiver automatically, with t
-    /// To be used when the StreamId property is set on the Unity ScriptableObject
-    /// </summary>
-    public void Init()
-    {
-      Client = new Client(AccountManager.GetDefaultAccount());
-    }
 
     /// <summary>
     /// Gets and converts the data of the last commit on the Stream
@@ -89,12 +82,16 @@ namespace Speckle.ConnectorUnity
     /// <returns></returns>
     public void Receive()
     {
+      if(Client==null || string.IsNullOrEmpty(StreamId))
+        throw new Exception("Receiver has not been initialized. Please call Init().");
+      
       Task.Run(async () =>
       {
         try
         {
-          var branches = await Client.StreamGetBranches(StreamId);
-          var mainBranch = branches.FirstOrDefault(b => b.name == "main");
+          var mainBranch = await Client.BranchGet(StreamId, "main", 1);
+          if(!mainBranch.commits.items.Any())
+            throw new Exception("This branch has no commits");
           var commit = mainBranch.commits.items[0];
           GetAndConvertObject(commit.referencedObject, commit.id);
         }
