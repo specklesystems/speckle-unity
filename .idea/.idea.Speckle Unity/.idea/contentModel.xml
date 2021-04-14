@@ -10,6 +10,19 @@
           <e p="Selectable.cs" t="Include" />
           <e p="SelectionManager.cs" t="Include" />
         </e>
+        <e p="First person controller" t="Include">
+          <e p="Scripts" t="Include">
+            <e p="Components" t="Include">
+              <e p="Crouch.cs" t="Include" />
+              <e p="FirstPersonAudio.cs" t="Include" />
+              <e p="GroundCheck.cs" t="Include" />
+              <e p="Jump.cs" t="Include" />
+              <e p="Zoom.cs" t="Include" />
+            </e>
+            <e p="FirstPersonLook.cs" t="Include" />
+            <e p="FirstPersonMovement.cs" t="Include" />
+          </e>
+        </e>
         <e p="Speckle Connector" t="Include">
           <e p="ConverterUnity.BuiltElements.cs" t="Include" />
           <e p="ConverterUnity.cs" t="Include" />
@@ -23,6 +36,7 @@
           <e p="Utils.cs" t="Include" />
         </e>
         <e p="SpeckleExamples.cs" t="Include" />
+        <e p="SpeckleTutorial.cs" t="Include" />
       </e>
       <e p="obj" t="ExcludeRecursive" />
       <e p="Packages" t="ExcludeRecursive" />
