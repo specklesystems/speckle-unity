@@ -23,6 +23,7 @@
             <e p="FirstPersonMovement.cs" t="Include" />
           </e>
         </e>
+        <e p="InteractionLogic.cs" t="Include" />
         <e p="Speckle Connector" t="Include">
           <e p="ConverterUnity.BuiltElements.cs" t="Include" />
           <e p="ConverterUnity.cs" t="Include" />
@@ -36,7 +37,9 @@
           <e p="Utils.cs" t="Include" />
         </e>
         <e p="SpeckleExamples.cs" t="Include" />
-        <e p="SpeckleTutorial.cs" t="Include" />
+        <e p="Tutorial" t="Include">
+          <e p="Tutorial.cs" t="Include" />
+        </e>
       </e>
       <e p="obj" t="ExcludeRecursive" />
       <e p="Packages" t="ExcludeRecursive" />

@@ -24,8 +24,10 @@ namespace Speckle.ConnectorUnity
   public class Receiver : MonoBehaviour
   {
     public string StreamId;
+    public string BranchName = "main";
+    public Stream Stream;
     public int TotalChildrenCount = 0;
-    private GameObject ReceivedData;
+    public GameObject ReceivedData;
 
     private bool AutoReceive;
     private bool DeleteOld;
@@ -67,6 +69,12 @@ namespace Speckle.ConnectorUnity
       OnTotalChildrenCountKnown = onTotalChildrenCountKnown;
 
       Client = new Client(account ?? AccountManager.GetDefaultAccount());
+      
+      //using the ApplicationPlaceholderObject to pass materials
+      //available in Assets/Materials to the converters
+      var materials = Resources.LoadAll("Materials", typeof(Material)).Cast<Material>()
+        .Select(x => new ApplicationPlaceholderObject {NativeObject = x}).ToList();
+      _converter.SetContextObjects(materials);
 
       if (AutoReceive)
       {
@@ -82,15 +90,15 @@ namespace Speckle.ConnectorUnity
     /// <returns></returns>
     public void Receive()
     {
-      if(Client==null || string.IsNullOrEmpty(StreamId))
+      if (Client == null || string.IsNullOrEmpty(StreamId))
         throw new Exception("Receiver has not been initialized. Please call Init().");
-      
+
       Task.Run(async () =>
       {
         try
         {
-          var mainBranch = await Client.BranchGet(StreamId, "main", 1);
-          if(!mainBranch.commits.items.Any())
+          var mainBranch = await Client.BranchGet(StreamId, BranchName, 1);
+          if (!mainBranch.commits.items.Any())
             throw new Exception("This branch has no commits");
           var commit = mainBranch.commits.items[0];
           GetAndConvertObject(commit.referencedObject, commit.id);
@@ -113,8 +121,11 @@ namespace Speckle.ConnectorUnity
     /// <param name="e"></param>
     protected virtual void Client_OnCommitCreated(object sender, CommitInfo e)
     {
-      Debug.Log("Commit created");
-      GetAndConvertObject(e.objectId, e.id);
+      if (e.branchName == BranchName)
+      {
+        Debug.Log("New commit created");
+        GetAndConvertObject(e.objectId, e.id);
+      }
     }
 
 

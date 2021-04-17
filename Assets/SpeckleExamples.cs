@@ -79,151 +79,52 @@ namespace Speckle.ConnectorUnity
 
     // Shows how to create a new Receiver from code and then pull data manually
     // Created receivers are added to a List of Receivers for future use
-    private void AddReceiver()
+    private async void AddReceiver()
     {
-      var streamId = SelectedStream.id;
       var autoReceive = AutoReceiveToggle.isOn;
+      var stream = await Streams.Get(SelectedStream.id, 10);
 
       var streamPrefab = Instantiate(StreamPrefab, new Vector3(0, 0, 0),
         Quaternion.identity);
-      streamPrefab.name = $"receiver-{streamId}";
+
+      //set position
       streamPrefab.transform.SetParent(StreamsCanvas.transform);
       var rt = streamPrefab.GetComponent<RectTransform>();
       rt.anchoredPosition = new Vector3(-10, -110 - StreamPrefabs.Count * 110, 0);
 
-      var receiver = streamPrefab.AddComponent<Receiver>();
-
-      var btn = streamPrefab.transform.Find("Btn").GetComponentInChildren<Button>();
-      var streamText = streamPrefab.transform.Find("StreamText").GetComponentInChildren<Text>();
-      var statusText = streamPrefab.transform.Find("StatusText").GetComponentInChildren<Text>();
-      var receiveProgress = btn.GetComponentInChildren<Slider>();
-      receiveProgress.gameObject.SetActive(false); //hide
-
-      receiver.Init(streamId, autoReceive, false,
-        onDataReceivedAction: (go) =>
-        {
-          statusText.text = $"Received {go.name}";
-          btn.interactable = true;
-          receiveProgress.value = 0;
-          receiveProgress.gameObject.SetActive(false);
-
-          AddComponents(go);
-        },
-        onTotalChildrenCountKnown: (count) => { receiver.TotalChildrenCount = count; },
-        onProgressAction: (dict) =>
-        {
-          //Run on a dispatcher as GOs can only be retrieved on the main thread
-          Dispatcher.Instance().Enqueue(() =>
-          {
-            var val = dict.Values.Average() / receiver.TotalChildrenCount;
-            receiveProgress.gameObject.SetActive(true);
-            receiveProgress.value = (float) val;
-          });
-        });
-
-
-      streamText.text = $"Stream: {SelectedStream.name}\nId: {SelectedStream.id} - Auto: {autoReceive}";
-      btn.onClick.AddListener(() =>
-      {
-        statusText.text = "Receiving...";
-        btn.interactable = false;
-        receiver.Receive();
-      });
-
+      streamPrefab.AddComponent<InteractionLogic>().InitReceiver(stream, autoReceive);
 
       StreamPrefabs.Add(streamPrefab);
     }
 
-    private void AddSender()
+    private async void AddSender()
     {
-      var streamId = SelectedStream.id;
+      var stream = await Streams.Get(SelectedStream.id, 10);
 
       var streamPrefab = Instantiate(StreamPrefab, new Vector3(0, 0, 0),
         Quaternion.identity);
-      streamPrefab.name = $"sender-{streamId}";
+
       streamPrefab.transform.SetParent(StreamsCanvas.transform);
       var rt = streamPrefab.GetComponent<RectTransform>();
       rt.anchoredPosition = new Vector3(-10, -110 - StreamPrefabs.Count * 110, 0);
 
-      var sender = streamPrefab.AddComponent<Sender>();
+      streamPrefab.AddComponent<InteractionLogic>().InitSender(stream);
 
-      var btn = streamPrefab.transform.Find("Btn").GetComponentInChildren<Button>();
-      var streamText = streamPrefab.transform.Find("StreamText").GetComponentInChildren<Text>();
-      var statusText = streamPrefab.transform.Find("StatusText").GetComponentInChildren<Text>();
-
-      btn.GetComponentInChildren<Text>().text = "Send";
-      statusText.text = "Ready to send";
-
-      var sendProgress = btn.GetComponentInChildren<Slider>();
-      sendProgress.gameObject.SetActive(false); //hide
-
-      streamText.text = $"Stream: {SelectedStream.name}\nId: {SelectedStream.id}";
-
-
-      btn.onClick.AddListener(() =>
-        {
-          var objs = new List<GameObject>();
-          foreach (var index in SelectionManager.selectedObjects)
-          {
-            objs.Add(SelectionManager.selectables[index].gameObject);
-          }
-
-          if (!objs.Any())
-          {
-            statusText.text = $"No objects selected";
-            return;
-          }
-
-          btn.interactable = false;
-          statusText.text = "Sending...";
-          sender.Send(SelectedStream.id, objs,
-            onProgressAction: (dict) =>
-            {
-              //Run on a dispatcher as GOs can only be retrieved on the main thread
-              Dispatcher.Instance().Enqueue(() =>
-              {
-                var val = dict.Values.Average() / objs.Count;
-                sendProgress.gameObject.SetActive(true);
-                sendProgress.value = (float) val;
-              });
-            },
-            onDataSentAction: (commitId) =>
-            {
-              Dispatcher.Instance().Enqueue(() =>
-              {
-                btn.interactable = true;
-                statusText.text = $"Sent {commitId}";
-                sendProgress.gameObject.SetActive(false); //hide
-              });
-            });
-
-
-          StreamPrefabs.Add(streamPrefab);
-        }
-      );
+      StreamPrefabs.Add(streamPrefab);
     }
 
-
-    /// <summary>
-    /// Recursively adds custom components to all children of a GameObject
-    /// </summary>
-    /// <param name="go"></param>
-    private void AddComponents(GameObject go)
+    public void RemoveStreamPrefab(GameObject streamPrefab)
     {
-      for (var i = 0; i < go.transform.childCount; i++)
+      StreamPrefabs.RemoveAt(StreamPrefabs.FindIndex(x => x.name == streamPrefab.name));
+      ReorderStreamPrefabs();
+    }
+
+    private void ReorderStreamPrefabs()
+    {
+      for (var i = 0; i < StreamPrefabs.Count; i++)
       {
-        var child = go.transform.GetChild(i);
-
-        if (child.childCount > 0)
-        {
-          AddComponents(child.gameObject);
-        }
-
-        child.gameObject.AddComponent<Selectable>();
-
-        //Add extra Components
-        //var rigidbody = child.gameObject.AddComponent<Rigidbody>();
-        //rigidbody.mass = 10;
+        var rt = StreamPrefabs[i].GetComponent<RectTransform>();
+        rt.anchoredPosition = new Vector3(-10, -110 - i * 110, 0);
       }
     }
   }
