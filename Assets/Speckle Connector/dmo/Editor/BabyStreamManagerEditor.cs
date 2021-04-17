@@ -1,22 +1,27 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace Speckle_Connector.dmo {
+namespace Speckle.ConnectorUnity {
 #if UNITY_EDITOR
     [CustomEditor( typeof( BabyStreamManager ) )]
     [CanEditMultipleObjects]
     public class BabyStreamManagerEditor : Editor {
 
         private SerializedProperty _property;
-        private int _selectedIndex;
+        private int _selectedStreamIndex, _selectedBranchIndex, _selectedCommitIndex;
+        
         private string[ ] _streamNames;
+        
         private bool _auto;
 
         private void OnEnable( )
             {
                 _property = serializedObject.FindProperty( "StreamListByName" );
-                // _selectedIndex = _streamNames != null ? Array.IndexOf( _streamNames, _property.stringValue ) : 0;
+ 
             }
+
+
+      
 
         public override void OnInspectorGUI( )
             {
@@ -32,16 +37,32 @@ namespace Speckle_Connector.dmo {
                     for ( var i = 0; i < script.StreamList.Count; i++ ) {
                         _streamNames[ i ] = script.StreamList[ i ].name;
                     }
+                    
 
-                    var index = EditorGUILayout.Popup( "Streams", _selectedIndex, _streamNames, GUILayout.ExpandWidth( true ) );
+                    var index = EditorGUILayout.Popup( "Streams", _selectedStreamIndex, _streamNames, GUILayout.ExpandWidth( true ) );
 
                     if ( index < 0 )
                         index = 0;
 
-                    _selectedIndex = index;
-                    script.SetSelectedStream = _selectedIndex;
+                    _selectedStreamIndex = index;
+                    script.SetSelectedStream = _selectedStreamIndex;
+                  
+                    // GUILayout.Space( 5 );
 
-                    // GUILayout.FlexibleSpace( );
+                    index = EditorGUILayout.Popup( "Branches", _selectedBranchIndex, script.StreamBranchesByName.ToArray(  ), GUILayout.ExpandWidth( true ) );
+                    if ( index < 0 )
+                        index = 0;
+                    
+                    _selectedBranchIndex = index;
+                    // complete 
+                    script.SetSelectedBranch = _selectedBranchIndex;
+
+                    index = EditorGUILayout.Popup( "Commits", _selectedCommitIndex, script.CommitByNames.ToArray(  ), GUILayout.ExpandWidth( true ) );
+                    if ( index < 0 )
+                        index = 0;
+                    
+                    _selectedCommitIndex = index;
+
 
                     GUILayout.BeginHorizontal( );
 

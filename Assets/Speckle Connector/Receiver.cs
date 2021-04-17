@@ -38,9 +38,14 @@ namespace Speckle.ConnectorUnity
     private ConverterUnity _converter = new ConverterUnity();
     private Client Client { get; set; }
 
+    
+    [SerializeField] private string branchName { get; set; } 
+    
+    public class Set {
 
-    public Receiver()
-    {
+      
+      
+
     }
 
     /// <summary>
