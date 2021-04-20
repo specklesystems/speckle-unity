@@ -33,7 +33,7 @@ namespace Objects.Converter.Unity
 
     public void SetPreviousContextObjects(List<ApplicationPlaceholderObject> objects) =>
       throw new NotImplementedException();
-
+    
     public Base ConvertToSpeckle(object @object)
     {
       switch (@object)
@@ -64,8 +64,8 @@ namespace Objects.Converter.Unity
         case Mesh o:
           return MeshToNative(o);
         //Built elements with a mesh representation implement this interface
-        case IDisplayMesh o: 
-          return MeshToNative((Base)o);
+        case IDisplayMesh o:
+          return MeshToNative((Base) o);
         default:
           //capture any other object that might have a mesh representation
           if (@object["displayMesh"] is Mesh)
