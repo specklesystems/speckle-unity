@@ -5,10 +5,10 @@ namespace Speckle_Connector.dmo {
 
     public class StreamSO : ScriptableObject {
 
+        public string streamId;
         public string streamName;
-        public string streamID;
         
-
+        
 
     }
 }

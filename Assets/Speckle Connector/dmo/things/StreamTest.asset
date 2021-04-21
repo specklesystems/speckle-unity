@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c2110f382384646afeb0ebe0b2109f0, type: 3}
   m_Name: StreamTest
   m_EditorClassIdentifier: 
-  streamName: 
-  streamID: 
+  id: 48977d8ff0
+  name: TestStudy

@@ -95,6 +95,8 @@ namespace Speckle.ConnectorUnity {
                 return _instance != null;
             }
 
+        public static Dispatcher Instance_Dmo { get; set; }
+        
         public static Dispatcher Instance( )
             {
                 if ( !Exists( ) ) {
@@ -107,6 +109,9 @@ namespace Speckle.ConnectorUnity {
             {
                 Setup.Init( Applications.Unity );
 
+                Instance_Dmo = this;
+                DontDestroyOnLoad( this.gameObject );
+                
                 if ( _instance == null ) {
                     _instance = this;
                     DontDestroyOnLoad( this.gameObject );

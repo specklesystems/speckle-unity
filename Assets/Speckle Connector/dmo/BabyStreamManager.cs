@@ -1,36 +1,15 @@
-using Objects.Converter.Unity;
-using Speckle.Core.Api;
-using Speckle.Core.Api.SubscriptionModels;
-using Speckle.Core.Credentials;
-using Speckle.Core.Logging;
-using Speckle.Core.Models;
-using Speckle.Core.Transports;
 using System;
 using System.Collections;
-using System.Collections.Concurrent;
+using Speckle.Core.Api;
+using Speckle.Core.Credentials;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using Sentry;
-using Sentry.Protocol;
+using Speckle_Connector.dmo;
 using UnityEngine;
 
 namespace Speckle.ConnectorUnity {
-
-    public class BabyBase : Base {
-
-        [DetachProperty]
-        [Chunkable( 20000 )]
-        public List<uint> values { get; set; } = new List<uint>( );
-
-        [DetachProperty]
-        [Chunkable( 20000 )]
-        public List<double> vector { get; set; } = new List<double>( );
-        
-
-
-    }
-    
+//https://forum.unity.com/threads/async-await-in-editor-script.481276/
+    [RequireComponent( typeof( Dispatcher ) )]
     public class BabyStreamManager : MonoBehaviour {
 
         private Stream _selectedStream = null;
@@ -42,8 +21,12 @@ namespace Speckle.ConnectorUnity {
         [SerializeField, Range( 1, 20 )] private int streamListLimit = 10;
 
         [Header( "||  Speckle Account Stuff ||" )]
-        [ReadOnly] [SerializeField] private string AccountName;
-        [ReadOnly] [SerializeField] private string ServerName, ServerURL;
+        [Tooltip( "WIP - If working from Editor use a scriptable object to import streams" ),
+         SerializeField] private StreamSO streamObj;
+        [ReadOnly] [Tooltip( "Speckle 2.0 Account info that is populated at run time" )
+                    , SerializeField] private string AccountName;
+        [ReadOnly] [Tooltip( "Speckle 2.0 Server info that is populated at run time" ),
+                    SerializeField] private string ServerName, ServerURL;
 
         [HideInInspector] [ReadOnly] [SerializeField]
         private List<string> StreamNames;
@@ -54,11 +37,14 @@ namespace Speckle.ConnectorUnity {
 
         public bool AutoUpdate { get; set; }
 
-        public string StreamName => _selectedStream == null ? "No Stream" : _selectedStream.name;
-        public string BranchName => _selectedStream == null && _selectedStream.branch == null ? "No Branch" : _selectedStream.branch.name;
-        public string CommitName => _selectedStream == null && _selectedStream.branch == null ? "No Branch" : _selectedStream.branch.name;
+        public event EventHandler<StreamSelectedArgs> StreamSelectedEvent;
 
-        public List<string> StreamBranchesByName {
+        public List<string> StreamsByName {
+            get => StreamNames ?? new List<string>( );
+            set => StreamNames = value;
+        }
+
+        public List<string> BranchesByName {
             get => BranchNames ?? new List<string>( );
             set => BranchNames = value;
         }
@@ -68,13 +54,43 @@ namespace Speckle.ConnectorUnity {
             set => CommitNames = value;
         }
 
-        public int SetSelectedStream {
+        private int _selectedStreamIndex, _selectedBranchIndex, _selectedCommitIndex;
+
+        public int SetSelectedBranch {
             set {
-                if ( StreamList != null && value >= 0 && StreamList.Count > value ) {
-                    _selectedStream = StreamList[ value ];
-                }
+                if ( _selectedBranchIndex == value || BranchNames == null ) return;
+
+                _selectedBranchIndex = SetIndex( value, BranchNames );
             }
         }
+        public int SetSelectedCommit {
+            set {
+                if ( _selectedCommitIndex == value || CommitByNames == null ) return;
+
+                _selectedCommitIndex = SetIndex( value, CommitByNames );
+            }
+        }
+
+        public int SetSelectedStream {
+            set {
+                if ( _selectedStreamIndex == value || StreamList == null ) return;
+
+                _selectedStreamIndex = SetIndex( value, StreamList );
+                _selectedStream = StreamList[ _selectedStreamIndex ];
+                FetchSpeckleStreamInfo( );
+            }
+        }
+
+        private static int SetIndex( int index, ICollection objects )
+            {
+                if ( objects != null ) {
+                    if ( index >= objects.Count )
+                        index = objects.Count - 1;
+                    else if ( index < 0 )
+                        index = 0;
+                }
+                return index;
+            }
 
         public List<Stream> StreamList {
             get => _streams;
@@ -90,15 +106,11 @@ namespace Speckle.ConnectorUnity {
             }
         }
 
-        private string FetchSelectedStreamInfo( )
+        private void Awake( )
             {
-                return _selectedStream == null
-                    ? "Select Stream First"
-                    : $"Description: {_selectedStream.description}\n" +
-                      $"Link sharing on: {_selectedStream.isPublic}\n" +
-                      $"Role: {_selectedStream.role}\n" +
-                      $"Collaborators: {_selectedStream.collaborators.Count}\n" +
-                      $"Id: {_selectedStream.id}";
+                // NOTE required for converting and setting up files
+                if ( Dispatcher.Instance_Dmo == null && gameObject.GetComponent<Dispatcher>(  ) == null )
+                    gameObject.AddComponent<Dispatcher>( );
             }
 
         private void Start( )
@@ -121,28 +133,38 @@ namespace Speckle.ConnectorUnity {
                 AccountName = defaultAccount.userInfo.name;
                 ServerName = defaultAccount.serverInfo.name;
                 ServerURL = defaultAccount.serverInfo.url;
-                // _selectedStream.branch.
 
                 _account = defaultAccount;
 
+                // TODO Figure out if storing the client as a property would make sense
                 var client = new Client( _account );
 
                 StreamList = await client.StreamsGet( streamListLimit );
+                StreamNames = ( from i in StreamList select i.name ).ToList( );
+
+                FetchSpeckleStreamInfo( client );
+            }
+
+        private async void FetchSpeckleStreamInfo( Client client = null )
+            {
+                client ??= new Client( _account );
 
                 var branches = await client.StreamGetBranches( _selectedStream.id );
                 BranchNames = ( from i in branches select i.name ).ToList( );
+                Debug.Log( $"Found {BranchNames.Count} Branches" );
 
                 var commits = await client.StreamGetCommits( _selectedStream.id );
                 CommitNames = ( from i in commits select i.id ).ToList( );
+                Debug.Log( $"Found {CommitNames.Count} Commits" );
+
+                // TODO move into ui script
+                StreamSelectedEvent?.Invoke( this, new StreamSelectedArgs( BranchNames, CommitNames ) );
             }
 
         private static Receiver CreateReceiverWrapper => new GameObject( "New Receiver" ).AddComponent<Receiver>( );
-        public int SetSelectedBranch { get; set; }
 
         public void LoadStream( )
             {
-                Debug.Log( "Load Button Called" );
-
                 if ( _selectedStream == null ) {
                     Debug.Log( "No Stream to Select from ya fool!" );
                     return;
@@ -155,10 +177,9 @@ namespace Speckle.ConnectorUnity {
 
                 ActiveReceivers ??= new List<Receiver>( );
 
-                var id = _selectedStream.id;
-
                 var instance = CreateReceiverWrapper;
-                instance.Init( id, AutoUpdate, false, _account,
+
+                instance.Init( _selectedStream.id, AutoUpdate, false, _account,
                     onDataReceivedAction: go => {
                         Debug.Log( "Item brought in" );
                         go.transform.SetParent( instance.transform );
@@ -169,7 +190,9 @@ namespace Speckle.ConnectorUnity {
                         Dispatcher.Instance( ).Enqueue( ( ) => { Debug.Log( dict.Values.Average( ) / instance.TotalChildrenCount ); } );
                     } );
 
-                // TODO currently is barking only at the main branch 
+                // NOTE this needs to be set prior to calling receive
+                instance.BranchName = BranchNames[ _selectedBranchIndex ];
+
                 instance.Receive( );
             }
 

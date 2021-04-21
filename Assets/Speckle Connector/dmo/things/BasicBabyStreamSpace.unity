@@ -328,11 +328,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b32130bb5c145d9b526e69efddda764, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  streamListLimit: 10
+  streamListLimit: 8
+  streamObj: {fileID: 11400000, guid: 63524175a62aa424290b52f8f5849357, type: 2}
   AccountName: 
   ServerName: 
   ServerURL: 
-  StreamListByName: []
+  StreamNames: []
+  BranchNames: []
+  CommitNames: []
+  ActiveReceivers: []
 --- !u!4 &1987772514
 Transform:
   m_ObjectHideFlags: 0

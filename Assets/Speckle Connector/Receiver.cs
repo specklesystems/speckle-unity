@@ -40,15 +40,7 @@ namespace Speckle.ConnectorUnity
     private ConverterUnity _converter = new ConverterUnity();
     private Client Client { get; set; }
 
-    
-    [SerializeField] private string branchName { get; set; } 
-    
-    public class Set {
 
-      
-      
-
-    }
 
     /// <summary>
     /// Initializes the Receiver manually
@@ -102,6 +94,7 @@ namespace Speckle.ConnectorUnity
       {
         try
         {
+          Debug.Log( $"Trying for Branch: {BranchName} on Stream: {StreamId} " );
           var mainBranch = await Client.BranchGet(StreamId, BranchName, 1);
           if (!mainBranch.commits.items.Any())
             throw new Exception("This branch has no commits");
