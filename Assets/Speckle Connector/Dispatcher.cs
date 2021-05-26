@@ -14,9 +14,11 @@ limitations under the License.
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Speckle.Core.Kits;
 using Speckle.Core.Logging;
+using Unity.EditorCoroutines.Editor;
 using UnityEngine;
 
 namespace Speckle.ConnectorUnity {
@@ -25,9 +27,48 @@ namespace Speckle.ConnectorUnity {
     /// A thread-safe class which holds a queue with actions to execute on the next Update() method. It can be used to make calls to the main thread for
     /// things such as UI Manipulation in Unity. It was developed for use in combination with the Firebase Unity plugin, which uses separate threads for event handling
     /// </summary>
+    ///
+    [ExecuteAlways]
     public class Dispatcher : MonoBehaviour {
 
         private static readonly Queue<Action> _executionQueue = new Queue<Action>( );
+
+        private static Dispatcher _instance;
+
+        EditorCoroutine m_LoggerCoroutine;
+
+        public static Dispatcher Instance { get; set; }
+        // public static Dispatcher Instance {
+        //     get {
+        //         if ( _instance == null )
+        //             throw new Exception( "Could not find the Dispatcher object. Please ensure you have added a Dispatcher object with this script to your scene." );
+        //
+        //         return _instance;
+        //     }
+        //     set => _instance = value;
+        // }
+
+        private void OnEnable( )
+            {
+                Instance = this;
+            }
+
+        void Awake( )
+            {
+                Instance = this;
+                Setup.Init( Applications.Unity );
+
+                if ( _instance == null ) {
+                    _instance = this;
+                    if ( Application.isPlaying )
+                        DontDestroyOnLoad( this.gameObject );
+                }
+            }
+
+        void OnDestroy( )
+            {
+                _instance = null;
+            }
 
         public void Update( )
             {
@@ -45,7 +86,13 @@ namespace Speckle.ConnectorUnity {
         public void Enqueue( IEnumerator action )
             {
                 lock ( _executionQueue ) {
-                    _executionQueue.Enqueue( ( ) => { StartCoroutine( action ); } );
+#if UNITY_EDITOR
+                    _executionQueue.Enqueue( ( ) => { EditorCoroutineUtility.StartCoroutine( action, this ); } );
+#endif
+                    // if ( Application.isPlaying ) {
+                    //     Debug.Log( "Calling from Play" );
+                    //     _executionQueue.Enqueue( ( ) => { StartCoroutine( action ); } );
+                    // } 
                 }
             }
 
@@ -86,41 +133,6 @@ namespace Speckle.ConnectorUnity {
             {
                 a( );
                 yield return null;
-            }
-
-        private static Dispatcher _instance = null;
-
-        public static bool Exists( )
-            {
-                return _instance != null;
-            }
-
-        public static Dispatcher Instance_Dmo { get; set; }
-        
-        public static Dispatcher Instance( )
-            {
-                if ( !Exists( ) ) {
-                    throw new Exception( "Could not find the Dispatcher object. Please ensure you have added a Dispatcher object with this script to your scene." );
-                }
-                return _instance;
-            }
-
-        void Awake( )
-            {
-                Setup.Init( Applications.Unity );
-
-                Instance_Dmo = this;
-                DontDestroyOnLoad( this.gameObject );
-                
-                if ( _instance == null ) {
-                    _instance = this;
-                    DontDestroyOnLoad( this.gameObject );
-                }
-            }
-
-        void OnDestroy( )
-            {
-                _instance = null;
             }
 
     }

@@ -4,82 +4,121 @@ using Speckle.Core.Api;
 using Speckle.Core.Credentials;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Speckle_Connector.dmo;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Speckle.ConnectorUnity {
-//https://forum.unity.com/threads/async-await-in-editor-script.481276/
+    [ExecuteAlways]
     [RequireComponent( typeof( Dispatcher ) )]
     public class BabyStreamManager : MonoBehaviour {
-
-        private Stream _selectedStream = null;
-        private List<Stream> _streams = null;
-        private Account _account;
-
-        // NOTE general info for editor updates
-        [Header( "||  Runtime Params  || " )]
-        [SerializeField, Range( 1, 20 )] private int streamListLimit = 10;
 
         [Header( "||  Speckle Account Stuff ||" )]
         [Tooltip( "WIP - If working from Editor use a scriptable object to import streams" ),
          SerializeField] private StreamSO streamObj;
-        [ReadOnly] [Tooltip( "Speckle 2.0 Account info that is populated at run time" )
-                    , SerializeField] private string AccountName;
-        [ReadOnly] [Tooltip( "Speckle 2.0 Server info that is populated at run time" ),
-                    SerializeField] private string ServerName, ServerURL;
 
-        [HideInInspector] [ReadOnly] [SerializeField]
-        private List<string> StreamNames;
-        [HideInInspector] [ReadOnly] [SerializeField]
-        private List<string> BranchNames, CommitNames;
-        [HideInInspector] [ReadOnly] [SerializeField]
         private List<Receiver> ActiveReceivers;
+        private UnityEvent<GameObject> StreamObjectLoadedEvent;
+
+        public int ListLimit { get; set; }
+
+        public Account Account {
+            get => Stash.Account;
+            set => Stash.Account = value;
+        }
+
+        public Stream SelectedStream {
+            get => Stash.SelectedStream;
+            set => Stash.SelectedStream = value;
+        }
+
+        public List<Stream> Streams {
+            get => Stash.Streams;
+            set => Stash.Streams = value;
+        }
+
+        public List<Branch> Branches {
+            get => Stash.Branches;
+            set => Stash.Branches = value;
+        }
+
+        public List<Commit> Commits {
+            get => Stash.Commits;
+            set => Stash.Commits = value;
+        }
+
+        private Fetcher _fetcher;
+        public Fetcher Fetch {
+            get {
+                _fetcher ??= new Fetcher( this );
+                return _fetcher;
+            }
+        }
 
         public bool AutoUpdate { get; set; }
+        public bool InProcess { get; set; }
 
-        public event EventHandler<StreamSelectedArgs> StreamSelectedEvent;
+        public bool StreamReady => SelectedStream != null;
 
-        public List<string> StreamsByName {
-            get => StreamNames ?? new List<string>( );
-            set => StreamNames = value;
-        }
+        public bool IsReady => Account != null && Streams?.Count > 0 && Branches?.Count > 0;
 
-        public List<string> BranchesByName {
-            get => BranchNames ?? new List<string>( );
-            set => BranchNames = value;
-        }
+        private Dispatcher Dispatcher {
+            get {
+                // NOTE required for converting and setting up files
+                if ( Dispatcher.Instance == null && gameObject.GetComponent<Dispatcher>( ) == null )
+                    gameObject.AddComponent<Dispatcher>( );
 
-        public List<string> CommitByNames {
-            get => CommitNames ?? new List<string>( );
-            set => CommitNames = value;
+                return Dispatcher.Instance;
+            }
         }
 
         private int _selectedStreamIndex, _selectedBranchIndex, _selectedCommitIndex;
 
         public int SetSelectedBranch {
             set {
-                if ( _selectedBranchIndex == value || BranchNames == null ) return;
-
-                _selectedBranchIndex = SetIndex( value, BranchNames );
+                if ( Branches != null )
+                    _selectedBranchIndex = SetIndex( value, Fetch.BranchesByName );
             }
         }
+
         public int SetSelectedCommit {
             set {
-                if ( _selectedCommitIndex == value || CommitByNames == null ) return;
-
-                _selectedCommitIndex = SetIndex( value, CommitByNames );
+                if ( Commits != null )
+                    _selectedCommitIndex = SetIndex( value, Fetch.CommitsById );
             }
         }
 
-        public int SetSelectedStream {
-            set {
-                if ( _selectedStreamIndex == value || StreamList == null ) return;
+        public async void SelectStreamFromList( int value )
+            {
+                if ( Streams == null ) return;
 
-                _selectedStreamIndex = SetIndex( value, StreamList );
-                _selectedStream = StreamList[ _selectedStreamIndex ];
-                FetchSpeckleStreamInfo( );
+                ClearSelectedStreamData( );
+
+                _selectedStreamIndex = SetIndex( value, Fetch.StreamsByName );
+
+                var selectedStream = Streams[ _selectedStreamIndex ];
+
+                if ( Account == null ) {
+                    Debug.Log( "No account set to pull from :(" );
+                    return;
+                }
+
+                if ( selectedStream == null ) {
+                    Debug.Log( "No Stream to Select from ya fool!" );
+                    return;
+                }
+
+                var client = new Client( Account );
+
+                var branches = await client.StreamGetBranches( selectedStream.id );
+                Branches = branches;
+
+                var commits = await client.StreamGetCommits( selectedStream.id );
+                Commits = commits;
+
+                SelectedStream = selectedStream;
             }
-        }
 
         private static int SetIndex( int index, ICollection objects )
             {
@@ -92,108 +131,151 @@ namespace Speckle.ConnectorUnity {
                 return index;
             }
 
-        public List<Stream> StreamList {
-            get => _streams;
-            set {
-                if ( value != null ) {
-                    Debug.Log( $"New Stream List coming in! {value.Count}" );
+        internal static class Stash {
 
-                    _streams = value;
-                    StreamNames = ( from i in value select i.name ).ToList( );
-                    // reset all names for branches and commits 
-                    SetSelectedStream = 0;
-                }
-            }
+            public static Account Account { get; internal set; }
+
+            public static Stream SelectedStream { get; internal set; }
+
+            public static List<Stream> Streams { get; internal set; }
+
+            public static List<Branch> Branches { get; internal set; }
+
+            public static List<Commit> Commits { get; internal set; }
+
         }
 
-        private void Awake( )
-            {
-                // NOTE required for converting and setting up files
-                if ( Dispatcher.Instance_Dmo == null && gameObject.GetComponent<Dispatcher>(  ) == null )
-                    gameObject.AddComponent<Dispatcher>( );
+        public class Fetcher {
+
+            public Fetcher( BabyStreamManager manager )
+                {
+                    Manager = manager;
+                }
+
+            public string AccountName {
+                get {
+                    var value = "nada";
+                    if ( Manager?.Account != null )
+                        value = Manager.Account.userInfo.name;
+                    return value;
+                }
             }
 
-        private void Start( )
-            {
-                FetchSpeckleAccountInfo( );
+            public string ServerName {
+                get {
+                    var value = "nada";
+                    if ( Manager?.Account != null )
+                        value = Manager.Account.serverInfo.name;
+                    return value;
+                }
             }
 
-        private async void FetchSpeckleAccountInfo( )
+            public string ServerURL {
+                get {
+                    var value = "nada";
+                    if ( Manager?.Account != null )
+                        value = Manager.Account.serverInfo.url;
+                    return value;
+                }
+            }
+
+            public IEnumerable<Account> Accounts => AccountManager.GetAccounts( );
+
+            public List<string> BranchesByName => GetByName( Manager?.Branches.GetInfo( ) );
+
+            public List<string> StreamsByName => GetByName( Manager?.Streams.GetInfo( ) );
+
+            public List<string> CommitsById => GetByName( Manager?.Commits.GetInfo( ) );
+
+            private static List<string> GetByName( IReadOnlyCollection<SpeckleSimpleInfo> list )
+                {
+                    var names = new List<string>( );
+
+                    if ( list != null && list.Count > 0 )
+                        names = ( from i in list select i.name ).ToList( );
+
+                    return names;
+                }
+
+            private BabyStreamManager Manager { get; }
+
+            private bool DispatcherActive => Manager?.Dispatcher != null;
+
+            public int SelectedStreamIndex => Manager == null ? 0 : Manager._selectedStreamIndex;
+
+        }
+
+        public async void GetSpeckleAccountData( )
             {
-                AccountName = "nada";
-                ServerName = "nada";
+                InProcess = false;
+                var speckleAccount = AccountManager.GetAccounts( ).FirstOrDefault( );
 
-                var defaultAccount = AccountManager.GetDefaultAccount( );
-
-                if ( defaultAccount == null ) {
+                if ( speckleAccount == null ) {
                     Debug.Log( "Please set a default account in SpeckleManager" );
                     return;
                 }
 
-                AccountName = defaultAccount.userInfo.name;
-                ServerName = defaultAccount.serverInfo.name;
-                ServerURL = defaultAccount.serverInfo.url;
+                Account = speckleAccount;
 
-                _account = defaultAccount;
+                ClearData( true );
+                var client = new Client( Account );
 
-                // TODO Figure out if storing the client as a property would make sense
-                var client = new Client( _account );
+                var streams = await client.StreamsGet( ListLimit );
 
-                StreamList = await client.StreamsGet( streamListLimit );
-                StreamNames = ( from i in StreamList select i.name ).ToList( );
-
-                FetchSpeckleStreamInfo( client );
+                Streams = streams;
             }
 
-        private async void FetchSpeckleStreamInfo( Client client = null )
+        private void ClearData( bool BranchesAndStreams )
             {
-                client ??= new Client( _account );
+                Streams = new List<Stream>( );
+                if ( !BranchesAndStreams ) return;
 
-                var branches = await client.StreamGetBranches( _selectedStream.id );
-                BranchNames = ( from i in branches select i.name ).ToList( );
-                Debug.Log( $"Found {BranchNames.Count} Branches" );
-
-                var commits = await client.StreamGetCommits( _selectedStream.id );
-                CommitNames = ( from i in commits select i.id ).ToList( );
-                Debug.Log( $"Found {CommitNames.Count} Commits" );
-
-                // TODO move into ui script
-                StreamSelectedEvent?.Invoke( this, new StreamSelectedArgs( BranchNames, CommitNames ) );
+                ClearSelectedStreamData( );
             }
 
-        private static Receiver CreateReceiverWrapper => new GameObject( "New Receiver" ).AddComponent<Receiver>( );
+        private void ClearSelectedStreamData( )
+            {
+                SelectedStream = null;
+                Branches = new List<Branch>( );
+                Commits = new List<Commit>( );
+            }
 
         public void LoadStream( )
             {
-                if ( _selectedStream == null ) {
-                    Debug.Log( "No Stream to Select from ya fool!" );
-                    return;
-                }
-
-                if ( _account == null ) {
+                if ( Account == null ) {
                     Debug.Log( "No account set to pull from :(" );
                     return;
                 }
 
-                ActiveReceivers ??= new List<Receiver>( );
+                if ( SelectedStream == null ) {
+                    Debug.Log( "No Stream to Select from ya fool!" );
+                    return;
+                }
 
-                var instance = CreateReceiverWrapper;
+                var branchName = Fetch.BranchesByName[ _selectedBranchIndex ];
 
-                instance.Init( _selectedStream.id, AutoUpdate, false, _account,
+                var instance = new GameObject( $"{branchName} Receiver" ).AddComponent<Receiver>( );
+
+                instance.Init( SelectedStream.id, AutoUpdate, false, Account,
                     onDataReceivedAction: go => {
-                        Debug.Log( "Item brought in" );
                         go.transform.SetParent( instance.transform );
+                        StreamObjectLoadedEvent?.Invoke( go );
                     },
                     onTotalChildrenCountKnown: count => { instance.TotalChildrenCount = count; },
-                    onProgressAction: dict => {
-                        // updating 
-                        Dispatcher.Instance( ).Enqueue( ( ) => { Debug.Log( dict.Values.Average( ) / instance.TotalChildrenCount ); } );
-                    } );
+                    onProgressAction: dict => { Dispatcher.Enqueue( ( ) => { Debug.Log( dict.Values.Average( ) / instance.TotalChildrenCount ); } ); } );
 
-                // NOTE this needs to be set prior to calling receive
-                instance.BranchName = BranchNames[ _selectedBranchIndex ];
+                instance.ReceiveCompleteAction += ( ) => {
+                    Debug.Log( "Receive Complete" );
+                    // InProcess = false;
+                };
 
-                instance.Receive( );
+                // InProcess = true;
+
+                instance.Receive( branchName );
+
+                ActiveReceivers ??= new List<Receiver>( );
+                ActiveReceivers.Add( instance );
+                InProcess = false;
             }
 
     }

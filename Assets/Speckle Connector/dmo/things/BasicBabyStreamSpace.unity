@@ -308,6 +308,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1987772514}
+  - component: {fileID: 1987772515}
   - component: {fileID: 1987772513}
   m_Layer: 0
   m_Name: StreamManager
@@ -325,18 +326,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1987772512}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0b32130bb5c145d9b526e69efddda764, type: 3}
+  m_Script: {fileID: 11500000, guid: 27492dda437de4643b9f10552c3aab1f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  streamListLimit: 8
-  streamObj: {fileID: 11400000, guid: 63524175a62aa424290b52f8f5849357, type: 2}
-  AccountName: 
-  ServerName: 
-  ServerURL: 
-  StreamNames: []
-  BranchNames: []
-  CommitNames: []
-  ActiveReceivers: []
+  streamObj: {fileID: 0}
 --- !u!4 &1987772514
 Transform:
   m_ObjectHideFlags: 0
@@ -351,3 +344,15 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1987772515
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1987772512}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 446eb2de03584f959b5aaf9427734028, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
