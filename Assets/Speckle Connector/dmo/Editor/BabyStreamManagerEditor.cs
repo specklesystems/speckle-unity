@@ -1,10 +1,5 @@
-using System;
-using System.Collections;
 using System.Linq;
-using System.Reflection;
-using System.Threading;
 using System.Threading.Tasks;
-using Unity.EditorCoroutines.Editor;
 using UnityEditor;
 using UnityEngine;
 
@@ -16,37 +11,20 @@ namespace Speckle.ConnectorUnity {
     [CanEditMultipleObjects]
     public class BabyStreamManagerEditor : Editor {
 
+        private int _listValue = 10;
+        private bool _auto,_foldOutAccount, _foldOutStreams;
+        private string[ ] _streamNames,_accountNames;
         private int _selectedStreamIndex, _selectedBranchIndex, _selectedCommitIndex, _selectedAccountIndex, _selectedServerIndex;
 
-        private string[ ] _streamNames;
-
-        private int _listValue = 10;
-
-        public string[ ] branchNames { private get; set; }
-        public string[ ] commitIds { private get; set; }
-
-        private bool _auto, _processing;
-
-        private bool _foldOutAccount, _foldOutStreams;
-        private string[ ] accountNames;
-
         [InitializeOnLoadMethod]
-        private static void Initialize( ) => EditorApplication.update += ExecuteContinuations;
+        private static void Initialize( ) => EditorApplication.update += Ayuda.ExecuteContinuations;
 
         private void OnEnable( )
             {
                 BabyStreamManager script = (BabyStreamManager) target;
-                accountNames = script.Fetch.Accounts.GetNames( ).ToArray( );
+                _accountNames = script.Fetch.Accounts.GetNames( ).ToArray( );
                 script.GetSpeckleAccountData( );
             }
-        // EditorCoroutine m_LoggerCoroutine;
-        // private IEnumerator LogTimeSinceCall( )
-        //     {
-        //         while ( true ) {
-        //             Debug.Log("Running");
-        //             yield return null;
-        //         }
-        //     }
 
         public override async void OnInspectorGUI( )
             {
@@ -55,44 +33,14 @@ namespace Speckle.ConnectorUnity {
 
                 BabyStreamManager script = (BabyStreamManager) target;
 
-                _processing = script.InProcess;
-
-                #region Async Test GUI
-                // if ( GUILayout.Button( "Do time consuming stuff" ) ) {
-                //     Debug.Log( "before: " + Thread.CurrentThread.ManagedThreadId );
-                //     if ( _processing ) {
-                //         Debug.Log( "In process, block dropped..." );
-                //     } else {
-                //         script.InProcess = true;
-                //         await Task.Run( DoTimeConsumingStuff );
-                //         script.InProcess = false;
-                //
-                //         Debug.Log( "after: " + Thread.CurrentThread.ManagedThreadId );
-                //         return;
-                //     }
-                // }
-                //
-                // GUILayout.BeginHorizontal( );
-                //
-                // if ( GUILayout.Button( "Post" ) ) {
-                //     SynchronizationContext.Current.Post( _ => Debug.Log( "Submitted via Post" ), null );
-                // }
-                //
-                // if ( GUILayout.Button( "Send" ) ) {
-                //     SynchronizationContext.Current.Send( _ => Debug.Log( "Submitted via Send" ), null );
-                // }
-                //
-                // GUILayout.EndHorizontal( );
-                #endregion
-
                 #region Account GUI
                 EditorGUILayout.BeginHorizontal( );
 
-                _selectedAccountIndex = EditorGUILayout.Popup( "Accounts", _selectedAccountIndex, accountNames, GUILayout.ExpandWidth( true ), GUILayout.Height( 20 ) );
+                _selectedAccountIndex = EditorGUILayout.Popup( "Accounts", _selectedAccountIndex, _accountNames, GUILayout.ExpandWidth( true ), GUILayout.Height( 20 ) );
 
-                if ( GUILayout.Button( "Load", GUILayout.Width( 60 ), GUILayout.Height( 20 ) ) || accountNames == null ) {
+                if ( GUILayout.Button( "Load", GUILayout.Width( 60 ), GUILayout.Height( 20 ) ) || _accountNames == null ) {
                     await Task.Run( ( ) => script.GetSpeckleAccountData( ) );
-                    accountNames = script.Fetch.Accounts.GetNames( ).ToArray( );
+                    _accountNames = script.Fetch.Accounts.GetNames( ).ToArray( );
                     return;
                 }
 
@@ -134,11 +82,6 @@ namespace Speckle.ConnectorUnity {
 
                 #region Stream List
                 var items = script.Fetch.StreamsByName.ToArray( );
-
-                // if ( items.Length <= 0 ) {
-                //     Debug.LogWarning( "No Streams available in this account, please create some streams yo" );
-                //     return;
-                // }
 
                 EditorGUILayout.BeginHorizontal( );
 
@@ -193,20 +136,6 @@ namespace Speckle.ConnectorUnity {
                 GUILayout.EndHorizontal( );
 
                 serializedObject.ApplyModifiedProperties( );
-            }
-
-        private void DoTimeConsumingStuff( )
-            {
-                Debug.Log( "doing..." );
-                Thread.Sleep( 1000 );
-                Debug.Log( "done: " + Thread.CurrentThread.ManagedThreadId );
-            }
-
-        private static void ExecuteContinuations( )
-            {
-                var context = SynchronizationContext.Current;
-                var execMethod = context.GetType( ).GetMethod( "Exec", BindingFlags.NonPublic | BindingFlags.Instance );
-                execMethod.Invoke( context, null );
             }
 
     }

@@ -95,10 +95,12 @@ namespace Speckle.ConnectorUnity {
                     try {
                         Debug.Log( $"Trying for Branch: {BranchName} on Stream: {StreamId} " );
                         var mainBranch = await Client.BranchGet( StreamId, BranchName, 1 );
+                       
                         if ( !mainBranch.commits.items.Any( ) )
                             throw new Exception( "This branch has no commits" );
 
                         var commit = mainBranch.commits.items[ 0 ];
+                        // TODO send info for what objects are being converted 
                         GetAndConvertObject( commit.referencedObject, commit.id );
                     }
                     catch ( Exception e ) {

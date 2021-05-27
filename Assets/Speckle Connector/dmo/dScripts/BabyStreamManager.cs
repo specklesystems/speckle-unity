@@ -264,12 +264,7 @@ namespace Speckle.ConnectorUnity {
                     onTotalChildrenCountKnown: count => { instance.TotalChildrenCount = count; },
                     onProgressAction: dict => { Dispatcher.Enqueue( ( ) => { Debug.Log( dict.Values.Average( ) / instance.TotalChildrenCount ); } ); } );
 
-                instance.ReceiveCompleteAction += ( ) => {
-                    Debug.Log( "Receive Complete" );
-                    // InProcess = false;
-                };
-
-                // InProcess = true;
+                instance.ReceiveCompleteAction += ( ) => { Debug.Log( "Receive Complete" ); };
 
                 instance.Receive( branchName );
 

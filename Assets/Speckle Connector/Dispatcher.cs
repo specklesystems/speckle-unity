@@ -37,6 +37,8 @@ namespace Speckle.ConnectorUnity {
 
         EditorCoroutine m_LoggerCoroutine;
 
+        public static bool Ownerless { get; set; }
+
         public static Dispatcher Instance { get; set; }
         // public static Dispatcher Instance {
         //     get {
@@ -86,13 +88,18 @@ namespace Speckle.ConnectorUnity {
         public void Enqueue( IEnumerator action )
             {
                 lock ( _executionQueue ) {
-#if UNITY_EDITOR
-                    _executionQueue.Enqueue( ( ) => { EditorCoroutineUtility.StartCoroutine( action, this ); } );
-#endif
-                    // if ( Application.isPlaying ) {
-                    //     Debug.Log( "Calling from Play" );
-                    //     _executionQueue.Enqueue( ( ) => { StartCoroutine( action ); } );
-                    // } 
+                    if ( Application.isEditor ) {
+                        Debug.Log( "Calling from Editor" );
+                        _executionQueue.Enqueue( ( ) => {
+                            if ( Ownerless )
+                                EditorCoroutineUtility.StartCoroutineOwnerless( action );
+                            else
+                                EditorCoroutineUtility.StartCoroutine( action, this );
+                        } );
+                    } else {
+                        Debug.Log( "Calling from Play" );
+                        _executionQueue.Enqueue( ( ) => { StartCoroutine( action ); } );
+                    }
                 }
             }
 

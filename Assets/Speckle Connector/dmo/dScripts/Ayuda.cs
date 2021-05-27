@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using System.Threading;
 using Speckle.Core.Api;
 
 namespace Speckle.ConnectorUnity {
@@ -16,6 +18,14 @@ namespace Speckle.ConnectorUnity {
 
     public static class Ayuda {
 
+        public static void SyncCall( SendOrPostCallback post ) => SynchronizationContext.Current.Post( post, null );
+
+        public static void ExecuteContinuations( )
+            {
+                var context = SynchronizationContext.Current;
+                var execMethod = context.GetType( ).GetMethod( "Exec", BindingFlags.NonPublic | BindingFlags.Instance );
+                execMethod.Invoke( context, null );
+            }
 
         public static List<SpeckleSimpleInfo> GetInfo( this IEnumerable<Stream> input )
             {
