@@ -3,6 +3,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using Speckle.Core.Api;
+using Speckle.Core.Credentials;
 
 namespace Speckle.ConnectorUnity {
     public readonly struct SpeckleSimpleInfo {
@@ -50,5 +51,18 @@ namespace Speckle.ConnectorUnity {
                     where i != null
                     select new SpeckleSimpleInfo( i.id ) ).ToList( );
             }
+        public static IEnumerable<string> GetNames( this IEnumerable<Account> accounts )
+            {
+                List<string> names = new List<string>( );
+                if ( accounts != null ) {
+                    names.AddRange(
+                        from account in accounts
+                        where account != null
+                        select account.userInfo.name
+                    );
+                }
+                return names;
+            }
+
     }
 }
