@@ -71,3 +71,6 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 .idea/
 *.meta
+
+# Unity Plugins
+/[Aa]ssets/[Pp]lugins/

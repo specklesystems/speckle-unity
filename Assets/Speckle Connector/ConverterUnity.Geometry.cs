@@ -315,7 +315,7 @@ namespace Objects.Converter.Unity
       //Add mesh collider
       MeshCollider mc = go.AddComponent<MeshCollider>();
       mc.sharedMesh = mesh;
-      mc.convex = true;
+      //mc.convex = true;
 
 
       //attach properties on this very mesh
@@ -345,11 +345,11 @@ namespace Objects.Converter.Unity
 
       if (renderMaterial != null)
       {
-        // 1. match shader by name, if any
-        shader = Shader.Find(renderMaterial.name);
-        if (shader != null)
+        // 1. match material by name, if any
+        var matByName = ContextObjects.FirstOrDefault(x => ((Material)x.NativeObject).name == renderMaterial.name);
+        if (matByName!=null)
         {
-          return new Material(shader);
+          return matByName.NativeObject as Material;
         }
         
         // 2. re-create material by setting diffuse color and transparency on standard shaders

@@ -57,6 +57,9 @@ public class SelectionManager : MonoBehaviour
     {
       // Detect which Objects are inside selection rectangle
       Camera camera = Camera.main;
+      if (camera == null)
+        return;
+      
       selectedObjects.Clear();
       for (int i = 0; i < selectables.Count; i++)
       {
