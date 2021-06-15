@@ -13,6 +13,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Sentry;
 using Sentry.Protocol;
+using Speckle.Core.Kits;
 using UnityEngine;
 
 namespace Speckle.ConnectorUnity
@@ -44,6 +45,8 @@ namespace Speckle.ConnectorUnity
         Task.Run(async () =>
         {
           var res = await Helpers.Send(streamId, data, "Data from unity!",
+            sourceApplication:Applications.Unity,
+            totalChildrenCount:gameObjects.Count(),
             account: account,
             onErrorAction: onErrorAction,
             onProgressAction: onProgressAction);
