@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ContentModelStore">
     <e p="C:\Code\Speckle-Next\speckle-unity\Speckle Unity" t="IncludeRecursive">
+      <e p="Assembly-CSharp-Editor.csproj" t="IncludeRecursive" />
       <e p="Assembly-CSharp.csproj" t="IncludeRecursive" />
       <e p="Assets" t="Include">
         <e p="Extra" t="Include">
@@ -17,9 +18,14 @@
           <e p="ConverterUnity.Geometry.cs" t="Include" />
           <e p="ConverterUnity.Units.cs" t="Include" />
           <e p="Dispatcher.cs" t="Include" />
+          <e p="Editor" t="Include">
+            <e p="StreamManagerEditor.cs" t="Include" />
+          </e>
           <e p="Receiver.cs" t="Include" />
+          <e p="RecursiveConverter.cs" t="Include" />
           <e p="Sender.cs" t="Include" />
           <e p="SpeckleProperties.cs" t="Include" />
+          <e p="StreamManager.cs" t="Include" />
           <e p="Streams.cs" t="Include" />
           <e p="Utils.cs" t="Include" />
         </e>
