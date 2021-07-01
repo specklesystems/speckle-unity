@@ -307,12 +307,19 @@ namespace Objects.Converter.Unity {
                         verts[ l ] -= meshBounds.center;
                     }
                 }
+                
+        
 
-                var uv = GenerateUV( verts, (float) speckleMesh.bbox.xSize.Length, (float) speckleMesh.bbox.ySize.Length ).ToList( );
 
                 mesh.SetVertices( verts );
                 mesh.SetTriangles( tris, 0 );
-                mesh.SetUVs( 0, uv );
+                
+                if(speckleMesh.bbox != null)
+                {
+                    var uv = GenerateUV( verts, (float) speckleMesh.bbox.xSize.Length, (float) speckleMesh.bbox.ySize.Length ).ToList( );
+                    mesh.SetUVs( 0, uv );
+                    
+                }
                 
                 // BUG: causing some funky issues with meshes
                 // mesh.RecalculateNormals( );
