@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Objects.Other;
+using Objects.Primitive;
 using Speckle.ConnectorUnity;
 using Speckle.Core.Models;
 using UnityEditor;
@@ -62,6 +63,28 @@ namespace Objects.Converter.Unity {
                 var asArray = arr.ToArray( );
                 for ( int i = 2, k = 0; i < arr.Count( ); i += 3 )
                     points[ k++ ] = VectorByCoordinates( asArray[ i - 2 ], asArray[ i - 1 ], asArray[ i ], units );
+
+
+                return points;
+            }
+
+        public Vector3[ ] ArrayToPoints( IEnumerable<double> arr, string units, out Vector2[ ] uv )
+            {
+                uv = null;
+                if ( arr.Count( ) % 3 != 0 ) throw new Exception( "Array malformed: length%3 != 0." );
+
+                Vector3[ ] points = new Vector3[ arr.Count( ) / 3 ];
+                uv = new Vector2[ points.Length ];
+
+                var asArray = arr.ToArray( );
+                for ( int i = 2, k = 0; i < arr.Count( ); i += 3 ) {
+
+                    points[ k++ ] = VectorByCoordinates( asArray[ i - 2 ], asArray[ i - 1 ], asArray[ i ], units );
+                }
+
+
+                // get size of mesh
+                for ( int i = 0; i < points.Length; i++ ) { }
 
                 return points;
             }
@@ -212,8 +235,6 @@ namespace Objects.Converter.Unity {
                 return MeshToNative( speckleMeshObject[ "displayMesh" ] as Mesh,
                     speckleMeshObject[ "renderMaterial" ] as RenderMaterial, speckleMeshObject.GetMembers( ) );
             }
-
-
         /// <summary>
         /// Converts a Speckle mesh to a GameObject with a mesh renderer
         /// </summary>
@@ -235,9 +256,11 @@ namespace Objects.Converter.Unity {
 
                 var verts = ArrayToPoints( speckleMesh.vertices, speckleMesh.units );
 
+
                 //convert speckleMesh.faces into triangle array           
                 List<int> tris = new List<int>( );
                 int i = 0;
+                // TODO: Check if this is causing issues with normals for mesh 
                 while (i < speckleMesh.faces.Count) {
                     if ( speckleMesh.faces[ i ] == 0 ) {
                         //Triangles
@@ -276,7 +299,6 @@ namespace Objects.Converter.Unity {
                     foreach ( var vert in verts ) {
                         meshBounds.Encapsulate( vert );
                     }
-                    // verts.ForEach( x => meshBounds.Encapsulate( x ) );
 
                     go.transform.position = meshBounds.center;
 
@@ -286,20 +308,17 @@ namespace Objects.Converter.Unity {
                     }
                 }
 
+                var uv = GenerateUV( verts, (float) speckleMesh.bbox.xSize.Length, (float) speckleMesh.bbox.ySize.Length ).ToList( );
+
                 mesh.SetVertices( verts );
                 mesh.SetTriangles( tris, 0 );
-
-                mesh.RecalculateNormals( );
-                mesh.RecalculateBounds( );
+                mesh.SetUVs( 0, uv );
+                
+                // BUG: causing some funky issues with meshes
+                // mesh.RecalculateNormals( );
                 mesh.Optimize( );
-
-
-                //generate uvs doesn't work as intended. Leaving out for now
-                //GenerateUVs (ref mesh);
-
                 // Setting mesh to filter once all mesh modifying is done
                 go.SafeMeshSet( mesh, true );
-                // go.AddComponent<MeshFilter>( ).mesh = mesh;
 
 
                 var meshRenderer = go.AddComponent<MeshRenderer>( );
@@ -325,7 +344,22 @@ namespace Objects.Converter.Unity {
                 AttachSpeckleProperties( go, properties );
                 return go;
             }
-    #endregion
+
+        private static IEnumerable<Vector2> GenerateUV( IReadOnlyList<Vector3> verts, float xSize, float ySize )
+            {
+                var uv = new Vector2[ verts.Count ];
+                for ( int i = 0; i < verts.Count; i++ ) {
+
+                    var vert = verts[ i ];
+                    uv[ i ] = new Vector2( vert.x / xSize, vert.y / ySize );
+                }
+                return uv;
+            }
+#endregion
+
+
+
+
 
         private Material GetMaterial( RenderMaterial renderMaterial )
             {
