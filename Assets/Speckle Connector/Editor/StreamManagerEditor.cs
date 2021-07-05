@@ -167,7 +167,8 @@ namespace Speckle.ConnectorUnity
             EditorUtility.DisplayProgressBar("Receving data...", "",
               Convert.ToSingle(dict.Values.Average() / _totalChildrenCount));
           },
-          onTotalChildrenCountKnown: count => { _totalChildrenCount = count; }
+          onTotalChildrenCountKnown: count => { _totalChildrenCount = count; },
+          disposeTransports: true
         );
         var rc = new RecursiveConverter();
         var go = rc.ConvertRecursivelyToNative(@base,
