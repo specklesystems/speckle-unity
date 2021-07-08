@@ -59,7 +59,7 @@ public class SelectionManager : MonoBehaviour
       Camera camera = Camera.main;
       if (camera == null)
         return;
-      
+
       selectedObjects.Clear();
       for (int i = 0; i < selectables.Count; i++)
       {
