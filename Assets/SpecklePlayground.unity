@@ -4823,6 +4823,7 @@ GameObject:
   - component: {fileID: 2060322467}
   - component: {fileID: 2060322466}
   - component: {fileID: 2060322468}
+  - component: {fileID: 2060322469}
   m_Layer: 0
   m_Name: EditorReceiver
   m_TagString: Untagged
@@ -4874,6 +4875,18 @@ MonoBehaviour:
   SelectedCommitIndex: 0
   OldSelectedAccountIndex: 0
   OldSelectedStreamIndex: 0
+--- !u!114 &2060322469
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2060322465}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b2d07ac05ae47bd41ae4c5ed2e43d333, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2066864134
 GameObject:
   m_ObjectHideFlags: 0
