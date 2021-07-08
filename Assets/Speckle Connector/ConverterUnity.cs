@@ -27,6 +27,7 @@ namespace Objects.Converter.Unity
 
 
     public List<ApplicationPlaceholderObject> ContextObjects { get; set; } = new List<ApplicationPlaceholderObject>();
+    
     public void SetContextDocument(object doc) => throw new NotImplementedException();
 
     public void SetContextObjects(List<ApplicationPlaceholderObject> objects) => ContextObjects = objects;
