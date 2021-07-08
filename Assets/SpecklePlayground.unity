@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 869165414}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657844, g: 0.49641222, b: 0.57481694, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -4787,7 +4787,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 2068176107}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b92189c3e4c187945ae253704dce9797, type: 3}
+  m_Script: {fileID: 11500000, guid: 4742105c6b43d644089e28f1952fc7dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   scrollSpeed: 10
@@ -4832,7 +4832,7 @@ MonoBehaviour:
   AddReceiverBtn: {fileID: 1707872732}
   AutoReceiveToggle: {fileID: 1587881870}
   AddSenderBtn: {fileID: 1279250014}
-  StreamPrefab: {fileID: 4459616723848542877, guid: 56efeb256feb62a4f9822d61f43c9abf, type: 3}
+  StreamPrefab: {fileID: 4459616723848542877, guid: 0df621c241cd10345a0013b35a425559, type: 3}
   StreamsCanvas: {fileID: 448199411}
 --- !u!4 &2071474493
 Transform:
