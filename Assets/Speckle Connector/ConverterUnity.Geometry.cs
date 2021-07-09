@@ -307,20 +307,17 @@ namespace Objects.Converter.Unity {
                         verts[ l ] -= meshBounds.center;
                     }
                 }
-                
-        
 
 
                 mesh.SetVertices( verts );
                 mesh.SetTriangles( tris, 0 );
-                
-                if(speckleMesh.bbox != null)
-                {
+
+                if ( speckleMesh.bbox != null ) {
                     var uv = GenerateUV( verts, (float) speckleMesh.bbox.xSize.Length, (float) speckleMesh.bbox.ySize.Length ).ToList( );
                     mesh.SetUVs( 0, uv );
-                    
+
                 }
-                
+
                 // BUG: causing some funky issues with meshes
                 // mesh.RecalculateNormals( );
                 mesh.Optimize( );

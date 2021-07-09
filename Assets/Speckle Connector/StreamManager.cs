@@ -1,14 +1,8 @@
-using System;
-using System.Collections;
 using Speckle.Core.Api;
 using Speckle.Core.Credentials;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Speckle.Core.Models;
-using UnityEditor;
 using UnityEngine;
-using UnityEngine.Events;
 
 namespace Speckle.ConnectorUnity {
     [ExecuteAlways]

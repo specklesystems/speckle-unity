@@ -10,5 +10,9 @@ namespace Speckle.ConnectorUnity
     public class SpeckleProperties : MonoBehaviour
     { 
         public Dictionary<string, object> Data { get; set; }
+
+        [SerializeField] private SpeckleRevitLevel speckleRevitLevel;
+        
+        
     }
 }
