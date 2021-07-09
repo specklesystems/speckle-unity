@@ -163,8 +163,8 @@ namespace Speckle.ConnectorUnity
             onTotalChildrenCountKnown: count => { _totalChildrenCount = count; },
             disposeTransports: true
           );
-          var rc = new RecursiveConverter( );
-          var go = rc.ConvertRecursivelyToNative(
+          
+          var go = _streamManager.ConvertRecursivelyToNative(
             @base,
             Branches[ SelectedBranchIndex ].commits.items[ SelectedCommitIndex ].id );
         }
