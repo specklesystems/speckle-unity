@@ -136,7 +136,8 @@ namespace Speckle.ConnectorUnity
           remoteTransport: transport,
           onErrorAction: OnErrorAction,
           onProgressAction: OnProgressAction,
-          onTotalChildrenCountKnown: OnTotalChildrenCountKnown
+          onTotalChildrenCountKnown: OnTotalChildrenCountKnown,
+          disposeTransports: true
         );
         Dispatcher.Instance().Enqueue(() =>
         {
