@@ -15,7 +15,7 @@ using UnityEngine.UIElements;
 
 namespace Speckle.ConnectorUnity
 {
-  [CustomEditor( typeof( StreamManager ) )]
+  [CustomEditor(typeof(StreamManager))]
   [CanEditMultipleObjects]
   public class StreamManagerEditor : Editor
   {
@@ -95,209 +95,221 @@ namespace Speckle.ConnectorUnity
       set { _streamManager.Branches = value; }
     }
 
-    private async Task LoadAccounts( )
+    private async Task LoadAccounts()
+    {
+      //refresh accounts just in case
+      Accounts = AccountManager.GetAccounts().ToList();
+      if (!Accounts.Any())
       {
-        //refresh accounts just in case
-        Accounts = AccountManager.GetAccounts( ).ToList( );
-        if ( !Accounts.Any( ) ) {
-          Debug.Log( "No Accounts found, please login in Manager" );
-        } else {
-          await SelectAccount( 0 );
+        Debug.Log("No Accounts found, please login in Manager");
+      } else
+      {
+        await SelectAccount(0);
+      }
+    }
+
+    private async Task SelectAccount(int i)
+    {
+      SelectedAccountIndex = i;
+      OldSelectedAccountIndex = i;
+      SelectedAccount = Accounts[i];
+
+      Client = new Client(SelectedAccount);
+      await LoadStreams();
+    }
+
+    private async Task LoadStreams()
+    {
+      EditorUtility.DisplayProgressBar("Loading streams...", "", 0);
+      Streams = await Client.StreamsGet();
+      EditorUtility.ClearProgressBar();
+      if (Streams.Any())
+        await SelectStream(0);
+    }
+
+    private async Task SelectStream(int i)
+    {
+      SelectedStreamIndex = i;
+      OldSelectedStreamIndex = i;
+      SelectedStream = Streams[i];
+
+      EditorUtility.DisplayProgressBar("Loading stream details...", "", 0);
+      Branches = await Client.StreamGetBranches(SelectedStream.id);
+      if (Branches.Any())
+      {
+        SelectedBranchIndex = 0;
+        if (Branches[SelectedBranchIndex].commits.items.Any())
+        {
+          SelectedCommitIndex = 0;
         }
       }
 
-    private async Task SelectAccount( int i )
-      {
-        SelectedAccountIndex = i;
-        OldSelectedAccountIndex = i;
-        SelectedAccount = Accounts[ i ];
+      EditorUtility.ClearProgressBar();
+    }
 
-        Client = new Client( SelectedAccount );
-        await LoadStreams( );
+    private async Task Receive()
+    {
+      EditorUtility.DisplayProgressBar("Receving data...", "", 0);
+
+
+      try
+      {
+        Tracker.TrackPageview(Tracker.RECEIVE);
+
+        var transport = new ServerTransport(SelectedAccount, SelectedStream.id);
+        var @base = await Operations.Receive(
+          Branches[SelectedBranchIndex].commits.items[SelectedCommitIndex].referencedObject,
+          remoteTransport: transport,
+          onProgressAction: dict =>
+          {
+            EditorUtility.DisplayProgressBar("Receving data...", "",
+                                             Convert.ToSingle(dict.Values.Average() / _totalChildrenCount));
+          },
+          onTotalChildrenCountKnown: count => { _totalChildrenCount = count; },
+          disposeTransports: true
+        );
+
+        var go = _streamManager.ConvertRecursivelyToNative(@base,
+                                                           Branches[SelectedBranchIndex].commits.items[SelectedCommitIndex].id);
+      }
+      catch (Exception e)
+      {
+        throw new SpeckleException(e.Message, e, true, SentryLevel.Error);
       }
 
-    private async Task LoadStreams( )
-      {
-        EditorUtility.DisplayProgressBar( "Loading streams...", "", 0 );
-        Streams = await Client.StreamsGet( );
-        EditorUtility.ClearProgressBar( );
-        if ( Streams.Any( ) )
-          await SelectStream( 0 );
-      }
 
-    private async Task SelectStream( int i )
-      {
-        SelectedStreamIndex = i;
-        OldSelectedStreamIndex = i;
-        SelectedStream = Streams[ i ];
+      EditorUtility.ClearProgressBar();
+    }
 
-        EditorUtility.DisplayProgressBar( "Loading stream details...", "", 0 );
-        Branches = await Client.StreamGetBranches( SelectedStream.id );
-        if ( Branches.Any( ) ) {
-          SelectedBranchIndex = 0;
-          if ( Branches[ SelectedBranchIndex ].commits.items.Any( ) ) {
-            SelectedCommitIndex = 0;
-          }
-        }
-
-        EditorUtility.ClearProgressBar( );
-      }
-
-    private async Task Receive( )
-      {
-        EditorUtility.DisplayProgressBar( "Receving data...", "", 0 );
-
-
-        try {
-          Tracker.TrackPageview( Tracker.RECEIVE );
-
-          var transport = new ServerTransport( SelectedAccount, SelectedStream.id );
-          var @base = await Operations.Receive(
-            Branches[ SelectedBranchIndex ].commits.items[ SelectedCommitIndex ].referencedObject,
-            remoteTransport: transport,
-            onProgressAction: dict => {
-              EditorUtility.DisplayProgressBar(
-                "Receving data...", "",
-                Convert.ToSingle( dict.Values.Average( ) / _totalChildrenCount ) );
-            },
-            onTotalChildrenCountKnown: count => { _totalChildrenCount = count; },
-            disposeTransports: true
-          );
-          
-          var go = _streamManager.ConvertRecursivelyToNative(
-            @base,
-            Branches[ SelectedBranchIndex ].commits.items[ SelectedCommitIndex ].id );
-        }
-        catch ( Exception e ) {
-          throw new SpeckleException( e.Message, e, true, SentryLevel.Error );
-        }
-
-
-        EditorUtility.ClearProgressBar( );
-      }
-
-    public override async void OnInspectorGUI( )
-      {
-        _streamManager = (StreamManager) target;
+    public override async void OnInspectorGUI()
+    {
+      _streamManager = (StreamManager) target;
 
 
       #region Account GUI
-        if ( Accounts == null ) {
-          await LoadAccounts( );
-          return;
-        }
+      if (Accounts == null)
+      {
+        await LoadAccounts();
+        return;
+      }
 
 
-        EditorGUILayout.BeginHorizontal( );
+      EditorGUILayout.BeginHorizontal();
 
-        SelectedAccountIndex = EditorGUILayout.Popup(
-          "Accounts", SelectedAccountIndex,
-          Accounts.Select( x => x.userInfo.email + " | " + x.serverInfo.name ).ToArray( ),
-          GUILayout.ExpandWidth( true ), GUILayout.Height( 20 ) );
+      SelectedAccountIndex = EditorGUILayout.Popup(
+        "Accounts", SelectedAccountIndex,
+        Accounts.Select(x => x.userInfo.email + " | " + x.serverInfo.name).ToArray(),
+        GUILayout.ExpandWidth(true), GUILayout.Height(20));
 
-        if ( OldSelectedAccountIndex != SelectedAccountIndex ) {
-          await SelectAccount( SelectedAccountIndex );
-          return;
-        }
+      if (OldSelectedAccountIndex != SelectedAccountIndex)
+      {
+        await SelectAccount(SelectedAccountIndex);
+        return;
+      }
 
-        if ( GUILayout.Button( "Refresh", GUILayout.Width( 60 ), GUILayout.Height( 20 ) ) ) {
-          await LoadAccounts( );
-          return;
-        }
+      if (GUILayout.Button("Refresh", GUILayout.Width(60), GUILayout.Height(20)))
+      {
+        await LoadAccounts();
+        return;
+      }
 
-        EditorGUILayout.EndHorizontal( );
+      EditorGUILayout.EndHorizontal();
 
 
       #region Speckle Account Info
-        _foldOutAccount = EditorGUILayout.BeginFoldoutHeaderGroup( _foldOutAccount, "Account Info" );
+      _foldOutAccount = EditorGUILayout.BeginFoldoutHeaderGroup(_foldOutAccount, "Account Info");
 
-        if ( _foldOutAccount ) {
-          EditorGUI.BeginDisabledGroup( true );
+      if (_foldOutAccount)
+      {
+        EditorGUI.BeginDisabledGroup(true);
 
-          EditorGUILayout.TextField(
-            "Name", SelectedAccount.userInfo.name,
-            GUILayout.Height( 20 ),
-            GUILayout.ExpandWidth( true ) );
+        EditorGUILayout.TextField(
+          "Name", SelectedAccount.userInfo.name,
+          GUILayout.Height(20),
+          GUILayout.ExpandWidth(true));
 
-          EditorGUILayout.TextField(
-            "Server", SelectedAccount.serverInfo.name,
-            GUILayout.Height( 20 ),
-            GUILayout.ExpandWidth( true ) );
+        EditorGUILayout.TextField(
+          "Server", SelectedAccount.serverInfo.name,
+          GUILayout.Height(20),
+          GUILayout.ExpandWidth(true));
 
-          EditorGUILayout.TextField(
-            "URL", SelectedAccount.serverInfo.url,
-            GUILayout.Height( 20 ),
-            GUILayout.ExpandWidth( true ) );
+        EditorGUILayout.TextField(
+          "URL", SelectedAccount.serverInfo.url,
+          GUILayout.Height(20),
+          GUILayout.ExpandWidth(true));
 
-          EditorGUI.EndDisabledGroup( );
-        }
+        EditorGUI.EndDisabledGroup();
+      }
 
-        EditorGUILayout.EndFoldoutHeaderGroup( );
+      EditorGUILayout.EndFoldoutHeaderGroup();
       #endregion
       #endregion
 
       #region Stream List
-        if ( Streams == null )
-          return;
+      if (Streams == null)
+        return;
 
-        EditorGUILayout.BeginHorizontal( );
+      EditorGUILayout.BeginHorizontal();
 
-        SelectedStreamIndex = EditorGUILayout.Popup(
-          "Streams",
-          SelectedStreamIndex, Streams.Select( x => x.name ).ToArray( ), GUILayout.Height( 20 ),
-          GUILayout.ExpandWidth( true ) );
+      SelectedStreamIndex = EditorGUILayout.Popup(
+        "Streams",
+        SelectedStreamIndex, Streams.Select(x => x.name).ToArray(), GUILayout.Height(20),
+        GUILayout.ExpandWidth(true));
 
-        if ( OldSelectedStreamIndex != SelectedStreamIndex ) {
-          await SelectStream( SelectedStreamIndex );
-          return;
-        }
+      if (OldSelectedStreamIndex != SelectedStreamIndex)
+      {
+        await SelectStream(SelectedStreamIndex);
+        return;
+      }
 
-        if ( GUILayout.Button( "Refresh", GUILayout.Width( 60 ), GUILayout.Height( 20 ) ) ) {
-          await LoadStreams( );
-          return;
-        }
+      if (GUILayout.Button("Refresh", GUILayout.Width(60), GUILayout.Height(20)))
+      {
+        await LoadStreams();
+        return;
+      }
 
-        EditorGUILayout.EndHorizontal( );
+      EditorGUILayout.EndHorizontal();
       #endregion
 
       #region Branch List
-        if ( Branches == null )
-          return;
+      if (Branches == null)
+        return;
 
-        EditorGUILayout.BeginHorizontal( );
+      EditorGUILayout.BeginHorizontal();
 
-        SelectedBranchIndex = EditorGUILayout.Popup(
-          "Branches",
-          SelectedBranchIndex, Branches.Select( x => x.name ).ToArray( ), GUILayout.Height( 20 ),
-          GUILayout.ExpandWidth( true ) );
-        EditorGUILayout.EndHorizontal( );
-
-
-        if ( !Branches[ SelectedBranchIndex ].commits.items.Any( ) )
-          return;
+      SelectedBranchIndex = EditorGUILayout.Popup(
+        "Branches",
+        SelectedBranchIndex, Branches.Select(x => x.name).ToArray(), GUILayout.Height(20),
+        GUILayout.ExpandWidth(true));
+      EditorGUILayout.EndHorizontal();
 
 
-        EditorGUILayout.BeginHorizontal( );
+      if (!Branches[SelectedBranchIndex].commits.items.Any())
+        return;
 
-        SelectedCommitIndex = EditorGUILayout.Popup(
-          "Commits",
-          SelectedCommitIndex,
-          Branches[ SelectedBranchIndex ].commits.items.Select( x => x.message ).ToArray( ),
-          GUILayout.Height( 20 ),
-          GUILayout.ExpandWidth( true ) );
 
-        EditorGUILayout.EndHorizontal( );
+      EditorGUILayout.BeginHorizontal();
+
+      SelectedCommitIndex = EditorGUILayout.Popup(
+        "Commits",
+        SelectedCommitIndex,
+        Branches[SelectedBranchIndex].commits.items.Select(x => x.message).ToArray(),
+        GUILayout.Height(20),
+        GUILayout.ExpandWidth(true));
+
+      EditorGUILayout.EndHorizontal();
       #endregion
 
-        EditorGUILayout.BeginHorizontal( );
+      EditorGUILayout.BeginHorizontal();
 
-        if ( GUILayout.Button( "Receive!" ) ) {
-          await Receive( );
-        }
-
-
-        GUILayout.EndHorizontal( );
+      if (GUILayout.Button("Receive!"))
+      {
+        await Receive();
       }
+
+
+      GUILayout.EndHorizontal();
+    }
 
 
   }
