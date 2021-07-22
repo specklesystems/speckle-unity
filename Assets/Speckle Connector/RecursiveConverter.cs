@@ -24,12 +24,13 @@ namespace Speckle.ConnectorUnity
     {
       //using the ApplicationPlaceholderObject to pass materials
       //available in Assets/Materials to the converters
-      var materials = Resources.LoadAll("Materials", typeof(Material)).Cast<Material>()
-          .Select(x => new ApplicationPlaceholderObject { NativeObject = x }).ToList();
-      _converter.SetContextObjects(materials);
+      var materials = Resources.LoadAll("", typeof(Material)).Cast<Material>().ToArray();
+      if (materials.Length == 0) Debug.LogWarning("To automatically assign materials to recieved meshes, materials have to be in the \'Assets/Resources\' folder!");
+      var placeholderObjects = materials.Select(x => new ApplicationPlaceholderObject { NativeObject = x }).ToList();
+      _converter.SetContextObjects(placeholderObjects);
 
 
-      // case 1: it's an item that has a direct conversion method, eg a point
+            // case 1: it's an item that has a direct conversion method, eg a point
       if (_converter.CanConvertToNative(@base))
       {
         var go = TryConvertItemToNative(@base);

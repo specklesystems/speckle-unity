@@ -31,6 +31,11 @@ namespace Speckle.ConnectorUnity
     public List<Stream> Streams;
     public List<Branch> Branches;
 
+
+#if UNITY_EDITOR
+    public static bool GenerateMaterials = false;
+#endif
+
     public GameObject ConvertRecursivelyToNative(Base @base, string id)
     {
 
