@@ -7,34 +7,49 @@ using UnityEngine;
 namespace Speckle.ConnectorUnity
 {
 
-  /// <summary>
-  /// This class gets attached to GOs and is used to store Speckle's metadata when sending / receiving
-  /// </summary>
-  public class SpeckleProperties : MonoBehaviour
+
+  public class SpeckleProperties : MonoBehaviour, ISerializationCallbackReceiver
   {
+    
+    public Dictionary<string, object> Data { get; set; }
+    
+    [SerializeField, HideInInspector]
+    private string _serializedData;
+    
+    public void OnBeforeSerialize()
+    {
+      Data ??= new Dictionary<string, object>();
+      
+      SpeckleData speckleData = new SpeckleData(Data);
+      _serializedData = Operations.Serialize(speckleData);
+    }
+
+    public void OnAfterDeserialize()
+    {
+      Base speckleData = Operations.Deserialize(_serializedData);
+      
+      Data = speckleData.GetMembers();
+      _serializedData = null;
+    }
+
     [Serializable]
     private class SpeckleData : Base
-    { }
-
-    [SerializeField] private SpeckleData DataBase;
-
-    public string SerializedData => DataBase != null ? Operations.Serialize(DataBase) : null;
-
-    public Dictionary<string, object> Data
     {
-      get => DataBase?.GetMembers();
-      set
+      public SpeckleData(IDictionary<string, object> data)
       {
-        if (value != null)
+        foreach (var v in data)
         {
-          DataBase = new SpeckleData();
-          foreach (var v in value)
-          {
-            DataBase[v.Key] = v.Value;
-          }
+          this[v.Key] = v.Value;
         }
       }
     }
 
+    [ContextMenu(nameof(Test))]
+    public void Test()
+    {
+      Debug.Log(Data.Count); //Set a breakpoint here to look at Data
+    }
+    
   }
+
 }
