@@ -62,6 +62,8 @@ namespace Objects.Converter.Unity
         //   return CurveToNative(o);
         // case View3D o:
         //   return View3DToNative(o);
+        case Pointcloud o:
+          return PointCloudToNative(o);
         case Mesh o:
           return MeshToNative(o);
         //Built elements with a mesh representation implement this interface
