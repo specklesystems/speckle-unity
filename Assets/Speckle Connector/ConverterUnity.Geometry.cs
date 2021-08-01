@@ -416,11 +416,11 @@ namespace Objects.Converter.Unity
 
         var c = renderMaterial.diffuse.ToUnityColor();
         mat.color = new Color(c.r, c.g, c.b, Convert.ToSingle(renderMaterial.opacity));
-        mat.name = renderMaterial.name;
+        mat.name = renderMaterial.name == null ? "material-"+ Guid.NewGuid().ToString().Substring(0,8) : renderMaterial.name;
 
 
 #if UNITY_EDITOR
-        if (Speckle.ConnectorUnity.StreamManager.GenerateMaterials)
+        if (StreamManager.GenerateMaterials)
         {
           if (!AssetDatabase.IsValidFolder("Assets/Resources")) AssetDatabase.CreateFolder("Assets", "Resources");
           if (!AssetDatabase.IsValidFolder("Assets/Resources/Materials")) AssetDatabase.CreateFolder("Assets/Resources", "Materials");
