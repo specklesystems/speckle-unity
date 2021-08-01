@@ -4870,11 +4870,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SelectedAccountIndex: 0
-  SelectedStreamIndex: 0
-  SelectedBranchIndex: 0
+  SelectedStreamIndex: 7
+  SelectedBranchIndex: 1
   SelectedCommitIndex: 0
   OldSelectedAccountIndex: 0
-  OldSelectedStreamIndex: 0
+  OldSelectedStreamIndex: 7
 --- !u!114 &2060322469
 MonoBehaviour:
   m_ObjectHideFlags: 0

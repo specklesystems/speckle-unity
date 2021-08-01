@@ -295,6 +295,17 @@ namespace Speckle.ConnectorUnity
       EditorGUILayout.EndHorizontal();
       #endregion
 
+      #region Generate Materials
+      EditorGUILayout.BeginHorizontal();
+
+      GUILayout.Label("Generate material assets");
+      GUILayout.FlexibleSpace();
+      StreamManager.GenerateMaterials = GUILayout.Toggle(StreamManager.GenerateMaterials, "");
+
+      EditorGUILayout.EndHorizontal();
+      #endregion
+
+
       EditorGUILayout.BeginHorizontal();
 
       if (GUILayout.Button("Receive!"))

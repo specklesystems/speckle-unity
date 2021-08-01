@@ -396,10 +396,15 @@ namespace Objects.Converter.Unity
       if (renderMaterial != null)
       {
         // 1. match material by name, if any
-        var matByName = ContextObjects.FirstOrDefault(x => ((Material)x.NativeObject).name == renderMaterial.name);
-        if (matByName != null)
+        Material matByName = null;
+        
+        foreach (var _mat in ContextObjects)
         {
-          return matByName.NativeObject as Material;
+          if (((Material)_mat.NativeObject).name == renderMaterial.name)
+          {
+            if (matByName == null) matByName = (Material)_mat.NativeObject;
+            else Debug.LogWarning("There is more than one Material with the name \'" + renderMaterial.name + "\'!", (Material)_mat.NativeObject);
+          }
         }
 
         // 2. re-create material by setting diffuse color and transparency on standard shaders
@@ -411,10 +416,22 @@ namespace Objects.Converter.Unity
 
         var c = renderMaterial.diffuse.ToUnityColor();
         mat.color = new Color(c.r, c.g, c.b, Convert.ToSingle(renderMaterial.opacity));
+        mat.name = renderMaterial.name == null ? "material-"+ Guid.NewGuid().ToString().Substring(0,8) : renderMaterial.name;
+
+
+#if UNITY_EDITOR
+        if (StreamManager.GenerateMaterials)
+        {
+          if (!AssetDatabase.IsValidFolder("Assets/Resources")) AssetDatabase.CreateFolder("Assets", "Resources");
+          if (!AssetDatabase.IsValidFolder("Assets/Resources/Materials")) AssetDatabase.CreateFolder("Assets/Resources", "Materials");
+          if (!AssetDatabase.IsValidFolder("Assets/Resources/Materials/Speckle Generated")) AssetDatabase.CreateFolder("Assets/Resources/Materials", "Speckle Generated");
+          if (AssetDatabase.LoadAllAssetsAtPath("Assets/Resources/Materials/Speckle Generated/" + mat.name + ".mat").Length == 0) AssetDatabase.CreateAsset(mat, "Assets/Resources/Materials/Speckle Generated/" + mat.name + ".mat");
+        }
+#endif
+
 
         return mat;
       }
-
       // 3. if not renderMaterial was passed, the default shader will be used 
       return mat;
     }
