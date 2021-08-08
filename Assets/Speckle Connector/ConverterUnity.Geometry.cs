@@ -406,6 +406,7 @@ namespace Objects.Converter.Unity
             else Debug.LogWarning("There is more than one Material with the name \'" + renderMaterial.name + "\'!", (Material)_mat.NativeObject);
           }
         }
+        if (matByName != null) return matByName;
 
         // 2. re-create material by setting diffuse color and transparency on standard shaders
         if (renderMaterial.opacity < 1)
