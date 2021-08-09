@@ -51,6 +51,13 @@ namespace Speckle.ConnectorUnity {
             }
 
 
+        public static int ToIntColor( this Color32 c )
+        {
+            return
+                System.Drawing.Color
+                    .FromArgb( Convert.ToInt32( c.r * 255 ), Convert.ToInt32( c.r * 255 ), Convert.ToInt32( c.r * 255 ) )
+                    .ToArgb( );
+        }
         public static int ToIntColor( this Color c )
             {
                 return

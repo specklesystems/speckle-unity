@@ -3,7 +3,7 @@ using System.Linq;
 using Pcx;
 using UnityEngine;
 
-namespace Speckle_Connector.MonoBase
+namespace Speckle_Connector
 {
   public class SpeckleCloud : MonoBehaviour
   {
@@ -13,17 +13,31 @@ namespace Speckle_Connector.MonoBase
     private PointCloudRenderer _pcxRenderer;
     private PointCloudData _data;
 
-    public void FromBase(List<Vector3> values, List<Color32> colors)
+    public string uints { get; set; }
+    // TODO fetch points from point cloud data object instead 
+    public List<Vector3> points { get; set; }
+    public List<Color32> colors { get; set; }
+
+    // TODO maybe add support for using particle system?
+    public void ToMono(List<Vector3> v, List<Color32> c)
     {
-      if (values == null)
+      if (v == null)
       {
         Debug.Log("Points for Speckle Cloud are not valid");
         return;
       }
-      colors ??= values.Select(v => new Color32(255, 255, 255, 255)).ToList();
+      c ??= v.Select(pts => new Color32(255, 255, 255, 255)).ToList();
 
+      points = v;
+      colors = c;
+      
+      UpdateContent();
+    }
+
+    private void UpdateContent()
+    {
       _data = ScriptableObject.CreateInstance<PointCloudData>();
-      _data.Initialize(values, colors);
+      _data.Initialize(points, colors);
 
       if (_pcxRenderer == null)
       {
@@ -33,7 +47,5 @@ namespace Speckle_Connector.MonoBase
       }
       _pcxRenderer.sourceData = _data;
     }
-
-    // TODO maybe add support for using particle system?
   }
 }

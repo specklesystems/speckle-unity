@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Objects.BuiltElements;
+using Speckle_Connector;
 using UnityEngine;
 using Mesh = Objects.Geometry.Mesh;
 
@@ -39,6 +40,8 @@ namespace Objects.Converter.Unity
     {
       switch (@object)
       {
+        case SpeckleCloud o:
+          return PointCloudToSpeckle(o);
         case GameObject o:
           if (o.GetComponent<MeshFilter>() != null)
             return MeshToSpeckle(o);
@@ -94,6 +97,8 @@ namespace Objects.Converter.Unity
       {
         case GameObject o:
           return o.GetComponent<MeshFilter>() != null;
+        case SpeckleCloud o:
+          return o.points != null && o.points.Any();
         default:
           return false;
       }
@@ -115,6 +120,8 @@ namespace Objects.Converter.Unity
         //   return true;
         // case View2D _:
         //   return false;
+        case Pointcloud _:
+          return true;
         case IDisplayMesh _:
           return true;
         case Mesh _:

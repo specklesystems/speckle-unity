@@ -88,6 +88,26 @@ namespace Objects.Converter.Unity {
 
                 return points;
             }
+    public List<Color32> ConvertColors(List<int> colorByNum)
+    {
+      var colors = new List<Color32>();
+      if (colorByNum == null || colorByNum.Count == 0) return colors;
+
+      colors.AddRange(colorByNum.Select(c => c.ToUnityColor()).Select(dummy => (Color32)dummy));
+      return colors;
+    }
+
+    public List<double> PointsFromVector(IEnumerable<Vector3> fromUnity)
+    {
+      var points = new List<double>();
+      foreach (var v3 in fromUnity)
+      {
+        points.Add(v3.x);
+        points.Add(v3.y);
+        points.Add(v3.z);
+      }
+      return points;
+    }
     #endregion
 
     #region ToSpeckle
@@ -373,6 +393,22 @@ namespace Objects.Converter.Unity {
                 //todo support more complex materials
                 var shader = Shader.Find( "Standard" );
                 Material mat = new Material( shader );
+    private Base PointCloudToSpeckle(SpeckleCloud @object)
+    {
+      return new Pointcloud()
+      {
+        units = @object.uints,
+        colors = @object.colors.Select(x => x.ToIntColor()).ToList(),
+        points = PointsFromVector(@object.points)
+      };
+    }
+    private object PointCloudToNative(Pointcloud @base)
+    {
+      var go = new GameObject(@base.id).AddComponent<SpeckleCloud>();
+      go.uints = @base.units;
+      go.ToMono(ArrayToPoints(@base.points, @base.units).ToList(), ConvertColors(@base.colors) );
+      return go;
+    }
 
                 //if a renderMaterial is passed use that, otherwise try get it from the mesh itself
 
