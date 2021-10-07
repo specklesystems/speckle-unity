@@ -152,7 +152,7 @@ namespace Speckle.ConnectorUnity
 
     private async Task Receive()
     {
-      EditorUtility.DisplayProgressBar("Receving data...", "", 0);
+      EditorUtility.DisplayProgressBar("Receiving data...", "", 0);
 
       try
       {
@@ -164,8 +164,11 @@ namespace Speckle.ConnectorUnity
             remoteTransport: transport,
             onProgressAction: dict =>
             {
-              EditorUtility.DisplayProgressBar("Receving data...", "",
-                              Convert.ToSingle(dict.Values.Average() / _totalChildrenCount));
+              UnityEditor.EditorApplication.delayCall += () =>
+              {
+                EditorUtility.DisplayProgressBar("Receiving data...", "",
+                  Convert.ToSingle(dict.Values.Average() / _totalChildrenCount));
+              };
             },
             onTotalChildrenCountKnown: count => { _totalChildrenCount = count; }
         );
@@ -176,11 +179,11 @@ namespace Speckle.ConnectorUnity
       }
       catch (Exception e)
       {
+        UnityEditor.EditorApplication.delayCall += () => { EditorUtility.ClearProgressBar(); };
         throw new SpeckleException(e.Message, e, true, SentryLevel.Error);
       }
 
-
-      EditorUtility.ClearProgressBar();
+      UnityEditor.EditorApplication.delayCall += () => { EditorUtility.ClearProgressBar(); };
     }
 
     public override async void OnInspectorGUI()
