@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
+using Speckle.Core.Api;
+using Speckle.Core.Models;
 using UnityEngine;
 
 namespace Speckle.ConnectorUnity
@@ -47,4 +48,5 @@ namespace Speckle.ConnectorUnity
     }
 
   }
+
 }
