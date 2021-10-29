@@ -13,6 +13,7 @@ using UnityEngine.Events;
 namespace Speckle.ConnectorUnity
 {
   [ExecuteAlways]
+  [AddComponentMenu("Speckle/Stream Manager")]
   public class StreamManager : MonoBehaviour
   {
 

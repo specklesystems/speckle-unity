@@ -106,7 +106,6 @@ namespace Speckle.ConnectorUnity
       InitRemove();
 
       var sender = gameObject.AddComponent<Sender>();
-      //sender.Stream = stream;
 
       var btn = gameObject.transform.Find("Btn").GetComponentInChildren<Button>();
 
@@ -125,9 +124,9 @@ namespace Speckle.ConnectorUnity
       btn.onClick.AddListener(() =>
         {
           var objs = new List<GameObject>();
-          foreach (var index in SelectionManager.selectedObjects)
+          foreach (var s in SelectionManager.selectedObjects)
           {
-            objs.Add(SelectionManager.selectables[index].gameObject);
+            objs.Add(s.gameObject);
           }
 
           if (!objs.Any())
