@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 
 //Thanks to : https://sharpcoderblog.com/blog/unity-3d-rts-style-unit-selection
+[AddComponentMenu("Speckle/Playground/Selection Manager"), DisallowMultipleComponent]
 public class SelectionManager : MonoBehaviour
 {
   public Texture topLeftBorder;
@@ -32,7 +33,7 @@ public class SelectionManager : MonoBehaviour
   Vector3 mousePosition1;
 
   public static List<Selectable> selectables = new List<Selectable>();
-  public static List<int> selectedObjects = new List<int>();
+  public static List<Selectable> selectedObjects = new List<Selectable>();
 
   // Update is called once per frame
   void Update()
@@ -66,7 +67,7 @@ public class SelectionManager : MonoBehaviour
         Bounds viewportBounds = GetViewportBounds(camera, mousePosition1, Input.mousePosition);
         if (viewportBounds.Contains(camera.WorldToViewportPoint(selectables[i].transform.position)))
         {
-          selectedObjects.Add(i);
+          selectedObjects.Add(selectables[i]);
         }
       }
     }
@@ -86,7 +87,7 @@ public class SelectionManager : MonoBehaviour
       Camera camera = Camera.main;
       for (int i = 0; i < selectedObjects.Count; i++)
       {
-        DrawSelectionIndicator(camera, selectables[selectedObjects[i]].GetObjectBounds());
+        DrawSelectionIndicator(camera, selectedObjects[i].GetObjectBounds());
       }
     }
   }

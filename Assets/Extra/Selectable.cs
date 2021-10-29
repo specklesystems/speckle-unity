@@ -4,6 +4,7 @@ using UnityEngine;
 
 
 //Thanks to : https://sharpcoderblog.com/blog/unity-3d-rts-style-unit-selection
+[AddComponentMenu("Speckle/Playground/Selectable"), DisallowMultipleComponent]
 public class Selectable : MonoBehaviour
 {
 
@@ -43,6 +44,7 @@ public class Selectable : MonoBehaviour
     if (SelectionManager.selectables.Contains(this))
     {
       SelectionManager.selectables.Remove(this);
+      SelectionManager.selectedObjects.Remove(this);
     }
   }
 }

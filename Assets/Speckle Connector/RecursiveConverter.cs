@@ -25,7 +25,7 @@ namespace Speckle.ConnectorUnity
       //using the ApplicationPlaceholderObject to pass materials
       //available in Assets/Materials to the converters
       var materials = Resources.LoadAll("", typeof(Material)).Cast<Material>().ToArray();
-      if (materials.Length == 0) Debug.LogWarning("To automatically assign materials to recieved meshes, materials have to be in the \'Assets/Resources\' folder!");
+      if (materials.Length == 0) Debug.Log("To automatically assign materials to recieved meshes, materials have to be in the \'Assets/Resources\' folder!");
       var placeholderObjects = materials.Select(x => new ApplicationPlaceholderObject { NativeObject = x }).ToList();
       _converter.SetContextObjects(placeholderObjects);
 
@@ -163,8 +163,6 @@ namespace Speckle.ConnectorUnity
           throw new SpeckleException(e.Message, e, true, SentryLevel.Error);
         }
       }
-
-      return null;
     }
 
 

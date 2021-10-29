@@ -311,15 +311,17 @@ namespace Speckle.ConnectorUnity
 
       EditorGUILayout.BeginHorizontal();
 
-      if (GUILayout.Button("Receive!"))
+      bool receive = GUILayout.Button("Receive!");
+      
+      EditorGUILayout.EndHorizontal();
+      
+      if (receive)
       {
         await Receive();
       }
+    
 
-
-      GUILayout.EndHorizontal();
     }
-
-
+    
   }
 }
