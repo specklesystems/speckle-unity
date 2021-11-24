@@ -7,42 +7,42 @@ using UnityEngine;
 public class Selectable : MonoBehaviour
 {
 
-    public Bounds GetObjectBounds()
+  public Bounds GetObjectBounds()
+  {
+    Bounds totalBounds = new Bounds();
+
+    var renderers = this.gameObject.GetComponents<MeshRenderer>();
+
+    foreach (var r in renderers)
     {
-        Bounds totalBounds = new Bounds();
-        
-        var renderers = this.gameObject.GetComponents<MeshRenderer>();
-
-        foreach (var r in renderers)
-        {
-            if(totalBounds.center == Vector3.zero)
-            {
-                totalBounds = r.bounds;
-            }
-            else
-            {
-                totalBounds.Encapsulate(r.bounds);
-            }
-        }
-
-        return totalBounds;
+      if (totalBounds.center == Vector3.zero)
+      {
+        totalBounds = r.bounds;
+      }
+      else
+      {
+        totalBounds.Encapsulate(r.bounds);
+      }
     }
 
-    void OnEnable()
-    {
-        //Add this Object to global list
-        if (!SelectionManager.selectables.Contains(this))
-        {
-            SelectionManager.selectables.Add(this);
-        }
-    }
+    return totalBounds;
+  }
 
-    void OnDisable()
+  void OnEnable()
+  {
+    //Add this Object to global list
+    if (!SelectionManager.selectables.Contains(this))
     {
-        //Remove this Object from global list
-        if (SelectionManager.selectables.Contains(this))
-        {
-            SelectionManager.selectables.Remove(this);
-        }
+      SelectionManager.selectables.Add(this);
     }
+  }
+
+  void OnDisable()
+  {
+    //Remove this Object from global list
+    if (SelectionManager.selectables.Contains(this))
+    {
+      SelectionManager.selectables.Remove(this);
+    }
+  }
 }

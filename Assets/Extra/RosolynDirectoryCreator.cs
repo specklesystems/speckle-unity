@@ -1,7 +1,8 @@
 ﻿using System.IO;
 using System.Text.RegularExpressions;
-using UnityEditor;
 using UnityEngine;
+#if UNITY_EDITOR
+using UnityEditor;
 
 namespace Speckle.ConnectorUnity
 {
@@ -21,7 +22,7 @@ namespace Speckle.ConnectorUnity
         return;
 
       const string pattern =
-          @"^DirectoryNotFoundException: Could not find a part of the path '.*?\\Temp\\RoslynAnalysisRunner'\.$";
+        @"^DirectoryNotFoundException: Could not find a part of the path '.*?\\Temp\\RoslynAnalysisRunner'\.$";
 
       if (Regex.IsMatch(message, pattern))
       {
@@ -30,3 +31,4 @@ namespace Speckle.ConnectorUnity
     }
   }
 }
+#endif

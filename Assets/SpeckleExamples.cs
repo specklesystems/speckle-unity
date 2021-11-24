@@ -16,12 +16,12 @@ namespace Speckle.ConnectorUnity
     public Button AddReceiverBtn;
     public Toggle AutoReceiveToggle;
     public Button AddSenderBtn;
-    public GameObject StreamPrefab;
+    public GameObject StreamPanel;
     public Canvas StreamsCanvas;
 
     private List<Stream> StreamList = null;
     private Stream SelectedStream = null;
-    private List<GameObject> StreamPrefabs = new List<GameObject>();
+    private List<GameObject> StreamPanels = new List<GameObject>();
 
     async void Start()
     {
@@ -84,46 +84,46 @@ namespace Speckle.ConnectorUnity
       var autoReceive = AutoReceiveToggle.isOn;
       var stream = await Streams.Get(SelectedStream.id, 10);
 
-      var streamPrefab = Instantiate(StreamPrefab, new Vector3(0, 0, 0),
+      var streamPrefab = Instantiate(StreamPanel, new Vector3(0, 0, 0),
         Quaternion.identity);
 
       //set position
       streamPrefab.transform.SetParent(StreamsCanvas.transform);
       var rt = streamPrefab.GetComponent<RectTransform>();
-      rt.anchoredPosition = new Vector3(-10, -110 - StreamPrefabs.Count * 110, 0);
+      rt.anchoredPosition = new Vector3(-10, -110 - StreamPanels.Count * 110, 0);
 
       streamPrefab.AddComponent<InteractionLogic>().InitReceiver(stream, autoReceive);
 
-      StreamPrefabs.Add(streamPrefab);
+      StreamPanels.Add(streamPrefab);
     }
 
     private async void AddSender()
     {
       var stream = await Streams.Get(SelectedStream.id, 10);
 
-      var streamPrefab = Instantiate(StreamPrefab, new Vector3(0, 0, 0),
+      var streamPrefab = Instantiate(StreamPanel, new Vector3(0, 0, 0),
         Quaternion.identity);
 
       streamPrefab.transform.SetParent(StreamsCanvas.transform);
       var rt = streamPrefab.GetComponent<RectTransform>();
-      rt.anchoredPosition = new Vector3(-10, -110 - StreamPrefabs.Count * 110, 0);
+      rt.anchoredPosition = new Vector3(-10, -110 - StreamPanels.Count * 110, 0);
 
       streamPrefab.AddComponent<InteractionLogic>().InitSender(stream);
 
-      StreamPrefabs.Add(streamPrefab);
+      StreamPanels.Add(streamPrefab);
     }
 
     public void RemoveStreamPrefab(GameObject streamPrefab)
     {
-      StreamPrefabs.RemoveAt(StreamPrefabs.FindIndex(x => x.name == streamPrefab.name));
+      StreamPanels.RemoveAt(StreamPanels.FindIndex(x => x.name == streamPrefab.name));
       ReorderStreamPrefabs();
     }
 
     private void ReorderStreamPrefabs()
     {
-      for (var i = 0; i < StreamPrefabs.Count; i++)
+      for (var i = 0; i < StreamPanels.Count; i++)
       {
-        var rt = StreamPrefabs[i].GetComponent<RectTransform>();
+        var rt = StreamPanels[i].GetComponent<RectTransform>();
         rt.anchoredPosition = new Vector3(-10, -110 - i * 110, 0);
       }
     }

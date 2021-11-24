@@ -1,5 +1,5 @@
 using System;
-using System.Collections.Generic;
+using System.Collections;
 using Speckle.Core.Api;
 using Speckle.Core.Models;
 using UnityEngine;
@@ -12,46 +12,41 @@ namespace Speckle.ConnectorUnity
   /// </summary>
   public class SpeckleProperties : MonoBehaviour, ISerializationCallbackReceiver
   {
-    
-    public Dictionary<string, object> Data { get; set; }
-    
+
+    [SerializeField, HideInInspector]
+    private SpeckleObservablePropertiesCollection observablePropertiesCollection;
+
     [SerializeField, HideInInspector]
     private string _serializedData;
-    
+
+    public object this[string key]
+    {
+      get => observablePropertiesCollection[key];
+      set => observablePropertiesCollection[key] = value;
+    }
+
+    public Dictionary<string, object> Data
+    {
+      get { return observablePropertiesCollection.ToDictionary(); }
+      set { observablePropertiesCollection.Set(value); }
+    }
+
     public void OnBeforeSerialize()
     {
-      Data ??= new Dictionary<string, object>();
-      
-      SpeckleData speckleData = new SpeckleData(Data);
-      _serializedData = Operations.Serialize(speckleData);
+      _serializedData = observablePropertiesCollection.serializedData;
     }
 
     public void OnAfterDeserialize()
     {
-      Base speckleData = Operations.Deserialize(_serializedData);
-      
-      Data = speckleData.GetMembers();
+      observablePropertiesCollection.Set(_serializedData);
       _serializedData = null;
     }
-
-    [Serializable]
-    private class SpeckleData : Base
-    {
-      public SpeckleData(IDictionary<string, object> data)
-      {
-        foreach (var v in data)
-        {
-          this[v.Key] = v.Value;
-        }
-      }
-    }
-
-    [ContextMenu(nameof(Test))]
-    public void Test()
-    {
-      Debug.Log(Data.Count); //Set a breakpoint here to look at Data
-    }
     
+    private void Awake()
+    {
+      observablePropertiesCollection = new SpeckleObservablePropertiesCollection();
+    }
+
   }
 
 }
