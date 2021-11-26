@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Sentry;
 using Speckle.Core.Api;
 using Speckle.Core.Credentials;
+using Speckle.Core.Kits;
 using Speckle.Core.Logging;
 using Speckle.Core.Transports;
 using UnityEditor;
@@ -175,7 +176,22 @@ namespace Speckle.ConnectorUnity
 
         var go = _streamManager.ConvertRecursivelyToNative(@base,
             Branches[SelectedBranchIndex].commits.items[SelectedCommitIndex].id);
-
+        
+        try
+        {
+          await Client.CommitReceived(new CommitReceivedInput
+          {
+            streamId = SelectedStream.id,
+            commitId = Branches[SelectedBranchIndex].commits.items[SelectedCommitIndex].id,
+            message = $"received commit from {Applications.Unity} Editor",
+            sourceApplication = Applications.Unity
+          });
+        }
+        catch
+        {
+          // Do nothing!
+        }
+        
       }
       catch (Exception e)
       {
