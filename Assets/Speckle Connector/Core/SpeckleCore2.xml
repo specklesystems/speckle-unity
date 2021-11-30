@@ -635,6 +635,11 @@
             Used to ignore properties from expand objects etc
             </summary>
         </member>
+        <member name="P:Speckle.Core.Kits.ISpeckleConverter.Report">
+            <summary>
+            Keeps track of the conversion process
+            </summary>
+        </member>
         <member name="M:Speckle.Core.Kits.ISpeckleConverter.ConvertToSpeckle(System.Object)">
             <summary>
             Converts a native object to a Speckle one
@@ -989,6 +994,21 @@
             <summary>
             A simple wrapper to keep track of the relationship between speckle objects and their host-application siblings in cases where the
             <see cref="P:Speckle.Core.Models.Base.applicationId"/> cannot correspond with the <see cref="P:Speckle.Core.Models.ApplicationPlaceholderObject.ApplicationGeneratedId"/> (ie, on receiving operations). 
+            </summary>
+        </member>
+        <member name="P:Speckle.Core.Models.ProgressReport.ConversionLog">
+            <summary>
+            Keeps track of the conversion process
+            </summary>
+        </member>
+        <member name="P:Speckle.Core.Models.ProgressReport.ConversionErrors">
+            <summary>
+            Keeps track of errors in the conversions.
+            </summary>
+        </member>
+        <member name="P:Speckle.Core.Models.ProgressReport.OperationErrors">
+            <summary>
+            Keeps track of errors in the operations of send/receive.
             </summary>
         </member>
         <member name="M:Speckle.Core.Models.Utilities.hashString(System.String,Speckle.Core.Models.Utilities.HashingFuctions)">

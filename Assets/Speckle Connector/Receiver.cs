@@ -13,6 +13,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Sentry;
 using Sentry.Protocol;
+using Speckle.Core.Kits;
 using UnityEngine;
 
 namespace Speckle.ConnectorUnity
@@ -155,6 +156,22 @@ namespace Speckle.ConnectorUnity
       {
         throw new SpeckleException(e.Message, e, true, SentryLevel.Error);
       }
+      
+      try
+      {
+        await Client.CommitReceived(new CommitReceivedInput
+        {
+          streamId = StreamId,
+          commitId = commitId,
+          message = "received commit from " + Applications.Unity,
+          sourceApplication = Applications.Unity
+        });
+      }
+      catch
+      {
+        // Do nothing!
+      }
+      
     }
 
 
