@@ -20,6 +20,8 @@ namespace Objects.Converter.Unity
     public string Name => nameof(ConverterUnity);
     public string Author => "Speckle";
     public string WebsiteOrEmail => "https://speckle.systems";
+    
+    public ProgressReport Report { get; }
 
     public IEnumerable<string> GetServicedApplications() => new string[] {Applications.Other}; //TODO: add unity
 

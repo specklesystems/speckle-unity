@@ -1,0 +1,24 @@
+{
+  "name": "systems.speckle.speckle-unity",
+  "version": "2.2.4-beta",
+  "displayName": "Speckle Unity Connector",
+  "description": "AEC Interoperability for Unity through Speckle",
+  "unity": "2018.3",
+  "documentationUrl": "https://speckle.guide/user/unity.html",
+  "changelogUrl": "https://speckle.notion.site/Public-Changelog-45cb90c7514642ffab2e72d0288e4071",
+  "license": "Apache-2.0",
+  "licensesUrl": "https://github.com/specklesystems/speckle-unity/blob/main/LICENSE",
+ "keywords": [
+    "speckle",
+    "aec",
+    "speckle-unity",
+	"version-control",
+	"interoperability",
+	"speckle systems"
+  ],
+  "author": {
+    "name": "Speckle Systems",
+    "email": "hello@speckle.systems",
+    "url": "https://speckle.systems"
+  }
+}
