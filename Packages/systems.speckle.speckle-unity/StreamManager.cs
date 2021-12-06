@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using Speckle.Core.Api;
 using Speckle.Core.Credentials;
 using System.Collections.Generic;
@@ -17,35 +18,23 @@ namespace Speckle.ConnectorUnity
   public class StreamManager : MonoBehaviour
   {
 
-    public int SelectedAccountIndex = -1;
-    public int SelectedStreamIndex = -1;
-    public int SelectedBranchIndex = -1;
-    public int SelectedCommitIndex = -1;
-    public int OldSelectedAccountIndex = -1;
-    public int OldSelectedStreamIndex = -1;
-
-    public Client Client;
-    public Account SelectedAccount;
-    public Stream SelectedStream;
-
-    public List<Account> Accounts;
-    public List<Stream> Streams;
-    public List<Branch> Branches;
-
-
-#if UNITY_EDITOR
+    public SpeckleStreamInstance streamInstance;
+    [SerializeField, HideInInspector] private float overallProgress;
+    private ConcurrentDictionary<string, double> progressReports;
+    
+    #if UNITY_EDITOR
     public static bool GenerateMaterials = false;
-#endif
-
-    public GameObject ConvertRecursivelyToNative(Base @base, string id)
+    #endif
+    
+    private async void OnEnable()
     {
+      streamInstance ??= new SpeckleStreamInstance();
 
-      var rc = GetComponent<RecursiveConverter>();
-      if (rc == null)
-        rc = gameObject.AddComponent<RecursiveConverter>();
+      streamInstance.OnProgressUpdate += (num, msg) => { overallProgress = Mathf.Clamp(num * 100f, 0f, 100f); };
+      streamInstance.OnProcessComplete += () => overallProgress = 0;
 
-      return rc.ConvertRecursivelyToNative(@base,
-          Branches[SelectedBranchIndex].commits.items[SelectedCommitIndex].id);
+      await streamInstance.RefreshManager();
     }
+
   }
 }
