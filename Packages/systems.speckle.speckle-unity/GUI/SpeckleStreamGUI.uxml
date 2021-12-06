@@ -1,0 +1,26 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="True">
+    <ui:VisualElement name="container">
+        <ui:VisualElement name="container-label" style="flex-direction: row; -unity-text-align: middle-center; justify-content: center;">
+            <ui:Label display-tooltip-when-elided="true" style="width: 37px; background-image: url(&apos;/Assets/Speckle Connector/GUI/Assets/specklesbluequarecubething.png&apos;); -unity-background-scale-mode: scale-to-fit;" />
+            <ui:Label text="Speckle Connector" display-tooltip-when-elided="true" name="label" style="-unity-text-align: upper-center; color: rgb(5, 127, 253); -unity-font-style: bold; font-size: 20px;" />
+        </ui:VisualElement>
+        <ui:VisualElement name="container-account" style="flex-direction: column; align-items: stretch;">
+            <ui:VisualElement name="container-account-btns" style="flex-direction: row; justify-content: flex-end; width: auto;">
+                <ui:Button name="refresh-account-button" text="refresh" class="su-button" style="width: 93px; align-items: auto; flex-direction: column; white-space: nowrap; -unity-text-align: middle-center;" />
+            </ui:VisualElement>
+            <ui:DropdownField name="accounts-dropdown" label="Accounts" tooltip="List of local Speckle accounts " style="width: auto; align-items: center; justify-content: space-around; flex-direction: row;" />
+        </ui:VisualElement>
+        <ui:VisualElement name="container-stream" class="row-stream">
+            <ui:DropdownField name="streams-dropdown" label="Streams" />
+            <ui:DropdownField name="branches-dropdown" label="Branches" />
+            <ui:DropdownField name="commits-dropdown" label="Commits" />
+        </ui:VisualElement>
+        <ui:DropdownField name="kits-dropdown" label="Kits" tooltip="List of local Speckle accounts " style="width: auto; align-items: center; justify-content: space-around; flex-direction: row;" />
+        <ui:VisualElement name="container-receive" class="row" style="align-items: center; justify-content: space-around; flex-direction: row; flex-shrink: 1; flex-basis: auto;">
+            <ui:VisualElement name="group-receive-progress" style="flex-direction: column; align-items: center; width: 342px;">
+                <ui:Button name="receive-stream-button" text="Receive" style="width: 337px; align-items: stretch; white-space: nowrap; -unity-text-align: middle-center;" />
+                <ui:ProgressBar name="receive-progressbar" title="progress" style="width: 337px; align-items: stretch; height: 15px; flex-direction: column;" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
