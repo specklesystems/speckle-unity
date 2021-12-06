@@ -1,7 +1,7 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="True">
     <ui:VisualElement name="container">
         <ui:VisualElement name="container-label" style="flex-direction: row; -unity-text-align: middle-center; justify-content: center;">
-            <ui:Label display-tooltip-when-elided="true" style="width: 37px; background-image: url(&apos;/Assets/Speckle Connector/GUI/Assets/specklesbluequarecubething.png&apos;); -unity-background-scale-mode: scale-to-fit;" />
+            <ui:Label display-tooltip-when-elided="true" style="width: 37px; background-image: url(&apos;/Packages/systems.speckle.speckle-unity/GUI/Assets/SpeckleCubeBlue.png&apos;); -unity-background-scale-mode: scale-to-fit;" />
             <ui:Label text="Speckle Connector" display-tooltip-when-elided="true" name="label" style="-unity-text-align: upper-center; color: rgb(5, 127, 253); -unity-font-style: bold; font-size: 20px;" />
         </ui:VisualElement>
         <ui:VisualElement name="container-account" style="flex-direction: column; align-items: stretch;">
@@ -19,7 +19,7 @@
         <ui:VisualElement name="container-receive" class="row" style="align-items: center; justify-content: space-around; flex-direction: row; flex-shrink: 1; flex-basis: auto;">
             <ui:VisualElement name="group-receive-progress" style="flex-direction: column; align-items: center; width: 342px;">
                 <ui:Button name="receive-stream-button" text="Receive" style="width: 337px; align-items: stretch; white-space: nowrap; -unity-text-align: middle-center;" />
-                <ui:ProgressBar name="receive-progressbar" title="progress" style="width: 337px; align-items: stretch; height: 15px; flex-direction: column;" />
+<!--                <ui:ProgressBar name="receive-progressbar" title="progress" bindingpath="overallProgress" style="width: 337px; align-items: stretch; height: 15px; flex-direction: column;" />-->
             </ui:VisualElement>
         </ui:VisualElement>
     </ui:VisualElement>
