@@ -15,7 +15,7 @@ namespace Speckle.ConnectorUnity
 {
 
   [Serializable]
-  public class StreamManagerInstance
+  public class SpeckleStreamInstance
   {
     public int accountIndex;
     public int streamIndex;
@@ -91,7 +91,7 @@ namespace Speckle.ConnectorUnity
     //   get => kits.Valid(kitIndex) ? kits[kitIndex] : null;
     // }
 
-    public StreamManagerInstance()
+    public SpeckleStreamInstance()
     {
       onProgressAction = UpdateProgress;
       onErrorAction = (s, exception) => Debug.LogException(exception);
