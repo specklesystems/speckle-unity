@@ -25,8 +25,7 @@ namespace Speckle.ConnectorUnity
     public Button btn_receive;
     public Button btn_clear;
 
-    public ProgressBar bar_receive;
-    public ProgressBar bar_send;
+    // public ProgressBar bar_receive;
 
     public SpeckleStreamInstance Instance;
 
@@ -49,9 +48,10 @@ namespace Speckle.ConnectorUnity
       drop_commits = SetDropDown("commits-dropdown", Instance.commits.Format().ToList(), Instance.commitIndex, CommitChange);
       drop_kits = SetDropDown("kits-dropdown", Instance.kits.Format().ToList(), Instance.kitIndex, KitChange);
 
-      bar_receive = this.Q<ProgressBar>("receive-progressbar");
+      // Progress Bar is only supported in 2021 :| thanks unity
+      // bar_receive = this.Q<ProgressBar>("receive-progressbar");
+      
       btn_receive = this.Q<Button>("receive-stream-button");
-
       btn_receive.clickable.clickedWithEventInfo += ReceiveButtonClick;
     }
 
