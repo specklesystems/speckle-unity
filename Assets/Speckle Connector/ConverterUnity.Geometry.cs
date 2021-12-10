@@ -16,7 +16,15 @@ namespace Objects.Converter.Unity
 {
   public partial class ConverterUnity
   {
+
     #region helper methods
+    
+    private static readonly int EmissionColor = Shader.PropertyToID("_EmissionColor");
+    private static readonly int Metallic = Shader.PropertyToID("_Metallic");
+    private static readonly int Glossiness = Shader.PropertyToID("_Glossiness");
+
+    private static Color ToUnityColor(SColor color) => new Color(color.R / 255f, color.G / 255f, color.B / 255f, color.A / 255f);
+    
     /// <summary>
     /// 
     /// </summary>
@@ -312,7 +320,7 @@ namespace Objects.Converter.Unity
       var go = new GameObject { name = speckleMesh.speckle_type };
       var mesh = new UnityEngine.Mesh { name = speckleMesh.speckle_type };
 
-      if (verts.Length >= 65535)
+      if (verts.Length >= UInt16.MaxValue)
         mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
 
 
@@ -365,13 +373,17 @@ namespace Objects.Converter.Unity
       //Set vertex colors
       if (speckleMesh.colors.Count == speckleMesh.VerticesCount)
       {
-        static Color ToUnityColor(SColor color) => new Color(color.R, color.G, color.B, color.A);
         var colors = speckleMesh.colors.Select(c => ToUnityColor(SColor.FromArgb(c))).ToList();
         mesh.SetColors(colors);
       }
+      else if (speckleMesh.colors.Count != 0)
+      {
+        Debug.LogWarning($"{typeof(Mesh)} {speckleMesh.id} has invalid number of vertex {nameof(Mesh.colors)}. Expected 0 or {speckleMesh.VerticesCount}, got {speckleMesh.colors.Count}");
+      }
 
       // BUG: causing some funky issues with meshes
-      // mesh.RecalculateNormals( );
+      mesh.RecalculateNormals();
+      mesh.RecalculateTangents();
       mesh.Optimize();
       // Setting mesh to filter once all mesh modifying is done
       go.SafeMeshSet(mesh, true);
@@ -450,10 +462,16 @@ namespace Objects.Converter.Unity
         }
 
         var c = renderMaterial.diffuse.ToUnityColor();
-        mat.color = new Color(c.r, c.g, c.b, Convert.ToSingle(renderMaterial.opacity));
-        mat.name = renderMaterial.name == null ? "material-"+ Guid.NewGuid().ToString().Substring(0,8) : renderMaterial.name;
+        mat.color = new Color(c.r, c.g, c.b, (float)renderMaterial.opacity);
+        mat.name = renderMaterial.name ?? "material-"+ Guid.NewGuid().ToString().Substring(0,8);
+        
+        mat.SetFloat(Metallic, (float)renderMaterial.metalness);
+        mat.SetFloat(Glossiness,  1 - (float)renderMaterial.roughness);
 
-
+        if (renderMaterial.emissive != SColor.Black.ToArgb()) mat.EnableKeyword ("_EMISSION");
+        mat.SetColor(EmissionColor, ToUnityColor(SColor.FromArgb(renderMaterial.emissive)));
+        
+        
 #if UNITY_EDITOR
         if (StreamManager.GenerateMaterials)
         {
@@ -463,8 +481,7 @@ namespace Objects.Converter.Unity
           if (AssetDatabase.LoadAllAssetsAtPath("Assets/Resources/Materials/Speckle Generated/" + mat.name + ".mat").Length == 0) AssetDatabase.CreateAsset(mat, "Assets/Resources/Materials/Speckle Generated/" + mat.name + ".mat");
         }
 #endif
-
-
+        
         return mat;
       }
       // 3. if not renderMaterial was passed, the default shader will be used 
