@@ -24,77 +24,81 @@ namespace Speckle.ConnectorUnity
     private int _totalChildrenCount = 0;
     private StreamManager _streamManager;
 
+    public int StreamsLimit { get; set; } = 30;
+    public int BranchesLimit { get; set; } = 30;
+    public int CommitsLimit { get; set; } = 25;
+
     private int SelectedAccountIndex
     {
-      get { return _streamManager.SelectedAccountIndex; }
-      set { _streamManager.SelectedAccountIndex = value; }
+      get => _streamManager.SelectedAccountIndex;
+      set => _streamManager.SelectedAccountIndex = value;
     }
 
     private int SelectedStreamIndex
     {
-      get { return _streamManager.SelectedStreamIndex; }
-      set { _streamManager.SelectedStreamIndex = value; }
+      get => _streamManager.SelectedStreamIndex;
+      set => _streamManager.SelectedStreamIndex = value;
     }
 
     private int SelectedBranchIndex
     {
-      get { return _streamManager.SelectedBranchIndex; }
-      set { _streamManager.SelectedBranchIndex = value; }
+      get => _streamManager.SelectedBranchIndex;
+      set => _streamManager.SelectedBranchIndex = value;
     }
 
     private int SelectedCommitIndex
     {
-      get { return _streamManager.SelectedCommitIndex; }
-      set { _streamManager.SelectedCommitIndex = value; }
+      get => _streamManager.SelectedCommitIndex;
+      set => _streamManager.SelectedCommitIndex = value;
     }
 
     private int OldSelectedAccountIndex
     {
-      get { return _streamManager.OldSelectedAccountIndex; }
-      set { _streamManager.OldSelectedAccountIndex = value; }
+      get => _streamManager.OldSelectedAccountIndex;
+      set => _streamManager.OldSelectedAccountIndex = value;
     }
 
     private int OldSelectedStreamIndex
     {
-      get { return _streamManager.OldSelectedStreamIndex; }
-      set { _streamManager.OldSelectedStreamIndex = value; }
+      get => _streamManager.OldSelectedStreamIndex;
+      set => _streamManager.OldSelectedStreamIndex = value;
     }
 
     private Client Client
     {
-      get { return _streamManager.Client; }
-      set { _streamManager.Client = value; }
+      get => _streamManager.Client;
+      set => _streamManager.Client = value;
     }
 
     private Account SelectedAccount
     {
-      get { return _streamManager.SelectedAccount; }
-      set { _streamManager.SelectedAccount = value; }
+      get => _streamManager.SelectedAccount;
+      set => _streamManager.SelectedAccount = value;
     }
 
     private Stream SelectedStream
     {
-      get { return _streamManager.SelectedStream; }
-      set { _streamManager.SelectedStream = value; }
+      get => _streamManager.SelectedStream;
+      set => _streamManager.SelectedStream = value;
     }
 
     public List<Account> Accounts
     {
-      get { return _streamManager.Accounts; }
-      set { _streamManager.Accounts = value; }
+      get => _streamManager.Accounts;
+      set => _streamManager.Accounts = value;
     }
 
     private List<Stream> Streams
     {
-      get { return _streamManager.Streams; }
-      set { _streamManager.Streams = value; }
+      get => _streamManager.Streams;
+      set => _streamManager.Streams = value;
     }
 
     private List<Branch> Branches
     {
-      get { return _streamManager.Branches; }
+      get => _streamManager.Branches;
 
-      set { _streamManager.Branches = value; }
+      set => _streamManager.Branches = value;
     }
 
     private async Task LoadAccounts()
@@ -124,7 +128,7 @@ namespace Speckle.ConnectorUnity
     private async Task LoadStreams()
     {
       EditorUtility.DisplayProgressBar("Loading streams...", "", 0);
-      Streams = await Client.StreamsGet();
+      Streams = await Client.StreamsGet(StreamsLimit);
       EditorUtility.ClearProgressBar();
       if (Streams.Any())
         await SelectStream(0);
@@ -137,7 +141,7 @@ namespace Speckle.ConnectorUnity
       SelectedStream = Streams[i];
 
       EditorUtility.DisplayProgressBar("Loading stream details...", "", 0);
-      Branches = await Client.StreamGetBranches(SelectedStream.id);
+      Branches = await Client.StreamGetBranches(SelectedStream.id, BranchesLimit, CommitsLimit);
       if (Branches.Any())
       {
         SelectedBranchIndex = 0;
