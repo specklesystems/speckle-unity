@@ -1,5 +1,5 @@
-﻿using Objects.Geometry;
-using System;
+﻿using System;
+using Objects.Geometry;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -17,13 +17,11 @@ namespace Objects.Converter.Unity
   public partial class ConverterUnity
   {
 
-    #region helper methods
-    
     private static readonly int EmissionColor = Shader.PropertyToID("_EmissionColor");
     private static readonly int Metallic = Shader.PropertyToID("_Metallic");
     private static readonly int Glossiness = Shader.PropertyToID("_Glossiness");
-
-    private static Color ToUnityColor(SColor color) => new Color(color.R / 255f, color.G / 255f, color.B / 255f, color.A / 255f);
+    
+    #region helper methods
     
     /// <summary>
     /// 
@@ -146,8 +144,8 @@ namespace Objects.Converter.Unity
       {
         var p = go.transform.TransformPoint(vertex);
         sVertices.Add(p.x);
+        sVertices.Add(p.z); //z and y swapped
         sVertices.Add(p.y);
-        sVertices.Add(p.z);
       }
       
       var nColors = nativeMesh.colors;
@@ -373,7 +371,7 @@ namespace Objects.Converter.Unity
       //Set vertex colors
       if (speckleMesh.colors.Count == speckleMesh.VerticesCount)
       {
-        var colors = speckleMesh.colors.Select(c => ToUnityColor(SColor.FromArgb(c))).ToList();
+        var colors = speckleMesh.colors.Select(c => c.ToUnityColor()).ToList();
         mesh.SetColors(colors);
       }
       else if (speckleMesh.colors.Count != 0)
@@ -469,7 +467,7 @@ namespace Objects.Converter.Unity
         mat.SetFloat(Glossiness,  1 - (float)renderMaterial.roughness);
 
         if (renderMaterial.emissive != SColor.Black.ToArgb()) mat.EnableKeyword ("_EMISSION");
-        mat.SetColor(EmissionColor, ToUnityColor(SColor.FromArgb(renderMaterial.emissive)));
+        mat.SetColor(EmissionColor, renderMaterial.emissive.ToUnityColor());
         
         
 #if UNITY_EDITOR

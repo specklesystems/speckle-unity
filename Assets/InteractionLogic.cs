@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Speckle.Core.Api;
+using Speckle.Core.Logging;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -157,6 +158,13 @@ namespace Speckle.ConnectorUnity
                 statusText.text = $"Sent {commitId}";
                 sendProgress.gameObject.SetActive(false); //hide
               });
+            },
+            onErrorAction: (id, e) =>
+            {
+              MakeButtonsInteractable(true);
+              statusText.text = $"Error {id}";
+              sendProgress.gameObject.SetActive(false); //hide
+              throw new SpeckleException(e.Message, e);
             });
         }
       );
