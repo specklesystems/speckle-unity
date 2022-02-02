@@ -15,7 +15,7 @@
           "Piwik.Tracker": "3.0.0",
           "Sentry": "3.9.4",
           "Speckle.Newtonsoft.Json": "12.0.3.1",
-          "System.Data.SQLite.Core": "1.0.115"
+          "System.Data.SQLite.Mac": "1.0.104.2"
         },
         "runtime": {
           "SpeckleCore2.dll": {}
@@ -121,14 +121,6 @@
           }
         }
       },
-      "Stub.System.Data.SQLite.Core.NetStandard/1.0.115": {
-        "runtime": {
-          "lib/netstandard2.0/System.Data.SQLite.dll": {
-            "assemblyVersion": "1.0.115.0",
-            "fileVersion": "1.0.115.0"
-          }
-        }
-      },
       "System.Buffers/4.5.1": {
         "runtime": {
           "lib/netstandard2.0/System.Buffers.dll": {
@@ -148,9 +140,12 @@
           }
         }
       },
-      "System.Data.SQLite.Core/1.0.115": {
-        "dependencies": {
-          "Stub.System.Data.SQLite.Core.NetStandard": "1.0.115"
+      "System.Data.SQLite.Mac/1.0.104.2": {
+        "runtime": {
+          "lib/net45/System.Data.SQLite.Mac.dll": {
+            "assemblyVersion": "1.0.104.0",
+            "fileVersion": "1.0.104.0"
+          }
         }
       },
       "System.Memory/4.5.4": {
@@ -354,13 +349,6 @@
       "path": "speckle.newtonsoft.json/12.0.3.1",
       "hashPath": "speckle.newtonsoft.json.12.0.3.1.nupkg.sha512"
     },
-    "Stub.System.Data.SQLite.Core.NetStandard/1.0.115": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-afpVRUKjuLZ17W2iv779YORpWQN40rJ82g/ASC6Yq1J4emO+8hL316AISf5nJWfXecygLdqevzXxQZR7z2yRww==",
-      "path": "stub.system.data.sqlite.core.netstandard/1.0.115",
-      "hashPath": "stub.system.data.sqlite.core.netstandard.1.0.115.nupkg.sha512"
-    },
     "System.Buffers/4.5.1": {
       "type": "package",
       "serviceable": true,
@@ -375,12 +363,12 @@
       "path": "system.collections.immutable/5.0.0",
       "hashPath": "system.collections.immutable.5.0.0.nupkg.sha512"
     },
-    "System.Data.SQLite.Core/1.0.115": {
+    "System.Data.SQLite.Mac/1.0.104.2": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-OuzSKnAnXtbsB7MUddjLiLAUEuEu8kJco3jWllZs+zgYmuiK5VHUHafD74C65HwnnmWVHUvFBrJ0NDAKINuGNQ==",
-      "path": "system.data.sqlite.core/1.0.115",
-      "hashPath": "system.data.sqlite.core.1.0.115.nupkg.sha512"
+      "sha512": "sha512-metaMCvUbEWs3tMja3vYoMty8+5KGyoBThvbA6hM5NVhF8nM9BM9dQHSmYemWMr1QXZ/o8kXoRGZ3ZipQBth8A==",
+      "path": "system.data.sqlite.mac/1.0.104.2",
+      "hashPath": "system.data.sqlite.mac.1.0.104.2.nupkg.sha512"
     },
     "System.Memory/4.5.4": {
       "type": "package",
