@@ -41,7 +41,7 @@ namespace Speckle.ConnectorUnity
 
       SelectStreamText.text = $"Select a stream on {defaultAccount.serverInfo.name}:";
 
-      StreamList = await Streams.List();
+      StreamList = await Streams.List(30);
       if (!StreamList.Any())
       {
         Debug.Log("There are no streams in your account, please create one online.");

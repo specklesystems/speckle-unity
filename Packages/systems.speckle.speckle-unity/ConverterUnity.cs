@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Objects.BuiltElements;
+using Unity.Plastic.Antlr3.Runtime.Debug;
 using UnityEngine;
 using Mesh = Objects.Geometry.Mesh;
 
@@ -16,6 +17,8 @@ namespace Objects.Converter.Unity
   {
     #region implemented methods
 
+    public void SetConverterSettings(object settings) => throw new NotImplementedException();
+    
     public string Description => "Default Speckle Kit for Unity";
     public string Name => nameof(ConverterUnity);
     public string Author => "Speckle";
@@ -66,20 +69,23 @@ namespace Objects.Converter.Unity
         //   return View3DToNative(o);
         case Mesh o:
           return MeshToNative(o);
-        //Built elements with a mesh representation implement this interface
-        case IDisplayMesh o:
-          return MeshToNative((Base) o);
         default:
           //capture any other object that might have a mesh representation
-          if (@object["displayMesh"] is Mesh)
-            return MeshToNative(@object["displayMesh"] as Mesh);
-          throw new NotSupportedException();
+          if (@object["displayValue"] is Base b)
+            return ConvertToNative(b);
+          if (@object["displayValue"] is IEnumerable<Base> bs)
+            return MeshesToNative(@object, bs.OfType<Mesh>().ToList());
+          if (@object["displayMesh"] is Base m)
+            return ConvertToNative(m);
+          Debug.LogWarning($"Skipping {@object.GetType()} {@object.id} - Not supported type");
+          return null;
       }
+
     }
 
     public List<Base> ConvertToSpeckle(List<object> objects)
     {
-      return objects.Select(x => ConvertToSpeckle(x)).ToList();
+      return objects.Select(ConvertToSpeckle).ToList();
     }
 
     public List<object> ConvertToNative(List<Base> objects)
@@ -115,12 +121,16 @@ namespace Objects.Converter.Unity
         //   return true;
         // case View2D _:
         //   return false;
-        case IDisplayMesh _:
-          return true;
         case Mesh _:
           return true;
         default:
-          return @object["displayMesh"] is Mesh;
+          if (@object["displayValue"] is Base)
+            return true;
+          if (@object["displayValue"] is IEnumerable<Base>)
+            return true;
+          if (@object["displayMesh"] is Base)
+            return true;
+          return false;
       }
     }
 
