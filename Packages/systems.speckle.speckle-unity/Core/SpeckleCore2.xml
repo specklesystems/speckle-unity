@@ -625,6 +625,17 @@
             <exception cref="T:System.Exception">Throws exception if account fetching failed. This could be due to non-existent account or stream.</exception>
             <returns>The valid account object for this stream.</returns>
         </member>
+        <member name="T:Speckle.Core.Kits.HostApplications">
+            <summary>
+            List of Host Applications - their slugs should match our ghost tags and ci/cd slugs
+            </summary>
+        </member>
+        <member name="T:Speckle.Core.Kits.VersionedHostApplications">
+            <summary>
+            List of Host Applications with their versions 
+            Do not change these - they must match the converter names!
+            </summary>
+        </member>
         <member name="T:Speckle.Core.Kits.SchemaMainParam">
             <summary>
             Used to indicate which is the main input parameter of the schema builder component. Schema info will be attached to this object.
@@ -863,6 +874,11 @@
         <member name="P:Speckle.Core.Logging.Setup.HostApplication">
             <summary>
             Set from the connectors, defines which current host application we're running on.
+            </summary>
+        </member>
+        <member name="P:Speckle.Core.Logging.Setup.VersionedHostApplication">
+            <summary>
+            Set from the connectors, defines which current host application we're running on - includes the version.
             </summary>
         </member>
         <member name="P:Speckle.Core.Logging.Setup.SUUID">

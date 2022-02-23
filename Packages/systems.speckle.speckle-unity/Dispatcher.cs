@@ -106,7 +106,7 @@ namespace Speckle.ConnectorUnity
 
 
 		void Awake() {
-			Setup.Init(Applications.Unity);
+			Setup.Init(VersionedHostApplications.Unity, HostApplications.Unity.Slug);
 			
 			if (_instance == null) {
 				_instance = this;

@@ -9,58 +9,58 @@
     ".NETStandard,Version=v2.0/": {
       "SpeckleCore2/2.1.0": {
         "dependencies": {
-          "GraphQL.Client": "3.2.4",
+          "GraphQL.Client": "4.0.2",
           "Microsoft.CSharp": "4.7.0",
           "NETStandard.Library": "2.0.3",
           "Piwik.Tracker": "3.0.0",
-          "Sentry": "3.9.4",
+          "Sentry": "3.13.0",
           "Speckle.Newtonsoft.Json": "12.0.3.1",
-          "System.Data.SQLite.Core": "1.0.115"
+          "System.Data.SQLite.Core": "1.0.115.5"
         },
         "runtime": {
           "SpeckleCore2.dll": {}
         }
       },
-      "GraphQL.Client/3.2.4": {
+      "GraphQL.Client/4.0.2": {
         "dependencies": {
-          "GraphQL.Client.Abstractions": "3.2.4",
-          "GraphQL.Client.Abstractions.Websocket": "3.2.4"
+          "GraphQL.Client.Abstractions": "4.0.2",
+          "GraphQL.Client.Abstractions.Websocket": "4.0.2"
         },
         "runtime": {
           "lib/netstandard2.0/GraphQL.Client.dll": {
-            "assemblyVersion": "3.2.4.0",
-            "fileVersion": "3.2.4.0"
+            "assemblyVersion": "4.0.2.0",
+            "fileVersion": "4.0.2.0"
           }
         }
       },
-      "GraphQL.Client.Abstractions/3.2.4": {
+      "GraphQL.Client.Abstractions/4.0.2": {
         "dependencies": {
-          "GraphQL.Primitives": "3.2.4",
+          "GraphQL.Primitives": "4.0.2",
           "System.Reactive": "4.3.2"
         },
         "runtime": {
           "lib/netstandard2.0/GraphQL.Client.Abstractions.dll": {
-            "assemblyVersion": "3.2.4.0",
-            "fileVersion": "3.2.4.0"
+            "assemblyVersion": "4.0.2.0",
+            "fileVersion": "4.0.2.0"
           }
         }
       },
-      "GraphQL.Client.Abstractions.Websocket/3.2.4": {
+      "GraphQL.Client.Abstractions.Websocket/4.0.2": {
         "dependencies": {
-          "GraphQL.Client.Abstractions": "3.2.4"
+          "GraphQL.Client.Abstractions": "4.0.2"
         },
         "runtime": {
           "lib/netstandard2.0/GraphQL.Client.Abstractions.Websocket.dll": {
-            "assemblyVersion": "3.2.4.0",
-            "fileVersion": "3.2.4.0"
+            "assemblyVersion": "4.0.2.0",
+            "fileVersion": "4.0.2.0"
           }
         }
       },
-      "GraphQL.Primitives/3.2.4": {
+      "GraphQL.Primitives/4.0.2": {
         "runtime": {
           "lib/netstandard2.0/GraphQL.Primitives.dll": {
-            "assemblyVersion": "3.2.4.0",
-            "fileVersion": "3.2.4.0"
+            "assemblyVersion": "4.0.2.0",
+            "fileVersion": "4.0.2.0"
           }
         }
       },
@@ -98,7 +98,7 @@
           }
         }
       },
-      "Sentry/3.9.4": {
+      "Sentry/3.13.0": {
         "dependencies": {
           "Microsoft.Bcl.AsyncInterfaces": "5.0.0",
           "System.Buffers": "4.5.1",
@@ -108,8 +108,8 @@
         },
         "runtime": {
           "lib/netstandard2.0/Sentry.dll": {
-            "assemblyVersion": "3.9.4.0",
-            "fileVersion": "3.9.4.0"
+            "assemblyVersion": "3.13.0.0",
+            "fileVersion": "3.13.0.0"
           }
         }
       },
@@ -121,11 +121,11 @@
           }
         }
       },
-      "Stub.System.Data.SQLite.Core.NetStandard/1.0.115": {
+      "Stub.System.Data.SQLite.Core.NetStandard/1.0.115.5": {
         "runtime": {
           "lib/netstandard2.0/System.Data.SQLite.dll": {
-            "assemblyVersion": "1.0.115.0",
-            "fileVersion": "1.0.115.0"
+            "assemblyVersion": "1.0.115.5",
+            "fileVersion": "1.0.115.5"
           }
         }
       },
@@ -148,9 +148,9 @@
           }
         }
       },
-      "System.Data.SQLite.Core/1.0.115": {
+      "System.Data.SQLite.Core/1.0.115.5": {
         "dependencies": {
-          "Stub.System.Data.SQLite.Core.NetStandard": "1.0.115"
+          "Stub.System.Data.SQLite.Core.NetStandard": "1.0.115.5"
         }
       },
       "System.Memory/4.5.4": {
@@ -270,33 +270,33 @@
       "serviceable": false,
       "sha512": ""
     },
-    "GraphQL.Client/3.2.4": {
+    "GraphQL.Client/4.0.2": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-5UB4Q0q9FOp4mp0OpfxtA0Zm6vy36qZdScVh1g2Dv9eLLwmdCeZ1NIejSOhRW0B0YvK580X1AmPLH9/l+D4EeA==",
-      "path": "graphql.client/3.2.4",
-      "hashPath": "graphql.client.3.2.4.nupkg.sha512"
+      "sha512": "sha512-EB/icQ7QWzCQzfT6yv8L6BAW+c7DrQuwIg/nNSguOQBMs2W7aaYMpEYidEZ4U2ao0CrT6gcCY0F8xz9hoB3Pvw==",
+      "path": "graphql.client/4.0.2",
+      "hashPath": "graphql.client.4.0.2.nupkg.sha512"
     },
-    "GraphQL.Client.Abstractions/3.2.4": {
+    "GraphQL.Client.Abstractions/4.0.2": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-51LYbe41RazWwoHOcVpd9RthAOrWp/bs6dW299QInh1Lkt3uVcFq6i2XH+y9hzoKbraE+JpEpIefO7UIiG0uLQ==",
-      "path": "graphql.client.abstractions/3.2.4",
-      "hashPath": "graphql.client.abstractions.3.2.4.nupkg.sha512"
+      "sha512": "sha512-zmtHtejUacIQHAdLEsetDX27mccX0R6MfEu32Ek4l6pprJe3zdtqx+UuWz3wSmrIaj05NLEe5FCHNTjhm3MnjA==",
+      "path": "graphql.client.abstractions/4.0.2",
+      "hashPath": "graphql.client.abstractions.4.0.2.nupkg.sha512"
     },
-    "GraphQL.Client.Abstractions.Websocket/3.2.4": {
+    "GraphQL.Client.Abstractions.Websocket/4.0.2": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-XwTnbuaTtsNiYueyeCMJzO57Bg7EN9BPZ2tGMjyVhVXqAIUiOGzaG0MP/6KZidWvydOV3VYEex7VoqirtueBdw==",
-      "path": "graphql.client.abstractions.websocket/3.2.4",
-      "hashPath": "graphql.client.abstractions.websocket.3.2.4.nupkg.sha512"
+      "sha512": "sha512-1JDpd1HgvytSWf7/v1TMJ1EXm6oVuga+lJWY9b9RtmGDjEtmFLxP1663/KLe5vTMzXRpxx3saOkkjikHhQOn3w==",
+      "path": "graphql.client.abstractions.websocket/4.0.2",
+      "hashPath": "graphql.client.abstractions.websocket.4.0.2.nupkg.sha512"
     },
-    "GraphQL.Primitives/3.2.4": {
+    "GraphQL.Primitives/4.0.2": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-2GFvSKFVO9EYuNgWVTspHAY769+dI2THBW+1cH7ZmmpCiee/llbPTJSVZx2J7zDpSAbeR5EUoF3a5T80w1sP2A==",
-      "path": "graphql.primitives/3.2.4",
-      "hashPath": "graphql.primitives.3.2.4.nupkg.sha512"
+      "sha512": "sha512-+E7WLhaBahp+gKmavi/X/mwVXZUIl+VjVA5MKyzSOf3Zzo8DJCxvjsfybmosIRXee4Xk2YQKA+bKlPVuf1MG8g==",
+      "path": "graphql.primitives/4.0.2",
+      "hashPath": "graphql.primitives.4.0.2.nupkg.sha512"
     },
     "Microsoft.Bcl.AsyncInterfaces/5.0.0": {
       "type": "package",
@@ -340,12 +340,12 @@
       "path": "piwik.tracker/3.0.0",
       "hashPath": "piwik.tracker.3.0.0.nupkg.sha512"
     },
-    "Sentry/3.9.4": {
+    "Sentry/3.13.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-q7LK5E/xNNNO0hVNYjvTqOKAzzKy2+YHxtmd9WKlrp2bo9/55VMtyQmqqjacQ8Tha6ugj50Z5XWu+2IEUiN4+Q==",
-      "path": "sentry/3.9.4",
-      "hashPath": "sentry.3.9.4.nupkg.sha512"
+      "sha512": "sha512-2SrQ2WG+SvisEx8l60JHA7Em7LWpZ7k8tnHn7eWAL1H8HYT7LsW0i5Lu5vXazeDivKAGNZoS4q+XuFIUkMXyDg==",
+      "path": "sentry/3.13.0",
+      "hashPath": "sentry.3.13.0.nupkg.sha512"
     },
     "Speckle.Newtonsoft.Json/12.0.3.1": {
       "type": "package",
@@ -354,12 +354,12 @@
       "path": "speckle.newtonsoft.json/12.0.3.1",
       "hashPath": "speckle.newtonsoft.json.12.0.3.1.nupkg.sha512"
     },
-    "Stub.System.Data.SQLite.Core.NetStandard/1.0.115": {
+    "Stub.System.Data.SQLite.Core.NetStandard/1.0.115.5": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-afpVRUKjuLZ17W2iv779YORpWQN40rJ82g/ASC6Yq1J4emO+8hL316AISf5nJWfXecygLdqevzXxQZR7z2yRww==",
-      "path": "stub.system.data.sqlite.core.netstandard/1.0.115",
-      "hashPath": "stub.system.data.sqlite.core.netstandard.1.0.115.nupkg.sha512"
+      "sha512": "sha512-WfrqQg6WL+r4H1sVKTenNj6ERLXUukUxqcjH1rqPqXadeIWccTVpydESieD7cZ/NWQVSKLYIHuoBX5du+BFhIQ==",
+      "path": "stub.system.data.sqlite.core.netstandard/1.0.115.5",
+      "hashPath": "stub.system.data.sqlite.core.netstandard.1.0.115.5.nupkg.sha512"
     },
     "System.Buffers/4.5.1": {
       "type": "package",
@@ -375,12 +375,12 @@
       "path": "system.collections.immutable/5.0.0",
       "hashPath": "system.collections.immutable.5.0.0.nupkg.sha512"
     },
-    "System.Data.SQLite.Core/1.0.115": {
+    "System.Data.SQLite.Core/1.0.115.5": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-OuzSKnAnXtbsB7MUddjLiLAUEuEu8kJco3jWllZs+zgYmuiK5VHUHafD74C65HwnnmWVHUvFBrJ0NDAKINuGNQ==",
-      "path": "system.data.sqlite.core/1.0.115",
-      "hashPath": "system.data.sqlite.core.1.0.115.nupkg.sha512"
+      "sha512": "sha512-vADIqqgpxaC5xR6qOV8/KMZkQeSDCfmmWpVOtQx0oEr3Yjq2XdTxX7+jfE4+oO2xPovAbYiz6Q5cLRbSsDkq6Q==",
+      "path": "system.data.sqlite.core/1.0.115.5",
+      "hashPath": "system.data.sqlite.core.1.0.115.5.nupkg.sha512"
     },
     "System.Memory/4.5.4": {
       "type": "package",
