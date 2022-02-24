@@ -54,18 +54,24 @@ namespace Speckle.ConnectorUnity
     }
 
 
+    /// <summary>
+    /// Converts a Unity color to an ARBG int
+    /// </summary>
     public static int ToIntColor(this Color c)
     {
       return
           System.Drawing.Color
-              .FromArgb(Convert.ToInt32(c.r * 255), Convert.ToInt32(c.r * 255), Convert.ToInt32(c.r * 255))
+              .FromArgb(Convert.ToInt32(c.r * 255), Convert.ToInt32(c.g * 255), Convert.ToInt32(c.b * 255))
               .ToArgb();
     }
-
+    
+    /// <summary>
+    /// Converts a ARGB formatted int to a Unity Color
+    /// </summary>
     public static Color ToUnityColor(this int c)
     {
       var argb = System.Drawing.Color.FromArgb(c);
-      return new Color(argb.R / 255.0f, argb.G / 255.0f, argb.B / 255.0f);
+      return new Color(argb.R / 255f, argb.G / 255f, argb.B / 255f);
     }
 
   }

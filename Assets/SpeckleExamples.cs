@@ -22,6 +22,7 @@ namespace Speckle.ConnectorUnity
     private List<Stream> StreamList = null;
     private Stream SelectedStream = null;
     private List<GameObject> StreamPanels = new List<GameObject>();
+    
 
     async void Start()
     {
@@ -40,7 +41,7 @@ namespace Speckle.ConnectorUnity
 
       SelectStreamText.text = $"Select a stream on {defaultAccount.serverInfo.name}:";
 
-      StreamList = await Streams.List();
+      StreamList = await Streams.List(30);
       if (!StreamList.Any())
       {
         Debug.Log("There are no streams in your account, please create one online.");
@@ -82,7 +83,7 @@ namespace Speckle.ConnectorUnity
     private async void AddReceiver()
     {
       var autoReceive = AutoReceiveToggle.isOn;
-      var stream = await Streams.Get(SelectedStream.id, 10);
+      var stream = await Streams.Get(SelectedStream.id, 30);
 
       var streamPrefab = Instantiate(StreamPanel, new Vector3(0, 0, 0),
         Quaternion.identity);
