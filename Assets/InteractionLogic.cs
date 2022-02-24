@@ -152,6 +152,7 @@ namespace Speckle.ConnectorUnity
             },
             onDataSentAction: (commitId) =>
             {
+              Debug.Log("Send operation completed", this);
               Dispatcher.Instance().Enqueue(() =>
               {
                 MakeButtonsInteractable(true);
@@ -161,10 +162,14 @@ namespace Speckle.ConnectorUnity
             },
             onErrorAction: (id, e) =>
             {
-              MakeButtonsInteractable(true);
-              statusText.text = $"Error {id}";
-              sendProgress.gameObject.SetActive(false); //hide
-              throw new SpeckleException(e.Message, e);
+              Debug.LogError("Send operation Failed!", this);
+              Dispatcher.Instance().Enqueue(() =>
+              {
+                MakeButtonsInteractable(true);
+                statusText.text = $"Error {id}";
+                sendProgress.gameObject.SetActive(false); //hide
+                throw new SpeckleException(e.Message, e);
+              });
             });
         }
       );

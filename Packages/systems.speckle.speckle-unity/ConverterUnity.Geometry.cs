@@ -6,6 +6,7 @@ using System.Reflection;
 using Objects.Other;
 using Objects.Utils;
 using Speckle.ConnectorUnity;
+using Speckle.Core.Logging;
 using Speckle.Core.Models;
 using UnityEditor;
 using UnityEngine;
@@ -528,7 +529,14 @@ namespace Objects.Converter.Unity
 
       foreach (var key in sd.Data.Keys)
       {
-        @base[key] = sd.Data[key];
+        try
+        {
+          @base[key] = sd.Data[key];
+        }
+        catch(SpeckleException)
+        {
+          // Ignore SpeckleExceptions that may be caused by get only properties
+        }
       }
     }
   }
