@@ -187,8 +187,8 @@ namespace Speckle.ConnectorUnity
           {
             streamId = SelectedStream.id,
             commitId = Branches[SelectedBranchIndex].commits.items[SelectedCommitIndex].id,
-            message = $"received commit from {Applications.Unity} Editor",
-            sourceApplication = Applications.Unity
+            message = $"received commit from {VersionedHostApplications.Unity} Editor",
+            sourceApplication = VersionedHostApplications.Unity
           });
         }
         catch

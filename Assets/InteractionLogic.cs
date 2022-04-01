@@ -139,38 +139,51 @@ namespace Speckle.ConnectorUnity
           MakeButtonsInteractable(false);
 
           statusText.text = "Sending...";
-          sender.Send(stream.id, objs,
-            onProgressAction: (dict) =>
-            {
-              //Run on a dispatcher as GOs can only be retrieved on the main thread
-              Dispatcher.Instance().Enqueue(() =>
+          try
+          {
+            sender.Send(stream.id, objs,
+              onProgressAction: (dict) =>
               {
-                var val = dict.Values.Average() / objs.Count;
-                sendProgress.gameObject.SetActive(true);
-                sendProgress.value = (float) val;
-              });
-            },
-            onDataSentAction: (commitId) =>
-            {
-              Debug.Log("Send operation completed", this);
-              Dispatcher.Instance().Enqueue(() =>
+                //Run on a dispatcher as GOs can only be retrieved on the main thread
+                Dispatcher.Instance().Enqueue(() =>
+                {
+                  var val = dict.Values.Average() / objs.Count;
+                  sendProgress.gameObject.SetActive(true);
+                  sendProgress.value = (float) val;
+                });
+              },
+              onDataSentAction: (commitId) =>
               {
-                MakeButtonsInteractable(true);
-                statusText.text = $"Sent {commitId}";
-                sendProgress.gameObject.SetActive(false); //hide
-              });
-            },
-            onErrorAction: (id, e) =>
-            {
-              Debug.LogError("Send operation Failed!", this);
-              Dispatcher.Instance().Enqueue(() =>
+                Debug.Log("Send operation completed", this);
+                Dispatcher.Instance().Enqueue(() =>
+                {
+                  MakeButtonsInteractable(true);
+                  statusText.text = $"Sent {commitId}";
+                  sendProgress.gameObject.SetActive(false); //hide
+                });
+              },
+              onErrorAction: (id, e) =>
               {
-                MakeButtonsInteractable(true);
-                statusText.text = $"Error {id}";
-                sendProgress.gameObject.SetActive(false); //hide
-                throw new SpeckleException(e.Message, e);
+                Debug.LogError("Send operation Failed!", this);
+                Dispatcher.Instance().Enqueue(() =>
+                {
+                  MakeButtonsInteractable(true);
+                  statusText.text = $"Error {id}";
+                  sendProgress.gameObject.SetActive(false); //hide
+                  Debug.LogError(e.Message, this);
+                });
               });
+          }
+          catch(Exception e)
+          {
+            Dispatcher.Instance().Enqueue(() =>
+            {
+              MakeButtonsInteractable(true);
+              statusText.text = $"Error {e.Message}";
+              sendProgress.gameObject.SetActive(false); //hide
+              Debug.LogError(e.Message, this);
             });
+          }
         }
       );
     }

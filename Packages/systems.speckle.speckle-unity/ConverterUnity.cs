@@ -2,10 +2,12 @@
 using Speckle.Core.Kits;
 using Speckle.Core.Models;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using JetBrains.Annotations;
 using Objects.BuiltElements;
 using Unity.Plastic.Antlr3.Runtime.Debug;
 using UnityEngine;
@@ -26,7 +28,7 @@ namespace Objects.Converter.Unity
     
     public ProgressReport Report { get; }
 
-    public IEnumerable<string> GetServicedApplications() => new string[] {Applications.Other}; //TODO: add unity
+    public IEnumerable<string> GetServicedApplications() => new string[] {VersionedHostApplications.Unity};
 
     public HashSet<Exception> ConversionErrors { get; private set; } = new HashSet<Exception>();
 
@@ -71,16 +73,33 @@ namespace Objects.Converter.Unity
           return MeshToNative(o);
         default:
           //capture any other object that might have a mesh representation
-          if (@object["displayValue"] is Base b)
-            return ConvertToNative(b);
-          if (@object["displayValue"] is IEnumerable<Base> bs)
-            return MeshesToNative(@object, bs.OfType<Mesh>().ToList());
-          if (@object["displayMesh"] is Base m)
-            return ConvertToNative(m);
+          object fallbackObject = DisplayValueToNative(@object);
+          if (fallbackObject != null) return fallbackObject;
+          
           Debug.LogWarning($"Skipping {@object.GetType()} {@object.id} - Not supported type");
           return null;
       }
 
+    }
+
+    public IList<string> DisplayValuePropertyAliases { get; set; } = new[] {"displayValue", "displayMesh" };
+    public object DisplayValueToNative(Base @object)
+    {
+      foreach (string alias in DisplayValuePropertyAliases)
+      {
+        switch (@object[alias])
+        {
+          //capture any other object that might have a mesh representation
+          case IEnumerable<Base> dvCollection:
+            return MeshesToNative(@object, dvCollection.OfType<Mesh>().ToList());
+          case Mesh dvMesh:
+            return MeshesToNative(@object , new[] {dvMesh});
+          case Base dvBase:
+            return ConvertToNative(dvBase);
+        }
+      }
+
+      return null;
     }
 
     public List<Base> ConvertToSpeckle(List<object> objects)

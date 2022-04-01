@@ -13,6 +13,7 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using Mesh = Objects.Geometry.Mesh;
 using SColor = System.Drawing.Color;
+using Transform = Objects.Other.Transform;
 
 namespace Objects.Converter.Unity
 {
@@ -257,7 +258,7 @@ namespace Objects.Converter.Unity
     /// <param name="meshes">Collection of <see cref="Objects.Geometry.Mesh"/>es that shall be converted</param>
     /// <param name="properties">If provided, will override the properties on the mesh itself</param>
     /// <returns>A <see cref="GameObject"/> with the converted <see cref="UnityEngine.Mesh"/>, <see cref="MeshFilter"/>, and <see cref="MeshRenderer"/></returns>
-    public GameObject MeshesToNative(Base element, IReadOnlyCollection<Mesh> meshes, Dictionary<string, object> properties = null)
+    public GameObject MeshesToNative(Base element, IReadOnlyCollection<Mesh> meshes)
     {
       MeshDataToNative(meshes, out var nativeMesh, out var nativeMaterials);
 
@@ -271,24 +272,19 @@ namespace Objects.Converter.Unity
       var meshRenderer = go.AddComponent<MeshRenderer>();
 
       meshRenderer.sharedMaterials = nativeMaterials;
-      //Add mesh collider
-      // MeshCollider mc = go.AddComponent<MeshCollider>( );
-      // mc.sharedMesh = mesh;
-      //mc.convex = true;
 
+      
+      var excludeProps = new HashSet<string>(typeof(Base).GetProperties(BindingFlags.Instance | BindingFlags.Public)
+        .Select(x => x.Name));
+      
+      excludeProps.Add("displayValue");
+      excludeProps.Add("displayMesh");
+      
+      var properties = element.GetMembers()
+        .Where(x => !excludeProps.Contains(x.Key))
+        .ToDictionary(x => x.Key, x => x.Value);
 
-      //attach properties on this very mesh
-      //means the mesh originated in Rhino or similar
-      if (properties == null)
-      {
-        var meshprops = typeof(Base).GetProperties(BindingFlags.Instance | BindingFlags.Public).Select(x => x.Name)
-          .ToList();
-        properties = element.GetMembers()
-          .Where(x => !meshprops.Contains(x.Key))
-          .ToDictionary(x => x.Key, x => x.Value);
-      }
-
-      AttachSpeckleProperties(go, properties);
+        AttachSpeckleProperties(go, properties);
       return go;
     }
     
@@ -298,14 +294,14 @@ namespace Objects.Converter.Unity
     /// <param name="speckleMesh">Mesh to convert</param>
     /// <param name="properties">If provided, will override the properties on the mesh itself</param>
     /// <returns></returns>
-    public GameObject MeshToNative(Mesh speckleMesh, Dictionary<string, object> properties = null)
+    public GameObject MeshToNative(Mesh speckleMesh)
     {
       if (speckleMesh.vertices.Count == 0 || speckleMesh.faces.Count == 0)
       {
         return null;
       }
 
-      return MeshesToNative(speckleMesh, new[] {speckleMesh}, properties);
+      return MeshesToNative(speckleMesh, new[] {speckleMesh});
     }
 
     /// <summary>
@@ -333,28 +329,28 @@ namespace Objects.Converter.Unity
       }
       nativeMaterials = materials.ToArray();
 
+      Debug.Assert(verts.Count >= 0);
+      Debug.Assert(verts.Count >= 0);
       nativeMesh = new UnityEngine.Mesh();
       
-      //TODO not sure if this is necessary, could just set the GameObject transform like we are in unreal?
+      
       //  center transform pivot according to the bounds of the model
-      // if (recenterMeshTransforms)
+      // Bounds meshBounds = new Bounds
       // {
-      //   Bounds meshBounds = new Bounds
-      //   {
-      //     center = verts[0]
-      //   };
+      //  center = verts[0]
+      // };
       //
-      //   foreach (var vert in verts)
-      //   {
-      //     meshBounds.Encapsulate(vert);
-      //   }
-      //   
-      //   // offset mesh vertices
-      //   for (int l = 0; l < verts.Count; l++)
-      //   {
-      //     verts[l] -= meshBounds.center;
-      //   }
+      // foreach (var vert in verts)
+      // {
+      //  meshBounds.Encapsulate(vert);
       // }
+      //
+      // // offset mesh vertices
+      // for (int l = 0; l < verts.Count; l++)
+      // {
+      //  verts[l] -= meshBounds.center;
+      // }
+      
       
       nativeMesh.subMeshCount = subMeshes.Count;
       
@@ -450,6 +446,18 @@ namespace Objects.Converter.Unity
         uv[i] = new Vector2(vert.x / xSize, vert.y / ySize);
       }
       return uv;
+    }
+    
+    private static Matrix4x4 UnflattenMatrix(IList<double> flatMatrix)
+    {
+      Matrix4x4 matrix = new Matrix4x4();
+      for(int row = 0; row < 4; row++)
+      for(int col = 0; col < 4; col++)
+      {
+        matrix[row,col] = (float)flatMatrix[row * 4 + col];
+      }
+
+      return matrix.transpose;
     }
     #endregion
 

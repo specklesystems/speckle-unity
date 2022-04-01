@@ -62,12 +62,12 @@ public class SelectionManager : MonoBehaviour
         return;
 
       selectedObjects.Clear();
-      for (int i = 0; i < selectables.Count; i++)
+      Bounds viewportBounds = GetViewportBounds(camera, mousePosition1, Input.mousePosition);
+      foreach (var t in selectables)
       {
-        Bounds viewportBounds = GetViewportBounds(camera, mousePosition1, Input.mousePosition);
-        if (viewportBounds.Contains(camera.WorldToViewportPoint(selectables[i].transform.position)))
+        if (viewportBounds.Contains(camera.WorldToViewportPoint(t.transform.position)))
         {
-          selectedObjects.Add(selectables[i]);
+          selectedObjects.Add(t);
         }
       }
     }
