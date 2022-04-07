@@ -222,6 +222,12 @@
             </summary>
             <remarks>Assign units when using this constructor due to <paramref name="height"/> param</remarks>
         </member>
+        <member name="M:Objects.BuiltElements.Room.#ctor(System.String,System.String,Objects.BuiltElements.Level,Objects.Geometry.Point,System.Collections.Generic.List{Objects.BuiltElements.Revit.Parameter})">
+            <summary>
+            SchemaBuilder constructor for a Room
+            </summary>
+            <remarks>Assign units when using this constructor due to <paramref name="height"/> param</remarks>
+        </member>
         <member name="M:Objects.BuiltElements.Wall.#ctor(System.Double,Objects.ICurve,System.Collections.Generic.List{Speckle.Core.Models.Base})">
             <summary>
             SchemaBuilder constructor for a Speckle wall
@@ -240,6 +246,18 @@
             <summary>
             Gets or sets the point at 0.5 length.
             </summary>
+        </member>
+        <member name="M:Objects.Geometry.Arc.#ctor(Objects.Geometry.Point,Objects.Geometry.Point,System.Double,System.String,System.String)">
+            <summary>
+            Initialise an `Arc` using the arc angle and the start and end points.
+            The radius, midpoint, start angle, and end angle will be calculated.
+            For now, this assumes 2D arcs on the XY plane
+            </summary>
+            <param name="startPoint">The start point of the arc</param>
+            <param name="endPoint">The end point of the arc</param>
+            <param name="angleRadians">The arc angle</param>
+            <param name="units">Units (defaults to "m")</param>
+            <param name="applicationId">ID given to the arc in the authoring programme (defaults to null)</param>
         </member>
         <member name="P:Objects.Geometry.Brep.Surfaces">
             <summary>
@@ -486,6 +504,41 @@
             You should not use this for anything. Access coordinates using X,Y,Z fields.
             </summary>
         </member>
+        <member name="P:Objects.Geometry.Vector.Length">
+            <summary>
+            Gets the Euclidean length of this vector.
+            </summary>
+            <returns>Length of the vector.</returns>
+        </member>
+        <member name="M:Objects.Geometry.Vector.DotProduct(Objects.Geometry.Vector,Objects.Geometry.Vector)">
+            <summary>
+            Gets the scalar product (dot product) of two given vectors
+            Dot product = u1*v1 + u2*v2 + u3*v3.
+            </summary>
+            <param name="u">First vector.</param>
+            <param name="v">Second vector.</param>
+            <returns>Numerical value of the dot product.</returns>
+        </member>
+        <member name="M:Objects.Geometry.Vector.CrossProduct(Objects.Geometry.Vector,Objects.Geometry.Vector)">
+            <summary>
+            Computes the vector product (cross product) of two given vectors
+            Cross product = { u2 * v3 - u3 * v2; u3 * v1 - u1 * v3; u1 * v2 - u2 * v1 }.
+            </summary>
+            <param name="u">First vector.</param>
+            <param name="v">Second vector.</param>
+            <returns>Vector result of the cross product.</returns>
+        </member>
+        <member name="M:Objects.Geometry.Vector.Unitize">
+            <summary>
+            Divides this vector by it's euclidean length.
+            </summary>
+        </member>
+        <member name="M:Objects.Geometry.Vector.Unit">
+            <summary>
+            Returns a normalized copy of this vector.
+            </summary>
+            <returns>A copy of this vector unitized.</returns>
+        </member>
         <member name="T:Objects.ITransformable`1">
             <summary>
             Interface for transformable objects.
@@ -679,7 +732,7 @@
             <param name="concreteCode"></param>
             <param name="coincidenceTolerance"></param>
         </member>
-        <member name="M:Objects.Structural.ETABS.Geometry.ETABSElement1D.#ctor(Objects.Geometry.Line,Objects.Structural.Properties.Property1D,Objects.Structural.Geometry.ElementType1D,System.String,Objects.Structural.Geometry.Restraint,Objects.Structural.Geometry.Restraint,Objects.Geometry.Vector,Objects.Geometry.Vector,Objects.Geometry.Plane,Objects.Structural.ETABS.Properties.ETABSLinearSpring,System.Double[],Objects.Structural.ETABS.Properties.DesignProcedure)">
+        <member name="M:Objects.Structural.CSI.Geometry.CSIElement1D.#ctor(Objects.Geometry.Line,Objects.Structural.Properties.Property1D,Objects.Structural.Geometry.ElementType1D,System.String,Objects.Structural.Geometry.Restraint,Objects.Structural.Geometry.Restraint,Objects.Geometry.Vector,Objects.Geometry.Vector,Objects.Geometry.Plane,Objects.Structural.CSI.Properties.CSILinearSpring,System.Double[],Objects.Structural.CSI.Properties.DesignProcedure)">
             <summary>
             SchemaBuilder constructor for structural 1D element (based on local axis)
             </summary>
@@ -693,7 +746,7 @@
             <param name="end2Offset"></param>
             <param name="localAxis"></param>
         </member>
-        <member name="M:Objects.Structural.ETABS.Geometry.ETABSElement1D.#ctor(Objects.Geometry.Line,Objects.Structural.Properties.Property1D,Objects.Structural.Geometry.ElementType1D,System.String,Objects.Structural.Geometry.Restraint,Objects.Structural.Geometry.Restraint,Objects.Geometry.Vector,Objects.Geometry.Vector,Objects.Structural.Geometry.Node,System.Double,Objects.Structural.ETABS.Properties.ETABSLinearSpring,System.Double[],Objects.Structural.ETABS.Properties.DesignProcedure)">
+        <member name="M:Objects.Structural.CSI.Geometry.CSIElement1D.#ctor(Objects.Geometry.Line,Objects.Structural.Properties.Property1D,Objects.Structural.Geometry.ElementType1D,System.String,Objects.Structural.Geometry.Restraint,Objects.Structural.Geometry.Restraint,Objects.Geometry.Vector,Objects.Geometry.Vector,Objects.Structural.Geometry.Node,System.Double,Objects.Structural.CSI.Properties.CSILinearSpring,System.Double[],Objects.Structural.CSI.Properties.DesignProcedure)">
             <summary>
             SchemaBuilder constructor for structural 1D element (based on orientation node and angle)
             </summary>

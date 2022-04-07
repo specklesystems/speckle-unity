@@ -129,7 +129,6 @@ namespace Speckle.ConnectorUnity
     {
       try
       {
-        Tracker.TrackPageview(Tracker.RECEIVE);
 
         var transport = new ServerTransport(Client.Account, StreamId);
         var @base = await Operations.Receive(
