@@ -52,7 +52,6 @@ namespace Speckle.ConnectorUnity
         {
           var res = await Operations.Send(
             data,
-            this.GetCancellationTokenOnDestroy(),
             new List<ITransport>() { transport },
             useDefaultCache: true,
             onProgressAction: onProgressAction,
