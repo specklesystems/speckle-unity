@@ -54,10 +54,9 @@ namespace Speckle.ConnectorUnity
             data,
             new List<ITransport>() { trasnport },
             useDefaultCache: true,
-            onProgressAction: onProgressAction,
-            onErrorAction: onErrorAction,
-            disposeTransports: true
-          )
+            disposeTransports: true,
+          onProgressAction: onProgressAction,
+            onErrorAction: onErrorAction
           );
 
           trasnport?.Dispose();
