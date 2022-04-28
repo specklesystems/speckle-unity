@@ -48,6 +48,7 @@ namespace Speckle.ConnectorUnity
             sourceApplication:Applications.Unity,
             totalChildrenCount:gameObjects.Count(),
             account: account,
+            disposeTransports: true
             onErrorAction: onErrorAction,
             onProgressAction: onProgressAction);
 
