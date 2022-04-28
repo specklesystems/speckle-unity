@@ -45,7 +45,7 @@ namespace Speckle.ConnectorUnity
         Task.Run(async () =>
         {
           var res = await Helpers.Send(streamId, data, "Data from unity!",
-            sourceApplication:Applications.Unity,
+            sourceApplication: VersionedHostApplications.Unity,
             totalChildrenCount:gameObjects.Count(),
             account: account,
             disposeTransports: true
