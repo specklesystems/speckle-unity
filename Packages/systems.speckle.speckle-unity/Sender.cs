@@ -46,20 +46,21 @@ namespace Speckle.ConnectorUnity
       {
         var data = ConvertRecursivelyToSpeckle(gameObjects);
         
-        trasnport = new ServerTransport(Account ?? AccountManager.GetDefaultAccount() , streamId);
+        trasnport = new ServerTransport(account ?? AccountManager.GetDefaultAccount() , streamId);
         
         Task.Run(async () =>
         {
           var res = await Operations.Send(
             data,
-            new List<ITransport>() { transport },
+            new List<ITransport>() { trasnport },
             useDefaultCache: true,
             onProgressAction: onProgressAction,
             onErrorAction: onErrorAction,
             disposeTransports: true
           )
+          );
 
-          transport?.Dispose();
+          trasnport?.Dispose();
           onDataSentAction?.Invoke(res);
         });
       }
