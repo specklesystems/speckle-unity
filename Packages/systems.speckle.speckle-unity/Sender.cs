@@ -24,6 +24,9 @@ namespace Speckle.ConnectorUnity
   /// </summary>
   public class Sender : MonoBehaviour
   {
+
+    private ServerTransport trasnport;
+    
     /// <summary>
     /// Converts and sends the data of the last commit on the Stream
     /// </summary>
@@ -42,15 +45,21 @@ namespace Speckle.ConnectorUnity
       try
       {
         var data = ConvertRecursivelyToSpeckle(gameObjects);
+        
+        trasnport = new ServerTransport(account ?? AccountManager.GetDefaultAccount() , streamId);
+        
         Task.Run(async () =>
         {
-          var res = await Helpers.Send(streamId, data, "Data from unity!",
-            sourceApplication: VersionedHostApplications.Unity,
-            totalChildrenCount:gameObjects.Count(),
-            account: account,
-            onErrorAction: onErrorAction,
-            onProgressAction: onProgressAction);
+          var res = await Operations.Send(
+            data,
+            new List<ITransport>() { trasnport },
+            useDefaultCache: true,
+            disposeTransports: true,
+          onProgressAction: onProgressAction,
+            onErrorAction: onErrorAction
+          );
 
+          trasnport?.Dispose();
           onDataSentAction?.Invoke(res);
         });
       }
@@ -58,6 +67,11 @@ namespace Speckle.ConnectorUnity
       {
         throw new SpeckleException(e.Message, e, true, SentryLevel.Error);
       }
+    }
+
+    private void OnDestroy()
+    {
+      trasnport?.Dispose();
     }
 
     #region private methods
