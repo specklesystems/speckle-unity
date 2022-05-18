@@ -256,7 +256,6 @@ namespace Objects.Converter.Unity
     /// </summary>
     /// <param name="element">The <see cref="Base"/> element from which properties should be grabbed from</param>
     /// <param name="meshes">Collection of <see cref="Objects.Geometry.Mesh"/>es that shall be converted</param>
-    /// <param name="properties">If provided, will override the properties on the mesh itself</param>
     /// <returns>A <see cref="GameObject"/> with the converted <see cref="UnityEngine.Mesh"/>, <see cref="MeshFilter"/>, and <see cref="MeshRenderer"/></returns>
     public GameObject MeshesToNative(Base element, IReadOnlyCollection<Mesh> meshes)
     {
@@ -292,7 +291,6 @@ namespace Objects.Converter.Unity
     /// Converts <paramref name="speckleMesh"/> to a <see cref="GameObject"/> with a <see cref="MeshRenderer"/>
     /// </summary>
     /// <param name="speckleMesh">Mesh to convert</param>
-    /// <param name="properties">If provided, will override the properties on the mesh itself</param>
     /// <returns></returns>
     public GameObject MeshToNative(Mesh speckleMesh)
     {

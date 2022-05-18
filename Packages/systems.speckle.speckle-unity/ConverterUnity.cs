@@ -1,15 +1,8 @@
-﻿using Objects.Geometry;
-using Speckle.Core.Kits;
+﻿using Speckle.Core.Kits;
 using Speckle.Core.Models;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using JetBrains.Annotations;
-using Objects.BuiltElements;
-using Unity.Plastic.Antlr3.Runtime.Debug;
 using UnityEngine;
 using Mesh = Objects.Geometry.Mesh;
 
