@@ -24,17 +24,26 @@ namespace Speckle.ConnectorUnity
   /// </summary>
   public class Sender : MonoBehaviour
   {
+
+    private ServerTransport transport;
+
     /// <summary>
     /// Converts and sends the data of the last commit on the Stream
     /// </summary>
     /// <param name="streamId">ID of the stream to send to</param>
     /// <param name="gameObjects">List of gameObjects to convert and send</param>
     /// <param name="account">Account to use. If not provided the default account will be used</param>
+    /// <param name="branchName">Name of branch to send to</param>
+    /// <param name="createCommit">When true, will create a commit using the root object</param>
     /// <param name="onDataSentAction">Action to run after the data has been sent</param>
     /// <param name="onProgressAction">Action to run when there is download/conversion progress</param>
     /// <param name="onErrorAction">Action to run on error</param>
     /// <exception cref="SpeckleException"></exception>
-    public void Send(string streamId, List<GameObject> gameObjects, Account account = null,
+    public void Send(string streamId,
+      List<GameObject> gameObjects,
+      Account account = null,
+      string branchName = "main",
+      bool createCommit = true,
       Action<string> onDataSentAction = null,
       Action<ConcurrentDictionary<string, int>> onProgressAction = null,
       Action<string, Exception> onErrorAction = null)
@@ -42,15 +51,36 @@ namespace Speckle.ConnectorUnity
       try
       {
         var data = ConvertRecursivelyToSpeckle(gameObjects);
+        var client = new Client(account ?? AccountManager.GetDefaultAccount());
+        transport = new ServerTransport(client.Account, streamId);
+
         Task.Run(async () =>
         {
-          var res = await Helpers.Send(streamId, data, "Data from unity!",
-            sourceApplication:Applications.Unity,
-            totalChildrenCount:gameObjects.Count(),
-            account: account,
-            onErrorAction: onErrorAction,
-            onProgressAction: onProgressAction);
+          var res = await Operations.Send(
+            data,
+            new List<ITransport>() { transport },
+            useDefaultCache: true,
+            disposeTransports: true,
+            onProgressAction: onProgressAction,
+            onErrorAction: onErrorAction
+          );
 
+          Analytics.TrackEvent(client.Account, Analytics.Events.Send);
+
+          if (createCommit)
+          {
+            await client.CommitCreate(
+              new CommitCreateInput
+              {
+                streamId = streamId,
+                branchName = branchName,
+                objectId = res,
+                message = "No message",
+                sourceApplication = VersionedHostApplications.Unity,
+              });
+          }
+          
+          transport?.Dispose();
           onDataSentAction?.Invoke(res);
         });
       }
@@ -58,6 +88,11 @@ namespace Speckle.ConnectorUnity
       {
         throw new SpeckleException(e.Message, e, true, SentryLevel.Error);
       }
+    }
+
+    private void OnDestroy()
+    {
+      transport?.Dispose();
     }
 
     #region private methods

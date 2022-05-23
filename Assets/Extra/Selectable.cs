@@ -40,11 +40,7 @@ public class Selectable : MonoBehaviour
 
   void OnDisable()
   {
-    //Remove this Object from global list
-    if (SelectionManager.selectables.Contains(this))
-    {
-      SelectionManager.selectables.Remove(this);
-      SelectionManager.selectedObjects.Remove(this);
-    }
+    SelectionManager.selectables.Remove(this);
+    SelectionManager.selectedObjects.Remove(this);
   }
 }
