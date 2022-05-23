@@ -1,6 +1,7 @@
 ﻿using Speckle.Core.Kits;
 using Speckle.Core.Models;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -75,7 +76,7 @@ namespace Objects.Converter.Unity
 
     }
 
-    public IList<string> DisplayValuePropertyAliases { get; set; } = new[] {"displayValue", "displayMesh" };
+    public IList<string> DisplayValuePropertyAliases { get; set; } = new[] {"displayValue","@displayValue","displayMesh", "@displayMesh" };
     public object DisplayValueToNative(Base @object)
     {
       foreach (string alias in DisplayValuePropertyAliases)
@@ -83,7 +84,7 @@ namespace Objects.Converter.Unity
         switch (@object[alias])
         {
           //capture any other object that might have a mesh representation
-          case IEnumerable<Base> dvCollection:
+          case IList dvCollection:
             return MeshesToNative(@object, dvCollection.OfType<Mesh>().ToList());
           case Mesh dvMesh:
             return MeshesToNative(@object , new[] {dvMesh});
@@ -91,7 +92,7 @@ namespace Objects.Converter.Unity
             return ConvertToNative(dvBase);
         }
       }
-
+      Debug.LogWarning("displayValue had no convertable objects");
       return null;
     }
 
@@ -103,7 +104,7 @@ namespace Objects.Converter.Unity
     public List<object> ConvertToNative(List<Base> objects)
     {
       return objects.Select(x => ConvertToNative(x)).ToList();
-      ;
+      
     }
 
     public bool CanConvertToSpeckle(object @object)
@@ -136,12 +137,15 @@ namespace Objects.Converter.Unity
         case Mesh _:
           return true;
         default:
-          if (@object["displayValue"] is Base)
-            return true;
-          if (@object["displayValue"] is IEnumerable<Base>)
-            return true;
-          if (@object["displayMesh"] is Base)
-            return true;
+          
+           foreach (string alias in DisplayValuePropertyAliases)
+           {
+             if (@object[alias] is Base)
+               return true;
+             if (@object[alias] is IList)
+               return true;
+           }
+          
           return false;
       }
     }

@@ -272,12 +272,15 @@ namespace Objects.Converter.Unity
 
       meshRenderer.sharedMaterials = nativeMaterials;
 
-      
-      var excludeProps = new HashSet<string>(typeof(Base).GetProperties(BindingFlags.Instance | BindingFlags.Public)
+      var excludeProps = new HashSet<string>(typeof(Mesh).GetProperties(BindingFlags.Instance | BindingFlags.Public)
         .Select(x => x.Name));
-      
-      excludeProps.Add("displayValue");
-      excludeProps.Add("displayMesh");
+
+      foreach (string alias in DisplayValuePropertyAliases)
+      {
+        excludeProps.Add(alias);
+      }
+      excludeProps.Add("renderMaterial");
+      excludeProps.Add("elements");
       
       var properties = element.GetMembers()
         .Where(x => !excludeProps.Contains(x.Key))

@@ -1,188 +1,140 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Objects.Converter.Unity;
-using Sentry;
-using Speckle.Core.Logging;
+using Speckle.Core.Kits;
 using Speckle.Core.Models;
 using UnityEngine;
 
 namespace Speckle.ConnectorUnity
 {
-  public class RecursiveConverter : MonoBehaviour
-  {
-
-    private ConverterUnity _converter = new ConverterUnity();
-
     /// <summary>
-    /// Converts a Base object to a GameObject Recursively
+    /// <see cref="Component"/> for recursive conversion of Speckle Objects to Native, and Native Objects to Speckle
     /// </summary>
-    /// <param name="base"></param>
-    /// <returns></returns>
-    public GameObject ConvertRecursivelyToNative(Base @base, string name)
+    [AddComponentMenu("Speckle/Conversion/" + nameof(RecursiveConverter))]
+    [ExecuteAlways, DisallowMultipleComponent]
+    public class RecursiveConverter : MonoBehaviour
     {
-      //using the ApplicationPlaceholderObject to pass materials
-      //available in Assets/Materials to the converters
-      var materials = Resources.LoadAll("", typeof(Material)).Cast<Material>().ToArray();
-      if (materials.Length == 0) Debug.Log("To automatically assign materials to recieved meshes, materials have to be in the \'Assets/Resources\' folder!");
-      var placeholderObjects = materials.Select(x => new ApplicationPlaceholderObject { NativeObject = x }).ToList();
-      _converter.SetContextObjects(placeholderObjects);
+        public virtual ISpeckleConverter ConverterInstance { get; set; } = new ConverterUnity();
+        
+#region ToNative
 
-
-            // case 1: it's an item that has a direct conversion method, eg a point
-      if (_converter.CanConvertToNative(@base))
-      {
-        var go = TryConvertItemToNative(@base);
-        return go;
-      }
-
-      // case 2: it's a wrapper Base
-      //       2a: if there's only one member unpack it
-      //       2b: otherwise return dictionary of unpacked members
-      var members = @base.GetMemberNames().ToList();
-      if (members.Count() == 1)
-      {
-        var go = RecurseTreeToNative(@base[members.First()]);
-        go.name = members.First();
-        return go;
-      }
-      else
-      {
-        //empty game object with the commit id as name, used to contain all the rest
-        var go = new GameObject
+        /// <summary>
+        /// Given <paramref name="baseObject"/>,
+        /// will recursively convert any objects in the tree
+        /// </summary>
+        /// <param name="baseObject">The Speckle object to convert + its children</param>
+        /// <param name="parent">Optional parent transform for the created root <see cref="GameObject"/>s</param>
+        /// <returns> A list of all created <see cref="GameObject"/>s</returns>
+        public virtual List<GameObject> RecursivelyConvertToNative(Base baseObject, Transform? parent)
+            => RecursivelyConvertToNative(baseObject, parent, o => ConverterInstance.CanConvertToNative(o));
+        
+        /// <inheritdoc cref="RecursivelyConvertToNative(Base, Transform)"/>
+        /// <param name="predicate">A function to determine if an object should be converted</param>
+        public virtual List<GameObject> RecursivelyConvertToNative(Base baseObject, Transform? parent, Func<Base, bool> predicate)
         {
-          name = name.Valid() ? name : "Base"
-        };
+            LoadMaterialOverrides();
 
-        foreach (var member in members)
-        {
-          var goo = RecurseTreeToNative(@base[member]);
-          if (goo != null)
-          {
-            goo.name = member;
-            goo.transform.parent = go.transform;
-          }
+            var createdGameObjects = new List<GameObject>();
+            RecurseTreeToNative(baseObject, parent, predicate, createdGameObjects);
+            //TODO track event
+            
+            return createdGameObjects;
+
         }
 
-        return go;
-      }
-    }
-
-
-    /// <summary>
-    /// Converts an object recursively to a list of GameObjects
-    /// </summary>
-    /// <param name="object"></param>
-    /// <returns></returns>
-    private GameObject RecurseTreeToNative(object @object)
-    {
-      if (IsList(@object))
-      {
-        var list = ((IEnumerable)@object).Cast<object>();
-        var objects = list.Select(x => RecurseTreeToNative(x)).Where(x => x != null).ToList();
-        if (objects.Any())
+        protected string[] namePropertyAliases = {"name", "Name"};
+        
+        protected virtual string GenerateObjectName(Base baseObject)
         {
-          var go = new GameObject();
-          go.name = "List";
-          objects.ForEach(x => x.transform.parent = go.transform);
-          return go;
-        }
-      }
-      else
-      {
-        return TryConvertItemToNative(@object);
-      }
-
-      return null;
-    }
-
-    private GameObject TryConvertItemToNative(object value)
-    {
-      if (value == null)
-        return null;
-
-      //it's a simple type or not a Base
-      if (value.GetType().IsSimpleType() || !(value is Base))
-      {
-        return null;
-      }
-
-      var @base = (Base)value;
-
-      //it's an unsupported Base, go through each of its property and try convert that
-      if (!_converter.CanConvertToNative(@base))
-      {
-        var members = @base.GetMemberNames().ToList();
-
-        //empty game object with the commit id as name, used to contain all the rest
-        var go = new GameObject();
-        go.name = @base.speckle_type;
-        var goos = new List<GameObject>();
-        foreach (var member in members)
-        {
-          var goo = RecurseTreeToNative(@base[member]);
-          if (goo != null)
-          {
-            goo.name = member;
-            goo.transform.parent = go.transform;
-            goos.Add(goo);
-          }
-        }
-
-        //if no children is valid, return null
-        if (!goos.Any())
-        {
-          Utils.SafeDestroy(go);
-          return null;
-        }
-
-        return go;
-      }
-      else
-      {
-        try
-        {
-          var go = _converter.ConvertToNative(@base) as GameObject;
-          // Some revit elements have nested elements in a "elements" property
-          // for instance hosted families on a wall
-          if (go != null && @base["elements"] is List<Base> l && l.Any())
-          {
-            var goo = RecurseTreeToNative(l);
-            if (goo != null)
+            foreach (var nameAlias in namePropertyAliases)
             {
-              goo.name = "elements";
-              goo.transform.parent = go.transform;
+                string? s = baseObject[nameAlias] as string;
+                if (!string.IsNullOrWhiteSpace(s)) return s!; //TODO any sanitization needed?
             }
-          }
 
-          return go;
+            return $"{baseObject.speckle_type} - {baseObject.id}";
         }
-        catch (Exception e)
+        
+        public virtual void RecurseTreeToNative(Base baseObject, Transform? parent, Func<Base, bool> predicate, IList<GameObject> outCreatedObjects)
         {
-          throw new SpeckleException(e.Message, e, true, SentryLevel.Error);
+            object? converted = null;
+            if(predicate(baseObject))
+                converted = ConverterInstance.ConvertToNative(baseObject);
+
+            // Handle new GameObjects
+            Transform? nextParent = parent;
+            if (converted is GameObject go)
+            {
+                outCreatedObjects.Add(go);
+                
+                nextParent = go.transform;
+                
+                go.name = GenerateObjectName(baseObject);
+                go.transform.SetParent(parent);
+                //TODO add support for unity specific props
+                //if (baseObject["tag"] is string t) go.tag = t;
+                //if (baseObject["layer"] is int layer) go.layer = layer;
+                //if (baseObject["isStatic"] is bool isStatic) go.isStatic = isStatic;
+            }
+
+            ConvertChildren(baseObject, nextParent, predicate, outCreatedObjects);
         }
-      }
+
+        protected virtual void ConvertChildren(Base baseObject, Transform? parent, Func<Base, bool> predicate, IList<GameObject> outCreatedObjects)
+        {
+            // Find child objects to convert,
+            IEnumerable<string> potentialChildren = baseObject.GetDynamicMembers();
+            if (!ConverterInstance.CanConvertToNative(baseObject))
+            {
+                potentialChildren = potentialChildren.Concat(baseObject.GetInstanceMembersNames());
+            }
+
+            foreach (string? c in potentialChildren)
+            {
+                object? value = baseObject[c];
+                
+                //Ignore everything but objects inheriting Base
+                if(value == null) continue;
+                if(value.GetType().IsSimpleType()) continue;
+                
+                if(value is Base o)
+                {
+                    RecurseTreeToNative(o, parent, predicate, outCreatedObjects);
+                }
+                else if (value is IDictionary dictionary)
+                {
+                    foreach (object obj in dictionary.Keys)
+                    {
+                        if(obj is Base b) RecurseTreeToNative(b, parent, predicate, outCreatedObjects);
+                    }
+                }
+                else if (value is IList collection)
+                {
+                    foreach (object obj in collection)
+                    {
+                        if(obj is Base b) RecurseTreeToNative(b, parent, predicate, outCreatedObjects);
+                    }
+                }
+                else
+                {
+                    Debug.Log(value.GetType());
+                }
+            }
+
+        }
+
+        protected virtual void LoadMaterialOverrides()
+        {
+            //using the ApplicationPlaceholderObject to pass materials
+            //available in Assets/Materials to the converters
+            var materials = Resources.LoadAll("", typeof(Material)).Cast<Material>().ToArray();
+            if (materials.Length == 0) Debug.Log("To automatically assign materials to recieved meshes, materials have to be in the \'Assets/Resources\' folder!");
+            var placeholderObjects = materials.Select(x => new ApplicationPlaceholderObject { NativeObject = x }).ToList();
+            ConverterInstance.SetContextObjects(placeholderObjects);
+        }
+#endregion
     }
-
-
-    private static bool IsList(object @object)
-    {
-      if (@object == null)
-        return false;
-
-      var type = @object.GetType();
-      return (typeof(IEnumerable).IsAssignableFrom(type) && !typeof(IDictionary).IsAssignableFrom(type) &&
-               type != typeof(string));
-    }
-
-    private static bool IsDictionary(object @object)
-    {
-      if (@object == null)
-        return false;
-
-      Type type = @object.GetType();
-      return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Dictionary<,>);
-    }
-  }
 }

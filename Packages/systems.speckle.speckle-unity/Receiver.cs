@@ -141,14 +141,18 @@ namespace Speckle.ConnectorUnity
         );
         Dispatcher.Instance().Enqueue(() =>
         {
-          
+          var root = new GameObject()
+          {
+            name = commitId,
+          };
+
           var rc = GetComponent<RecursiveConverter>();
-          var go = rc.ConvertRecursivelyToNative(@base, commitId);
+          var go = rc.RecursivelyConvertToNative(@base, root.transform);
           //remove previously received object
           if (DeleteOld && ReceivedData != null)
             Destroy(ReceivedData);
-          ReceivedData = go;
-          OnDataReceivedAction?.Invoke(go);
+          ReceivedData = root;
+          OnDataReceivedAction?.Invoke(root);
         });
       }
       catch (Exception e)

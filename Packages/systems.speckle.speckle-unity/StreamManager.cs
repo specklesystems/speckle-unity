@@ -33,15 +33,28 @@ namespace Speckle.ConnectorUnity
     public static bool GenerateMaterials = false;
 #endif
 
-    public GameObject ConvertRecursivelyToNative(Base @base, string id)
+    public List<GameObject> ConvertRecursivelyToNative(Base @base, string id)
     {
 
       var rc = GetComponent<RecursiveConverter>();
       if (rc == null)
         rc = gameObject.AddComponent<RecursiveConverter>();
 
-      return rc.ConvertRecursivelyToNative(@base,
-          Branches[SelectedBranchIndex].commits.items[SelectedCommitIndex].id);
+      var rootObject = new GameObject()
+      {
+          name = id,
+      };
+      
+      return rc.RecursivelyConvertToNative(@base, rootObject.transform);
     }
+    
+#if UNITY_EDITOR
+    [ContextMenu("Open Speckle Stream in Browser")]
+    protected void OpenUrlInBrowser()
+    {
+        string url = $"{SelectedAccount.serverInfo.url}/streams/{SelectedStream.id}/commits/{Branches[SelectedBranchIndex].commits.items[SelectedCommitIndex].id}";
+        Application.OpenURL(url);
+    }
+#endif
   }
 }
