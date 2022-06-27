@@ -20,6 +20,7 @@ namespace Objects.Converter.Unity
     public string WebsiteOrEmail => "https://speckle.systems";
     
     public ProgressReport Report { get; }
+    public ReceiveMode ReceiveMode { get; set; } //TODO implement this!
 
     public IEnumerable<string> GetServicedApplications() => new string[] {VersionedHostApplications.Unity};
 

@@ -66,6 +66,13 @@
             <param name="limit">Max number of streams to return</param>
             <returns></returns>
         </member>
+        <member name="M:Speckle.Core.Api.Client.FavoriteStreamsGet(System.Threading.CancellationToken,System.Int32)">
+            <summary>
+            Gets all favorite streams for the current user
+            </summary>
+            <param name="limit">Max number of streams to return</param>
+            <returns></returns>
+        </member>
         <member name="M:Speckle.Core.Api.Client.StreamSearch(System.String,System.Int32)">
             <summary>
             Searches the user's streams by name, description, and ID
@@ -107,6 +114,7 @@
             <summary>
             Updates a stream.
             </summary>
+            <param name="cancellationToken"></param>
             <param name="streamInput">Note: the id field needs to be a valid stream id.</param>
             <returns>The stream's id.</returns>
         </member>
@@ -121,6 +129,7 @@
             <summary>
             Deletes a stream.
             </summary>
+            <param name="cancellationToken"></param>
             <param name="id">Id of the stream to be deleted</param>
             <returns></returns>
         </member>
@@ -128,34 +137,45 @@
             <summary>
             Grants permissions to a user on a given stream.
             </summary>
-            <param name="streamId">Id of the stream to grant permissions to</param>
-            <param name="userId">Id of the user to grant permissions to</param>
-            <param name="role">Role to give the user on this stream</param>
+            <param name="permissionInput"></param>
             <returns></returns>
         </member>
         <member name="M:Speckle.Core.Api.Client.StreamGrantPermission(System.Threading.CancellationToken,Speckle.Core.Api.StreamGrantPermissionInput)">
             <summary>
             Grants permissions to a user on a given stream.
             </summary>
-            <param name="streamId">Id of the stream to grant permissions to</param>
-            <param name="userId">Id of the user to grant permissions to</param>
-            <param name="role">Role to give the user on this stream</param>
+            <param name="cancellationToken"></param>
+            <param name="permissionInput"></param>
             <returns></returns>
         </member>
         <member name="M:Speckle.Core.Api.Client.StreamRevokePermission(Speckle.Core.Api.StreamRevokePermissionInput)">
             <summary>
             Revokes permissions of a user on a given stream.
             </summary>
-            <param name="streamId">Id of the stream to revoke permissions from</param>
-            <param name="userId">Id of the user to revoke permissions from</param>
+            <param name="permissionInput"></param>
             <returns></returns>
         </member>
         <member name="M:Speckle.Core.Api.Client.StreamRevokePermission(System.Threading.CancellationToken,Speckle.Core.Api.StreamRevokePermissionInput)">
             <summary>
             Revokes permissions of a user on a given stream.
             </summary>
-            <param name="streamId">Id of the stream to revoke permissions from</param>
-            <param name="userId">Id of the user to revoke permissions from</param>
+            <param name="cancellationToken"></param>
+            <param name="permissionInput"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Speckle.Core.Api.Client.StreamInviteCreate(Speckle.Core.Api.StreamInviteCreateInput)">
+            <summary>
+            Sends an email invite to join a stream and assigns them a collaborator role.
+            </summary>
+            <param name="streamCreateInput"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Speckle.Core.Api.Client.StreamInviteCreate(System.Threading.CancellationToken,Speckle.Core.Api.StreamInviteCreateInput)">
+            <summary>
+            Sends an email invite to join a stream and assigns them a collaborator role.
+            </summary>
+            <param name="cancellationToken"></param>
+            <param name="streamCreateInput"></param>
             <returns></returns>
         </member>
         <member name="M:Speckle.Core.Api.Client.StreamGetBranches(System.String,System.Int32,System.Int32)">
@@ -718,6 +738,11 @@
             Keeps track of the conversion process
             </summary>
         </member>
+        <member name="P:Speckle.Core.Kits.ISpeckleConverter.ReceiveMode">
+            <summary>
+            Decides what to do when an element being received already exists
+            </summary>
+        </member>
         <member name="M:Speckle.Core.Kits.ISpeckleConverter.ConvertToSpeckle(System.Object)">
             <summary>
             Converts a native object to a Speckle one
@@ -893,6 +918,11 @@
         <member name="F:Speckle.Core.Logging.Analytics.Events.DUIAction">
             <summary>
             Event triggered when an action is executed in Desktop UI, it should contain the name of the action and the host application
+            </summary>
+        </member>
+        <member name="F:Speckle.Core.Logging.Analytics.Events.NodeCreate">
+            <summary>
+            Event triggered when a node is first created in a visual programming environment, it should contain the name of the action and the host application
             </summary>
         </member>
         <member name="P:Speckle.Core.Logging.Analytics.LastEmail">
