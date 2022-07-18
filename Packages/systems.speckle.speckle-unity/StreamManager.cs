@@ -1,8 +1,10 @@
 using System;
-using System.Collections;
 using Speckle.Core.Api;
 using Speckle.Core.Credentials;
 using System.Collections.Generic;
+using System.Linq;
+using Objects.Other;
+using Objects.Utils;
 using Speckle.Core.Models;
 using UnityEngine;
 
@@ -12,7 +14,6 @@ namespace Speckle.ConnectorUnity
   [AddComponentMenu("Speckle/Stream Manager")]
   public class StreamManager : MonoBehaviour
   {
-
     public int SelectedAccountIndex = -1;
     public int SelectedStreamIndex = -1;
     public int SelectedBranchIndex = -1;
@@ -27,25 +28,25 @@ namespace Speckle.ConnectorUnity
     public List<Account> Accounts;
     public List<Stream> Streams;
     public List<Branch> Branches;
-
-
+    
 #if UNITY_EDITOR
     public static bool GenerateMaterials = false;
 #endif
-
-    public List<GameObject> ConvertRecursivelyToNative(Base @base, string id)
+    public List<GameObject> ConvertRecursivelyToNative(Base @base, string name)
     {
 
       var rc = GetComponent<RecursiveConverter>();
       if (rc == null)
         rc = gameObject.AddComponent<RecursiveConverter>();
 
-      var rootObject = new GameObject()
-      {
-          name = id,
-      };
+      var rootObject = new GameObject(name);
       
-      return rc.RecursivelyConvertToNative(@base, rootObject.transform);
+      Func<Base, bool> predicate = o =>
+          rc.ConverterInstance.CanConvertToNative(o) //Accept geometry
+          || o.speckle_type == "Base" && o.totalChildrenCount > 0; // Or Base objects that have children
+
+
+      return rc.RecursivelyConvertToNative(@base, rootObject.transform, predicate);
     }
     
 #if UNITY_EDITOR

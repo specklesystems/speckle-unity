@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Threading;
 using System.Threading.Tasks;
 using Sentry;
 using Speckle.Core.Api;
@@ -12,13 +10,12 @@ using Speckle.Core.Logging;
 using Speckle.Core.Transports;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.UIElements;
 
-namespace Speckle.ConnectorUnity
+namespace Speckle.ConnectorUnity.Editor
 {
   [CustomEditor(typeof(StreamManager))]
   [CanEditMultipleObjects]
-  public class StreamManagerEditor : Editor
+  public class StreamManagerEditor : UnityEditor.Editor
   {
     private bool _foldOutAccount;
     private int _totalChildrenCount = 0;

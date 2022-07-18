@@ -1,5 +1,5 @@
 ﻿using Objects.BuiltElements;
-using Objects.Geometry;
+
 using UnityEngine;
 
 namespace Objects.Converter.Unity
@@ -22,7 +22,7 @@ namespace Objects.Converter.Unity
       camera.transform.up = VectorByCoordinates(speckleView.upDirection.x, speckleView.upDirection.y,
         speckleView.upDirection.z, speckleView.upDirection.units);
 
-      AttachSpeckleProperties(go, speckleView.GetMembers());
+      AttachSpeckleProperties(go, speckleView.GetType(),speckleView.GetMembers());
       return go;
     }
   }
