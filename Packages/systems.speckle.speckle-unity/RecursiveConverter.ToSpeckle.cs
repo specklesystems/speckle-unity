@@ -40,7 +40,7 @@ namespace Speckle.ConnectorUnity
             
             return new Base()
             {
-                ["objects"] = convertedRootObjects,
+                ["@objects"] = convertedRootObjects,
             };
         }
         
@@ -62,7 +62,7 @@ namespace Speckle.ConnectorUnity
             {
                 // Convert and output 
                 Base converted = ConverterInstance.ConvertToSpeckle(rootObject);
-                converted["elements"] = convertedChildren;
+                converted["@elements"] = convertedChildren;
                 outConverted.Add(converted);
             }
             else

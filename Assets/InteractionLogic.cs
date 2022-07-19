@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using Speckle.Core.Api;
 using Speckle.Core.Logging;
@@ -124,11 +125,7 @@ namespace Speckle.ConnectorUnity
 
       btn.onClick.AddListener(() =>
         {
-          var objs = new List<GameObject>();
-          foreach (var s in SelectionManager.selectedObjects)
-          {
-            objs.Add(s.gameObject);
-          }
+          var objs = SelectionManager.selectedObjects.Select(s => s.gameObject).ToImmutableHashSet();
 
           if (!objs.Any())
           {
@@ -137,7 +134,7 @@ namespace Speckle.ConnectorUnity
           }
           
           MakeButtonsInteractable(false);
-
+          
           statusText.text = "Sending...";
           try
           {
@@ -170,7 +167,7 @@ namespace Speckle.ConnectorUnity
                   MakeButtonsInteractable(true);
                   statusText.text = $"Error {id}";
                   sendProgress.gameObject.SetActive(false); //hide
-                  Debug.LogError(e.Message, this);
+                  Debug.LogError(e, this);
                 });
               });
           }
@@ -181,7 +178,7 @@ namespace Speckle.ConnectorUnity
               MakeButtonsInteractable(true);
               statusText.text = $"Error {e.Message}";
               sendProgress.gameObject.SetActive(false); //hide
-              Debug.LogError(e.Message, this);
+              Debug.LogError(e, this);
             });
           }
         }

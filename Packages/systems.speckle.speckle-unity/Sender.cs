@@ -15,6 +15,7 @@ using Sentry;
 using Sentry.Protocol;
 using Speckle.Core.Kits;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Speckle.ConnectorUnity
 {
@@ -22,10 +23,17 @@ namespace Speckle.ConnectorUnity
   /// A Speckle Sender, it's a wrapper around a basic Speckle Client
   /// that handles conversions for you
   /// </summary>
+  [RequireComponent(typeof(RecursiveConverter))]
   public class Sender : MonoBehaviour
   {
 
     private ServerTransport transport;
+    private RecursiveConverter converter;
+
+    private void Awake()
+    {
+      converter = GetComponent<RecursiveConverter>();
+    }
 
     /// <summary>
     /// Converts and sends the data of the last commit on the Stream
@@ -40,7 +48,7 @@ namespace Speckle.ConnectorUnity
     /// <param name="onErrorAction">Action to run on error</param>
     /// <exception cref="SpeckleException"></exception>
     public void Send(string streamId,
-      List<GameObject> gameObjects,
+      ISet<GameObject> gameObjects,
       Account account = null,
       string branchName = "main",
       bool createCommit = true,
@@ -50,7 +58,8 @@ namespace Speckle.ConnectorUnity
     {
       try
       {
-        var data = ConvertRecursivelyToSpeckle(gameObjects);
+        var data = converter.RecursivelyConvertToSpeckle(SceneManager.GetActiveScene().GetRootGameObjects(),
+          o => gameObjects.Contains(o));
         var client = new Client(account ?? AccountManager.GetDefaultAccount());
         transport = new ServerTransport(client.Account, streamId);
 
@@ -58,7 +67,7 @@ namespace Speckle.ConnectorUnity
         {
           var res = await Operations.Send(
             data,
-            new List<ITransport>() { transport },
+            new List<ITransport>() {transport},
             useDefaultCache: true,
             disposeTransports: true,
             onProgressAction: onProgressAction,
@@ -79,7 +88,7 @@ namespace Speckle.ConnectorUnity
                 sourceApplication = VersionedHostApplications.Unity,
               });
           }
-          
+
           transport?.Dispose();
           onDataSentAction?.Invoke(res);
         });
@@ -96,55 +105,8 @@ namespace Speckle.ConnectorUnity
     }
 
     #region private methods
+    
 
-    private Base ConvertRecursivelyToSpeckle(List<GameObject> gos)
-    {
-      if (gos.Count == 1)
-      {
-        return RecurseTreeToNative(gos[0]);
-      }
-
-      var @base = new Base();
-      @base["objects"] = gos.Select(x => RecurseTreeToNative(x)).Where(x => x != null).ToList();
-      return @base;
-    }
-
-    private Base RecurseTreeToNative(GameObject go)
-    {
-      var converter = new ConverterUnity();
-      if (converter.CanConvertToSpeckle(go))
-      {
-        try
-        {
-          return converter.ConvertToSpeckle(go);
-        }
-        catch (Exception e)
-        {
-          Debug.LogError(e);
-          return null;
-        }
-      }
-
-      if (go.transform.childCount > 0)
-      {
-        var @base = new Base();
-        var objects = new List<Base>();
-        for (var i = 0; i < go.transform.childCount; i++)
-        {
-          var goo = RecurseTreeToNative(go.transform.GetChild(i).gameObject);
-          if (goo != null)
-            objects.Add(goo);
-        }
-
-        if (objects.Any())
-        {
-          @base["objects"] = objects;
-          return @base;
-        }
-      }
-
-      return null;
-    }
 
     #endregion
   }
