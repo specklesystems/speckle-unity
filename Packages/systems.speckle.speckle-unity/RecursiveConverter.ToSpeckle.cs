@@ -49,19 +49,19 @@ namespace Speckle.ConnectorUnity
             return RecursivelyConvertToSpeckle(new[] {rootObject}, predicate);
         }
         
-        public virtual void RecurseTreeToSpeckle(GameObject rootObject, Func<GameObject, bool> predicate, List<Base> outConverted)
+        public virtual void RecurseTreeToSpeckle(GameObject currentObject, Func<GameObject, bool> predicate, List<Base> outConverted)
         {
             // Convert children first
-            var convertedChildren = new List<Base>(rootObject.transform.childCount);
-            foreach(Transform child in rootObject.transform)
+            var convertedChildren = new List<Base>(currentObject.transform.childCount);
+            foreach(Transform child in currentObject.transform)
             {
                 RecurseTreeToSpeckle(child.gameObject, predicate, convertedChildren);
             }
             
-            if (ConverterInstance.CanConvertToSpeckle(rootObject) && predicate(rootObject))
+            if (ConverterInstance.CanConvertToSpeckle(currentObject) && predicate(currentObject))
             {
                 // Convert and output 
-                Base converted = ConverterInstance.ConvertToSpeckle(rootObject);
+                Base converted = ConverterInstance.ConvertToSpeckle(currentObject);
                 converted["@elements"] = convertedChildren;
                 outConverted.Add(converted);
             }

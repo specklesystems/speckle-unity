@@ -121,7 +121,7 @@ namespace Speckle.ConnectorUnity.Editor
                     
                     if (r == null)
                     {
-                        EditorGUILayout.TextField(propName, item == null? "NULL" : item.ToString());
+                        EditorGUILayout.TextField(i.ToString(), item == null? "NULL" : item.ToString());
                         continue;
                     }
                     //Update list item

@@ -15,20 +15,20 @@ namespace Speckle.ConnectorUnity
         /// Given <paramref name="baseObject"/>,
         /// will recursively convert any objects in the tree
         /// </summary>
-        /// <param name="baseObject">The Speckle object to convert + its children</param>
+        /// <param name="o">The object to convert (<see cref="Base"/> or <see cref="List{T}"/> of)</param>
         /// <param name="parent">Optional parent transform for the created root <see cref="GameObject"/>s</param>
         /// <returns> A list of all created <see cref="GameObject"/>s</returns>
-        public virtual List<GameObject> RecursivelyConvertToNative(Base baseObject, Transform? parent)
-            => RecursivelyConvertToNative(baseObject, parent, o => ConverterInstance.CanConvertToNative(o));
+        public virtual List<GameObject> RecursivelyConvertToNative(object? o, Transform? parent)
+            => RecursivelyConvertToNative(o, parent, o => ConverterInstance.CanConvertToNative(o));
         
-        /// <inheritdoc cref="RecursivelyConvertToNative(Base, Transform)"/>
+        /// <inheritdoc cref="RecursivelyConvertToNative(object, Transform)"/>
         /// <param name="predicate">A function to determine if an object should be converted</param>
-        public virtual List<GameObject> RecursivelyConvertToNative(Base baseObject, Transform? parent, Func<Base, bool> predicate)
+        public virtual List<GameObject> RecursivelyConvertToNative(object? o, Transform? parent, Func<Base, bool> predicate)
         {
             LoadMaterialOverrides();
 
             var createdGameObjects = new List<GameObject>();
-            RecurseTreeToNative(baseObject, parent, predicate, createdGameObjects);
+            ConvertChild(o, parent, predicate, createdGameObjects);
             //TODO track event
             
             return createdGameObjects;
@@ -76,8 +76,9 @@ namespace Speckle.ConnectorUnity
             
             // For geometry, only traverse `elements` prop, otherwise, try and convert everything
             IEnumerable<string> potentialChildren;
-            if (ConverterInstance.CanConvertToNative(baseObject)) potentialChildren = new []{"elements"};
-            else potentialChildren = baseObject.GetMemberNames();
+            potentialChildren = ConverterInstance.CanConvertToNative(baseObject)
+                ? new []{"elements"}
+                : baseObject.GetMemberNames();
 
             // Convert Children
             foreach (string propertyName in potentialChildren)
@@ -124,7 +125,7 @@ namespace Speckle.ConnectorUnity
             //using the ApplicationPlaceholderObject to pass materials
             //available in Assets/Materials to the converters
             var materials = Resources.LoadAll("", typeof(Material)).Cast<Material>().ToArray();
-            if (materials.Length == 0) Debug.Log("To automatically assign materials to received meshes, materials have to be in the \'Assets/Resources\' folder!");
+            //if (materials.Length == 0) Debug.Log("To automatically assign materials to received meshes, materials have to be in the \'Assets/Resources\' folder!");
             var placeholderObjects = materials.Select(x => new ApplicationPlaceholderObject { NativeObject = x }).ToList();
             ConverterInstance.SetContextObjects(placeholderObjects);
         }

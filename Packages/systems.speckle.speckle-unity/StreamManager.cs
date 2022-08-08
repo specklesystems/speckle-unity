@@ -2,9 +2,6 @@ using System;
 using Speckle.Core.Api;
 using Speckle.Core.Credentials;
 using System.Collections.Generic;
-using System.Linq;
-using Objects.Other;
-using Objects.Utils;
 using Speckle.Core.Models;
 using UnityEngine;
 
@@ -32,21 +29,44 @@ namespace Speckle.ConnectorUnity
 #if UNITY_EDITOR
     public static bool GenerateMaterials = false;
 #endif
-    public List<GameObject> ConvertRecursivelyToNative(Base @base, string name)
+      
+#nullable enable
+    public GameObject ConvertRecursivelyToNative(Base @base, string rootObjectName, Action<Base>? beforeConvertCallback)
     {
 
       var rc = GetComponent<RecursiveConverter>();
       if (rc == null)
         rc = gameObject.AddComponent<RecursiveConverter>();
 
-      var rootObject = new GameObject(name);
-      
-      Func<Base, bool> predicate = o =>
-          rc.ConverterInstance.CanConvertToNative(o) //Accept geometry
-          || o.speckle_type == "Base" && o.totalChildrenCount > 0; // Or Base objects that have children
+      var rootObject = new GameObject(rootObjectName);
+
+      bool Predicate(Base o)
+      {
+          beforeConvertCallback?.Invoke(o);
+          return rc.ConverterInstance.CanConvertToNative(o) //Accept geometry
+                 || o.speckle_type == "Base" && o.totalChildrenCount > 0; // Or Base objects that have children  
+      }
 
 
-      return rc.RecursivelyConvertToNative(@base, rootObject.transform, predicate);
+      // For the rootObject only, we will create property GameObjects
+      // i.e. revit categories
+      foreach (var prop in @base.GetMembers())
+      {
+          var converted = rc.RecursivelyConvertToNative(prop.Value, null, Predicate);
+          
+          //Skip empties
+          if(converted.Count <= 0) continue;
+
+          var propertyObject = new GameObject(prop.Key);
+          propertyObject.transform.SetParent(rootObject.transform);
+          foreach (var o in converted)
+          {
+              if(o.transform.parent == null) o.transform.SetParent(propertyObject.transform);
+          }
+          
+      }
+
+      return rootObject;
     }
     
 #if UNITY_EDITOR

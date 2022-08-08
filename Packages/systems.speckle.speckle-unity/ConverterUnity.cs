@@ -69,7 +69,13 @@ namespace Objects.Converter.Unity
           switch (component)
           {
             case MeshFilter meshFilter:
-              speckleObject["@displayValue"] = MeshToSpeckle(meshFilter);
+              var displayValues = MeshToSpeckle(meshFilter);
+              
+              if(speckleObject.GetInstanceMembersNames().Any(name => name == "displayValue"))
+                speckleObject["displayValue"] = displayValues;
+              else
+                speckleObject["@displayValue"] = displayValues;
+              
               break;
             // case Camera camera:
             //     speckleObject["cameraComponent"] = CameraToSpeckle(camera);
