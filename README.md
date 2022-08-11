@@ -33,9 +33,9 @@ Currently tested on Windows and MacOS. Experimental support for Android [in the 
 
 ## Sample project
 This repo holds a simple sample project (Speckle Playground). Simply [download this repo](https://github.com/specklesystems/speckle-unity/archive/refs/heads/main.zip)
-or checkout with git, and open in Unity 2020.3.
+or clone with git, and open in Unity 2020.3.
 ```
-git checkout https://github.com/specklesystems/speckle-unity.git
+git clone https://github.com/specklesystems/speckle-unity.git
 ```
 The sample project contains an example GUI (UnityUI) for fetching stream/branch data, and receiving/sending geometry to Speckle.
 
