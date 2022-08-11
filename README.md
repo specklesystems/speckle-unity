@@ -2,93 +2,75 @@
 
 # Connector Unity
 
-[![Twitter Follow](https://img.shields.io/twitter/follow/SpeckleSystems?style=social)](https://twitter.com/SpeckleSystems) [![Community forum users](https://img.shields.io/discourse/users?server=https%3A%2F%2Fdiscourse.speckle.works&style=flat-square&logo=discourse&logoColor=white)](https://discourse.speckle.works) [![website](https://img.shields.io/badge/https://-speckle.systems-royalblue?style=flat-square)](https://speckle.systems) [![docs](https://img.shields.io/badge/docs-speckle.guide-orange?style=flat-square&logo=read-the-docs&logoColor=white)](https://speckle.guide/dev/)
+[![Twitter Follow](https://img.shields.io/twitter/follow/SpeckleSystems?style=social)](https://twitter.com/SpeckleSystems) [![Community forum users](https://img.shields.io/discourse/users?server=https%3A%2F%2Fdiscourse.speckle.works&style=flat-square&logo=discourse&logoColor=white)](https://discourse.speckle.works) [![website](https://img.shields.io/badge/https://-speckle.systems-royalblue?style=flat-square)](https://speckle.systems) [![docs](https://img.shields.io/badge/docs-speckle.guide-orange?style=flat-square&logo=read-the-docs&logoColor=white)](https://speckle.guide/user/unity.html)
 
 
 
 ## Introduction
 
-This repo holds Speckle's Unity Connector, it's currently released as early alpha.
+This repo holds Speckle's Unity Connector + a sample project (Speckle playground). This connector is currently in an Alpha stage.
 
 This connector is meant to be used by developers, it doesn't have an elaborated UI but it offers convenience methods to send and receive data. The connector uses our [Speckle .NET SDK](https://github.com/specklesystems/speckle-sharp).
 
-
-
 ![unity](https://user-images.githubusercontent.com/2679513/108543628-3a83ff00-72dd-11eb-8792-3d43ce54e6af.gif)
 
+Checkout our dedicated [Tutorials and Docs](https://speckle.systems/tag/unity/).
+
+If you are enjoying using Speckle, don't forget to ⭐ our [GitHub repositories](https://github.com/specklesystems),
+and [join our community forum](https://speckle.community/) where you can post any questions, suggestions, and discuss exciting projects!
+
+## Notice
+We support Unity 2020 and 2021 (newer versions likely work, but aren't currently part of our test pipeline).
 
 
-## Documentation
+Features:
+ - Receive Speckle Objects at Editor or Runtime
+ - Send Speckle Objects at Runtime (editor support in the works!)
+ - Material override/substitution
+ - Automatic receiving changes
+ 
+Currently tested on Windows and MacOS. Experimental support for Android [in the works](https://github.com/specklesystems/speckle-unity/issues/68).
 
-More comprehensive developer documentation can be found in the [Speckle Docs website](https://speckle.guide/dev/).
+## Sample project
+This repo holds a simple sample project (Speckle Playground). Simply [download this repo](https://github.com/specklesystems/speckle-unity/archive/refs/heads/main.zip)
+or checkout with git, and open in Unity 2020.3.
+```
+git checkout https://github.com/specklesystems/speckle-unity.git
+```
+The sample project contains an example GUI (UnityUI) for fetching stream/branch data, and receiving/sending geometry to Speckle.
 
+## Installation
 
+To install the connector into your own Unity project (rather than using the sample project), open the Package Manager (`Windows -> Package Manager`)
+and select **Add Package from git URL**. (requires [git](https://git-scm.com/downloads) installed)
 
-## Developing & Debugging
+<p align="center"><img src="https://github.com/specklesystems/speckle-docs/blob/main/user/img-unity/unity_install_git.png" width="25%" /></p>
 
-We encourage everyone interested to debug / hack /contribute / give feedback to this project.
+Paste in the following URL
+```
+https://github.com/specklesystems/speckle-unity.git?path=/Packages/systems.speckle.speckle-unity
+```
+
+Checkout [our docs for getting started instructions](https://speckle.guide/user/unity.html#getting-started)
+---
+
+We encourage everyone interested to hack / contribute / debug / give feedback to this project.
+
 
 ### Requirements
 
-- Unity (we're currently testing with 2020+)
-- A Speckle Server running (more on this below)
-- Speckle Manager (more on this below)
-
-
+- Unity 2020.3+
+- Have created an account on [speckle.xyz](https://speckle.xyz) (or your own server)
+- Installed [Speckle Manager](https://speckle.guide/user/manager.html) (recommended, otherwise you'll need to implement your own authentication system in Unity)
 
 ### Dependencies
 
-All dependencies to Speckle Core have been included compiled in the Asset folder until we figure out how to best reference Core.
-
-The GraphQL library has been recompiled with a fix for Unity, see https://github.com/graphql-dotnet/graphql-client/issues/318 for more info.
-
-
-
-### Getting Started 🏁
-
-Following instructions on how to get started debugging and contributing to this connector.
-
-
-#### Server
-
-In order to test Speckle in all its glory you'll need a server running, you can run a local one by simply following these instructions:
-
-- https://github.com/specklesystems/Server
-
-If you're facing any errors make sure Postgress and Redis are up and running. 
-
-#### Accounts
-
-The connector itself doesn't have features to manage your Speckle accounts, this functionality has been delegated to the Speckle Manager desktop app.
-
-You can install an alpha version of it from: [https://speckle-releases.ams3.digitaloceanspaces.com/manager/SpeckleManager%20Setup.exe](https://speckle-releases.ams3.digitaloceanspaces.com/manager/SpeckleManager%20Setup.exe)
-
-After installing it, you can use it to add/create an account on the Server.
-
-
-
-### Debugging
-
-Open your IDE and click "Attach to Unity and Debug".
-
-
-
-### Questions and Feedback 💬
-
-Hey, this is work in progress, I'm sure you'll have plenty of feedback, and we want to hear all about it! Get in touch with us on [the forum](https://discourse.speckle.works)! 
-
+All dependencies to Speckle Core have been included; compiled in the Asset folder until we figure out how to best reference Core.
 
 
 ## Contributing
 
 Please make sure you read the [contribution guidelines](.github/CONTRIBUTING.md) for an overview of the best practices we try to follow.
-
-
-
-## Community
-
-The Speckle Community hangs out on [the forum](https://discourse.speckle.works), do join and introduce yourself!
-
 
 
 ## License
