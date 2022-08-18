@@ -1,19 +1,16 @@
-﻿using Objects.Converter.Unity;
-using Speckle.Core.Api;
-using Speckle.Core.Api.SubscriptionModels;
+﻿using Speckle.Core.Api;
 using Speckle.Core.Credentials;
 using Speckle.Core.Logging;
 using Speckle.Core.Models;
 using Speckle.Core.Transports;
 using System;
-using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Sentry;
-using Sentry.Protocol;
 using Speckle.Core.Kits;
+using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -23,13 +20,16 @@ namespace Speckle.ConnectorUnity
   /// A Speckle Sender, it's a wrapper around a basic Speckle Client
   /// that handles conversions for you
   /// </summary>
-  [RequireComponent(typeof(RecursiveConverter))]
+  [RequireComponent(typeof(RecursiveConverter)), ExecuteAlways]
   public class Sender : MonoBehaviour
   {
-
+   
     private ServerTransport transport;
     private RecursiveConverter converter;
+    private CancellationTokenSource cancellationTokenSource;
 
+    #nullable enable
+    
     private void Awake()
     {
       converter = GetComponent<RecursiveConverter>();
@@ -49,60 +49,96 @@ namespace Speckle.ConnectorUnity
     /// <exception cref="SpeckleException"></exception>
     public void Send(string streamId,
       ISet<GameObject> gameObjects,
-      Account account = null,
+      Account? account = null,
       string branchName = "main",
       bool createCommit = true,
-      Action<string> onDataSentAction = null,
-      Action<ConcurrentDictionary<string, int>> onProgressAction = null,
-      Action<string, Exception> onErrorAction = null)
+      Action<string>? onDataSentAction = null,
+      Action<ConcurrentDictionary<string, int>>? onProgressAction = null,
+      Action<string, Exception>? onErrorAction = null)
     {
       try
       {
-        var data = converter.RecursivelyConvertToSpeckle(SceneManager.GetActiveScene().GetRootGameObjects(),
-          o => gameObjects.Contains(o));
+        CancelOperations();
+        
+        cancellationTokenSource = new CancellationTokenSource();
+        
         var client = new Client(account ?? AccountManager.GetDefaultAccount());
         transport = new ServerTransport(client.Account, streamId);
-
-        Task.Run(async () =>
-        {
-          var res = await Operations.Send(
-            data,
-            new List<ITransport>() {transport},
-            useDefaultCache: true,
-            disposeTransports: true,
-            onProgressAction: onProgressAction,
-            onErrorAction: onErrorAction
-          );
-
-          Analytics.TrackEvent(client.Account, Analytics.Events.Send);
-
-          if (createCommit)
-          {
-            await client.CommitCreate(
-              new CommitCreateInput
-              {
-                streamId = streamId,
-                branchName = branchName,
-                objectId = res,
-                message = "No message",
-                sourceApplication = VersionedHostApplications.Unity,
-              });
-          }
-
-          transport?.Dispose();
-          onDataSentAction?.Invoke(res);
-        });
+        transport.CancellationToken = cancellationTokenSource.Token;
+        
+        var rootObjects = SceneManager.GetActiveScene().GetRootGameObjects();
+        
+        var data = converter.RecursivelyConvertToSpeckle(rootObjects,
+          o => gameObjects.Contains(o));
+        
+        SendData(transport, data, client, branchName, createCommit, cancellationTokenSource.Token, onDataSentAction, onProgressAction, onErrorAction);
+          
       }
       catch (Exception e)
       {
-        throw new SpeckleException(e.Message, e, true, SentryLevel.Error);
+        throw new SpeckleException(e.ToString(), e, true, SentryLevel.Error);
       }
+    }
+
+
+    public static void SendData(ServerTransport remoteTransport,
+      Base data,
+      Client client,
+      string branchName,
+      bool createCommit,
+      CancellationToken cancellationToken,
+      Action<string>? onDataSentAction = null,
+      Action<ConcurrentDictionary<string, int>>? onProgressAction = null,
+      Action<string, Exception>? onErrorAction = null)
+    {
+
+      Task.Run(async () =>
+      {
+      
+        var res = await Operations.Send(
+          data,
+          cancellationToken: cancellationToken,
+          new List<ITransport>() {remoteTransport},
+          useDefaultCache: true,
+          disposeTransports: true,
+          onProgressAction: onProgressAction,
+          onErrorAction: onErrorAction
+        );
+
+        Analytics.TrackEvent(client.Account, Analytics.Events.Send);
+
+        if (createCommit && !cancellationToken.IsCancellationRequested)
+        {
+          long count = data.GetTotalChildrenCount();
+          
+          await client.CommitCreate(cancellationToken,
+            new CommitCreateInput
+            {
+              streamId = remoteTransport.StreamId,
+              branchName = branchName,
+              objectId = res,
+              message = $"Sent {count} objects from {VersionedHostApplications.Unity}",
+              sourceApplication = VersionedHostApplications.Unity,
+              totalChildrenCount = (int)count,
+            });
+        }
+        
+        onDataSentAction?.Invoke(res);
+      }, cancellationToken);
     }
 
     private void OnDestroy()
     {
-      transport?.Dispose();
+      CancelOperations();
     }
+
+    public void CancelOperations()
+    {
+      cancellationTokenSource?.Cancel();
+      transport?.Dispose();
+      cancellationTokenSource?.Dispose();
+    }
+    
 
     #region private methods
     

@@ -113,10 +113,9 @@ namespace Speckle.ConnectorUnity
                     ConvertChild(v, parent, predicate, outCreatedObjects);
                 }
             }
-            else
+            else if(!value.GetType().IsValueType) //don't want to output errors for structs
             {
                 Debug.Log($"Unknown type {value.GetType()} found when traversing tree, will be safely ignored");
-                
             }
         }
 

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
 using Objects.BuiltElements;
+using Speckle.ConnectorUnity;
 using UnityEngine;
 using Mesh = Objects.Geometry.Mesh;
 
@@ -23,6 +24,7 @@ namespace Objects.Converter.Unity
     public string WebsiteOrEmail => "https://speckle.systems";
     
     public ProgressReport Report { get; }
+    public ReceiveMode ReceiveMode { get; set; }
 
     public IEnumerable<string> GetServicedApplications() => new string[] {VersionedHostApplications.Unity};
 
@@ -60,7 +62,7 @@ namespace Objects.Converter.Unity
       //speckleObject["transform"] = TransformToSpeckle(go.Transform); //TODO
       speckleObject["tag"] = go.tag;
       speckleObject["layer"] = go.layer;
-      speckleObject["isStatic"] = go.isStatic;
+      //speckleObject["isStatic"] = go.isStatic; //todo figure out realtime-rendered static mobility interoperability (unreal)
 
       foreach (Component component in go.GetComponents<Component>())
       {
@@ -71,11 +73,8 @@ namespace Objects.Converter.Unity
             case MeshFilter meshFilter:
               var displayValues = MeshToSpeckle(meshFilter);
               
-              if(speckleObject.GetInstanceMembersNames().Any(name => name == "displayValue"))
-                speckleObject["displayValue"] = displayValues;
-              else
-                speckleObject["@displayValue"] = displayValues;
-              
+              speckleObject.SetDetachedPropertyChecked("displayValue", displayValues);
+
               break;
             // case Camera camera:
             //     speckleObject["cameraComponent"] = CameraToSpeckle(camera);
@@ -115,7 +114,7 @@ namespace Objects.Converter.Unity
           
           //Object is not a raw geometry, convert it as display value element
           GameObject? element = DisplayValueToNative(speckleObject);
-          if (element != null)
+          if (element != null && !speckleObject.speckle_type.Contains("Objects.Geometry"))
           {
             AttachSpeckleProperties(element, speckleObject.GetType(), GetProperties(speckleObject));
             return element;

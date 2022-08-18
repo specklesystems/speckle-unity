@@ -2,7 +2,6 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Runtime.CompilerServices;
 using Speckle.Core.Api;
 using Speckle.Core.Models;
 using UnityEngine;
@@ -84,7 +83,7 @@ namespace Speckle.ConnectorUnity
             
             try
             {
-                SpeckleType = Type.GetType(_serializedSpeckleType);
+                _speckleType = Type.GetType(_serializedSpeckleType);
             }
             catch (Exception e)
             {

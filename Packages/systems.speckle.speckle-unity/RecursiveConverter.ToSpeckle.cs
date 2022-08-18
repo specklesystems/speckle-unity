@@ -62,7 +62,7 @@ namespace Speckle.ConnectorUnity
             {
                 // Convert and output 
                 Base converted = ConverterInstance.ConvertToSpeckle(currentObject);
-                converted["@elements"] = convertedChildren;
+                converted.SetDetachedPropertyChecked("elements", convertedChildren);
                 outConverted.Add(converted);
             }
             else

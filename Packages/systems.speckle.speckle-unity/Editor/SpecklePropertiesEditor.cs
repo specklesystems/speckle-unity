@@ -1,10 +1,13 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using Objects.Geometry;
 using Objects.Primitive;
+using PlasticPipe.PlasticProtocol.Messages;
 using Speckle.Core.Models;
 using UnityEditor;
 using UnityEngine;
@@ -21,7 +24,8 @@ namespace Speckle.ConnectorUnity.Editor
         private static readonly Type[] SpeckleTypeOptions;
 
         private HashSet<string> ArrayFoldoutState = new HashSet<string>();
-        
+        private static Dictionary<Type, List<PropertyInfo>> propInfoCache = new ();
+
         static SpecklePropertiesEditor()
         {
             var options = typeof(Mesh).Assembly
@@ -55,11 +59,28 @@ namespace Speckle.ConnectorUnity.Editor
                 properties.SpeckleType = SpeckleTypeOptions[speckleTypeSelectedIndex];
             }
             
-            //Properties
-            GUILayout.Label("Properties: ");
+            // Instance Properties
+            GUILayout.Label("Instance Properties: ");
             
+            var InstancePropertyNames = DynamicBase.GetInstanceMembersNames(properties.SpeckleType);
+            
+            foreach (var propName in InstancePropertyNames)
+            {
+                if (!properties.Data.TryGetValue(propName, out object? existingValue)) continue;
+                
+                var newValue = CreateField(existingValue, propName, propLayoutOptions);
+                if(newValue != existingValue)
+                    properties.Data[propName] = newValue;
+                
+                GUILayout.Space(10);
+            }
+            
+            GUILayout.Label("Dynamic Properties: ");
+            var ignoreSet = InstancePropertyNames.ToImmutableHashSet();
             foreach (var kvp in properties.Data)
             {
+                if (ignoreSet.Contains(kvp.Key)) continue;
+                
                 var existingValue = kvp.Value;
                 var newValue = CreateField(existingValue, kvp.Key, propLayoutOptions);
                 if(newValue != existingValue)
@@ -135,5 +156,6 @@ namespace Speckle.ConnectorUnity.Editor
 
             return list;
         }
+        
     }
 }

@@ -7,6 +7,7 @@ using Speckle.Core.Api;
 using Speckle.Core.Logging;
 using UnityEngine;
 using UnityEngine.UI;
+using Text = UnityEngine.UI.Text;
 
 namespace Speckle.ConnectorUnity
 {
@@ -108,7 +109,6 @@ namespace Speckle.ConnectorUnity
       InitRemove();
 
       var sender = gameObject.AddComponent<Sender>();
-
       var btn = gameObject.transform.Find("Btn").GetComponentInChildren<Button>();
 
       var streamText = gameObject.transform.Find("StreamText").GetComponentInChildren<Text>();

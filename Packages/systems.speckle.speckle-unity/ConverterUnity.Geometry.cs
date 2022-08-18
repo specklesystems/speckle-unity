@@ -1,6 +1,8 @@
 ﻿using System;
 using Objects.Geometry;
 using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -12,8 +14,12 @@ using Speckle.Core.Models;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering;
-using Mesh = Objects.Geometry.Mesh;
+using Material = UnityEngine.Material;
+using Mesh = UnityEngine.Mesh;
+using SMesh = Objects.Geometry.Mesh;
 using SColor = System.Drawing.Color;
+using Transform = UnityEngine.Transform;
+using STransform = Objects.Other.Transform;
 
 #nullable enable
 namespace Objects.Converter.Unity
@@ -21,9 +27,9 @@ namespace Objects.Converter.Unity
     public partial class ConverterUnity
     {
 
-        private static readonly int EmissionColor = Shader.PropertyToID("_EmissionColor");
-        private static readonly int Metallic = Shader.PropertyToID("_Metallic");
-        private static readonly int Glossiness = Shader.PropertyToID("_Glossiness");
+        protected static readonly int EmissionColor = Shader.PropertyToID("_EmissionColor");
+        protected static readonly int Metallic = Shader.PropertyToID("_Metallic");
+        protected static readonly int Glossiness = Shader.PropertyToID("_Glossiness");
     
         #region helper methods
     
@@ -90,66 +96,165 @@ namespace Objects.Converter.Unity
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public Point PointToSpeckle(Vector3 p)
+        public virtual Point PointToSpeckle(Vector3 p)
         {
             //switch y and z
             return new Point(p.x, p.z, p.y);
         }
 
-
-        public List<Mesh>? MeshToSpeckle(MeshFilter? meshFilter)
+        
+        
+        
+        
+        public virtual List<SMesh>? MeshToSpeckle(MeshFilter meshFilter)
         {
-            if (meshFilter == null) return null;
-
+            Material[]? materials = meshFilter.GetComponent<Renderer>()?.materials; 
+#if UNITY_EDITOR
+            var nativeMesh = meshFilter.sharedMesh;
+#else
             var nativeMesh = meshFilter.mesh;
-      
-            var nTriangles = nativeMesh.triangles;
-            List<int> sFaces = new List<int>(nTriangles.Length * 4);
-            for (int i = 2; i < nTriangles.Length; i += 3)
+#endif
+            if (nativeMesh == null) return null;
+            
+            List<SMesh> convertedMeshes = new List<SMesh>(nativeMesh.subMeshCount);
+            for (int i = 0; i < nativeMesh.subMeshCount; i++)
             {
-                sFaces.Add(0); //Triangle cardinality indicator
+                var subMesh = nativeMesh.GetSubMesh(i);
+                SMesh converted;
+                switch (subMesh.topology)
+                {
+                    // case MeshTopology.Points:
+                    //     //TODO convert as pointcloud
+                    //     continue;
+                    case MeshTopology.Triangles:
+                        converted = SubMeshToSpeckle(nativeMesh, meshFilter.transform, subMesh, i, 3);
+                        convertedMeshes.Add(converted);
+                        break;
+                    case MeshTopology.Quads:
+                        converted = SubMeshToSpeckle(nativeMesh, meshFilter.transform, subMesh, i, 4);
+                        convertedMeshes.Add(converted);
+                        break;
+                    default:
+                        Debug.LogError($"Failed to convert submesh {i} of {typeof(GameObject)} {meshFilter.gameObject.name} to Speckle, Unsupported Mesh Topography {subMesh.topology}. Submesh will be ignored.");
+                        continue;
+                }
 
-                sFaces.Add(nTriangles[i]);
-                sFaces.Add(nTriangles[i - 1]);
-                sFaces.Add(nTriangles[i - 2]);
+                if (materials == null || materials.Length <= i) continue;
+                
+                Material mat = materials[i]; 
+                if(mat != null) converted["renderMaterial"] = MaterialToSpeckle(mat);
+            }
+            
+            return convertedMeshes;
+        }
+
+
+        protected virtual SMesh SubMeshToSpeckle(Mesh nativeMesh, Transform instanceTransform, SubMeshDescriptor subMesh, int subMeshIndex, int faceN)
+        {
+            var nFaces = nativeMesh.GetIndices( subMeshIndex, true);
+            int numFaces = nFaces.Length / faceN;
+            List<int> sFaces = new List<int>(numFaces * (faceN + 1));
+
+            int indexOffset = subMesh.firstVertex;
+            
+            int i = 0;
+            int j = 0;
+            while (i < nFaces.Length)
+            {
+                if (j == 0)
+                {
+                    sFaces.Add(faceN);
+                    j = faceN;
+                }
+                sFaces.Add(nFaces[i] - indexOffset);
+                j--;
+                i++;
             }
 
-            var nVertices = nativeMesh.vertices;
-            List<double> sVertices = new List<double>(nVertices.Length * 3);
-            foreach (var vertex in nVertices)
+            
+            int vertexTake = subMesh.vertexCount;
+            var nVertices = nativeMesh.vertices.Skip(indexOffset).Take(vertexTake);
+            List<double> sVertices = new List<double>(subMesh.vertexCount * 3); 
+            foreach (var vertex in nVertices) 
             {
-                var p = meshFilter.gameObject.transform.TransformPoint(vertex);
+                var p = instanceTransform.TransformPoint(vertex); 
                 sVertices.Add(p.x);
                 sVertices.Add(p.z); //z and y swapped //TODO is this correct? LH -> RH
                 sVertices.Add(p.y);
             }
-      
-            var nColors = nativeMesh.colors;
+            
+            var nColors = nativeMesh.colors.Skip(indexOffset).Take(vertexTake).ToArray();;
             List<int> sColors = new List<int>(nColors.Length);
             sColors.AddRange(nColors.Select(c => c.ToIntColor()));
-
-            var nTexCoords = nativeMesh.uv;
+            
+            var nTexCoords = nativeMesh.uv.Skip(indexOffset).Take(vertexTake).ToArray();
             List<double> sTexCoords = new List<double>(nTexCoords.Length * 2);
             foreach (var uv in nTexCoords)
             {
                 sTexCoords.Add(uv.x);
                 sTexCoords.Add(uv.y);
             }
+            
+            var convertedMesh = new SMesh
+            {
+                vertices = sVertices,
+                faces = sFaces,
+                colors = sColors,
+                textureCoordinates = sTexCoords,
+                units = ModelUnits
+            };
+            
+            return convertedMesh;
+        }
 
-            var mesh = new Mesh();
-      
-            mesh.vertices = sVertices;
-            mesh.faces = sFaces;
-            mesh.colors = sColors;
-            mesh.textureCoordinates = sTexCoords;
-            mesh.units = ModelUnits;
+        protected static HashSet<string> SupportedShadersToSpeckle = new()
+        {
+            "Legacy Shaders/Transparent/Diffuse", "Standard"
+        };
+        public virtual RenderMaterial MaterialToSpeckle(Material nativeMaterial)
+        {
+            //Warning message for unknown shaders
+            if(!SupportedShadersToSpeckle.Contains(nativeMaterial.shader.name)) Debug.LogWarning($"Material Shader \"{nativeMaterial.shader.name}\" is not explicitly supported, the resulting material may be incorrect");
+            
+            var color = nativeMaterial.color;
+            var opacity = 1f;
+            if (nativeMaterial.shader.name.ToLower().Contains("transparent"))
+            {
+                opacity = color.a;
+                color.a = 255;
+            }
 
-            return new List<Mesh>() {mesh}; //TODO split mesh by render material
+            var emissive = nativeMaterial.IsKeywordEnabled("_EMISSION")
+                ? nativeMaterial.GetColor(EmissionColor).ToIntColor()
+                : SColor.Black.ToArgb();
+            
+            var materialName = !string.IsNullOrWhiteSpace(nativeMaterial.name)
+                ? nativeMaterial.name.Replace("(Instance)", string.Empty).TrimEnd()
+                : $"material-{Guid.NewGuid().ToString().Substring(0, 8)}";
+
+            var metalness = nativeMaterial.HasProperty(Metallic)
+                ? nativeMaterial.GetFloat(Metallic)
+                : 0;
+            
+            var roughness = nativeMaterial.HasProperty(Glossiness)
+                ? 1 - nativeMaterial.GetFloat(Glossiness)
+                : 1;
+
+            return new RenderMaterial
+            {
+                name = materialName,
+                diffuse = color.ToIntColor(),
+                opacity = opacity,
+                metalness = metalness,
+                roughness = roughness,
+                emissive = emissive,
+            };
         }
         #endregion
 
+        
         #region ToNative
-        private GameObject? NewPointBasedGameObject(Vector3[] points, string name)
+        protected GameObject? NewPointBasedGameObject(Vector3[] points, string name)
         {
             if (points.Length == 0) return null;
 
@@ -226,7 +331,7 @@ namespace Objects.Converter.Unity
         /// </summary>
         /// <param name="meshes">Collection of <see cref="Objects.Geometry.Mesh"/>es that shall be converted</param>
         /// <returns>A <see cref="GameObject"/> with the converted <see cref="UnityEngine.Mesh"/>, <see cref="MeshFilter"/>, and <see cref="MeshRenderer"/></returns>
-        public GameObject? MeshesToNative(IReadOnlyCollection<Mesh> meshes)
+        public GameObject? MeshesToNative(IReadOnlyCollection<SMesh> meshes)
         {
             if (!meshes.Any()) return null;
             
@@ -266,7 +371,7 @@ namespace Objects.Converter.Unity
         /// </summary>
         /// <param name="speckleMesh">Mesh to convert</param>
         /// <returns></returns>
-        public GameObject? MeshToNative(Mesh speckleMesh)
+        public GameObject? MeshToNative(SMesh speckleMesh)
         {
             if (speckleMesh.vertices.Count == 0 || speckleMesh.faces.Count == 0)
             {
@@ -275,7 +380,7 @@ namespace Objects.Converter.Unity
             }
 
             GameObject? converted = MeshesToNative(new[] {speckleMesh});
-            if(converted != null) AttachSpeckleProperties(converted,speckleMesh.GetType(), GetProperties(speckleMesh, typeof(Mesh)));
+            //if(converted != null) AttachSpeckleProperties(converted,speckleMesh.GetType(), GetProperties(speckleMesh, typeof(Mesh)));
             return converted;
         }
 
@@ -285,7 +390,7 @@ namespace Objects.Converter.Unity
         /// <param name="meshes">meshes to be converted as SubMeshes</param>
         /// <param name="nativeMesh">The converted native mesh</param>W
         /// <param name="nativeMaterials">The converted materials (one per converted sub-mesh)</param>
-        public void MeshDataToNative(IReadOnlyCollection<Mesh> meshes, out UnityEngine.Mesh nativeMesh, out Material[] nativeMaterials)
+        public void MeshDataToNative(IReadOnlyCollection<SMesh> meshes, out Mesh nativeMesh, out Material[] nativeMaterials)
         {
             var verts = new List<Vector3>();
       
@@ -295,7 +400,7 @@ namespace Objects.Converter.Unity
             var materials = new List<Material>(meshes.Count);
             var subMeshes = new List<List<int>>(meshes.Count);
 
-            foreach (Mesh m in meshes)
+            foreach (SMesh m in meshes)
             {
                 if(m.vertices.Count == 0 || m.faces.Count == 0 ) continue;
                 List<int> tris = new List<int>();
@@ -306,7 +411,7 @@ namespace Objects.Converter.Unity
 
             Debug.Assert(verts.Count >= 0);
             Debug.Assert(verts.Count >= 0);
-            nativeMesh = new UnityEngine.Mesh();
+            nativeMesh = new Mesh();
       
       
             //  center transform pivot according to the bounds of the model
@@ -351,7 +456,7 @@ namespace Objects.Converter.Unity
         }
     
     
-        protected void SubmeshToNative(Mesh speckleMesh, List<Vector3> verts, List<int> tris, List<Vector2> texCoords, List<Color> vertexColors, List<Material> materials)
+        protected void SubmeshToNative(SMesh speckleMesh, List<Vector3> verts, List<int> tris, List<Vector2> texCoords, List<Color> vertexColors, List<Material> materials)
         {
             speckleMesh.AlignVerticesWithTexCoordsByIndex();
             speckleMesh.TriangulateMesh();
@@ -390,7 +495,7 @@ namespace Objects.Converter.Unity
                 else if (speckleMesh.colors.Count != 0)
                 {
                     //TODO what if only some submeshes have colors?
-                    Debug.LogWarning($"{typeof(Mesh)} {speckleMesh.id} has invalid number of vertex {nameof(Mesh.colors)}. Expected 0 or {speckleMesh.VerticesCount}, got {speckleMesh.colors.Count}");
+                    Debug.LogWarning($"{typeof(SMesh)} {speckleMesh.id} has invalid number of vertex {nameof(SMesh.colors)}. Expected 0 or {speckleMesh.VerticesCount}, got {speckleMesh.colors.Count}");
                 }
             }
       
@@ -406,7 +511,7 @@ namespace Objects.Converter.Unity
             }
       
             // Convert RenderMaterial
-            materials.Add(GetMaterial(speckleMesh["renderMaterial"] as RenderMaterial));
+            materials.Add(RenderMaterialToNative(speckleMesh["renderMaterial"] as RenderMaterial));
         }
     
     
@@ -440,7 +545,7 @@ namespace Objects.Converter.Unity
 
 
 
-        private Material GetMaterial(RenderMaterial? renderMaterial)
+        private Material RenderMaterialToNative(RenderMaterial? renderMaterial)
         {
             //todo support more complex materials
             var shader = Shader.Find("Standard");
@@ -458,7 +563,7 @@ namespace Objects.Converter.Unity
                 if (((Material)_mat.NativeObject).name == renderMaterial.name)
                 {
                     if (matByName == null) matByName = (Material)_mat.NativeObject;
-                    else Debug.LogWarning("There is more than one Material with the name \'" + renderMaterial.name + "\'!", (Material)_mat.NativeObject);
+                    else Debug.LogWarning($"There is more than one Material with the name '{renderMaterial.name}'!", (Material)_mat.NativeObject);
                 }
             }
             if (matByName != null) return matByName;
@@ -472,7 +577,9 @@ namespace Objects.Converter.Unity
 
             var c = renderMaterial.diffuse.ToUnityColor();
             mat.color = new Color(c.r, c.g, c.b, (float)renderMaterial.opacity);
-            mat.name = renderMaterial.name ?? "material-"+ Guid.NewGuid().ToString().Substring(0,8);
+            mat.name = string.IsNullOrWhiteSpace(renderMaterial.name)
+                       ? renderMaterial.name.Replace('/', '-')
+                       : "material-" + Guid.NewGuid().ToString().Substring(0,8);
         
             mat.SetFloat(Metallic, (float)renderMaterial.metalness);
             mat.SetFloat(Glossiness,  1 - (float)renderMaterial.roughness);
@@ -489,7 +596,7 @@ namespace Objects.Converter.Unity
                 if (!AssetDatabase.IsValidFolder("Assets/Resources/Materials")) AssetDatabase.CreateFolder("Assets/Resources", "Materials");
                 if (!AssetDatabase.IsValidFolder("Assets/Resources/Materials/Speckle Generated")) AssetDatabase.CreateFolder("Assets/Resources/Materials", "Speckle Generated");
           
-                if (AssetDatabase.LoadAllAssetsAtPath("Assets/Resources/Materials/Speckle Generated/" + name + ".mat").Length == 0) AssetDatabase.CreateAsset(mat, "Assets/Resources/Materials/Speckle Generated/" + name + ".mat");
+                if (AssetDatabase.LoadAllAssetsAtPath($"Assets/Resources/Materials/Speckle Generated/" + name + ".mat").Length == 0) AssetDatabase.CreateAsset(mat, "Assets/Resources/Materials/Speckle Generated/" + name + ".mat");
           
             }
 #endif

@@ -326,6 +326,16 @@
             Represents the orientation of a <see cref="T:Objects.Geometry.Brep"/>
             </summary>
         </member>
+        <member name="T:Objects.Geometry.BrepLoopType">
+            <summary>
+            Represents the type of a loop in a <see cref="T:Objects.Geometry.Brep"/>'s face.
+            </summary>
+        </member>
+        <member name="T:Objects.Geometry.BrepEdge">
+            <summary>
+            Represents an edge of the <see cref="P:Objects.Geometry.BrepEdge.Brep"/>.
+            </summary>
+        </member>
         <member name="T:Objects.Geometry.BrepFace">
             <summary>
             Represents a face on a <see cref="P:Objects.Geometry.BrepFace.Brep"/>
@@ -339,16 +349,6 @@
         <member name="T:Objects.Geometry.BrepTrim">
             <summary>
             Represents a UV Trim curve for one of the <see cref="P:Objects.Geometry.BrepTrim.Brep"/>'s surfaces.
-            </summary>
-        </member>
-        <member name="T:Objects.Geometry.BrepEdge">
-            <summary>
-            Represents an edge of the <see cref="P:Objects.Geometry.BrepEdge.Brep"/>.
-            </summary>
-        </member>
-        <member name="T:Objects.Geometry.BrepLoopType">
-            <summary>
-            Represents the type of a loop in a <see cref="T:Objects.Geometry.Brep"/>'s face.
             </summary>
         </member>
         <member name="P:Objects.Geometry.ControlPoint.value">
@@ -572,6 +572,128 @@
             if a native displayable object cannot be converted.
             </summary>
         </member>
+        <member name="T:Objects.Organization.Container">
+            <summary>
+            A simple container for organising objects within a model and preserving object hierarchy.
+            A container is defined by a unique <see cref="P:Objects.Organization.Container.name"/> and its list of contained <see cref="P:Objects.Organization.Container.elements"/>.
+            The <see cref="P:Objects.Organization.Container.elements"/> can include an unrestricted number of <see cref="T:Speckle.Core.Models.Base"/> objects including additional nested <see cref="T:Objects.Organization.Container"/>s.
+            </summary>
+            <remarks>
+            A <see cref="T:Objects.Organization.Container"/> correlates to eg Rhino and AutoCad Layers or Blender Collections.
+            While it is possible for an object to belong to multiple containers, most applications will not support this and
+            on receive the object will be assigned the the first container it is encountered in.
+            </remarks>
+        </member>
+        <member name="P:Objects.Organization.Container.name">
+            <summary>
+            The name of the container.
+            This should be unique within the commit.
+            </summary>
+            TODO: standardise this behaviour across connectors
+            <remarks>On receive, this will be prepended with the id of the stream as to not overwrite existing containers in the file.</remarks>
+        </member>
+        <member name="P:Objects.Organization.Container.elements">
+            <summary>
+            The elements contained in this <see cref="T:Objects.Organization.Container"/>. This can include any <see cref="T:Speckle.Core.Models.Base"/> object including
+            additional nested <see cref="T:Objects.Organization.Container"/>s.
+            </summary>
+            <remarks>
+            Most applications will expect all contained elements to have displayable geometry or to be another <see cref="T:Objects.Organization.Container"/>.
+            This means that purely data <see cref="T:Speckle.Core.Models.Base"/> objects may be lost on receive. 
+            </remarks>
+        </member>
+        <member name="M:Objects.Organization.Container.#ctor(System.String,System.Collections.Generic.List{Speckle.Core.Models.Base})">
+            <summary>
+            Constructor for a basic container.
+            </summary>
+            <param name="name">The unique name of this container</param>
+            <param name="elements">Any contained <see cref="T:Speckle.Core.Models.Base"/> objects</param>
+        </member>
+        <member name="T:Objects.Organization.Model">
+            <summary>
+            Represents a model from an authoring application and can be used as the root commit object when sending.
+            It contains <see cref="T:Objects.Organization.ModelInfo"/> and <see cref="T:Objects.Organization.Setting"/> objects 
+            </summary>
+        </member>
+        <member name="P:Objects.Organization.Model.info">
+            <summary>
+            General model-wide information stored in a <see cref="T:Objects.Organization.ModelInfo"/> object.
+            This may include anything from simply a project / file name to specific location information (eg with <see cref="T:Objects.Organization.BIMModelInfo"/>)
+            </summary>
+        </member>
+        <member name="T:Objects.Organization.ModelInfo">
+            <summary>
+            Basic model info class to be attached to the <see cref="P:Objects.Organization.Model.info"/> field on a <see cref="T:Objects.Organization.Model"/> object.
+            It contains general information about the model and can be extended or subclassed to include more application-specific
+            information.
+            </summary>
+        </member>
+        <member name="P:Objects.Organization.ModelInfo.name">
+            <summary>
+            The name of the model.
+            </summary>
+        </member>
+        <member name="P:Objects.Organization.ModelInfo.number">
+            <summary>
+            The identifying number of the model.
+            </summary>
+        </member>
+        <member name="T:Objects.Organization.BIMModelInfo">
+            <summary>
+            Extended <see cref="T:Objects.Organization.ModelInfo"/> to be attached to the <see cref="P:Objects.Organization.Model.info"/> field on a <see cref="T:Objects.Organization.Model"/> object.
+            This contains additional properties applicable to AEC projects.
+            </summary>
+        </member>
+        <member name="P:Objects.Organization.BIMModelInfo.clientName">
+            <summary>
+            The name of the client
+            </summary>
+        </member>
+        <member name="P:Objects.Organization.BIMModelInfo.buildingName">
+            <summary>
+            The name of the building
+            </summary>
+        </member>
+        <member name="P:Objects.Organization.BIMModelInfo.status">
+            <summary>
+            The status or phase of the model.
+            </summary>
+        </member>
+        <member name="P:Objects.Organization.BIMModelInfo.address">
+            <summary>
+            The address of the model.
+            </summary>
+        </member>
+        <member name="P:Objects.Organization.BIMModelInfo.siteName">
+            <summary>
+            The name of the site location as a string.
+            </summary>
+        </member>
+        <member name="P:Objects.Organization.BIMModelInfo.latitude">
+            <summary>
+            The latitude of the site location in radians.
+            </summary>
+        </member>
+        <member name="P:Objects.Organization.BIMModelInfo.longitude">
+            <summary>
+            The longitude of the site location in radians.
+            </summary>
+        </member>
+        <member name="P:Objects.Organization.BIMModelInfo.locations">
+            <summary>
+            A list of origin locations within this model as a list of <see cref="T:Objects.Other.Transform"/>s
+            </summary>
+        </member>
+        <member name="P:Objects.Organization.Setting.name">
+            <summary>
+            The name of the setting
+            </summary>
+        </member>
+        <member name="P:Objects.Organization.Setting.selection">
+            <summary>
+            The objects selected in the setting
+            </summary>
+        </member>
         <member name="T:Objects.Other.BlockDefinition">
             <summary>
             Block definition class 
@@ -581,6 +703,12 @@
             <summary>
             Block instance class 
             </summary>
+        </member>
+        <member name="P:Objects.Other.BlockInstance.transformedGeometry">
+            <inheritdoc cref="M:Objects.Other.BlockInstance.GetTransformedGeometry"/>
+        </member>
+        <member name="P:Objects.Other.BlockInstance.insertionPlane">
+            <inheritdoc cref="M:Objects.Other.BlockInstance.GetInsertionPlane"/>
         </member>
         <member name="P:Objects.Other.BlockInstance.transform">
             <summary>
@@ -597,6 +725,105 @@
             </summary>
             <returns>Insertion point as a <see cref="T:Objects.Geometry.Point"/></returns>
         </member>
+        <member name="M:Objects.Other.BlockInstance.GetTransformedGeometry">
+            <summary>
+            Returns the a copy of the Block Definition's geometry transformed with this BlockInstance's transform.
+            </summary>
+            <returns>The transformed geometry for this BlockInstance.</returns>
+        </member>
+        <member name="M:Objects.Other.BlockInstance.GetInsertionPlane">
+            <summary>
+            Returns a plane representing the insertion point and orientation of this Block instance.
+            </summary>
+            <remarks>This method will skip scaling. If you need scaling, we recommend using the transform instead.</remarks>
+            <returns>A Plane on the insertion point of this Block Instance, with the correct 3-axis rotations.</returns>
+        </member>
+        <member name="T:Objects.Other.Dimension">
+            <summary>
+            Dimension class 
+            </summary>
+        </member>
+        <member name="P:Objects.Other.Dimension.measurement">
+            <summary>
+            The measurement of the dimension.
+            </summary>
+        </member>
+        <member name="P:Objects.Other.Dimension.value">
+            <summary>
+            The text of the dimension, without any formatting
+            </summary>
+        </member>
+        <member name="P:Objects.Other.Dimension.richText">
+            <summary>
+            The text of the dimension, with rtf formatting
+            </summary>
+        </member>
+        <member name="P:Objects.Other.Dimension.position">
+            <summary>
+            The position of the dimension
+            </summary>
+        </member>
+        <member name="P:Objects.Other.Dimension.textPosition">
+            <summary>
+            The position of the text of the dimension
+            </summary>
+        </member>
+        <member name="P:Objects.Other.Dimension.displayValue">
+            <summary>
+            Curves representing the annotation 
+            </summary>
+        </member>
+        <member name="T:Objects.Other.DistanceDimension">
+            <summary>
+            Dimension class measuring a distance
+            </summary>
+        </member>
+        <member name="P:Objects.Other.DistanceDimension.direction">
+            <summary>
+            The unitized normal of the dimension.
+            </summary>
+        </member>
+        <member name="P:Objects.Other.DistanceDimension.isOrdinate">
+            <summary>
+            Indicates if this dimension is an ordinate dimension
+            </summary>
+            <remarks> Ordinate dimensions (measuring distance between two points exclusively along the x or y axis) 
+            are in practice drawn with different conventions than linear dimensions, and are treated as a special subset of them.</remarks>
+        </member>
+        <member name="P:Objects.Other.DistanceDimension.measured">
+            <summary>
+            The objects being measured.
+            </summary>
+            <remarks>
+            Distance measurements are between two points
+            </remarks>
+        </member>
+        <member name="T:Objects.Other.LengthDimension">
+            <summary>
+            Dimension class measuring a length
+            </summary>
+        </member>
+        <member name="P:Objects.Other.LengthDimension.measured">
+            <summary>
+            The objects being measured.
+            </summary>
+            <remarks>
+            For length dimensions, this is a curve
+            </remarks>
+        </member>
+        <member name="T:Objects.Other.AngleDimension">
+            <summary>
+            Dimension class measuring an angle
+            </summary>
+        </member>
+        <member name="P:Objects.Other.AngleDimension.measured">
+            <summary>
+            The objects being measured.
+            </summary>
+            <remarks>
+            For angle dimensions, this is two lines
+            </remarks>
+        </member>
         <member name="T:Objects.Other.DisplayStyle">
             <summary>
             Minimal display style class. Developed primarily for display styles in Rhino and AutoCAD.
@@ -611,6 +838,26 @@
         <member name="T:Objects.Other.HatchLoopType">
             <summary>
             Represents the type of a loop in a <see cref="T:Objects.Other.Hatch"/>'s curves.
+            </summary>
+        </member>
+        <member name="T:Objects.Other.Material">
+            <summary>
+            Generic class for materials containing generic parameters
+            </summary>
+        </member>
+        <member name="T:Objects.Other.Revit.RevitMaterial">
+            <summary>
+            Material in Revit defininf all revit properties from Autodesk.Revit.DB.Material
+            </summary>
+        </member>
+        <member name="P:Objects.Other.MaterialQuantity.area">
+            <summary>
+            Area of the material on a element
+            </summary>
+        </member>
+        <member name="P:Objects.Other.MaterialQuantity.units">
+            <summary>
+            UnitMeasure of the quantity,e.g meters implies aquaremeters for area and cubicmeters for the volume
             </summary>
         </member>
         <member name="T:Objects.Other.RenderMaterial">
@@ -636,6 +883,16 @@
             The 3x3 sub-matrix determines scaling.
             The 4th column defines translation, where the last value could be a divisor.
             </remarks>
+        </member>
+        <member name="M:Objects.Other.Transform.#ctor(System.Double[],System.Double[],System.Double[],System.Double[],System.String)">
+            <summary>
+            Construct a transform given the x, y, and z bases and the translation vector
+            </summary>
+            <param name="x"></param>
+            <param name="y"></param>
+            <param name="z"></param>
+            <param name="translation"></param>
+            <param name="units"></param>
         </member>
         <member name="M:Objects.Other.Transform.Deconstruct(System.Double[]@,System.Double[]@,System.String@)">
             <summary>

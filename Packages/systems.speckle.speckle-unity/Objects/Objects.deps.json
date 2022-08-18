@@ -85,7 +85,7 @@
           "Microsoft.NETCore.Platforms": "1.1.0"
         }
       },
-      "Sentry/3.15.0": {
+      "Sentry/3.19.0": {
         "dependencies": {
           "Microsoft.Bcl.AsyncInterfaces": "5.0.0",
           "System.Buffers": "4.5.1",
@@ -95,8 +95,8 @@
         },
         "runtime": {
           "lib/netstandard2.0/Sentry.dll": {
-            "assemblyVersion": "3.15.0.0",
-            "fileVersion": "3.15.0.0"
+            "assemblyVersion": "3.19.0.0",
+            "fileVersion": "3.19.0.0"
           }
         }
       },
@@ -105,14 +105,6 @@
           "lib/netstandard2.0/Speckle.Newtonsoft.Json.dll": {
             "assemblyVersion": "12.0.3.0",
             "fileVersion": "11.0.1.0"
-          }
-        }
-      },
-      "Stub.System.Data.SQLite.Core.NetStandard/1.0.115.5": {
-        "runtime": {
-          "lib/netstandard2.0/System.Data.SQLite.dll": {
-            "assemblyVersion": "1.0.115.5",
-            "fileVersion": "1.0.115.5"
           }
         }
       },
@@ -135,9 +127,12 @@
           }
         }
       },
-      "System.Data.SQLite.Core/1.0.115.5": {
-        "dependencies": {
-          "Stub.System.Data.SQLite.Core.NetStandard": "1.0.115.5"
+      "System.Data.SQLite.Mac/1.0.104.2": {
+        "runtime": {
+          "lib/net45/System.Data.SQLite.Mac.dll": {
+            "assemblyVersion": "1.0.104.0",
+            "fileVersion": "1.0.104.0"
+          }
         }
       },
       "System.Memory/4.5.4": {
@@ -320,12 +315,12 @@
       "path": "netstandard.library/2.0.3",
       "hashPath": "netstandard.library.2.0.3.nupkg.sha512"
     },
-    "Sentry/3.15.0": {
+    "Sentry/3.19.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-bvZcbPpBgcsCVOxmM0E9jO4wHl9pLvCjKTdNY3S/CsJD5pVAtABPy45Si4afWtuA6OTPCp4vNDGeuiFCxP1iiw==",
-      "path": "sentry/3.15.0",
-      "hashPath": "sentry.3.15.0.nupkg.sha512"
+      "sha512": "sha512-AB2M8QGA9eGh1DN+mBpBMNPwHDRausGQscCbPZIkPYdXnkBYdKXUR+1AAYvAEJmGMEyGIjIfUhUuhwSPCR9Jjg==",
+      "path": "sentry/3.19.0",
+      "hashPath": "sentry.3.19.0.nupkg.sha512"
     },
     "Speckle.Newtonsoft.Json/12.0.3.1": {
       "type": "package",
@@ -333,13 +328,6 @@
       "sha512": "sha512-yM+DdKzI++HY4FYbloGcPGQ0yrfSv5/a5Rd+iYuzj47ATRtb2M5oCEVcxM4Xum5EDq0BMwkIY/cw/DMlRrZFDA==",
       "path": "speckle.newtonsoft.json/12.0.3.1",
       "hashPath": "speckle.newtonsoft.json.12.0.3.1.nupkg.sha512"
-    },
-    "Stub.System.Data.SQLite.Core.NetStandard/1.0.115.5": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-WfrqQg6WL+r4H1sVKTenNj6ERLXUukUxqcjH1rqPqXadeIWccTVpydESieD7cZ/NWQVSKLYIHuoBX5du+BFhIQ==",
-      "path": "stub.system.data.sqlite.core.netstandard/1.0.115.5",
-      "hashPath": "stub.system.data.sqlite.core.netstandard.1.0.115.5.nupkg.sha512"
     },
     "System.Buffers/4.5.1": {
       "type": "package",
@@ -355,12 +343,12 @@
       "path": "system.collections.immutable/5.0.0",
       "hashPath": "system.collections.immutable.5.0.0.nupkg.sha512"
     },
-    "System.Data.SQLite.Core/1.0.115.5": {
+    "System.Data.SQLite.Mac/1.0.104.2": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-vADIqqgpxaC5xR6qOV8/KMZkQeSDCfmmWpVOtQx0oEr3Yjq2XdTxX7+jfE4+oO2xPovAbYiz6Q5cLRbSsDkq6Q==",
-      "path": "system.data.sqlite.core/1.0.115.5",
-      "hashPath": "system.data.sqlite.core.1.0.115.5.nupkg.sha512"
+      "sha512": "sha512-metaMCvUbEWs3tMja3vYoMty8+5KGyoBThvbA6hM5NVhF8nM9BM9dQHSmYemWMr1QXZ/o8kXoRGZ3ZipQBth8A==",
+      "path": "system.data.sqlite.mac/1.0.104.2",
+      "hashPath": "system.data.sqlite.mac.1.0.104.2.nupkg.sha512"
     },
     "System.Memory/4.5.4": {
       "type": "package",

@@ -66,6 +66,13 @@
             <param name="limit">Max number of streams to return</param>
             <returns></returns>
         </member>
+        <member name="M:Speckle.Core.Api.Client.FavoriteStreamsGet(System.Threading.CancellationToken,System.Int32)">
+            <summary>
+            Gets all favorite streams for the current user
+            </summary>
+            <param name="limit">Max number of streams to return</param>
+            <returns></returns>
+        </member>
         <member name="M:Speckle.Core.Api.Client.StreamSearch(System.String,System.Int32)">
             <summary>
             Searches the user's streams by name, description, and ID
@@ -107,6 +114,7 @@
             <summary>
             Updates a stream.
             </summary>
+            <param name="cancellationToken"></param>
             <param name="streamInput">Note: the id field needs to be a valid stream id.</param>
             <returns>The stream's id.</returns>
         </member>
@@ -121,6 +129,7 @@
             <summary>
             Deletes a stream.
             </summary>
+            <param name="cancellationToken"></param>
             <param name="id">Id of the stream to be deleted</param>
             <returns></returns>
         </member>
@@ -128,34 +137,45 @@
             <summary>
             Grants permissions to a user on a given stream.
             </summary>
-            <param name="streamId">Id of the stream to grant permissions to</param>
-            <param name="userId">Id of the user to grant permissions to</param>
-            <param name="role">Role to give the user on this stream</param>
+            <param name="permissionInput"></param>
             <returns></returns>
         </member>
         <member name="M:Speckle.Core.Api.Client.StreamGrantPermission(System.Threading.CancellationToken,Speckle.Core.Api.StreamGrantPermissionInput)">
             <summary>
             Grants permissions to a user on a given stream.
             </summary>
-            <param name="streamId">Id of the stream to grant permissions to</param>
-            <param name="userId">Id of the user to grant permissions to</param>
-            <param name="role">Role to give the user on this stream</param>
+            <param name="cancellationToken"></param>
+            <param name="permissionInput"></param>
             <returns></returns>
         </member>
         <member name="M:Speckle.Core.Api.Client.StreamRevokePermission(Speckle.Core.Api.StreamRevokePermissionInput)">
             <summary>
             Revokes permissions of a user on a given stream.
             </summary>
-            <param name="streamId">Id of the stream to revoke permissions from</param>
-            <param name="userId">Id of the user to revoke permissions from</param>
+            <param name="permissionInput"></param>
             <returns></returns>
         </member>
         <member name="M:Speckle.Core.Api.Client.StreamRevokePermission(System.Threading.CancellationToken,Speckle.Core.Api.StreamRevokePermissionInput)">
             <summary>
             Revokes permissions of a user on a given stream.
             </summary>
-            <param name="streamId">Id of the stream to revoke permissions from</param>
-            <param name="userId">Id of the user to revoke permissions from</param>
+            <param name="cancellationToken"></param>
+            <param name="permissionInput"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Speckle.Core.Api.Client.StreamInviteCreate(Speckle.Core.Api.StreamInviteCreateInput)">
+            <summary>
+            Sends an email invite to join a stream and assigns them a collaborator role.
+            </summary>
+            <param name="streamCreateInput"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Speckle.Core.Api.Client.StreamInviteCreate(System.Threading.CancellationToken,Speckle.Core.Api.StreamInviteCreateInput)">
+            <summary>
+            Sends an email invite to join a stream and assigns them a collaborator role.
+            </summary>
+            <param name="cancellationToken"></param>
+            <param name="streamCreateInput"></param>
             <returns></returns>
         </member>
         <member name="M:Speckle.Core.Api.Client.StreamGetBranches(System.String,System.Int32,System.Int32)">
@@ -318,7 +338,7 @@
             <summary>
             Gets the activity of a stream
             </summary>
-            <param name="streamId">Id of the stream to get the commits from</param>
+            <param name="streamId">Id of the stream to get the activity from</param>
             <param name="after">Only show activity after this DateTime</param>
             <param name="before">Only show activity before this DateTime</param>
             <param name="cursor">Time to filter the activity with</param>
@@ -331,7 +351,7 @@
             Gets the activity of a stream
             </summary>
             <param name="cancellationToken"></param>
-            <param name="streamId">Id of the stream to get the commits from</param>
+            <param name="id">Id of the stream to get the activity from</param>
             <param name="after">Only show activity after this DateTime</param>
             <param name="before">Only show activity before this DateTime</param>
             <param name="cursor">Time to filter the activity with</param>
@@ -339,6 +359,44 @@
             <param name="limit">Max number of commits to get</param>
             <returns></returns>
             <exception cref="T:System.Exception"></exception>
+        </member>
+        <member name="M:Speckle.Core.Api.Client.StreamGetComments(System.String,System.Int32,System.String)">
+            <summary>
+            Gets the comments on a Stream
+            </summary>
+            <param name="streamId">Id of the stream to get the comments from</param>
+            <param name="limit">The number of comments to get</param>
+            <param name="cursor">Time to filter the comments with</param>
+            <returns></returns>
+        </member>
+        <member name="M:Speckle.Core.Api.Client.StreamGetComments(System.Threading.CancellationToken,System.String,System.Int32,System.String)">
+            <summary>
+             Gets the comments on a Stream
+            </summary>
+            <param name="cancellationToken"></param>
+            <param name="streamId">Id of the stream to get the comments from</param>
+            <param name="limit">The number of comments to get</param>
+            <param name="cursor">Time to filter the comments with</param>
+            <returns></returns>
+            <exception cref="T:Speckle.Core.Logging.SpeckleException"></exception>
+        </member>
+        <member name="M:Speckle.Core.Api.Client.StreamGetCommentScreenshot(System.String,System.String)">
+            <summary>
+             Gets the screenshot of a Comment
+            </summary>
+            <param name="id">Id of the comment</param>
+            <param name="streamId">Id of the stream to get the comment from</param>
+            <returns></returns>
+        </member>
+        <member name="M:Speckle.Core.Api.Client.StreamGetCommentScreenshot(System.Threading.CancellationToken,System.String,System.String)">
+            <summary>
+             Gets the screenshot of a Comment
+            </summary>
+            <param name="cancellationToken"></param>
+            <param name="id">Id of the comment</param>
+            <param name="streamId">Id of the stream to get the comment from</param>
+            <returns></returns>
+            <exception cref="T:Speckle.Core.Logging.SpeckleException"></exception>
         </member>
         <member name="M:Speckle.Core.Api.Client.ObjectGet(System.String,System.String)">
             <summary>
@@ -718,6 +776,11 @@
             Keeps track of the conversion process
             </summary>
         </member>
+        <member name="P:Speckle.Core.Kits.ISpeckleConverter.ReceiveMode">
+            <summary>
+            Decides what to do when an element being received already exists
+            </summary>
+        </member>
         <member name="M:Speckle.Core.Kits.ISpeckleConverter.ConvertToSpeckle(System.Object)">
             <summary>
             Converts a native object to a Speckle one
@@ -893,6 +956,11 @@
         <member name="F:Speckle.Core.Logging.Analytics.Events.DUIAction">
             <summary>
             Event triggered when an action is executed in Desktop UI, it should contain the name of the action and the host application
+            </summary>
+        </member>
+        <member name="F:Speckle.Core.Logging.Analytics.Events.NodeCreate">
+            <summary>
+            Event triggered when a node is first created in a visual programming environment, it should contain the name of the action and the host application
             </summary>
         </member>
         <member name="P:Speckle.Core.Logging.Analytics.LastEmail">
@@ -1113,6 +1181,46 @@
             Currently we assume having only 1 property means we auto-wrap it around a DynamicBase, therefore is a wrapper. This might change in the future.
             </summary>
         </member>
+        <member name="T:Speckle.Core.Models.IgnoreTheItemAttribute">
+            <summary>
+            This attribute is used internally to hide the this[key]{get; set;} property from inner reflection on members.
+            For more info see this discussion: https://speckle.community/t/why-do-i-keep-forgetting-base-objects-cant-use-item-as-a-dynamic-member/3246/5
+            </summary>
+        </member>
+        <member name="T:Speckle.Core.Models.Extensions.BaseExtensions.FlattenPredicate">
+            <summary>
+            Provides access to each base object to determine if they should be included in the output of the 'Flatten' function.
+            </summary>
+            <remarks>
+            Should return 'true' if the object is to be included in the output, 'false' otherwise.
+            </remarks>
+        </member>
+        <member name="T:Speckle.Core.Models.Extensions.BaseExtensions.BaseRecursionBreaker">
+            <summary>
+            Provides access to each base object in the traverse function, and decides whether the traverse function should continue traversing it's children or not.
+            </summary>
+            <remarks>
+            Should return 'true' if you wish to stop the traverse behaviour, 'false' otherwise.
+            </remarks>
+        </member>
+        <member name="M:Speckle.Core.Models.Extensions.BaseExtensions.Flatten(Speckle.Core.Models.Base,Speckle.Core.Models.Extensions.BaseExtensions.BaseRecursionBreaker)">
+            <summary>
+            Traverses through the <paramref name="root"/> object and its children.
+            Only traverses through the first occurrence of a <see cref="T:Speckle.Core.Models.Base"/> object (to prevent infinite recursion on circular references)
+            </summary>
+            <param name="root">The root object of the tree to flatten</param>
+            <param name="recursionBreaker">Optional predicate function to determine whether to break (or continue) traversal of a <see cref="T:Speckle.Core.Models.Base"/> object's children.</param>
+            <returns>A flat List of <see cref="T:Speckle.Core.Models.Base"/> objects.</returns>
+            <seealso cref="M:Speckle.Core.Models.Extensions.BaseExtensions.Traverse(Speckle.Core.Models.Base,Speckle.Core.Models.Extensions.BaseExtensions.BaseRecursionBreaker)"/>
+        </member>
+        <member name="M:Speckle.Core.Models.Extensions.BaseExtensions.Traverse(Speckle.Core.Models.Base,Speckle.Core.Models.Extensions.BaseExtensions.BaseRecursionBreaker)">
+            <summary>
+            Depth-first traversal of the specified <paramref name="root"/> object and all of its children as a deferred Enumerable, with a <paramref name="recursionBreaker"/> function to break the traversal.
+            </summary>
+            <param name="root">The <see cref="T:Speckle.Core.Models.Base"/> object to traverse.</param>
+            <param name="recursionBreaker">Predicate function to determine whether to break (or continue) traversal of a <see cref="T:Speckle.Core.Models.Base"/> object's children.</param>
+            <returns>Deferred Enumerable of the <see cref="T:Speckle.Core.Models.Base"/> objects being traversed (iterable only once).</returns>
+        </member>
         <member name="T:Speckle.Core.Models.Abstract">
             <summary>
             Wrapper around other, third party, classes that are not coming from a speckle kit.
@@ -1174,6 +1282,24 @@
             </summary>
             <param name="input"></param>
             <returns></returns>
+        </member>
+        <member name="M:Speckle.Core.Models.Utilities.GetApplicationProps(System.Object,System.Type,System.Boolean,System.Collections.Generic.List{System.String})">
+            <summary>
+            Retrieves the simple type properties of an object
+            </summary>
+            <param name="o"></param>
+            <param name="t"></param>
+            <param name="getParentProps">Set to true to also retrieve simple props of direct parent type</param>
+            <param name="ignore">Names of props to ignore</param>
+            <returns></returns>
+        </member>
+        <member name="M:Speckle.Core.Models.Utilities.SetApplicationProps(System.Object,System.Type,Speckle.Core.Models.Base)">
+            <summary>
+            Sets the properties of an object with the properties of a base object
+            </summary>
+            <param name="o"></param>
+            <param name="t"></param>
+            <param name="props">The base class object representing application props</param>
         </member>
         <member name="M:Speckle.Core.Models.Utilities.SplitList``1(System.Collections.Generic.List{``0},System.Int32)">
             <summary>
