@@ -149,13 +149,13 @@ namespace Speckle.ConnectorUnity
                   sendProgress.value = (float) val;
                 });
               },
-              onDataSentAction: (commitId) =>
+              onDataSentAction: (objectId) =>
               {
-                Debug.Log("Send operation completed", this);
+                Debug.Log($"Send operation completed, object id: {objectId}", this);
                 Dispatcher.Instance().Enqueue(() =>
                 {
                   MakeButtonsInteractable(true);
-                  statusText.text = $"Sent {commitId}";
+                  statusText.text = $"Sent {objectId}";
                   sendProgress.gameObject.SetActive(false); //hide
                 });
               },

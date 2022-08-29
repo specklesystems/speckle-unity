@@ -11,7 +11,8 @@ namespace Speckle.ConnectorUnity
     /// <summary>
     /// This class gets attached to GOs and is used to store Speckle's metadata when sending / receiving
     /// </summary>
-    [Serializable]
+    [AddComponentMenu("Speckle/Speckle Properties")]
+    [Serializable, DisallowMultipleComponent]
     public class SpeckleProperties : MonoBehaviour, ISerializationCallbackReceiver
     {
 
@@ -45,8 +46,10 @@ namespace Speckle.ConnectorUnity
             }
             set
             {
+                
                 Debug.Assert(typeof(Base).IsAssignableFrom(value));
                 Debug.Assert(!value.IsAbstract);
+                
                 _speckleType = value;
                 _hasChanged = true;
             }

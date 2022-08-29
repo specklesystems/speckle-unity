@@ -114,9 +114,11 @@ namespace Objects.Converter.Unity
           
           //Object is not a raw geometry, convert it as display value element
           GameObject? element = DisplayValueToNative(speckleObject);
-          if (element != null && !speckleObject.speckle_type.Contains("Objects.Geometry"))
+          if (element != null)
           {
-            AttachSpeckleProperties(element, speckleObject.GetType(), GetProperties(speckleObject));
+            if(!speckleObject.speckle_type.Contains("Objects.Geometry"))
+              AttachSpeckleProperties(element, speckleObject.GetType(), GetProperties(speckleObject));
+            
             return element;
           }
 

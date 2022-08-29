@@ -3,11 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using System.Reflection;
-using System.Text;
 using Objects.Geometry;
-using Objects.Primitive;
-using PlasticPipe.PlasticProtocol.Messages;
 using Speckle.Core.Models;
 using UnityEditor;
 using UnityEngine;
@@ -22,9 +18,11 @@ namespace Speckle.ConnectorUnity.Editor
     {
         private static readonly string[] SpeckleTypeOptionStrings;
         private static readonly Type[] SpeckleTypeOptions;
-
-        private HashSet<string> ArrayFoldoutState = new HashSet<string>();
-        private static Dictionary<Type, List<PropertyInfo>> propInfoCache = new ();
+        
+        private static HashSet<string> ArrayFoldoutState = new();
+        private static bool instancePropFoldoutState = true;
+        private static bool dynamicPropFoldoutState = true;
+        private static bool isEditMode = false;
 
         static SpecklePropertiesEditor()
         {
@@ -46,10 +44,22 @@ namespace Speckle.ConnectorUnity.Editor
         
         public override void OnInspectorGUI()
         {
-            SpeckleProperties properties = (SpeckleProperties) target;
+            SpeckleProperties properties = (SpeckleProperties)target;
 
+            //Edit Mode
+            isEditMode = EditorGUILayout.ToggleLeft("Enable Inspector Edit Mode (experimental)", isEditMode);
+
+            if (isEditMode)
+            {
+                GUILayout.Label(
+                    "Modifying properties through the inspector is experimental and can lead to invalid objects, proceed at your own risk!",
+                    EditorStyles.helpBox);
+                GUILayout.Space(10);
+            }
+            GUI.enabled = isEditMode;
+            
             // SpeckleType
-            GUILayout.Label("Speckle Type: ");
+            GUILayout.Label("Speckle Type: ", EditorStyles.boldLabel );
             
             var oldIndex = Array.IndexOf(SpeckleTypeOptions, properties.SpeckleType);
             var speckleTypeSelectedIndex = EditorGUILayout.Popup(oldIndex, SpeckleTypeOptionStrings);
@@ -60,33 +70,37 @@ namespace Speckle.ConnectorUnity.Editor
             }
             
             // Instance Properties
-            GUILayout.Label("Instance Properties: ");
-            
             var InstancePropertyNames = DynamicBase.GetInstanceMembersNames(properties.SpeckleType);
-            
-            foreach (var propName in InstancePropertyNames)
+            instancePropFoldoutState = EditorGUILayout.Foldout(instancePropFoldoutState, "Instance Properties: ", EditorStyles.foldoutHeader);
+            if (instancePropFoldoutState)
             {
-                if (!properties.Data.TryGetValue(propName, out object? existingValue)) continue;
-                
-                var newValue = CreateField(existingValue, propName, propLayoutOptions);
-                if(newValue != existingValue)
-                    properties.Data[propName] = newValue;
-                
-                GUILayout.Space(10);
+                foreach (var propName in InstancePropertyNames)
+                {
+                    if (!properties.Data.TryGetValue(propName, out object? existingValue)) continue;
+                    
+                    var newValue = CreateField(existingValue, propName, propLayoutOptions);
+                    if(newValue != existingValue)
+                        properties.Data[propName] = newValue;
+                    
+                }
             }
             
-            GUILayout.Label("Dynamic Properties: ");
-            var ignoreSet = InstancePropertyNames.ToImmutableHashSet();
-            foreach (var kvp in properties.Data)
+            GUILayout.Space(10);
+            dynamicPropFoldoutState = EditorGUILayout.Foldout(dynamicPropFoldoutState, "Dynamic Properties:", EditorStyles.foldoutHeader);
+            if (dynamicPropFoldoutState)
             {
-                if (ignoreSet.Contains(kvp.Key)) continue;
-                
-                var existingValue = kvp.Value;
-                var newValue = CreateField(existingValue, kvp.Key, propLayoutOptions);
-                if(newValue != existingValue)
-                    properties.Data[kvp.Key] = newValue;
-                
-                GUILayout.Space(10);
+                var ignoreSet = InstancePropertyNames.ToImmutableHashSet();
+                foreach (var kvp in properties.Data)
+                {
+                    if (ignoreSet.Contains(kvp.Key)) continue;
+                    
+                    var existingValue = kvp.Value;
+                    var newValue = CreateField(existingValue, kvp.Key, propLayoutOptions);
+                    if(newValue != existingValue)
+                        properties.Data[kvp.Key] = newValue;
+                    
+                    GUILayout.Space(10);
+                }
             }
         }
 
@@ -99,8 +113,9 @@ namespace Speckle.ConnectorUnity.Editor
                 IList l => ArrayField(propName, l, options),
                 _ => CreateFieldPrimitive(v, propName, options),
             };
-            if (ret != null) return ret;
 
+            if (ret != null) return ret;
+            
             EditorGUILayout.TextField(propName, v == null? "NULL" : v.ToString());
             return v;
         }
@@ -114,7 +129,7 @@ namespace Speckle.ConnectorUnity.Editor
                 float f => EditorGUILayout.FloatField(propName, f, options),
                 double d => EditorGUILayout.DoubleField(propName, d, options),
                 string s => EditorGUILayout.TextField(propName, s, options),
-                bool b => GUILayout.Toggle(b, propName, options),
+                bool b => EditorGUILayout.Toggle(propName, b, options),
                 Enum e => EditorGUILayout.EnumPopup(propName, e, options),
                 Point p => PointToVector3(EditorGUILayout.Vector3Field(propName, new Vector3((float)p.x, (float)p.z, (float)p.z), options), p),
                 _ => null,
