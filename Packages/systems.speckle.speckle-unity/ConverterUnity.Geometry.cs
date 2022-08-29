@@ -1,8 +1,6 @@
 ﻿using System;
 using Objects.Geometry;
 using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -324,8 +322,7 @@ namespace Objects.Converter.Unity
             var go = NewPointBasedGameObject(points, curve.speckle_type);
             return go;
         }
-
-    
+        
         /// <summary>
         /// Converts multiple <paramref name="meshes"/> (e.g. with different materials) into one native mesh
         /// </summary>
@@ -336,10 +333,11 @@ namespace Objects.Converter.Unity
             if (!meshes.Any()) return null;
             
             var go = new GameObject();
-            MeshDataToNative(meshes, out var nativeMesh, out var nativeMaterials);
-
+            MeshDataToNative(meshes, out var nativeMesh, out var nativeMaterials, out var center);
+            
+            go.transform.position = center;
             go.SafeMeshSet(nativeMesh, true);
-      
+
             var meshRenderer = go.AddComponent<MeshRenderer>();
 
             meshRenderer.sharedMaterials = nativeMaterials;
@@ -383,20 +381,21 @@ namespace Objects.Converter.Unity
             //if(converted != null) AttachSpeckleProperties(converted,speckleMesh.GetType(), GetProperties(speckleMesh, typeof(Mesh)));
             return converted;
         }
-
-        /// <summary> 
-        ///
+        
+        /// <summary>
+        /// 
         /// </summary>
         /// <param name="meshes">meshes to be converted as SubMeshes</param>
-        /// <param name="nativeMesh">The converted native mesh</param>W
+        /// <param name="nativeMesh">The converted native mesh</param>
         /// <param name="nativeMaterials">The converted materials (one per converted sub-mesh)</param>
-        public void MeshDataToNative(IReadOnlyCollection<SMesh> meshes, out Mesh nativeMesh, out Material[] nativeMaterials)
+        /// <param name="center">Center position for the mesh</param>
+        public void MeshDataToNative(IReadOnlyCollection<SMesh> meshes, out Mesh nativeMesh, out Material[] nativeMaterials, out Vector3 center)
         {
-            var verts = new List<Vector3>();
-      
-            var uvs = new List<Vector2>();
-            var vertexColors = new List<Color>();
-      
+             var verts = new List<Vector3>();
+
+             var uvs = new List<Vector2>();
+             var vertexColors = new List<Color>();
+             
             var materials = new List<Material>(meshes.Count);
             var subMeshes = new List<List<int>>(meshes.Count);
 
@@ -413,25 +412,8 @@ namespace Objects.Converter.Unity
             Debug.Assert(verts.Count >= 0);
             nativeMesh = new Mesh();
       
-      
-            //  center transform pivot according to the bounds of the model
-            // Bounds meshBounds = new Bounds
-            // {
-            //  center = verts[0]
-            // };
-            //
-            // foreach (var vert in verts)
-            // {
-            //  meshBounds.Encapsulate(vert);
-            // }
-            //
-            // // offset mesh vertices
-            // for (int l = 0; l < verts.Count; l++)
-            // {
-            //  verts[l] -= meshBounds.center;
-            // }
-      
-      
+            RecenterVertices(verts, out center);
+
             nativeMesh.subMeshCount = subMeshes.Count;
       
             nativeMesh.SetVertices(verts);
@@ -527,7 +509,7 @@ namespace Objects.Converter.Unity
             }
             return uv;
         }
-    
+        
         private static Matrix4x4 UnflattenMatrix(IList<double> flatMatrix)
         {
             Matrix4x4 matrix = new Matrix4x4();
@@ -541,6 +523,22 @@ namespace Objects.Converter.Unity
         }
         #endregion
 
+        public static void RecenterVertices(List<Vector3> vertices, out Vector3 center)
+        {
+          center = Vector3.zero;
+
+          if (vertices == null || !vertices.Any()) return;
+
+          Bounds meshBounds = new Bounds { center = vertices[0] };
+
+          foreach (var vert in vertices)
+            meshBounds.Encapsulate(vert);
+
+          center = meshBounds.center;
+
+          for (int i = 0; i < vertices.Count; i++)
+            vertices[i] -= meshBounds.center;
+        }
 
 
 
