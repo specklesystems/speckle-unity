@@ -14,6 +14,7 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using Material = UnityEngine.Material;
 using Mesh = UnityEngine.Mesh;
+using Object = UnityEngine.Object;
 using SMesh = Objects.Geometry.Mesh;
 using SColor = System.Drawing.Color;
 using Transform = UnityEngine.Transform;
@@ -31,40 +32,22 @@ namespace Objects.Converter.Unity
     
         #region helper methods
     
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <param name="z"></param>
-        /// <returns></returns>
+
+        
+        public Vector3 VectorByCoordinates(double x, double y, double z, double scaleFactor)
+        {
+            // switch y and z //TODO is this correct? LH -> RH
+            return new Vector3((float)(x * scaleFactor), (float)(z * scaleFactor), (float)(y * scaleFactor));
+        }
+        
         public Vector3 VectorByCoordinates(double x, double y, double z, string units)
         {
-            // switch y and z
-            return new Vector3((float)ScaleToNative(x, units), (float)ScaleToNative(z, units),
-                (float)ScaleToNative(y, units));
+            var f = Speckle.Core.Kits.Units.GetConversionFactor(units, ModelUnits);
+            return VectorByCoordinates(x, y, z, f);
         }
 
-        public Vector3 VectorFromPoint(Point p)
-        {
-            // switch y and z
-            return new Vector3((float)ScaleToNative(p.x, p.units), (float)ScaleToNative(p.z, p.units),
-                (float)ScaleToNative(p.y, p.units));
-        }
+        public Vector3 VectorFromPoint(Point p) => VectorByCoordinates(p.x, p.y, p.z, p.units);
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="ptValues"></param>
-        /// <returns></returns>
-        // public Vector3 ArrayToPoint(double[] ptValues, string units)
-        // {
-        //   double x = ptValues[0];
-        //   double y = ptValues[1];
-        //   double z = ptValues[2];
-        //
-        //   return PointByCoordinates(x, y, z, units);
-        // }
 
         /// <summary>
         /// 
@@ -76,11 +59,11 @@ namespace Objects.Converter.Unity
             if (arr.Count % 3 != 0) throw new Exception("Array malformed: length%3 != 0.");
 
             Vector3[] points = new Vector3[arr.Count / 3];
-
+            var f = Speckle.Core.Kits.Units.GetConversionFactor(units, ModelUnits);
+            
             for (int i = 2, k = 0; i < arr.Count; i += 3)
-                points[k++] = VectorByCoordinates(arr[i - 2], arr[i - 1], arr[i], units);
-
-
+                points[k++] = VectorByCoordinates(arr[i - 2], arr[i - 1], arr[i], f);
+            
             return points;
         }
         
@@ -155,20 +138,34 @@ namespace Objects.Converter.Unity
 
             int indexOffset = subMesh.firstVertex;
             
-            int i = 0;
+            // int i = 0;
+            // int j = 0;
+            // while (i < nFaces.Length)
+            // {
+            //     if (j == 0)
+            //     {
+            //         sFaces.Add(faceN);
+            //         j = faceN;
+            //     }
+            //     sFaces.Add(nFaces[i] - indexOffset);
+            //     j--;
+            //     i++;
+            // }
+            
+            int i = nFaces.Length - 1;
             int j = 0;
-            while (i < nFaces.Length)
+            while (i >= 0) //Traverse backwards to ensure CCW face orientation
             {
                 if (j == 0)
                 {
+                    //Add face cardinality indicator ever
                     sFaces.Add(faceN);
                     j = faceN;
                 }
                 sFaces.Add(nFaces[i] - indexOffset);
                 j--;
-                i++;
+                i--;
             }
-
             
             int vertexTake = subMesh.vertexCount;
             var nVertices = nativeMesh.vertices.Skip(indexOffset).Take(vertexTake);
@@ -358,9 +355,12 @@ namespace Objects.Converter.Unity
             }
             excludeProps.Add("renderMaterial");
             excludeProps.Add("elements");
+            excludeProps.Add("name");
+            //excludeProps.Add("tag");
+            excludeProps.Add("physicsLayer");
       
             return o.GetMembers()
-                .Where(x => !excludeProps.Contains(x.Key))
+                .Where(x => !(excludeProps.Contains(x.Key) || excludeProps.Contains(x.Key.TrimStart('@'))))
                 .ToDictionary(x => x.Key, x => (object?)x.Value);
         }
     
@@ -540,9 +540,6 @@ namespace Objects.Converter.Unity
             vertices[i] -= meshBounds.center;
         }
 
-
-
-
         private Material RenderMaterialToNative(RenderMaterial? renderMaterial)
         {
             //todo support more complex materials
@@ -550,22 +547,16 @@ namespace Objects.Converter.Unity
             Material mat = new Material(shader);
 
             //if a renderMaterial is passed use that, otherwise try get it from the mesh itself
-
             if (renderMaterial == null) return mat;
             
             // 1. match material by name, if any
-            Material? matByName = null;
-        
-            foreach (var _mat in ContextObjects)
-            {
-                if (((Material)_mat.NativeObject).name == renderMaterial.name)
-                {
-                    if (matByName == null) matByName = (Material)_mat.NativeObject;
-                    else Debug.LogWarning($"There is more than one Material with the name '{renderMaterial.name}'!", (Material)_mat.NativeObject);
-                }
-            }
-            if (matByName != null) return matByName;
+            string materialName = string.IsNullOrWhiteSpace(renderMaterial.name)
+                ? $"material-{renderMaterial.id}"
+                : renderMaterial.name.Replace('/', '-');
 
+            if (LoadedAssets.TryGetValue(materialName, out Object asset)
+                && asset is Material loadedMaterial) return loadedMaterial;
+            
             // 2. re-create material by setting diffuse color and transparency on standard shaders
             if (renderMaterial.opacity < 1)
             {
@@ -575,10 +566,7 @@ namespace Objects.Converter.Unity
 
             var c = renderMaterial.diffuse.ToUnityColor();
             mat.color = new Color(c.r, c.g, c.b, (float)renderMaterial.opacity);
-            mat.name = string.IsNullOrWhiteSpace(renderMaterial.name)
-                       ? renderMaterial.name.Replace('/', '-')
-                       : "material-" + Guid.NewGuid().ToString().Substring(0,8);
-        
+            mat.name = materialName;
             mat.SetFloat(Metallic, (float)renderMaterial.metalness);
             mat.SetFloat(Glossiness,  1 - (float)renderMaterial.roughness);
 

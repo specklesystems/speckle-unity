@@ -1,4 +1,3 @@
-
 using System.Collections;
 using System.Threading.Tasks;
 using Speckle.ConnectorUnity;
@@ -8,17 +7,15 @@ using Speckle.Core.Transports;
 using UnityEngine;
 
 [RequireComponent(typeof(RecursiveConverter))]
-public class TestManualReceive : MonoBehaviour
+public class ManualReceive : MonoBehaviour
 {
-
-    [field: SerializeField] private string AuthToken { get; set; }
-    [field: SerializeField] private string ServerUrl { get; set; }
-    [field: SerializeField] private string StreamId { get; set; }
-    [field: SerializeField] private string ObjectId { get; set; }
     
-
+    public string authToken;
+    public string serverUrl;
+    public string streamId, objectId;
+    
     private RecursiveConverter receiver;
-    
+
 
     void Awake()
     {
@@ -37,17 +34,17 @@ public class TestManualReceive : MonoBehaviour
     {
         var account = new Account()
         {
-            token = AuthToken,
-            serverInfo = new ServerInfo() {url = ServerUrl},
+            token = authToken,
+            serverInfo = new ServerInfo() {url = serverUrl},
         };
 
         Task.Run(async () =>
         {
-            var transport = new ServerTransport(account, StreamId);
+            var transport = new ServerTransport(account, streamId);
             var localTransport = new MemoryTransport();
-            
+        
             var @base = await Operations.Receive(
-                ObjectId,
+                objectId,
                 remoteTransport: transport,
                 localTransport: localTransport,
                 onErrorAction: (m, e)=> Debug.LogError(m + e),
@@ -56,13 +53,12 @@ public class TestManualReceive : MonoBehaviour
 
             Dispatcher.Instance().Enqueue(() =>
             {
-
-                var rc = GetComponent<RecursiveConverter>();
                 var parentObject = new GameObject(name);
-                rc.RecursivelyConvertToNative(@base, parentObject.transform);
+                receiver.RecursivelyConvertToNative(@base, parentObject.transform);
 
-                Debug.Log($"Receive {ObjectId} completed");
+                Debug.Log($"Receive {objectId} completed");
             });
         });
     }
 }
+

@@ -34,6 +34,15 @@
             <param name="limit">Max number of users to return</param>
             <returns></returns>
         </member>
+        <member name="M:Speckle.Core.Api.Client.GetServerVersion(System.Threading.CancellationToken)">
+             <summary>
+             Gets the version of the current server. Useful for guarding against unsupported api calls on newer or older servers.
+             </summary>
+             <param name="cancellationToken">[Optional] defaults to an empty cancellation token</param>
+             <returns><see cref="T:System.Version"/> object excluding any strings (eg "2.7.2-alpha.6995" becomes "2.7.2.6995")</returns>
+             <exception cref="T:Speckle.Core.Logging.SpeckleException"></exception>
+            
+        </member>
         <member name="M:Speckle.Core.Api.Client.StreamGet(System.String,System.Int32)">
             <summary>
             Gets a stream by id including basic branch info (id, name, description, and total commit count).
@@ -133,14 +142,14 @@
             <param name="id">Id of the stream to be deleted</param>
             <returns></returns>
         </member>
-        <member name="M:Speckle.Core.Api.Client.StreamGrantPermission(Speckle.Core.Api.StreamGrantPermissionInput)">
+        <member name="M:Speckle.Core.Api.Client.StreamGrantPermission(Speckle.Core.Api.StreamPermissionInput)">
             <summary>
             Grants permissions to a user on a given stream.
             </summary>
             <param name="permissionInput"></param>
             <returns></returns>
         </member>
-        <member name="M:Speckle.Core.Api.Client.StreamGrantPermission(System.Threading.CancellationToken,Speckle.Core.Api.StreamGrantPermissionInput)">
+        <member name="M:Speckle.Core.Api.Client.StreamGrantPermission(System.Threading.CancellationToken,Speckle.Core.Api.StreamPermissionInput)">
             <summary>
             Grants permissions to a user on a given stream.
             </summary>
@@ -163,6 +172,16 @@
             <param name="permissionInput"></param>
             <returns></returns>
         </member>
+        <member name="M:Speckle.Core.Api.Client.StreamUpdatePermission(Speckle.Core.Api.StreamPermissionInput,System.Threading.CancellationToken)">
+            <summary>
+            Updates permissions for a user on a given stream.
+            Valid for Speckle Server >=2.6.4
+            </summary>
+            <param name="updatePermissionInput">includes the streamId, the userId of the user to update, and the user's new role</param>
+            <param name="cancellationToken"></param>
+            <returns></returns>
+            <exception cref="T:Speckle.Core.Logging.SpeckleException"></exception>
+        </member>
         <member name="M:Speckle.Core.Api.Client.StreamInviteCreate(Speckle.Core.Api.StreamInviteCreateInput)">
             <summary>
             Sends an email invite to join a stream and assigns them a collaborator role.
@@ -175,8 +194,28 @@
             Sends an email invite to join a stream and assigns them a collaborator role.
             </summary>
             <param name="cancellationToken"></param>
-            <param name="streamCreateInput"></param>
+            <param name="inviteCreateInput"></param>
             <returns></returns>
+        </member>
+        <member name="M:Speckle.Core.Api.Client._CheckStreamInvitesSupported(System.Threading.CancellationToken)">
+            <summary>
+            Checks if Speckle Server version is at least v2.6.4 meaning stream invites are supported.
+            </summary>
+            <param name="cancellationToken"></param>
+            <returns>true if invites are supported</returns>
+            <exception cref="T:Speckle.Core.Logging.SpeckleException">if Speckle Server version is less than v2.6.4</exception>
+        </member>
+        <member name="M:Speckle.Core.Api.Client.StreamInviteUse(System.String,System.String,System.Boolean,System.Threading.CancellationToken)">
+            <summary>
+            Accept or decline a stream invite.
+            Requires Speckle Server version >= 2.6 .4
+            </summary>
+            <param name="streamId"></param>
+            <param name="token"></param>
+            <param name="accept"></param>
+            <param name="cancellationToken"></param>
+            <returns></returns>
+            <exception cref="T:Speckle.Core.Logging.SpeckleException"></exception>
         </member>
         <member name="M:Speckle.Core.Api.Client.StreamGetBranches(System.String,System.Int32,System.Int32)">
             <summary>
@@ -210,7 +249,7 @@
             Creates a branch on a stream.
             </summary>
             <param name="branchInput"></param>
-            <returns>The stream's id.</returns>
+            <returns>The branch id.</returns>
         </member>
         <member name="M:Speckle.Core.Api.Client.BranchGet(System.String,System.String,System.Int32)">
             <summary>
@@ -531,6 +570,30 @@
             <param name="slug">The connector slug eg. revit, rhino, etc</param>
             <returns></returns>
         </member>
+        <member name="P:Speckle.Core.Api.Helpers.InstallSpeckleFolderPath">
+            <summary>
+            Returns the correct location of the Speckle installation folder. Usually this would be the user's %appdata%/Speckle folder, unless the install was made for all users.
+            </summary>
+            <returns>The location of the Speckle installation folder</returns>
+        </member>
+        <member name="P:Speckle.Core.Api.Helpers.UserSpeckleFolderPath">
+            <summary>
+            Returns the correct location of the Speckle folder for the current user. Usually this would be the user's %appdata%/Speckle folder.
+            </summary>
+            <returns>The location of the Speckle installation folder</returns>
+        </member>
+        <member name="P:Speckle.Core.Api.Helpers.InstallApplicationDataPath">
+            <summary>
+            Returns the correct location of the AppData folder where Speckle is installed. Usually this would be the user's %appdata% folder, unless the install was made for all users.
+            </summary>
+            <returns>The location of the AppData folder where Speckle is installed</returns>
+        </member>
+        <member name="P:Speckle.Core.Api.Helpers.UserApplicationDataPath">
+            <summary>
+            Returns the correct location for `Environment.SpecialFolder.ApplicationData` for the current roaming user.
+            </summary>
+            <returns>The location of the user's `%appdata%` folder.</returns>
+        </member>
         <!-- Badly formed XML comment ignored for member "T:Speckle.Core.Api.Operations" -->
         <member name="M:Speckle.Core.Api.Operations.GetSerializerInstance">
             <summary>
@@ -715,6 +778,12 @@
             </summary>
             <param name="id">ID of the account to remove</param>
         </member>
+        <member name="M:Speckle.Core.Credentials.AccountManager.ChangeDefaultAccount(System.String)">
+            <summary>
+            Changes the default account
+            </summary>
+            <param name="id"></param>
+        </member>
         <member name="M:Speckle.Core.Credentials.AccountManager.AddAccount(System.String)">
             <summary>
             Adds an account by propting the user to log in via a web flow
@@ -835,13 +904,13 @@
             </summary>
             <param name="doc">The current application document</param>
         </member>
-        <member name="M:Speckle.Core.Kits.ISpeckleConverter.SetContextObjects(System.Collections.Generic.List{Speckle.Core.Models.ApplicationPlaceholderObject})">
+        <member name="M:Speckle.Core.Kits.ISpeckleConverter.SetContextObjects(System.Collections.Generic.List{Speckle.Core.Models.ApplicationObject})">
             <summary>
             Some converters need to know which other objects are being converted, in order to sort relationships between them (ie, Revit). Use this method to set them.
             </summary>
             <param name="objects"></param>
         </member>
-        <member name="M:Speckle.Core.Kits.ISpeckleConverter.SetPreviousContextObjects(System.Collections.Generic.List{Speckle.Core.Models.ApplicationPlaceholderObject})">
+        <member name="M:Speckle.Core.Kits.ISpeckleConverter.SetPreviousContextObjects(System.Collections.Generic.List{Speckle.Core.Models.ApplicationObject})">
             <summary>
             Some converters need to know which objects have been converted before in order to update them (ie, Revit). Use this method to set them.
             </summary>
@@ -995,8 +1064,8 @@
             <summary>
             Tracks an event from a specified email and server, anonymizes personal information
             </summary>
-            <param name="email">Email of the user, it will be anonymized</param>
-            <param name="server">Server URL, it will be anonymized</param>
+            <param name="hashedEmail">Email of the user anonymized</param>
+            <param name="hashedServer">Server URL anonymized</param>
             <param name="eventName">Name of the event</param>
             <param name="customProperties">Additional parameters to pass to the event</param>
         </member>
@@ -1020,11 +1089,6 @@
         <member name="P:Speckle.Core.Logging.Setup.VersionedHostApplication">
             <summary>
             Set from the connectors, defines which current host application we're running on - includes the version.
-            </summary>
-        </member>
-        <member name="P:Speckle.Core.Logging.Setup.SUUID">
-            <summary>
-            Tries to get the SUUID set by the Manager
             </summary>
         </member>
         <member name="T:Speckle.Core.Models.DetachProperty">
@@ -1255,11 +1319,65 @@
             </summary>
             <typeparam name="T"></typeparam>
         </member>
-        <member name="T:Speckle.Core.Models.ApplicationPlaceholderObject">
+        <member name="T:Speckle.Core.Models.ApplicationObject">
             <summary>
             A simple wrapper to keep track of the relationship between speckle objects and their host-application siblings in cases where the
-            <see cref="P:Speckle.Core.Models.Base.applicationId"/> cannot correspond with the <see cref="P:Speckle.Core.Models.ApplicationPlaceholderObject.ApplicationGeneratedId"/> (ie, on receiving operations). 
+            <see cref="P:Speckle.Core.Models.Base.applicationId"/> cannot correspond with the <see cref="P:Speckle.Core.Models.ApplicationObject.CreatedIds"/> (ie, on receiving operations). 
             </summary>
+        </member>
+        <member name="P:Speckle.Core.Models.ApplicationObject.Container">
+            <summary>
+            The container for the object in the native application
+            </summary>
+        </member>
+        <member name="P:Speckle.Core.Models.ApplicationObject.Convertible">
+            <summary>
+            Indicates if conversion is supported by the converter
+            </summary>
+        </member>
+        <member name="P:Speckle.Core.Models.ApplicationObject.Fallback">
+            <summary>
+            The fallback values if direct conversion is not available, typically displayValue
+            </summary>
+        </member>
+        <member name="P:Speckle.Core.Models.ApplicationObject.OriginalId">
+            <summary>
+            The Speckle id (on receive) or native id (on send)
+            </summary>
+            <remarks>
+            Used to retrieve this object in <code>ProgressReport.GetReportObject()</code>, typically to pass between connectors and converters
+            </remarks>
+        </member>
+        <member name="P:Speckle.Core.Models.ApplicationObject.Descriptor">
+            <summary>
+            A descriptive string to describe the object. Use the object type as default.
+            </summary>
+        </member>
+        <member name="P:Speckle.Core.Models.ApplicationObject.CreatedIds">
+            <summary>
+            The created object ids associated with this object
+            </summary>
+            <remarks>
+            On send, this is currently left empty as generating Speckle ids would be performance expensive
+            </remarks>
+        </member>
+        <member name="P:Speckle.Core.Models.ApplicationObject.Status">
+            <summary>
+            Conversion status of object
+            </summary>
+        </member>
+        <member name="P:Speckle.Core.Models.ApplicationObject.Log">
+            <summary>
+            Conversion notes or other important information to expose to the user
+            </summary>
+        </member>
+        <member name="P:Speckle.Core.Models.ApplicationObject.Converted">
+            <summary>
+            Converted objects corresponding to this object
+            </summary>
+            <remarks>
+            Used during receive for convenience, corresponds to CreatedIds
+            </remarks>
         </member>
         <member name="P:Speckle.Core.Models.ProgressReport.ConversionLog">
             <summary>

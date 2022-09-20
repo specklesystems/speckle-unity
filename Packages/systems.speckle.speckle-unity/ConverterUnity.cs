@@ -4,11 +4,11 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using JetBrains.Annotations;
 using Objects.BuiltElements;
 using Speckle.ConnectorUnity;
 using UnityEngine;
 using Mesh = Objects.Geometry.Mesh;
+using Object = UnityEngine.Object;
 
 namespace Objects.Converter.Unity
 {
@@ -28,17 +28,19 @@ namespace Objects.Converter.Unity
 
     public IEnumerable<string> GetServicedApplications() => new string[] {VersionedHostApplications.Unity};
 
-    public HashSet<Exception> ConversionErrors { get; private set; } = new HashSet<Exception>();
+    public HashSet<Exception> ConversionErrors { get; private set; }
 
-
-    public List<ApplicationPlaceholderObject> ContextObjects { get; set; } = new List<ApplicationPlaceholderObject>();
+    public Dictionary<string, Object> LoadedAssets { get; private set; }
     
-    public void SetContextDocument(object doc) => throw new NotImplementedException();
+    public void SetContextDocument(object doc)
+    {
+      if(doc is not Dictionary<string, Object> loadedAssets) throw new ArgumentException($"Expected {nameof(doc)} to be of type {typeof(Dictionary<string, Object>)}", nameof(doc));
+      LoadedAssets = loadedAssets;
+    }
 
-    public void SetContextObjects(List<ApplicationPlaceholderObject> objects) => ContextObjects = objects;
+    public void SetContextObjects(List<ApplicationObject> objects) => throw new NotImplementedException();
 
-    public void SetPreviousContextObjects(List<ApplicationPlaceholderObject> objects) =>
-      throw new NotImplementedException();
+    public void SetPreviousContextObjects(List<ApplicationObject> objects) => throw new NotImplementedException();
     
 #nullable enable
      public object? ConvertToNative(Base @object) => ConvertToNativeGameObject(@object);
@@ -61,7 +63,7 @@ namespace Objects.Converter.Unity
       speckleObject["name"] = go.name;
       //speckleObject["transform"] = TransformToSpeckle(go.Transform); //TODO
       speckleObject["tag"] = go.tag;
-      speckleObject["layer"] = go.layer;
+      speckleObject["physicsLayer"] = LayerMask.LayerToName(go.layer);
       //speckleObject["isStatic"] = go.isStatic; //todo figure out realtime-rendered static mobility interoperability (unreal)
 
       foreach (Component component in go.GetComponents<Component>())

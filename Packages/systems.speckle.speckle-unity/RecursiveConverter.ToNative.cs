@@ -70,7 +70,11 @@ namespace Speckle.ConnectorUnity
                 go.transform.SetParent(parent);
                 //TODO add support for unity specific props
                 //if (baseObject["tag"] is string t) go.tag = t;
-                //if (baseObject["layer"] is int layer) go.layer = layer;
+                if (baseObject["physicsLayer"] is string layerName)
+                {
+                    int layer = LayerMask.NameToLayer(layerName); //TODO: check how this can be interoperable with Unreal and Blender
+                    if (layer > -1) go.layer = layer;
+                }
                 //if (baseObject["isStatic"] is bool isStatic) go.isStatic = isStatic;
             }
             
@@ -121,12 +125,14 @@ namespace Speckle.ConnectorUnity
 
         protected virtual void LoadMaterialOverrides()
         {
-            //using the ApplicationPlaceholderObject to pass materials
+            //using the ContextDocument to pass materials
             //available in Assets/Materials to the converters
-            var materials = Resources.LoadAll("", typeof(Material)).Cast<Material>().ToArray();
-            //if (materials.Length == 0) Debug.Log("To automatically assign materials to received meshes, materials have to be in the \'Assets/Resources\' folder!");
-            var placeholderObjects = materials.Select(x => new ApplicationPlaceholderObject { NativeObject = x }).ToList();
-            ConverterInstance.SetContextObjects(placeholderObjects);
+            Dictionary<string, UnityEngine.Object> loadedAssets = Resources.LoadAll("", typeof(Material))
+                .GroupBy(o => o.name)
+                .Select(o => o.First())
+                .ToDictionary(o => o.name);
+
+            ConverterInstance.SetContextDocument(loadedAssets);
         }
         
         

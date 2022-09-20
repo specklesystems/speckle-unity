@@ -12,7 +12,7 @@
           "GraphQL.Client": "4.0.2",
           "Microsoft.CSharp": "4.7.0",
           "NETStandard.Library": "2.0.3",
-          "Sentry": "3.19.0",
+          "Sentry": "3.20.1",
           "Speckle.Newtonsoft.Json": "12.0.3.1",
           "System.Data.SQLite.Core": "1.0.115"
         },
@@ -89,7 +89,7 @@
           "Microsoft.NETCore.Platforms": "1.1.0"
         }
       },
-      "Sentry/3.19.0": {
+      "Sentry/3.20.1": {
         "dependencies": {
           "Microsoft.Bcl.AsyncInterfaces": "5.0.0",
           "System.Buffers": "4.5.1",
@@ -99,8 +99,8 @@
         },
         "runtime": {
           "lib/netstandard2.0/Sentry.dll": {
-            "assemblyVersion": "3.19.0.0",
-            "fileVersion": "3.19.0.0"
+            "assemblyVersion": "3.20.1.0",
+            "fileVersion": "3.20.1.0"
           }
         }
       },
@@ -324,12 +324,12 @@
       "path": "netstandard.library/2.0.3",
       "hashPath": "netstandard.library.2.0.3.nupkg.sha512"
     },
-    "Sentry/3.19.0": {
+    "Sentry/3.20.1": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-AB2M8QGA9eGh1DN+mBpBMNPwHDRausGQscCbPZIkPYdXnkBYdKXUR+1AAYvAEJmGMEyGIjIfUhUuhwSPCR9Jjg==",
-      "path": "sentry/3.19.0",
-      "hashPath": "sentry.3.19.0.nupkg.sha512"
+      "sha512": "sha512-SkI+CaRmdi5W3JA2plmJpjCQ+P49EuoCODmvrcYUGqeWMGwqa8DJWyeUDpso1DD82wYzbQ0RioSAoxG3nUhzjQ==",
+      "path": "sentry/3.20.1",
+      "hashPath": "sentry.3.20.1.nupkg.sha512"
     },
     "Speckle.Newtonsoft.Json/12.0.3.1": {
       "type": "package",
