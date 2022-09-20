@@ -1,20 +1,18 @@
-﻿using Objects.Converter.Unity;
-using Speckle.Core.Api;
-using Speckle.Core.Api.SubscriptionModels;
+﻿using Speckle.Core.Api;
 using Speckle.Core.Credentials;
 using Speckle.Core.Logging;
 using Speckle.Core.Models;
 using Speckle.Core.Transports;
 using System;
-using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Sentry;
-using Sentry.Protocol;
 using Speckle.Core.Kits;
+using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Speckle.ConnectorUnity
 {
@@ -22,10 +20,20 @@ namespace Speckle.ConnectorUnity
   /// A Speckle Sender, it's a wrapper around a basic Speckle Client
   /// that handles conversions for you
   /// </summary>
+  [RequireComponent(typeof(RecursiveConverter)), ExecuteAlways]
   public class Sender : MonoBehaviour
   {
-
+   
     private ServerTransport transport;
+    private RecursiveConverter converter;
+    private CancellationTokenSource cancellationTokenSource;
+
+    #nullable enable
+    
+    private void Awake()
+    {
+      converter = GetComponent<RecursiveConverter>();
+    }
 
     /// <summary>
     /// Converts and sends the data of the last commit on the Stream
@@ -40,111 +48,101 @@ namespace Speckle.ConnectorUnity
     /// <param name="onErrorAction">Action to run on error</param>
     /// <exception cref="SpeckleException"></exception>
     public void Send(string streamId,
-      List<GameObject> gameObjects,
-      Account account = null,
+      ISet<GameObject> gameObjects,
+      Account? account = null,
       string branchName = "main",
       bool createCommit = true,
-      Action<string> onDataSentAction = null,
-      Action<ConcurrentDictionary<string, int>> onProgressAction = null,
-      Action<string, Exception> onErrorAction = null)
+      Action<string>? onDataSentAction = null,
+      Action<ConcurrentDictionary<string, int>>? onProgressAction = null,
+      Action<string, Exception>? onErrorAction = null)
     {
       try
       {
-        var data = ConvertRecursivelyToSpeckle(gameObjects);
+        CancelOperations();
+        
+        cancellationTokenSource = new CancellationTokenSource();
+        
         var client = new Client(account ?? AccountManager.GetDefaultAccount());
         transport = new ServerTransport(client.Account, streamId);
-
-        Task.Run(async () =>
-        {
-          var res = await Operations.Send(
-            data,
-            new List<ITransport>() { transport },
-            useDefaultCache: true,
-            disposeTransports: true,
-            onProgressAction: onProgressAction,
-            onErrorAction: onErrorAction
-          );
-
-          Analytics.TrackEvent(client.Account, Analytics.Events.Send);
-
-          if (createCommit)
-          {
-            await client.CommitCreate(
-              new CommitCreateInput
-              {
-                streamId = streamId,
-                branchName = branchName,
-                objectId = res,
-                message = "No message",
-                sourceApplication = VersionedHostApplications.Unity,
-              });
-          }
+        transport.CancellationToken = cancellationTokenSource.Token;
+        
+        var rootObjects = SceneManager.GetActiveScene().GetRootGameObjects();
+        
+        var data = converter.RecursivelyConvertToSpeckle(rootObjects,
+          o => gameObjects.Contains(o));
+        
+        SendData(transport, data, client, branchName, createCommit, cancellationTokenSource.Token, onDataSentAction, onProgressAction, onErrorAction);
           
-          transport?.Dispose();
-          onDataSentAction?.Invoke(res);
-        });
       }
       catch (Exception e)
       {
-        throw new SpeckleException(e.Message, e, true, SentryLevel.Error);
+        throw new SpeckleException(e.ToString(), e, true, SentryLevel.Error);
       }
+    }
+
+
+    public static void SendData(ServerTransport remoteTransport,
+      Base data,
+      Client client,
+      string branchName,
+      bool createCommit,
+      CancellationToken cancellationToken,
+      Action<string>? onDataSentAction = null,
+      Action<ConcurrentDictionary<string, int>>? onProgressAction = null,
+      Action<string, Exception>? onErrorAction = null)
+    {
+
+      Task.Run(async () =>
+      {
+      
+        var res = await Operations.Send(
+          data,
+          cancellationToken: cancellationToken,
+          new List<ITransport>() {remoteTransport},
+          useDefaultCache: true,
+          disposeTransports: true,
+          onProgressAction: onProgressAction,
+          onErrorAction: onErrorAction
+        );
+
+        Analytics.TrackEvent(client.Account, Analytics.Events.Send);
+
+        if (createCommit && !cancellationToken.IsCancellationRequested)
+        {
+          long count = data.GetTotalChildrenCount();
+          
+          await client.CommitCreate(cancellationToken,
+            new CommitCreateInput
+            {
+              streamId = remoteTransport.StreamId,
+              branchName = branchName,
+              objectId = res,
+              message = $"Sent {count} objects from {VersionedHostApplications.Unity}",
+              sourceApplication = VersionedHostApplications.Unity,
+              totalChildrenCount = (int)count,
+            });
+        }
+        
+        onDataSentAction?.Invoke(res);
+      }, cancellationToken);
     }
 
     private void OnDestroy()
     {
-      transport?.Dispose();
+      CancelOperations();
     }
+
+    public void CancelOperations()
+    {
+      cancellationTokenSource?.Cancel();
+      transport?.Dispose();
+      cancellationTokenSource?.Dispose();
+    }
+    
 
     #region private methods
+    
 
-    private Base ConvertRecursivelyToSpeckle(List<GameObject> gos)
-    {
-      if (gos.Count == 1)
-      {
-        return RecurseTreeToNative(gos[0]);
-      }
-
-      var @base = new Base();
-      @base["objects"] = gos.Select(x => RecurseTreeToNative(x)).Where(x => x != null).ToList();
-      return @base;
-    }
-
-    private Base RecurseTreeToNative(GameObject go)
-    {
-      var converter = new ConverterUnity();
-      if (converter.CanConvertToSpeckle(go))
-      {
-        try
-        {
-          return converter.ConvertToSpeckle(go);
-        }
-        catch (Exception e)
-        {
-          Debug.LogError(e);
-          return null;
-        }
-      }
-
-      if (go.transform.childCount > 0)
-      {
-        var @base = new Base();
-        var objects = new List<Base>();
-        for (var i = 0; i < go.transform.childCount; i++)
-        {
-          var goo = RecurseTreeToNative(go.transform.GetChild(i).gameObject);
-          if (goo != null)
-            objects.Add(goo);
-        }
-
-        if (objects.Any())
-        {
-          @base["objects"] = objects;
-          return @base;
-        }
-      }
-
-      return null;
-    }
 
     #endregion
   }

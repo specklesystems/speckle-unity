@@ -1,4 +1,16 @@
 {
-	"name": "Speckle.Connector",
-	"references":[ "GUID:24f666972ea7e9149abddaae766b9c1d" ]
+    "name": "Speckle.Connector",
+    "rootNamespace": "Speckle.ConnectorUnity",
+    "references": [
+        "GUID:24f666972ea7e9149abddaae766b9c1d"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
 }

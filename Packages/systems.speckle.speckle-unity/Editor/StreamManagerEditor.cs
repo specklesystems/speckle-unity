@@ -1,24 +1,22 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Threading;
 using System.Threading.Tasks;
 using Sentry;
 using Speckle.Core.Api;
 using Speckle.Core.Credentials;
 using Speckle.Core.Kits;
 using Speckle.Core.Logging;
+using Speckle.Core.Models;
 using Speckle.Core.Transports;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.UIElements;
 
-namespace Speckle.ConnectorUnity
+namespace Speckle.ConnectorUnity.Editor
 {
   [CustomEditor(typeof(StreamManager))]
   [CanEditMultipleObjects]
-  public class StreamManagerEditor : Editor
+  public class StreamManagerEditor : UnityEditor.Editor
   {
     private bool _foldOutAccount;
     private int _totalChildrenCount = 0;
@@ -157,52 +155,57 @@ namespace Speckle.ConnectorUnity
 
     private async Task Receive()
     {
-      EditorUtility.DisplayProgressBar("Receiving data...", "", 0);
+      var transport = new ServerTransport(SelectedAccount, SelectedStream.id);
+      EditorUtility.DisplayProgressBar($"Receiving data from {transport.BaseUri}...", "", 0);
 
       try
       {
-
-        var transport = new ServerTransport(SelectedAccount, SelectedStream.id);
+        // Receive Speckle Objects
         var @base = await Operations.Receive(
-            Branches[SelectedBranchIndex].commits.items[SelectedCommitIndex].referencedObject,
-            remoteTransport: transport,
-            onProgressAction: dict =>
+          Branches[SelectedBranchIndex].commits.items[SelectedCommitIndex].referencedObject,
+          remoteTransport: transport,
+          onProgressAction: dict =>
+          {
+            UnityEditor.EditorApplication.delayCall += () =>
             {
-              UnityEditor.EditorApplication.delayCall += () =>
-              {
-                EditorUtility.DisplayProgressBar("Receiving data...", "",
-                  Convert.ToSingle(dict.Values.Average() / _totalChildrenCount));
-              };
-            },
-            onTotalChildrenCountKnown: count => { _totalChildrenCount = count; }
+              EditorUtility.DisplayProgressBar($"Receiving data from {transport.BaseUri}...", "",
+                Convert.ToSingle(dict.Values.Average() / _totalChildrenCount));
+            };
+          },
+          onTotalChildrenCountKnown: count => { _totalChildrenCount = count; }
         );
 
+        EditorUtility.ClearProgressBar();
+
+        //Convert Speckle Objects
+        int childrenConverted = 0;
+        void BeforeConvertCallback(Base b)
+        {
+          EditorUtility.DisplayProgressBar("Converting To Native...", $"{b.speckle_type} - {b.id}",
+            Convert.ToSingle(childrenConverted++ / _totalChildrenCount));
+        }
+
         var go = _streamManager.ConvertRecursivelyToNative(@base,
-            Branches[SelectedBranchIndex].commits.items[SelectedCommitIndex].id);
+          Branches[SelectedBranchIndex].commits.items[SelectedCommitIndex].id, BeforeConvertCallback);
         
-        try
+        // Read Receipt
+        await Client.CommitReceived(new CommitReceivedInput
         {
-          await Client.CommitReceived(new CommitReceivedInput
-          {
-            streamId = SelectedStream.id,
-            commitId = Branches[SelectedBranchIndex].commits.items[SelectedCommitIndex].id,
-            message = $"received commit from {VersionedHostApplications.Unity} Editor",
-            sourceApplication = VersionedHostApplications.Unity
-          });
-        }
-        catch
-        {
-          // Do nothing!
-        }
-        
+          streamId = SelectedStream.id,
+          commitId = Branches[SelectedBranchIndex].commits.items[SelectedCommitIndex].id,
+          message = $"received commit from {VersionedHostApplications.Unity} Editor",
+          sourceApplication = VersionedHostApplications.Unity
+        });
+
       }
       catch (Exception e)
       {
-        UnityEditor.EditorApplication.delayCall += () => { EditorUtility.ClearProgressBar(); };
         throw new SpeckleException(e.Message, e, true, SentryLevel.Error);
       }
-
-      UnityEditor.EditorApplication.delayCall += () => { EditorUtility.ClearProgressBar(); };
+      finally
+      {
+        EditorApplication.delayCall += EditorUtility.ClearProgressBar; 
+      }
     }
 
     public override async void OnInspectorGUI()

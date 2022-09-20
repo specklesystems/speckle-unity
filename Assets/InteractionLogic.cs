@@ -1,11 +1,13 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using Speckle.Core.Api;
 using Speckle.Core.Logging;
 using UnityEngine;
 using UnityEngine.UI;
+using Text = UnityEngine.UI.Text;
 
 namespace Speckle.ConnectorUnity
 {
@@ -107,7 +109,6 @@ namespace Speckle.ConnectorUnity
       InitRemove();
 
       var sender = gameObject.AddComponent<Sender>();
-
       var btn = gameObject.transform.Find("Btn").GetComponentInChildren<Button>();
 
       var streamText = gameObject.transform.Find("StreamText").GetComponentInChildren<Text>();
@@ -124,11 +125,7 @@ namespace Speckle.ConnectorUnity
 
       btn.onClick.AddListener(() =>
         {
-          var objs = new List<GameObject>();
-          foreach (var s in SelectionManager.selectedObjects)
-          {
-            objs.Add(s.gameObject);
-          }
+          var objs = SelectionManager.selectedObjects.Select(s => s.gameObject).ToImmutableHashSet();
 
           if (!objs.Any())
           {
@@ -137,7 +134,7 @@ namespace Speckle.ConnectorUnity
           }
           
           MakeButtonsInteractable(false);
-
+          
           statusText.text = "Sending...";
           try
           {
@@ -152,13 +149,13 @@ namespace Speckle.ConnectorUnity
                   sendProgress.value = (float) val;
                 });
               },
-              onDataSentAction: (commitId) =>
+              onDataSentAction: (objectId) =>
               {
-                Debug.Log("Send operation completed", this);
+                Debug.Log($"Send operation completed, object id: {objectId}", this);
                 Dispatcher.Instance().Enqueue(() =>
                 {
                   MakeButtonsInteractable(true);
-                  statusText.text = $"Sent {commitId}";
+                  statusText.text = $"Sent {objectId}";
                   sendProgress.gameObject.SetActive(false); //hide
                 });
               },
@@ -170,7 +167,7 @@ namespace Speckle.ConnectorUnity
                   MakeButtonsInteractable(true);
                   statusText.text = $"Error {id}";
                   sendProgress.gameObject.SetActive(false); //hide
-                  Debug.LogError(e.Message, this);
+                  Debug.LogError(e, this);
                 });
               });
           }
@@ -181,7 +178,7 @@ namespace Speckle.ConnectorUnity
               MakeButtonsInteractable(true);
               statusText.text = $"Error {e.Message}";
               sendProgress.gameObject.SetActive(false); //hide
-              Debug.LogError(e.Message, this);
+              Debug.LogError(e, this);
             });
           }
         }

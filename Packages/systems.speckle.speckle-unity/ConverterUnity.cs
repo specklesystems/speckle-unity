@@ -1,10 +1,14 @@
 ﻿using Speckle.Core.Kits;
 using Speckle.Core.Models;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Objects.BuiltElements;
+using Speckle.ConnectorUnity;
 using UnityEngine;
 using Mesh = Objects.Geometry.Mesh;
+using Object = UnityEngine.Object;
 
 namespace Objects.Converter.Unity
 {
@@ -20,37 +24,81 @@ namespace Objects.Converter.Unity
     public string WebsiteOrEmail => "https://speckle.systems";
     
     public ProgressReport Report { get; }
+    public ReceiveMode ReceiveMode { get; set; }
 
     public IEnumerable<string> GetServicedApplications() => new string[] {VersionedHostApplications.Unity};
 
-    public HashSet<Exception> ConversionErrors { get; private set; } = new HashSet<Exception>();
+    public HashSet<Exception> ConversionErrors { get; private set; }
 
-
-    public List<ApplicationPlaceholderObject> ContextObjects { get; set; } = new List<ApplicationPlaceholderObject>();
+    public Dictionary<string, Object> LoadedAssets { get; private set; }
     
-    public void SetContextDocument(object doc) => throw new NotImplementedException();
-
-    public void SetContextObjects(List<ApplicationPlaceholderObject> objects) => ContextObjects = objects;
-
-    public void SetPreviousContextObjects(List<ApplicationPlaceholderObject> objects) =>
-      throw new NotImplementedException();
-    
-    public Base ConvertToSpeckle(object @object)
+    public void SetContextDocument(object doc)
     {
-      switch (@object)
-      {
-        case GameObject o:
-          if (o.GetComponent<MeshFilter>() != null)
-            return MeshToSpeckle(o);
-          throw new NotSupportedException();
-        default:
-          throw new NotSupportedException();
-      }
+      if(doc is not Dictionary<string, Object> loadedAssets) throw new ArgumentException($"Expected {nameof(doc)} to be of type {typeof(Dictionary<string, Object>)}", nameof(doc));
+      LoadedAssets = loadedAssets;
     }
 
-    public object ConvertToNative(Base @object)
+    public void SetContextObjects(List<ApplicationObject> objects) => throw new NotImplementedException();
+
+    public void SetPreviousContextObjects(List<ApplicationObject> objects) => throw new NotImplementedException();
+    
+#nullable enable
+     public object? ConvertToNative(Base @object) => ConvertToNativeGameObject(@object);
+
+    public Base ConvertToSpeckle(object @object)
     {
-      switch (@object)
+      if (!(@object is GameObject go)) throw new NotSupportedException($"Cannot convert object of type {@object.GetType()} to Speckle");
+      return ConvertGameObjectToSpeckle(go);
+    }
+    
+#endregion implemented methods
+
+
+    
+    public Base ConvertGameObjectToSpeckle(GameObject go)
+    {
+
+      Base speckleObject = CreateSpeckleObjectFromProperties(go);
+
+      speckleObject["name"] = go.name;
+      //speckleObject["transform"] = TransformToSpeckle(go.Transform); //TODO
+      speckleObject["tag"] = go.tag;
+      speckleObject["physicsLayer"] = LayerMask.LayerToName(go.layer);
+      //speckleObject["isStatic"] = go.isStatic; //todo figure out realtime-rendered static mobility interoperability (unreal)
+
+      foreach (Component component in go.GetComponents<Component>())
+      {
+        try
+        {
+          switch (component)
+          {
+            case MeshFilter meshFilter:
+              var displayValues = MeshToSpeckle(meshFilter);
+              
+              speckleObject.SetDetachedPropertyChecked("displayValue", displayValues);
+
+              break;
+            // case Camera camera:
+            //     speckleObject["cameraComponent"] = CameraToSpeckle(camera);
+            //     break;
+          }
+        }
+        catch(Exception e)
+        {
+          Debug.LogError($"Failed to convert {component.GetType()} component\n{e}", component);
+        }
+      }
+
+      return speckleObject;
+    }
+    
+
+    
+
+    
+    public GameObject? ConvertToNativeGameObject(Base speckleObject)
+    {
+      switch (speckleObject)
       {
         // case Point o:
         //   return PointToNative(o);
@@ -60,38 +108,44 @@ namespace Objects.Converter.Unity
         //   return PolylineToNative(o);
         // case Curve o:
         //   return CurveToNative(o);
-        // case View3D o:
-        //   return View3DToNative(o);
+        case View3D v:
+          return View3DToNative(v);
         case Mesh o:
           return MeshToNative(o);
         default:
-          //capture any other object that might have a mesh representation
-          object fallbackObject = DisplayValueToNative(@object);
-          if (fallbackObject != null) return fallbackObject;
           
-          Debug.LogWarning($"Skipping {@object.GetType()} {@object.id} - Not supported type");
-          return null;
+          //Object is not a raw geometry, convert it as display value element
+          GameObject? element = DisplayValueToNative(speckleObject);
+          if (element != null)
+          {
+            if(!speckleObject.speckle_type.Contains("Objects.Geometry"))
+              AttachSpeckleProperties(element, speckleObject.GetType(), GetProperties(speckleObject));
+            
+            return element;
+          }
+
+          return new GameObject();
       }
 
     }
 
-    public IList<string> DisplayValuePropertyAliases { get; set; } = new[] {"displayValue", "displayMesh" };
-    public object DisplayValueToNative(Base @object)
+
+    public IList<string> DisplayValuePropertyAliases { get; set; } = new[] {"displayValue","@displayValue","displayMesh", "@displayMesh" };
+    public GameObject? DisplayValueToNative(Base @object)
     {
       foreach (string alias in DisplayValuePropertyAliases)
       {
         switch (@object[alias])
         {
           //capture any other object that might have a mesh representation
-          case IEnumerable<Base> dvCollection:
-            return MeshesToNative(@object, dvCollection.OfType<Mesh>().ToList());
+          case IList dvCollection:
+            return MeshesToNative(dvCollection.OfType<Mesh>().ToList());
           case Mesh dvMesh:
-            return MeshesToNative(@object , new[] {dvMesh});
+            return MeshesToNative(new[] {dvMesh});
           case Base dvBase:
-            return ConvertToNative(dvBase);
+            return ConvertToNativeGameObject(dvBase);
         }
       }
-
       return null;
     }
 
@@ -100,10 +154,9 @@ namespace Objects.Converter.Unity
       return objects.Select(ConvertToSpeckle).ToList();
     }
 
-    public List<object> ConvertToNative(List<Base> objects)
+    public List<object?> ConvertToNative(List<Base> objects)
     {
       return objects.Select(x => ConvertToNative(x)).ToList();
-      ;
     }
 
     public bool CanConvertToSpeckle(object @object)
@@ -136,16 +189,17 @@ namespace Objects.Converter.Unity
         case Mesh _:
           return true;
         default:
-          if (@object["displayValue"] is Base)
-            return true;
-          if (@object["displayValue"] is IEnumerable<Base>)
-            return true;
-          if (@object["displayMesh"] is Base)
-            return true;
-          return false;
-      }
+          
+           foreach (string alias in DisplayValuePropertyAliases)
+           {
+             if (@object[alias] is Base)
+               return true;
+             if (@object[alias] is IList)
+               return true;
+           }
+          
+           return false;
+        }
     }
-
-    #endregion implemented methods
   }
 }

@@ -1,3 +1,4 @@
 {
-	"name": "Speckle.Extra"
+	"name": "Speckle.Extra",
+	"references":[ "GUID:eed1b8b83e2c0074d9e5de2348e3ff72" ]
 }
