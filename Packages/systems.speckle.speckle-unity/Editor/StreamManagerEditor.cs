@@ -313,7 +313,7 @@ namespace Speckle.ConnectorUnity.Editor
 
       SelectedCommitIndex = EditorGUILayout.Popup("Commits",
           SelectedCommitIndex,
-          Branches[SelectedBranchIndex].commits.items.Select(x => x.message).ToArray(),
+          Branches[SelectedBranchIndex].commits.items.Select(x => $"{x.message} - {x.id}").ToArray(),
           GUILayout.Height(20),
           GUILayout.ExpandWidth(true));
 
@@ -325,7 +325,7 @@ namespace Speckle.ConnectorUnity.Editor
 
       GUILayout.Label("Generate material assets");
       GUILayout.FlexibleSpace();
-      StreamManager.GenerateMaterials = GUILayout.Toggle(StreamManager.GenerateMaterials, "");
+      StreamManager.GenerateAssets = GUILayout.Toggle(StreamManager.GenerateAssets, "");
 
       EditorGUILayout.EndHorizontal();
       #endregion

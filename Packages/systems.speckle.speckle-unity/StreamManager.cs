@@ -4,6 +4,7 @@ using Speckle.Core.Credentials;
 using System.Collections.Generic;
 using Speckle.Core.Models;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Speckle.ConnectorUnity
 {
@@ -27,7 +28,7 @@ namespace Speckle.ConnectorUnity
     public List<Branch> Branches;
     
 #if UNITY_EDITOR
-    public static bool GenerateMaterials = false;
+      public static bool GenerateAssets = false;
 #endif
       
 #nullable enable

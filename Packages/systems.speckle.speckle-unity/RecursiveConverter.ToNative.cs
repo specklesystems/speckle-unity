@@ -43,7 +43,7 @@ namespace Speckle.ConnectorUnity
             foreach (var nameAlias in namePropertyAliases)
             {
                 string? s = baseObject[nameAlias] as string;
-                if (!string.IsNullOrWhiteSpace(s)) return s!; //TODO any sanitization needed?
+                if (!string.IsNullOrWhiteSpace(s)) return s; //TODO any sanitization needed?
             }
             
             // 2. Use type + id as fallback name
@@ -63,12 +63,14 @@ namespace Speckle.ConnectorUnity
             if (converted is GameObject go)
             {
                 outCreatedObjects.Add(go);
-                
                 nextParent = go.transform;
                 
-                go.name = GenerateObjectName(baseObject);
-                go.transform.SetParent(parent);
-                //TODO add support for unity specific props
+                go.transform.SetParent(parent, true);
+                
+                //Set some common for all created GameObjects
+                //TODO add support for more unity specific props
+                if(go.name == "New Game Object" || string.IsNullOrWhiteSpace(go.name))
+                    go.name = GenerateObjectName(baseObject);
                 //if (baseObject["tag"] is string t) go.tag = t;
                 if (baseObject["physicsLayer"] is string layerName)
                 {
