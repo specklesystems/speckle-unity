@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Speckle.ConnectorUnity.NativeCache;
 using Speckle.Core.Models;
 using UnityEngine;
 
@@ -12,25 +13,34 @@ namespace Speckle.ConnectorUnity
     {
         
         /// <summary>
-        /// Given <paramref name="baseObject"/>,
+        /// Given <paramref name="o"/>,
         /// will recursively convert any objects in the tree
         /// </summary>
         /// <param name="o">The object to convert (<see cref="Base"/> or <see cref="List{T}"/> of)</param>
         /// <param name="parent">Optional parent transform for the created root <see cref="GameObject"/>s</param>
         /// <returns> A list of all created <see cref="GameObject"/>s</returns>
         public virtual List<GameObject> RecursivelyConvertToNative(object? o, Transform? parent)
-            => RecursivelyConvertToNative(o, parent, o => ConverterInstance.CanConvertToNative(o));
+            => RecursivelyConvertToNative(o, parent, b => ConverterInstance.CanConvertToNative(b));
         
         /// <inheritdoc cref="RecursivelyConvertToNative(object, Transform)"/>
         /// <param name="predicate">A function to determine if an object should be converted</param>
         public virtual List<GameObject> RecursivelyConvertToNative(object? o, Transform? parent, Func<Base, bool> predicate)
         {
-            LoadMaterialOverrides();
+            //Ensure we have A native cache
+            if (AssetCache.nativeCaches.Any(x => x == null))
+            {
+                AssetCache.nativeCaches = NativeCacheFactory.GetStandaloneCacheSetup();
+            }
+            
+            ConverterInstance.SetContextDocument(AssetCache);
+            AssetCache.BeginWrite();
 
             var createdGameObjects = new List<GameObject>();
             ConvertChild(o, parent, predicate, createdGameObjects);
             //TODO track event
             
+            AssetCache.FinishWrite();
+
             return createdGameObjects;
 
         }
@@ -81,8 +91,7 @@ namespace Speckle.ConnectorUnity
             }
             
             // For geometry, only traverse `elements` prop, otherwise, try and convert everything
-            IEnumerable<string> potentialChildren;
-            potentialChildren = ConverterInstance.CanConvertToNative(baseObject)
+            IEnumerable<string> potentialChildren = ConverterInstance.CanConvertToNative(baseObject)
                 ? new []{"elements"}
                 : baseObject.GetMemberNames();
 
@@ -124,19 +133,6 @@ namespace Speckle.ConnectorUnity
                 Debug.Log($"Unknown type {value.GetType()} found when traversing tree, will be safely ignored");
             }
         }
-
-        protected virtual void LoadMaterialOverrides()
-        {
-            //using the ContextDocument to pass materials
-            //available in Assets/Materials to the converters
-            Dictionary<string, UnityEngine.Object> loadedAssets = Resources.LoadAll("", typeof(Material))
-                .GroupBy(o => o.name)
-                .Select(o => o.First())
-                .ToDictionary(o => o.name);
-
-            ConverterInstance.SetContextDocument(loadedAssets);
-        }
-        
         
         [Obsolete("Use RecursivelyConvertToNative instead")]
         public GameObject ConvertRecursivelyToNative(Base @base, string name)

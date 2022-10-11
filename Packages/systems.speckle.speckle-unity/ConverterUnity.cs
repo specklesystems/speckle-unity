@@ -5,10 +5,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using Objects.BuiltElements;
 using Objects.Other;
 using Speckle.ConnectorUnity;
+using Speckle.ConnectorUnity.NativeCache;
 using UnityEditor;
 using UnityEngine;
 using Mesh = Objects.Geometry.Mesh;
@@ -32,14 +32,14 @@ namespace Objects.Converter.Unity
 
         public IEnumerable<string> GetServicedApplications() => new string[] {VersionedHostApplications.Unity};
 
-        public Dictionary<string, Object> LoadedAssets { get; private set; }
+        public AbstractNativeCache LoadedAssets { get; private set; }
 
         public void SetContextDocument(object doc)
         {
-            if (doc is not Dictionary<string, Object> loadedAssets)
+            if (doc is not AbstractNativeCache context)
                 throw new ArgumentException(
                     $"Expected {nameof(doc)} to be of type {typeof(Dictionary<string, Object>)}", nameof(doc));
-            LoadedAssets = loadedAssets;
+            LoadedAssets = context;
         }
 
         public void SetContextObjects(List<ApplicationObject> objects) => throw new NotImplementedException();

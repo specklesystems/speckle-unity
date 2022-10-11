@@ -10,6 +10,7 @@ using Speckle.Core.Logging;
 using Speckle.Core.Models;
 using UnityEditor;
 using UnityEngine;
+using Object = UnityEngine.Object;
 using SMesh = Objects.Geometry.Mesh;
 using Transform = UnityEngine.Transform;
 using STransform = Objects.Other.Transform;
@@ -216,29 +217,21 @@ namespace Objects.Converter.Unity
                 return null;
             }
 
-#if UNITY_EDITOR
-            // Check `Resources` for existing cached prefab asset
-            // TODO: this isn't how we check for existing materials, maybe there's a reason not to call LoadAssetPath constantly
-            string assetName = $"{GetAssetName(block.blockDefinition)}.prefab"
-                .Trim(Path.GetInvalidFileNameChars());
-            const string assetPath = "Assets/Resources/Prefabs/";
-            if (StreamManager.GenerateAssets) //TODO: I don't like how the converter is aware of StreamManager
+            // Check for existing conversions
+            if(LoadedAssets.TryGetObject(block.blockDefinition, out GameObject? existingPrefab))
             {
-                GameObject? existing = AssetDatabase.LoadAssetAtPath<GameObject>($"{assetPath}/{assetName}");
-                if (existing)
-                {
-                    var go = (GameObject) PrefabUtility.InstantiatePrefab(existing);
-                    go.name = block.blockDefinition.name ?? "";
-                    return go;
-                }
-            }
+#if UNITY_EDITOR
+                var go = (GameObject) PrefabUtility.InstantiatePrefab(existingPrefab);
+#else
+                var go = Object.Instantiate(existingPrefab);
 #endif
-            
-            // No existing found, so we Convert the block
-            
-            GameObject native = new GameObject(block.blockDefinition.name ?? "");
-            TransformToNativeTransform(native.transform, block.transform);
+                go.name = block.blockDefinition.name ?? "";
+                return go;
+            }
 
+            // Convert the block definition
+            GameObject native = new GameObject(block.blockDefinition.name ?? "");
+            
             List<SMesh> meshes = new();
             List<Base> others = new();
             foreach (Base geo in block.blockDefinition.geometry)
@@ -262,14 +255,9 @@ namespace Objects.Converter.Unity
                 c.transform.SetParent(native.transform, false);
             }
 
-#if UNITY_EDITOR
-            if (StreamManager.GenerateAssets) //TODO: I don't like how the converter is aware of StreamManager
-            {
-                CreateDirectoryFromAssetPath(assetPath);
-                PrefabUtility.SaveAsPrefabAssetAndConnect(native, $"Assets/Resources/Prefabs/{assetName}",
-                    InteractionMode.AutomatedAction);
-            }
-#endif
+            LoadedAssets.TrySaveObject(block.blockDefinition, native);
+            
+            TransformToNativeTransform(native.transform, block.transform);
 
             return native;
         }

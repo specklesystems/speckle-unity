@@ -139,6 +139,9 @@ namespace Speckle.ConnectorUnity
           onTotalChildrenCountKnown: OnTotalChildrenCountKnown,
           disposeTransports: true
         );
+        
+        Analytics.TrackEvent(Client.Account, Analytics.Events.Receive);
+        
         Dispatcher.Instance().Enqueue(() =>
         {
           var root = new GameObject()

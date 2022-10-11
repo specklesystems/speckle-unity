@@ -1,10 +1,7 @@
 {
-    "name": "Speckle.Connector.Editor",
+    "name": "EditorCaches",
     "rootNamespace": "Speckle.ConnectorUnity",
-    "references": [
-        "GUID:eed1b8b83e2c0074d9e5de2348e3ff72",
-        "GUID:05078f9b6da40444fbd72ec600449925"
-    ],
+    "references": ["GUID:05078f9b6da40444fbd72ec600449925"],
     "includePlatforms": [
         "Editor"
     ],

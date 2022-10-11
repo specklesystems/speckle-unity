@@ -6,6 +6,7 @@ using Objects.Other;
 using Objects.Utils;
 using PlasticPipe.Certificates;
 using Speckle.ConnectorUnity;
+using Speckle.ConnectorUnity.NativeCache;
 using Speckle.Core.Models;
 using UnityEditor;
 using UnityEngine;
@@ -207,7 +208,7 @@ namespace Objects.Converter.Unity
         /// <summary>
         /// Converts multiple <paramref name="meshes"/> (e.g. with different materials) into one native mesh
         /// </summary>
-        /// <param name="element">Root element who's name/id is used to identify the mesh</param>
+        /// <param name="element">The <see cref="Base"/> object being converted</param>
         /// <param name="meshes">Collection of <see cref="Objects.Geometry.Mesh"/>es that shall be converted</param>
         /// <returns>A <see cref="GameObject"/> with the converted <see cref="UnityEngine.Mesh"/>, <see cref="MeshFilter"/>, and <see cref="MeshRenderer"/></returns>
         public GameObject? MeshesToNative(Base element, IReadOnlyCollection<SMesh> meshes)
@@ -222,10 +223,10 @@ namespace Objects.Converter.Unity
             Material[] nativeMaterials = RenderMaterialsToNative(meshes);
             Vector3 center;
             
-            if (LoadedAssets.TryGetValue(element.id, out var existingObj)
-                && existingObj is Mesh existing)
+            if (LoadedAssets.TryGetObject(element, out Mesh? existing))
             {
                 nativeMesh = existing;
+                //todo This is pretty inefficient, having to the mesh data anyway just to get the center... eek
                 MeshDataToNative(meshes,
                     out List<Vector3> verts,
                     out _,
@@ -236,22 +237,15 @@ namespace Objects.Converter.Unity
             else
             {
                 MeshToNativeMesh(meshes, out nativeMesh, out center);
-                string name = GetAssetName(element);
+                string name = AssetHelpers.GetObjectName(element);
                 nativeMesh.name = name;
-#if UNITY_EDITOR
-                if (StreamManager.GenerateAssets) //TODO: I don't like how the converter is aware of StreamManager
-                {
-                    const string assetPath = "Assets/Resources/Meshes/Speckle Generated/";
-                    CreateDirectoryFromAssetPath(assetPath);
-                    AssetDatabase.CreateAsset(nativeMesh, $"{assetPath}/{name}");
-                }
-#endif
+                LoadedAssets.TrySaveObject(element, nativeMesh);
             }
             
             var go = new GameObject();
             go.transform.position = center;
             go.SafeMeshSet(nativeMesh, nativeMaterials);
-            
+
             return go;
         }
 
@@ -461,19 +455,14 @@ namespace Objects.Converter.Unity
             //todo support more complex materials
             var shader = Shader.Find("Standard");
             Material mat = new Material(shader);
-
-            //if a renderMaterial is passed use that, otherwise try get it from the mesh itself
+            
+            // 1. If no renderMaterial was passed, use default material
             if (renderMaterial == null) return mat;
 
-            // 1. match material by name, if any
-            string materialName = string.IsNullOrWhiteSpace(renderMaterial.name)
-                ? $"material-{renderMaterial.id}"
-                : renderMaterial.name.Replace('/', '-');
-
-            if (LoadedAssets.TryGetValue(materialName, out Object asset)
-                && asset is Material loadedMaterial) return loadedMaterial;
-
-            // 2. re-create material by setting diffuse color and transparency on standard shaders
+            // 2. Try get existing/override material from asset cache
+            if (LoadedAssets.TryGetObject(renderMaterial, out Material? loadedMaterial)) return loadedMaterial;
+            
+            // 3. Otherwise, convert fresh!
             if (renderMaterial.opacity < 1)
             {
                 shader = Shader.Find("Transparent/Diffuse");
@@ -482,50 +471,18 @@ namespace Objects.Converter.Unity
 
             var c = renderMaterial.diffuse.ToUnityColor();
             mat.color = new Color(c.r, c.g, c.b, (float) renderMaterial.opacity);
-            mat.name = materialName;
+            mat.name = AssetHelpers.GetObjectName(renderMaterial);;
             mat.SetFloat(Metallic, (float) renderMaterial.metalness);
             mat.SetFloat(Glossiness, 1 - (float) renderMaterial.roughness);
 
             if (renderMaterial.emissive != SColor.Black.ToArgb()) mat.EnableKeyword("_EMISSION");
             mat.SetColor(EmissionColor, renderMaterial.emissive.ToUnityColor());
 
-
-#if UNITY_EDITOR
-            if (StreamManager.GenerateAssets) //TODO: I don't like how the converter is aware of StreamManager
-            {
-                var invalidChars = Path.GetInvalidFileNameChars();
-                string name = new(mat.name.Where(x => !invalidChars.Contains(x)).ToArray());
-
-                const string assetPath = "Assets/Resources/Materials/Speckle Generated/";
-                CreateDirectoryFromAssetPath(assetPath);
-
-                if (AssetDatabase.LoadAllAssetsAtPath($"{assetPath}/{name}.mat")
-                        .Length == 0)
-                    AssetDatabase.CreateAsset(mat, $"{assetPath}/{name}.mat");
-
-            }
-#endif
-
+            LoadedAssets.TrySaveObject(renderMaterial, mat);
+            
             return mat;
-            // 3. if not renderMaterial was passed, the default shader will be used 
         }
-    
-        protected static string GetAssetName(Base b, bool alwaysIncludeId = true)
-        {
-            var invalidChars = Path.GetInvalidFileNameChars();
-            string id = b.id;
-            foreach (var nameAlias in new[] {"name", "Name"})
-            {
-                string? rawName = b[nameAlias] as string;
-                if (string.IsNullOrWhiteSpace(rawName)) continue;
-
-                string name = new(rawName.Where(x => !invalidChars.Contains(x)).ToArray());
-
-                return alwaysIncludeId ? $"{name} - {id}" : name;
-            }
-
-            return id;
-        }
+        
         
         #endregion
 
