@@ -14,16 +14,16 @@ namespace Speckle.ConnectorUnity
             #elif UNITY_2021
             return  HostAppVersion.v2021;
             #elif UNITY_2022
-            return  HostAppVersion.v202;
+            return  HostAppVersion.v2022;
             #elif UNITY_2023
             return  HostAppVersion.v2023;
             #elif UNITY_2024
             return  HostAppVersion.v2024;
             #elif UNITY_2025
             return  HostAppVersion.v2025;
-            #endif
-            
+            #else
             return HostAppVersion.v;
+            #endif
         }
 
     }
