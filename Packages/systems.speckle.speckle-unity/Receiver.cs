@@ -169,8 +169,8 @@ namespace Speckle.ConnectorUnity
         {
           streamId = StreamId,
           commitId = commitId,
-          message = "received commit from " + VersionedHostApplications.Unity,
-          sourceApplication = VersionedHostApplications.Unity
+          message = $"received commit from {Application.unityVersion}",
+          sourceApplication = HostApplications.Unity.GetVersion(CoreUtils.GetHostAppVersion())
         });
       }
       catch

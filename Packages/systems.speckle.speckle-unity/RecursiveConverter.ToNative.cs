@@ -3,7 +3,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Speckle.ConnectorUnity.NativeCache;
 using Speckle.Core.Models;
 using UnityEngine;
 
@@ -93,7 +92,7 @@ namespace Speckle.ConnectorUnity
             // For geometry, only traverse `elements` prop, otherwise, try and convert everything
             IEnumerable<string> potentialChildren = ConverterInstance.CanConvertToNative(baseObject)
                 ? new []{"elements"}
-                : baseObject.GetMemberNames();
+                : baseObject.GetMembers().Keys;
 
             // Convert Children
             foreach (string propertyName in potentialChildren)

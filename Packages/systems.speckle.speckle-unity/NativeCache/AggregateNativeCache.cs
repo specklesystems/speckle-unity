@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Speckle.ConnectorUnity.NativeCache;
 using Speckle.Core.Models;
 using UnityEngine;
 using Object = UnityEngine.Object;

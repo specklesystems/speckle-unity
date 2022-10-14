@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Sentry;
-using Speckle.ConnectorUnity.NativeCache;
 using Speckle.Core.Api;
 using Speckle.Core.Credentials;
 using Speckle.Core.Kits;
@@ -199,8 +198,8 @@ namespace Speckle.ConnectorUnity.Editor
                 {
                     streamId = SelectedStream.id,
                     commitId = Branches[SelectedBranchIndex].commits.items[SelectedCommitIndex].id,
-                    message = $"received commit from {VersionedHostApplications.Unity} Editor",
-                    sourceApplication = VersionedHostApplications.Unity
+                    message = $"received commit from {HostApplications.Unity.Name} Editor",
+                    sourceApplication = HostApplications.Unity.Name
                 });
             }
             catch (Exception e)

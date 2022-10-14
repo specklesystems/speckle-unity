@@ -1,8 +1,5 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using Speckle.ConnectorUnity;
-using Speckle.Core.Models;
 using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -28,6 +25,7 @@ public class SpeckleObject : MonoBehaviour, ISerializationCallbackReceiver
 
     }
     
+    #if UNITY_EDITOR
     void OnGUI()
     {
         GUILayout.Label("Value: ");
@@ -64,6 +62,7 @@ public class SpeckleObject : MonoBehaviour, ISerializationCallbackReceiver
             _ => v
         };
     }
+    #endif
 }
 
 

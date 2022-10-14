@@ -10,7 +10,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Sentry;
 using Speckle.Core.Kits;
-using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -117,8 +116,8 @@ namespace Speckle.ConnectorUnity
               streamId = remoteTransport.StreamId,
               branchName = branchName,
               objectId = res,
-              message = $"Sent {count} objects from {VersionedHostApplications.Unity}",
-              sourceApplication = VersionedHostApplications.Unity,
+              message = $"Sent {count} objects from Unity",
+              sourceApplication = HostApplications.Unity.Name,
               totalChildrenCount = (int)count,
             });
         }

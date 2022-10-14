@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using Speckle.ConnectorUnity.NativeCache;
-using UnityEditor.Build;
 using UnityEngine;
 
 #if UNITY_EDITOR

@@ -3,13 +3,11 @@ using Speckle.Core.Models;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using Objects.BuiltElements;
 using Objects.Other;
 using Speckle.ConnectorUnity;
 using Speckle.ConnectorUnity.NativeCache;
-using UnityEditor;
 using UnityEngine;
 using Mesh = Objects.Geometry.Mesh;
 using Object = UnityEngine.Object;
@@ -30,7 +28,7 @@ namespace Objects.Converter.Unity
         public ProgressReport Report { get; }
         public ReceiveMode ReceiveMode { get; set; }
 
-        public IEnumerable<string> GetServicedApplications() => new string[] {VersionedHostApplications.Unity};
+        public IEnumerable<string> GetServicedApplications() => new string[] {HostApplications.Unity.Name};
 
         public AbstractNativeCache LoadedAssets { get; private set; }
 
@@ -216,15 +214,6 @@ namespace Objects.Converter.Unity
 
                     return false;
             }
-        }
-
-        protected static void CreateDirectoryFromAssetPath(string assetPath)
-        {
-            string directoryPath = Path.GetDirectoryName(assetPath);
-            if (Directory.Exists(directoryPath))
-                return;
-            Directory.CreateDirectory(directoryPath);
-            AssetDatabase.Refresh();
         }
     }
 }
