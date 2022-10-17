@@ -2,10 +2,8 @@ using System;
 using Speckle.Core.Api;
 using Speckle.Core.Credentials;
 using System.Collections.Generic;
-using Speckle.ConnectorUnity.NativeCache;
 using Speckle.Core.Models;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Speckle.ConnectorUnity
 {

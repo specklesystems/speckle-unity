@@ -6,10 +6,12 @@ using System.Linq;
 using System.Reflection;
 using Objects.Other;
 using Speckle.ConnectorUnity;
+using Speckle.ConnectorUnity.NativeCache;
 using Speckle.Core.Logging;
 using Speckle.Core.Models;
 using UnityEditor;
 using UnityEngine;
+using Mesh = UnityEngine.Mesh;
 using Object = UnityEngine.Object;
 using SMesh = Objects.Geometry.Mesh;
 using Transform = UnityEngine.Transform;
@@ -217,15 +219,21 @@ namespace Objects.Converter.Unity
                 return null;
             }
 
-            // Check for existing conversions
-            if(LoadedAssets.TryGetObject(block.blockDefinition, out GameObject? existingPrefab))
+            // Check for existing converted object
+            if(LoadedAssets.TryGetObject(block.blockDefinition, out GameObject? existingGo))
             {
 #if UNITY_EDITOR
-                var go = (GameObject) PrefabUtility.InstantiatePrefab(existingPrefab);
+                bool isPrefab = PrefabUtility.GetPrefabAssetType(existingGo) != PrefabAssetType.NotAPrefab;
+                
+                var go = isPrefab
+                        ? (GameObject) PrefabUtility.InstantiatePrefab(existingGo)
+                        : Object.Instantiate(existingGo);
 #else
-                var go = Object.Instantiate(existingPrefab);
+                var go = Object.Instantiate(existingGo);
 #endif
                 go.name = block.blockDefinition.name ?? "";
+                
+                TransformToNativeTransform(go.transform, block.transform);
                 return go;
             }
 
@@ -243,7 +251,13 @@ namespace Objects.Converter.Unity
 
             if (meshes.Any())
             {
-                MeshToNativeMesh(meshes, out var nativeMesh);
+                if (!TryGetMeshFromCache(block.blockDefinition, meshes, out Mesh? nativeMesh, out _))
+                {
+                    MeshToNativeMesh(meshes, out nativeMesh);
+                    string name = AssetHelpers.GetObjectName(block.blockDefinition);
+                    nativeMesh.name = name;
+                    LoadedAssets.TrySaveObject(block.blockDefinition, nativeMesh);
+                }
                 var nativeMaterials = RenderMaterialsToNative(meshes);
                 native.SafeMeshSet(nativeMesh, nativeMaterials);
             }
@@ -258,7 +272,7 @@ namespace Objects.Converter.Unity
             LoadedAssets.TrySaveObject(block.blockDefinition, native);
             
             TransformToNativeTransform(native.transform, block.transform);
-
+            if (block["name"] is string instanceName) native.name = instanceName;
             return native;
         }
 

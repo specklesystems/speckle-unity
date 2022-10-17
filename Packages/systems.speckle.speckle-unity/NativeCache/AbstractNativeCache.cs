@@ -75,7 +75,7 @@ namespace Speckle.ConnectorUnity.NativeCache
         
         public static string GetObjectName(Base speckleObject)
         {
-            string objectName = speckleObject["name"] as string ?? speckleObject.GetType().ToString();
+            string objectName = speckleObject["name"] as string ?? speckleObject.speckle_type.Split(':').Last();
             return $"{objectName} - {speckleObject.id}";
         }
         

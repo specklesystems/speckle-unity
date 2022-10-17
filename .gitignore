@@ -73,3 +73,8 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 .idea/
+
+# Speckle cached recieved objects
+/[Aa]ssets/[Rr]esources/[Mm]aterials/
+/[Aa]ssets/[Rr]esources/[Gg]eometry/
+/[Aa]ssets/[Rr]esources/[Pp]refabs/

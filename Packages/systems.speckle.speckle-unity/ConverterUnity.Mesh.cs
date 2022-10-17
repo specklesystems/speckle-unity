@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Objects.Other;
 using Objects.Utils;
@@ -26,7 +27,7 @@ namespace Objects.Converter.Unity
         protected static readonly int Glossiness = Shader.PropertyToID("_Glossiness");
 
         #region ToSpeckle
-
+        
         public virtual List<SMesh>? MeshToSpeckle(MeshFilter meshFilter)
         {
             Material[]? materials = meshFilter.GetComponent<Renderer>()?.materials;
@@ -214,24 +215,12 @@ namespace Objects.Converter.Unity
                 Debug.Log($"Skipping {element.GetType()} {element.id}, zero {typeof(SMesh)} provided");
                 return null;
             }
-            
-            Mesh nativeMesh;
+
             Material[] nativeMaterials = RenderMaterialsToNative(meshes);
-            Vector3 center;
-            
-            if (LoadedAssets.TryGetObject(element, out Mesh? existing))
+
+            if (!TryGetMeshFromCache(element, meshes, out Mesh? nativeMesh, out Vector3 center))
             {
-                nativeMesh = existing;
-                //todo This is pretty inefficient, having to the mesh data anyway just to get the center... eek
-                MeshDataToNative(meshes,
-                    out List<Vector3> verts,
-                    out _,
-                    out _,
-                    out _);
-                center = CalculateBounds(verts).center;
-            }
-            else
-            {
+                //Convert a new one
                 MeshToNativeMesh(meshes, out nativeMesh, out center);
                 string name = AssetHelpers.GetObjectName(element);
                 nativeMesh.name = name;
@@ -267,6 +256,26 @@ namespace Objects.Converter.Unity
             return converted;
         }
 
+        protected bool TryGetMeshFromCache(Base element, IReadOnlyCollection<SMesh> meshes, [NotNullWhen(true)] out Mesh? nativeMesh, out Vector3 center)
+        {
+            if (LoadedAssets.TryGetObject(element, out Mesh? existing))
+            {
+                nativeMesh = existing;
+                //todo This is pretty inefficient, having to the mesh data anyway just to get the center... eek
+                MeshDataToNative(meshes,
+                    out List<Vector3> verts,
+                    out _,
+                    out _,
+                    out _);
+                center = CalculateBounds(verts).center;
+                return true;
+            }
+
+            nativeMesh = default;
+            center = default;
+            return false;
+        }
+        
         /// <summary>
         /// Converts Speckle <see cref="SMesh"/>s as a native <see cref="Mesh"/> object 
         /// </summary>
