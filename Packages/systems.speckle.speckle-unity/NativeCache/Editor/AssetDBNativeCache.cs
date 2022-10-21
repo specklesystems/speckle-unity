@@ -15,29 +15,25 @@ namespace Speckle.ConnectorUnity.NativeCache.Editor
     /// </summary>
     public sealed class AssetDBNativeCache : AbstractNativeCache
     {
-        public string path = "Assets/Resources";
+        public const string DefaultPath = "Assets/Resources";
+        public string path = DefaultPath;
 
         private MemoryNativeCache readCache;
-
-        private Dictionary<Base, Object> writeBuffer = new();
-
+        
 #nullable enable
-        private void Awake()
+        
+        void Awake()
         {
             readCache = CreateInstance<MemoryNativeCache>();
         }
-        
+       
         public override bool TryGetObject<T>(Base speckleObject, [NotNullWhen(true)] out T? nativeObject) where T : class
         {
             if(readCache.TryGetObject(speckleObject, out nativeObject))
                 return true;
             
             Type nativeType = typeof(T);
-            string? folder = AssetHelpers.GetAssetFolder(nativeType, path);
-            if (folder == null) return false;
-            
-            string assetName = AssetHelpers.GetAssetName(speckleObject, nativeType);
-            string assetPath = $"{folder}/{assetName}";
+            if (!GetAssetPath(nativeType, speckleObject, out string? assetPath)) return false;
             
             nativeObject = AssetDatabase.LoadAssetAtPath<T>(assetPath);
             return nativeObject != null;
@@ -45,85 +41,63 @@ namespace Speckle.ConnectorUnity.NativeCache.Editor
 
         public override bool TrySaveObject(Base speckleObject, Object nativeObject)
         {
-            writeBuffer.TryAdd(speckleObject, nativeObject);
-            return readCache.TrySaveObject(speckleObject, nativeObject);
+            return WriteObject(speckleObject, nativeObject);
         }
-
-        public bool WriteObject(Base speckleObject, Object nativeObject)
+        
+        private bool WriteObject(Base speckleObject, Object nativeObject)
         {
             Type nativeType = nativeObject.GetType();
-            string? folder = AssetHelpers.GetAssetFolder(nativeType, path);
-            
-            if (folder == null) return false;
-            if (!CreateDirectory(folder)) return false;
-
-            string assetName = AssetHelpers.GetAssetName(speckleObject, nativeType);
-            string assetPath = $"{folder}/{assetName}";
+            if (!GetAssetPath(nativeType, speckleObject, out string? assetPath)) return false;
             
             // Special case for GameObjects, we want to use PrefabUtility
             if (nativeObject is GameObject go)
             {
-                PrefabUtility.SaveAsPrefabAssetAndConnect(go, assetPath, InteractionMode.AutomatedAction);
-                return true;
+                var prefab = PrefabUtility.SaveAsPrefabAssetAndConnect(go, assetPath, InteractionMode.AutomatedAction);
+                return readCache.TrySaveObject(speckleObject, prefab);
             }
             
             // Exit early if there's already an asset
             Object? existing = AssetDatabase.LoadAssetAtPath(assetPath, nativeObject.GetType());
             if (existing != null)
             {
-                Debug.LogWarning($"Failed to write asset as one already existed at path: {folder}/{assetName}", this);
+                Debug.LogWarning($"Failed to write asset as one already existed at path: {assetPath}", this);
                 return false;
             }
 
-            AssetDatabase.CreateAsset(nativeObject, $"{folder}/{assetName}");
-            return true;
+            AssetDatabase.CreateAsset(nativeObject, $"{assetPath}");
+            return readCache.TrySaveObject(speckleObject, nativeObject);
+        }
+        
+        
+        public override void BeginWrite()
+        {
+            base.BeginWrite();
+            //AssetDatabase.StartAssetEditing();
         }
 
-        
-        public void WriteAssets(IEnumerable<KeyValuePair<Base, Object>> assets)
-        {
-            //Write Asset Data
-            try
-            {
-                AssetDatabase.StartAssetEditing();
-                int i = 0;
-                int count = writeBuffer.Count;
-                foreach(var kvp in assets)
-                {
-                    if (kvp.Value is GameObject p)
-                    {
-                        continue;
-                    }
-                    
-                    EditorUtility.DisplayProgressBar("Writing assets", $"Writing asset for {kvp.Value.name}", (float)i / count);
-                    WriteObject(kvp.Key, kvp.Value);
-                }
-            }
-            finally
-            {
-                AssetDatabase.StopAssetEditing();
-                EditorUtility.DisplayProgressBar("Writing assets", $"Finishing writing assets", 1f);
-                AssetDatabase.SaveAssets();
-                EditorUtility.ClearProgressBar();
-            }
-        }
-        
         public override void FinishWrite()
         {
             if (!isWriting) return;
-            
-            var prefabs = writeBuffer.Where(x => x.Value is GameObject);
-            var notPrefabs = writeBuffer.Where(x => x.Value is not GameObject);
-            
-            WriteAssets(notPrefabs);
-            WriteAssets(prefabs);
-            
-            writeBuffer.Clear();
+            //AssetDatabase.StopAssetEditing();
+            AssetDatabase.SaveAssets();
+
             if (readCache != null) readCache.LoadedAssets.Clear();
             
             base.FinishWrite();
         }
+        
+        private bool GetAssetPath(Type nativeType, Base speckleObject, [NotNullWhen(true)] out string? outPath)
+        {
+            string? folder = AssetHelpers.GetAssetFolder(nativeType, path);
+            outPath = null;
+            if (folder == null) return false;
+            if (!CreateDirectory(folder)) return false;
 
+            string assetName = AssetHelpers.GetAssetName(speckleObject, nativeType);
+            outPath = $"{folder}/{assetName}";
+            return true;
+        }
+        
         private static bool CreateDirectory(string directoryPath)
         {
             if (Directory.Exists(directoryPath))
@@ -133,10 +107,9 @@ namespace Speckle.ConnectorUnity.NativeCache.Editor
             AssetDatabase.Refresh();
             return info.Exists;
         }
-        
 
         [ContextMenu("SetPath")]
-        internal void SetPath_Menu()
+        public void SetPath_Menu()
         {
             var selection = EditorUtility.OpenFolderPanel("Set Assets Path", "Assets/Resources", "");
             

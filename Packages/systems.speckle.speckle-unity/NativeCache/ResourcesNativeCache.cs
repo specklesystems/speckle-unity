@@ -8,7 +8,8 @@ namespace Speckle.ConnectorUnity.NativeCache
     #nullable enable
     /// <summary>
     /// Loads existing assets from <see cref="Resources"/>
-    /// optionally accepting byName overrides
+    /// by friendly id (see <see cref="AssetHelpers.GetAssetName"/>)
+    /// or by name (when <see cref="ResourcesNativeCache.matchByName"/> is <see langword="true"/>)
     /// </summary>
     public sealed class ResourcesNativeCache : AbstractNativeCache
     {

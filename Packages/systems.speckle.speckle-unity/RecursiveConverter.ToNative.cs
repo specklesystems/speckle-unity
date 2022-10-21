@@ -31,15 +31,21 @@ namespace Speckle.ConnectorUnity
                 AssetCache.nativeCaches = NativeCacheFactory.GetStandaloneCacheSetup();
             }
             
-            ConverterInstance.SetContextDocument(AssetCache);
-            AssetCache.BeginWrite();
-
             var createdGameObjects = new List<GameObject>();
-            ConvertChild(o, parent, predicate, createdGameObjects);
+            ConverterInstance.SetContextDocument(AssetCache);
+            try
+            {
+                AssetCache.BeginWrite();
+                ConvertChild(o, parent, predicate, createdGameObjects);
+            }
+            finally
+            {
+                AssetCache.FinishWrite();
+            }
+
             //TODO track event
             
-            AssetCache.FinishWrite();
-
+            
             return createdGameObjects;
 
         }

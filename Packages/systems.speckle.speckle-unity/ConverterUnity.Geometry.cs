@@ -222,17 +222,8 @@ namespace Objects.Converter.Unity
             // Check for existing converted object
             if(LoadedAssets.TryGetObject(block.blockDefinition, out GameObject? existingGo))
             {
-#if UNITY_EDITOR
-                bool isPrefab = PrefabUtility.GetPrefabAssetType(existingGo) != PrefabAssetType.NotAPrefab;
-                
-                var go = isPrefab
-                        ? (GameObject) PrefabUtility.InstantiatePrefab(existingGo)
-                        : Object.Instantiate(existingGo);
-#else
-                var go = Object.Instantiate(existingGo);
-#endif
+                var go = InstantiateCopy(existingGo);
                 go.name = block.blockDefinition.name ?? "";
-                
                 TransformToNativeTransform(go.transform, block.transform);
                 return go;
             }
@@ -245,13 +236,15 @@ namespace Objects.Converter.Unity
             foreach (Base geo in block.blockDefinition.geometry)
             {
                 if (geo is SMesh m) meshes.Add(m);
-                else if (geo is Brep s) meshes.AddRange(s.displayValue);
+                else if (geo is IDisplayValue<List<SMesh>> s) meshes.AddRange(s.displayValue);
                 else others.Add(geo);
             }
 
+            Mesh? nativeMesh = null;
             if (meshes.Any())
             {
-                if (!TryGetMeshFromCache(block.blockDefinition, meshes, out Mesh? nativeMesh, out _))
+                bool foundExisting = TryGetMeshFromCache(block.blockDefinition, meshes, out nativeMesh, out _);
+                if(!foundExisting)
                 {
                     MeshToNativeMesh(meshes, out nativeMesh);
                     string name = AssetHelpers.GetObjectName(block.blockDefinition);
@@ -268,7 +261,7 @@ namespace Objects.Converter.Unity
                 if (c == null) continue;
                 c.transform.SetParent(native.transform, false);
             }
-
+            
             LoadedAssets.TrySaveObject(block.blockDefinition, native);
             
             TransformToNativeTransform(native.transform, block.transform);
@@ -276,6 +269,25 @@ namespace Objects.Converter.Unity
             return native;
         }
 
+
+        private static GameObject InstantiateCopy(GameObject existingGo)
+        {
+#if UNITY_EDITOR
+            GameObject? prefabInstance = null;
+            bool isPrefab = PrefabUtility.GetPrefabAssetType(existingGo) != PrefabAssetType.NotAPrefab;
+            if (isPrefab)
+            {
+                GameObject? prefabAsset = PrefabUtility.GetCorrespondingObjectFromSource(existingGo);
+                if (prefabAsset == null) prefabAsset = existingGo;
+                prefabInstance = (GameObject) PrefabUtility.InstantiatePrefab(prefabAsset);
+            }
+
+            if (prefabInstance != null)
+                return prefabInstance;
+#endif
+            
+            return Object.Instantiate(existingGo);
+        }
 
 
         /// <summary>

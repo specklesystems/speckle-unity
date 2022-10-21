@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
@@ -63,13 +64,14 @@ namespace Speckle.ConnectorUnity.NativeCache
             return null;
         }
         
+        
+        private static readonly HashSet<char> InvalidChars = Path.GetInvalidFileNameChars().ToHashSet();
         public static string GetAssetName(Base speckleObject, Type nativeType)
         {
             string suffix = GetAssetSuffix(nativeType);
-            var invalidChars = Path.GetInvalidFileNameChars();
             string name = GetObjectName(speckleObject);
 
-            string sanitisedName = new(name.Where(x => !invalidChars.Contains(x)).ToArray());
+            string sanitisedName = new(name.Where(x => !InvalidChars.Contains(x)).ToArray());
             return $"{sanitisedName}{suffix}";
         }
         
