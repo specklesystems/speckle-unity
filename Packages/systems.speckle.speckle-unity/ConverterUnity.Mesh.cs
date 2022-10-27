@@ -454,37 +454,41 @@ namespace Objects.Converter.Unity
         {
             return meshes.Select(m => RenderMaterialToNative(m["renderMaterial"] as RenderMaterial)).ToArray();
         }
-        
+
+        //Just used as cache key for the default (null) material
+        private static RenderMaterial defaultMaterialPlaceholder = new(){id="defaultMaterial"};
         public Material RenderMaterialToNative(RenderMaterial? renderMaterial)
         {
             //todo support more complex materials
-            var shader = Shader.Find("Standard");
-            Material mat = new Material(shader);
             
             // 1. If no renderMaterial was passed, use default material
-            if (renderMaterial == null) return mat;
+            if (renderMaterial == null)
+            {
+                if (!LoadedAssets.TryGetObject(defaultMaterialPlaceholder, out Material? defaultMaterial))
+                {
+                    defaultMaterial = new Material(Shader.Find("Standard"));
+                    LoadedAssets.TrySaveObject(defaultMaterialPlaceholder, defaultMaterial);
+                }
+                return defaultMaterial;
+            }
 
             // 2. Try get existing/override material from asset cache
             if (LoadedAssets.TryGetObject(renderMaterial, out Material? loadedMaterial)) return loadedMaterial;
             
             // 3. Otherwise, convert fresh!
-            if (renderMaterial.opacity < 1)
-            {
-                shader = Shader.Find("Transparent/Diffuse");
-                mat = new Material(shader);
-            }
-
+            string shaderName = renderMaterial.opacity < 1 ? "Transparent/Diffuse" : "Standard";
+            Shader shader = Shader.Find(shaderName);
+            var mat = new Material(shader);
+            
             var c = renderMaterial.diffuse.ToUnityColor();
             mat.color = new Color(c.r, c.g, c.b, (float) renderMaterial.opacity);
-            mat.name = AssetHelpers.GetObjectName(renderMaterial);;
+            mat.name = AssetHelpers.GetObjectName(renderMaterial);
             mat.SetFloat(Metallic, (float) renderMaterial.metalness);
             mat.SetFloat(Glossiness, 1 - (float) renderMaterial.roughness);
-
             if (renderMaterial.emissive != SColor.Black.ToArgb()) mat.EnableKeyword("_EMISSION");
             mat.SetColor(EmissionColor, renderMaterial.emissive.ToUnityColor());
-
-            LoadedAssets.TrySaveObject(renderMaterial, mat);
             
+            LoadedAssets.TrySaveObject(renderMaterial, mat);
             return mat;
         }
         

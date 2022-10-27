@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using Objects.Converter.Unity;
+﻿using Objects.Converter.Unity;
 using Speckle.ConnectorUnity.NativeCache;
 using Speckle.Core.Kits;
+using Speckle.Core.Logging;
 using UnityEngine;
 
 namespace Speckle.ConnectorUnity
@@ -21,6 +20,8 @@ namespace Speckle.ConnectorUnity
 
         private void Awake()
         {
+            Setup.Init(HostApplications.Unity.GetVersion(CoreUtils.GetHostAppVersion()), HostApplications.Unity.Slug);
+
             if (AssetCache == null)
             {
                 var assetCache = ScriptableObject.CreateInstance<AggregateNativeCache>();
