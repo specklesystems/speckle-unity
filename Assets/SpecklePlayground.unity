@@ -4111,11 +4111,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SelectedAccountIndex: 0
-  SelectedStreamIndex: 15
-  SelectedBranchIndex: 0
+  SelectedStreamIndex: 8
+  SelectedBranchIndex: 1
   SelectedCommitIndex: 0
   OldSelectedAccountIndex: 0
-  OldSelectedStreamIndex: 15
+  OldSelectedStreamIndex: 8
 --- !u!114 &2060322469
 MonoBehaviour:
   m_ObjectHideFlags: 0

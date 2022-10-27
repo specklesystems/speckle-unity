@@ -47,21 +47,21 @@ public class PerformanceTest
          Assert.That(stopwatch.ElapsedMilliseconds, Is.Zero);
      }
      
-     [UnityTest, TestCaseSource(nameof(dataSource))]
-     public IEnumerable Receive_Coroutine(string stream)
-     {
-         var stopwatch = Stopwatch.StartNew();
-         
-         Task t = Helpers.Receive(stream);
-         t.Start();
-
-         yield return new WaitUntil(() => !t.IsCompleted || stopwatch.ElapsedMilliseconds >= 100000);
-
-         stopwatch.Stop();
-         Console.WriteLine(stopwatch.ElapsedMilliseconds);
-         Assert.That(stopwatch.ElapsedMilliseconds, Is.Zero);
-         Assert.True(t.IsCompletedSuccessfully);
-     }
+     // [UnityTest, TestCaseSource(nameof(dataSource))]
+     // public IEnumerable Receive_Coroutine(string stream)
+     // {
+     //     var stopwatch = Stopwatch.StartNew();
+     //     
+     //     Task t = Helpers.Receive(stream);
+     //     t.Start();
+     //
+     //     yield return new WaitUntil(() => !t.IsCompleted || stopwatch.ElapsedMilliseconds >= 100000);
+     //
+     //     stopwatch.Stop();
+     //     Console.WriteLine(stopwatch.ElapsedMilliseconds);
+     //     Assert.That(stopwatch.ElapsedMilliseconds, Is.Zero);
+     //     Assert.True(t.IsCompletedSuccessfully);
+     // }
     
     
 }
