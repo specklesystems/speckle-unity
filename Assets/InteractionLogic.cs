@@ -32,9 +32,11 @@ namespace Speckle.ConnectorUnity
 
       //populate branches
       branchesDropdown.options.Clear();
-      foreach (var branch in receiver.Stream.branches.items)
+      List<Branch> branches = receiver.Stream.branches.items;
+      branches.Reverse();
+      foreach (Branch branch in branches)
       {
-        branchesDropdown.options.Add(new Dropdown.OptionData(branch.name));
+        branchesDropdown.options.Add(new Dropdown.OptionData(branch.name.Replace(' ', '\u00A0')));
       }
 
       //trigger ui refresh, maybe there's a better method
@@ -45,7 +47,7 @@ namespace Speckle.ConnectorUnity
         if (index == -1)
           return;
 
-        receiver.BranchName = receiver.Stream.branches.items[index].name;
+        receiver.BranchName = branches[index].name;
       });
 
       receiver.Init(stream.id, autoReceive, true,
@@ -159,13 +161,13 @@ namespace Speckle.ConnectorUnity
                   sendProgress.gameObject.SetActive(false); //hide
                 });
               },
-              onErrorAction: (id, e) =>
+              onErrorAction: (message, e) =>
               {
                 Debug.LogError("Send operation Failed!", this);
                 Dispatcher.Instance().Enqueue(() =>
                 {
                   MakeButtonsInteractable(true);
-                  statusText.text = $"Error {id}";
+                  statusText.text = $"Error {message}";
                   sendProgress.gameObject.SetActive(false); //hide
                   Debug.LogError(e, this);
                 });

@@ -23,7 +23,7 @@ using UnityEngine;
 public class CameraOperate : MonoBehaviour
 {
   [Tooltip("Mouse wheel rolling control lens please enter, the speed of the back")]
-  [Range(0.5f, 10f)] public float scrollSpeed = 10f;
+  [Range(0f, 10f)] public float scrollSpeed = 10f;
   [Tooltip("Right mouse button control lens X axis rotation speed")]
   [Range(0.5f, 2f)] public float rotateXSpeed = 1f;
   [Tooltip("Right mouse button control lens Y axis rotation speed")]
