@@ -240,11 +240,9 @@ namespace Objects.Converter.Unity
                 else others.Add(geo);
             }
 
-            Mesh? nativeMesh = null;
             if (meshes.Any())
             {
-                bool foundExisting = TryGetMeshFromCache(block.blockDefinition, meshes, out nativeMesh, out _);
-                if(!foundExisting)
+                if(!TryGetMeshFromCache(block.blockDefinition, meshes, out Mesh? nativeMesh, out _))
                 {
                     MeshToNativeMesh(meshes, out nativeMesh);
                     string name = AssetHelpers.GetObjectName(block.blockDefinition);
