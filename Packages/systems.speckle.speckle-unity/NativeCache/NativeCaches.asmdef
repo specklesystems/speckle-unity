@@ -1,0 +1,16 @@
+{
+    "name": "NativeCaches",
+    "rootNamespace": "Speckle.ConnectorUnity",
+    "references": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "SpeckleCore2.dll"
+    ],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

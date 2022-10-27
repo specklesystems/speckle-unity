@@ -1,6 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
+#nullable enable
 namespace Speckle.ConnectorUnity
 {
   public static class Utils
@@ -22,35 +23,29 @@ namespace Speckle.ConnectorUnity
 
 
 
-    public static void SafeMeshSet(this GameObject go, Mesh m, bool addMeshFilterIfNotFound)
+    public static void SafeMeshSet(this GameObject go, Mesh m, Material[] materials, bool addMeshComponentsIfNotFound = true)
     {
+      MeshFilter? mf = go.GetComponent<MeshFilter>();
+      MeshRenderer? mr = go.GetComponent<MeshRenderer>();
 
-      var mf = go.GetComponent<MeshFilter>();
-      if (mf == null)
+      if (addMeshComponentsIfNotFound)
       {
-        if (!addMeshFilterIfNotFound) return;
-
-        mf = go.AddComponent<MeshFilter>();
+        if (mf == null)
+          mf = go.AddComponent<MeshFilter>();
+        if (mr == null)
+          mr = go.AddComponent<MeshRenderer>();
       }
 
-
       if (Application.isPlaying)
+      {
         mf.mesh = m;
+        mr.materials = materials;
+      }
       else
+      {
         mf.sharedMesh = m;
-    }
-
-
-    public static void SafeMeshSet(this GameObject go, Mesh m)
-    {
-      var mf = go.GetComponent<MeshFilter>();
-      if (mf == null) return;
-
-
-      if (Application.isPlaying)
-        mf.mesh = m;
-      else
-        mf.sharedMesh = m;
+        mr.sharedMaterials = materials;
+      }
     }
 
 

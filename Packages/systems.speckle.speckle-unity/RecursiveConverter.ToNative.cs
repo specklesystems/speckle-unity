@@ -12,24 +12,39 @@ namespace Speckle.ConnectorUnity
     {
         
         /// <summary>
-        /// Given <paramref name="baseObject"/>,
+        /// Given <paramref name="o"/>,
         /// will recursively convert any objects in the tree
         /// </summary>
         /// <param name="o">The object to convert (<see cref="Base"/> or <see cref="List{T}"/> of)</param>
         /// <param name="parent">Optional parent transform for the created root <see cref="GameObject"/>s</param>
         /// <returns> A list of all created <see cref="GameObject"/>s</returns>
         public virtual List<GameObject> RecursivelyConvertToNative(object? o, Transform? parent)
-            => RecursivelyConvertToNative(o, parent, o => ConverterInstance.CanConvertToNative(o));
+            => RecursivelyConvertToNative(o, parent, b => ConverterInstance.CanConvertToNative(b));
         
         /// <inheritdoc cref="RecursivelyConvertToNative(object, Transform)"/>
         /// <param name="predicate">A function to determine if an object should be converted</param>
         public virtual List<GameObject> RecursivelyConvertToNative(object? o, Transform? parent, Func<Base, bool> predicate)
         {
-            LoadMaterialOverrides();
-
+            //Ensure we have A native cache
+            if (AssetCache.nativeCaches.Any(x => x == null))
+            {
+                AssetCache.nativeCaches = NativeCacheFactory.GetStandaloneCacheSetup();
+            }
+            
             var createdGameObjects = new List<GameObject>();
-            ConvertChild(o, parent, predicate, createdGameObjects);
+            ConverterInstance.SetContextDocument(AssetCache);
+            try
+            {
+                AssetCache.BeginWrite();
+                ConvertChild(o, parent, predicate, createdGameObjects);
+            }
+            finally
+            {
+                AssetCache.FinishWrite();
+            }
+
             //TODO track event
+            
             
             return createdGameObjects;
 
@@ -43,7 +58,7 @@ namespace Speckle.ConnectorUnity
             foreach (var nameAlias in namePropertyAliases)
             {
                 string? s = baseObject[nameAlias] as string;
-                if (!string.IsNullOrWhiteSpace(s)) return s!; //TODO any sanitization needed?
+                if (!string.IsNullOrWhiteSpace(s)) return s; //TODO any sanitization needed?
             }
             
             // 2. Use type + id as fallback name
@@ -63,12 +78,14 @@ namespace Speckle.ConnectorUnity
             if (converted is GameObject go)
             {
                 outCreatedObjects.Add(go);
-                
                 nextParent = go.transform;
                 
-                go.name = GenerateObjectName(baseObject);
-                go.transform.SetParent(parent);
-                //TODO add support for unity specific props
+                go.transform.SetParent(parent, true);
+                
+                //Set some common for all created GameObjects
+                //TODO add support for more unity specific props
+                if(go.name == "New Game Object" || string.IsNullOrWhiteSpace(go.name))
+                    go.name = GenerateObjectName(baseObject);
                 //if (baseObject["tag"] is string t) go.tag = t;
                 if (baseObject["physicsLayer"] is string layerName)
                 {
@@ -79,10 +96,9 @@ namespace Speckle.ConnectorUnity
             }
             
             // For geometry, only traverse `elements` prop, otherwise, try and convert everything
-            IEnumerable<string> potentialChildren;
-            potentialChildren = ConverterInstance.CanConvertToNative(baseObject)
+            IEnumerable<string> potentialChildren = ConverterInstance.CanConvertToNative(baseObject)
                 ? new []{"elements"}
-                : baseObject.GetMemberNames();
+                : baseObject.GetMembers().Keys;
 
             // Convert Children
             foreach (string propertyName in potentialChildren)
@@ -122,19 +138,6 @@ namespace Speckle.ConnectorUnity
                 Debug.Log($"Unknown type {value.GetType()} found when traversing tree, will be safely ignored");
             }
         }
-
-        protected virtual void LoadMaterialOverrides()
-        {
-            //using the ContextDocument to pass materials
-            //available in Assets/Materials to the converters
-            Dictionary<string, UnityEngine.Object> loadedAssets = Resources.LoadAll("", typeof(Material))
-                .GroupBy(o => o.name)
-                .Select(o => o.First())
-                .ToDictionary(o => o.name);
-
-            ConverterInstance.SetContextDocument(loadedAssets);
-        }
-        
         
         [Obsolete("Use RecursivelyConvertToNative instead")]
         public GameObject ConvertRecursivelyToNative(Base @base, string name)

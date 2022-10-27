@@ -14,6 +14,11 @@
             Station equation direction for the corresponding station equation should be true for increasing or false for decreasing
             </summary>
         </member>
+        <member name="P:Objects.BuiltElements.Civil.CivilAlignment.parent">
+            <summary>
+            Name of parent alignment if this is an offset alignment
+            </summary>
+        </member>
         <member name="M:Objects.BuiltElements.Area.#ctor(System.String,System.String,Objects.BuiltElements.Level,Objects.Geometry.Point)">
             <summary>
             SchemaBuilder constructor for a Room
@@ -237,15 +242,82 @@
             <param name="elements"></param>
             <remarks>Assign units when using this constructor due to <paramref name="height"/> param</remarks>
         </member>
+        <member name="T:Objects.Geometry.Arc">
+            <summary>
+            Represents a sub-curve of a three-dimensional circle.
+            </summary>
+        </member>
+        <member name="P:Objects.Geometry.Arc.radius">
+            <summary>
+            The radius of the <see cref="T:Objects.Geometry.Arc"/>
+            </summary>
+        </member>
+        <member name="P:Objects.Geometry.Arc.startAngle">
+            <summary>
+            The start angle of the <see cref="T:Objects.Geometry.Arc"/> based on it's <see cref="P:Objects.Geometry.Arc.plane"/>
+            </summary>
+        </member>
+        <member name="P:Objects.Geometry.Arc.endAngle">
+            <summary>
+            The end angle of the <see cref="T:Objects.Geometry.Arc"/> based on it's <see cref="P:Objects.Geometry.Arc.plane"/>
+            </summary>
+        </member>
+        <member name="P:Objects.Geometry.Arc.angleRadians">
+            <summary>
+            The inner angle of the <see cref="T:Objects.Geometry.Arc"/>
+            </summary>
+        </member>
         <member name="P:Objects.Geometry.Arc.plane">
             <summary>
             Gets or sets the plane of the <see cref="T:Objects.Geometry.Arc"/>. The plane origin is the <see cref="T:Objects.Geometry.Arc"/> center.
+            </summary>
+        </member>
+        <member name="P:Objects.Geometry.Arc.domain">
+            <inheritdoc/>
+        </member>
+        <member name="P:Objects.Geometry.Arc.startPoint">
+            <summary>
+            The start <see cref="T:Objects.Geometry.Point"/> of the <see cref="T:Objects.Geometry.Arc"/>
             </summary>
         </member>
         <member name="P:Objects.Geometry.Arc.midPoint">
             <summary>
             Gets or sets the point at 0.5 length.
             </summary>
+        </member>
+        <member name="P:Objects.Geometry.Arc.endPoint">
+            <summary>
+            The end <see cref="T:Objects.Geometry.Point"/> of the <see cref="T:Objects.Geometry.Arc"/>
+            </summary>
+        </member>
+        <member name="P:Objects.Geometry.Arc.bbox">
+            <inheritdoc/>
+        </member>
+        <member name="P:Objects.Geometry.Arc.area">
+            <inheritdoc/>
+        </member>
+        <member name="P:Objects.Geometry.Arc.length">
+            <inheritdoc/>
+        </member>
+        <member name="P:Objects.Geometry.Arc.units">
+            <summary>
+            The units this object was specified in.
+            </summary>
+        </member>
+        <member name="M:Objects.Geometry.Arc.#ctor">
+            <inheritdoc/>
+        </member>
+        <member name="M:Objects.Geometry.Arc.#ctor(Objects.Geometry.Plane,System.Double,System.Double,System.Double,System.Double,System.String,System.String)">
+            <summary>
+            Constructs a new <see cref="T:Objects.Geometry.Arc"/> using angle values.
+            </summary>
+            <param name="plane">The Plane where the arc will be drawn</param>
+            <param name="radius">The radius of the Arc</param>
+            <param name="startAngle">The angle formed between the start point and the X Axis of the plane</param>
+            <param name="endAngle">The angle formed between the end point and the X Axis of the plane</param>
+            <param name="angleRadians">The total angle of the Arc in Radians</param>
+            <param name="units">The object's units</param>
+            <param name="applicationId">The object's unique application ID</param>
         </member>
         <member name="M:Objects.Geometry.Arc.#ctor(Objects.Geometry.Point,Objects.Geometry.Point,System.Double,System.String,System.String)">
             <summary>
@@ -259,9 +331,129 @@
             <param name="units">Units (defaults to "m")</param>
             <param name="applicationId">ID given to the arc in the authoring programme (defaults to null)</param>
         </member>
+        <member name="M:Objects.Geometry.Arc.#ctor(Objects.Geometry.Plane,Objects.Geometry.Point,Objects.Geometry.Point,System.Double,System.String,System.String)">
+            <summary>
+            Initialise an `Arc` using a plane, the arc angle and the start and end points.
+            The radius, midpoint, start angle, and end angle will be calculated.
+            </summary>
+            <param name="plane">The Plane where the arc will be drawn</param>
+            <param name="startPoint">The start point of the arc</param>
+            <param name="endPoint">The end point of the arc</param>
+            <param name="angleRadians">The arc angle</param>
+            <param name="units">Units (defaults to "m")</param>
+            <param name="applicationId">ID given to the arc in the authoring programme (defaults to null)</param>
+        </member>
+        <member name="M:Objects.Geometry.Arc.ToList">
+            <summary>
+            Creates a flat list with the values of the <see cref="T:Objects.Geometry.Arc"/>
+            This is only used for serialisation purposes.
+            </summary>
+            <returns>A list of numbers representing the <see cref="T:Objects.Geometry.Arc"/>'s value</returns>
+        </member>
+        <member name="M:Objects.Geometry.Arc.FromList(System.Collections.Generic.List{System.Double})">
+            <summary>
+            Creates a new <see cref="T:Objects.Geometry.Arc"/> instance based on a flat list of numerical values.
+            This is only used for deserialisation purposes.
+            </summary>
+            <remarks>The input list should be the result of having called <see cref="M:Objects.Geometry.Arc.ToList"/></remarks>
+            <param name="list">A list of numbers</param>
+            <returns>A new <see cref="T:Objects.Geometry.Arc"/> with the values assigned from the list.</returns>
+        </member>
+        <member name="M:Objects.Geometry.Arc.TransformTo(Objects.Other.Transform,Objects.Geometry.Arc@)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Objects.Geometry.Arc.TransformTo(Objects.Other.Transform,Objects.ITransformable@)">
+            <inheritdoc/>
+        </member>
+        <member name="T:Objects.Geometry.Box">
+            <summary>
+            Represents a 3-dimensional box oriented on a plane.
+            </summary>
+        </member>
+        <member name="P:Objects.Geometry.Box.basePlane">
+            <summary>
+            Gets or sets the plane that defines the orientation of the <see cref="T:Objects.Geometry.Box"/>
+            </summary>
+        </member>
+        <member name="P:Objects.Geometry.Box.xSize">
+            <summary>
+            Gets or sets the <see cref="T:Objects.Primitive.Interval"/> that defines the min and max coordinate in the X direction
+            </summary>
+        </member>
+        <member name="P:Objects.Geometry.Box.ySize">
+            <summary>
+            Gets or sets the <see cref="T:Objects.Primitive.Interval"/> that defines the min and max coordinate in the Y direction
+            </summary>
+        </member>
+        <member name="P:Objects.Geometry.Box.zSize">
+            <summary>
+            Gets or sets the <see cref="T:Objects.Primitive.Interval"/> that defines the min and max coordinate in the Y direction
+            </summary>
+        </member>
+        <member name="P:Objects.Geometry.Box.bbox">
+            <inheritdoc/>
+        </member>
+        <member name="P:Objects.Geometry.Box.area">
+            <inheritdoc/>
+        </member>
+        <member name="P:Objects.Geometry.Box.volume">
+            <inheritdoc/>
+        </member>
+        <member name="P:Objects.Geometry.Box.units">
+            <summary>
+            The units this object's coordinates are in.
+            </summary>
+            <remarks>
+            This should be one of <see cref="T:Speckle.Core.Kits.Units"/>
+            </remarks>
+        </member>
+        <member name="M:Objects.Geometry.Box.#ctor">
+            <inheritdoc/>
+        </member>
+        <member name="M:Objects.Geometry.Box.#ctor(Objects.Geometry.Plane,Objects.Primitive.Interval,Objects.Primitive.Interval,Objects.Primitive.Interval,System.String,System.String)">
+            <summary>
+            Constructs a new <see cref="T:Objects.Geometry.Box"/> instance with a <see cref="T:Objects.Geometry.Plane"/> and coordinate intervals for all 3 axis {x , y , z}
+            </summary>
+            <param name="basePlane">The plane the box will be oriented by.</param>
+            <param name="xSize">The range of coordinates (min, max) for the X axis</param>
+            <param name="ySize">The range of coordinates (min, max) for the Y axis</param>
+            <param name="zSize">The range of coordinates (min, max) for the Z axis</param>
+            <param name="units">The units the coordinates are in.</param>
+            <param name="applicationId">The unique application ID of the object.</param>
+        </member>
+        <member name="T:Objects.Geometry.Brep">
+            <summary>
+            Represents a "Boundary Representation" Solid
+            </summary>
+        </member>
+        <member name="P:Objects.Geometry.Brep.bbox">
+            <inheritdoc/>
+        </member>
+        <member name="P:Objects.Geometry.Brep.area">
+            <inheritdoc/>
+        </member>
+        <member name="P:Objects.Geometry.Brep.volume">
+            <inheritdoc/>
+        </member>
+        <member name="P:Objects.Geometry.Brep.units">
+            <summary>
+            The unit's this object's coordinates are in.
+            </summary>
+            <remarks>
+            This should be one of <see cref="T:Speckle.Core.Kits.Units"/>
+            </remarks>
+        </member>
+        <member name="P:Objects.Geometry.Brep.displayValue">
+            <inheritdoc/>
+        </member>
         <member name="P:Objects.Geometry.Brep.Surfaces">
             <summary>
             Gets or sets the list of surfaces in this <see cref="T:Objects.Geometry.Brep"/> instance.
+            </summary>
+        </member>
+        <member name="P:Objects.Geometry.Brep.SurfacesValue">
+            <summary>
+            Gets or sets the flat list of numbers representing the <see cref="T:Objects.Geometry.Brep"/>'s surfaces.
             </summary>
         </member>
         <member name="P:Objects.Geometry.Brep.Curve3D">
@@ -269,35 +461,91 @@
             Gets or sets the list of 3-dimensional curves in this <see cref="T:Objects.Geometry.Brep"/> instance.
             </summary>
         </member>
+        <member name="P:Objects.Geometry.Brep.Curve3DValues">
+            <summary>
+            Gets or sets the flat list of numbers representing the <see cref="T:Objects.Geometry.Brep"/>'s 3D curves.
+            </summary>
+            <remarks>
+            This is only used for the <see cref="T:Objects.Geometry.Brep"/> class serialisation/deserialisation. You should use <see cref="P:Objects.Geometry.Brep.Curve3D"/> instead.
+            </remarks>
+        </member>
         <member name="P:Objects.Geometry.Brep.Curve2D">
             <summary>
             Gets or sets the list of 2-dimensional UV curves in this <see cref="T:Objects.Geometry.Brep"/> instance.
             </summary>
+        </member>
+        <member name="P:Objects.Geometry.Brep.Curve2DValues">
+            <summary>
+            Gets or sets the flat list of numbers representing the <see cref="T:Objects.Geometry.Brep"/>'s 2D curves.
+            </summary>
+            <remarks>
+            This is only used for the <see cref="T:Objects.Geometry.Brep"/> class serialisation/deserialisation. You should use <see cref="P:Objects.Geometry.Brep.Curve2D"/> instead.
+            </remarks>
         </member>
         <member name="P:Objects.Geometry.Brep.Vertices">
             <summary>
             Gets or sets the list of vertices in this <see cref="T:Objects.Geometry.Brep"/> instance.
             </summary>
         </member>
+        <member name="P:Objects.Geometry.Brep.VerticesValue">
+            <summary>
+            Gets or sets the flat list of numbers representing the <see cref="T:Objects.Geometry.Brep"/>'s vertices.
+            </summary>
+            <remarks>
+            This is only used for the <see cref="T:Objects.Geometry.Brep"/> class serialisation/deserialisation. You should use <see cref="P:Objects.Geometry.Brep.Vertices"/> instead.
+            </remarks>
+        </member>
         <member name="P:Objects.Geometry.Brep.Edges">
             <summary>
             Gets or sets the list of edges in this <see cref="T:Objects.Geometry.Brep"/> instance.
             </summary>
+        </member>
+        <member name="P:Objects.Geometry.Brep.EdgesValue">
+            <summary>
+            Gets or sets the flat list of numbers representing the <see cref="T:Objects.Geometry.Brep"/>'s edges.
+            </summary>
+            <remarks>
+            This is only used for the <see cref="T:Objects.Geometry.Brep"/> class serialisation/deserialisation. You should use <see cref="P:Objects.Geometry.Brep.Edges"/> instead.
+            </remarks>
         </member>
         <member name="P:Objects.Geometry.Brep.Loops">
             <summary>
             Gets or sets the list of closed UV loops in this <see cref="T:Objects.Geometry.Brep"/> instance.
             </summary>
         </member>
+        <member name="P:Objects.Geometry.Brep.LoopsValue">
+            <summary>
+            Gets or sets the flat list of numbers representing the <see cref="T:Objects.Geometry.Brep"/>'s loops.
+            </summary>
+            <remarks>
+            This is only used for the <see cref="T:Objects.Geometry.Brep"/> class serialisation/deserialisation. You should use <see cref="P:Objects.Geometry.Brep.Loops"/> instead.
+            </remarks>
+        </member>
         <member name="P:Objects.Geometry.Brep.Trims">
             <summary>
             Gets or sets the list of UV trim segments for each surface in this <see cref="T:Objects.Geometry.Brep"/> instance.
             </summary>
         </member>
+        <member name="P:Objects.Geometry.Brep.TrimsValue">
+            <summary>
+            Gets or sets the flat list of numbers representing the <see cref="T:Objects.Geometry.Brep"/>'s trims.
+            </summary>
+            <remarks>
+            This is only used for the <see cref="T:Objects.Geometry.Brep"/> class serialisation/deserialisation. You should use <see cref="P:Objects.Geometry.Brep.Trims"/> instead.
+            </remarks>
+        </member>
         <member name="P:Objects.Geometry.Brep.Faces">
             <summary>
             Gets or sets the list of faces in this <see cref="T:Objects.Geometry.Brep"/> instance.
             </summary>
+        </member>
+        <member name="P:Objects.Geometry.Brep.FacesValue">
+            <summary>
+            Gets or sets the flat list of numbers representing the <see cref="T:Objects.Geometry.Brep"/>'s faces.
+            </summary>
+            <remarks>
+            This is only used for the <see cref="T:Objects.Geometry.Brep"/> class serialisation/deserialisation. You should use <see cref="P:Objects.Geometry.Brep.Faces"/> instead.
+            </remarks>
         </member>
         <member name="P:Objects.Geometry.Brep.IsClosed">
             <summary>
@@ -315,20 +563,54 @@
             </summary>
         </member>
         <member name="M:Objects.Geometry.Brep.TransformTo(Objects.Other.Transform,Objects.Geometry.Brep@)">
-            <summary>
-            Returns a new transformed Brep.
-            </summary>
-            <param name="transform"></param>
-            <returns></returns>
+            <inheritdoc/>
+        </member>
+        <member name="M:Objects.Geometry.Brep.TransformTo(Objects.Other.Transform,Objects.ITransformable@)">
+            <inheritdoc/>
         </member>
         <member name="T:Objects.Geometry.BrepOrientation">
             <summary>
             Represents the orientation of a <see cref="T:Objects.Geometry.Brep"/>
             </summary>
         </member>
+        <member name="F:Objects.Geometry.BrepOrientation.None">
+            Brep has no specific orientation
+        </member>
+        <member name="F:Objects.Geometry.BrepOrientation.Inward">
+            Brep faces inward
+        </member>
+        <member name="F:Objects.Geometry.BrepOrientation.Outward">
+            Brep faces outward
+        </member>
+        <member name="F:Objects.Geometry.BrepOrientation.Unknown">
+            Orientation is not known
+        </member>
         <member name="T:Objects.Geometry.BrepLoopType">
             <summary>
             Represents the type of a loop in a <see cref="T:Objects.Geometry.Brep"/>'s face.
+            </summary>
+        </member>
+        <member name="F:Objects.Geometry.BrepLoopType.Unknown">
+            Loop type is not known
+        </member>
+        <member name="F:Objects.Geometry.BrepLoopType.Outer">
+            Loop is the outer loop of a face
+        </member>
+        <member name="F:Objects.Geometry.BrepLoopType.Inner">
+            Loop is an inner loop of a face
+        </member>
+        <member name="F:Objects.Geometry.BrepLoopType.Slit">
+            Loop is a closed curve with no area.
+        </member>
+        <member name="F:Objects.Geometry.BrepLoopType.CurveOnSurface">
+            Loop represents a curve on a surface
+        </member>
+        <member name="F:Objects.Geometry.BrepLoopType.PointOnSurface">
+            Loop is collapsed to a point.
+        </member>
+        <member name="T:Objects.Geometry.BrepTrimType">
+            <summary>
+            Represents the type of a trim in a <see cref="T:Objects.Geometry.Brep"/>'s loop.
             </summary>
         </member>
         <member name="T:Objects.Geometry.BrepEdge">
@@ -479,11 +761,114 @@
             <see cref="P:Objects.Geometry.Mesh.vertices"/>, <see cref="P:Objects.Geometry.Mesh.colors"/>, and <see cref="P:Objects.Geometry.Mesh.faces"/> lists will be modified to contain no shared vertices (vertices shared between polygons)
             </remarks>
         </member>
+        <member name="T:Objects.Geometry.Point">
+            <summary>
+            A 3-dimensional point
+            </summary>
+            <remarks>
+            TODO: The Point class does not override the Equality operator, which means that there may be cases where `Equals` is used instead of `==`, as the comparison will be done by reference, not value.
+            </remarks>
+        </member>
         <member name="P:Objects.Geometry.Point.value">
             <summary>
-            OBSOLETE - This is just here for backwards compatibility.
-            You should not use this for anything. Access coordinates using x, y, z properties.
+            Gets or sets the coordinates of the <see cref="T:Objects.Geometry.Point"/>
             </summary>
+        </member>
+        <member name="P:Objects.Geometry.Point.bbox">
+            <inheritdoc/>
+        </member>
+        <member name="M:Objects.Geometry.Point.#ctor">
+            <inheritdoc/>
+        </member>
+        <member name="M:Objects.Geometry.Point.#ctor(System.Double,System.Double,System.Double,System.String,System.String)">
+            <summary>
+            Constructs a new <see cref="T:Objects.Geometry.Point"/> from a set of coordinates and it's units.
+            </summary>
+            <param name="x">The x coordinate</param>
+            <param name="y">The y coordinate</param>
+            <param name="z">The z coordinate</param>
+            <param name="units">The units the point's coordinates are in.</param>
+            <param name="applicationId">The object's unique application ID</param>
+        </member>
+        <member name="M:Objects.Geometry.Point.#ctor(Objects.Geometry.Vector)">
+            <summary>
+            Constructs a new <see cref="T:Objects.Geometry.Point"/> from a <see cref="T:Objects.Geometry.Vector"/>
+            </summary>
+            <param name="vector">The Vector whose coordinates will be used for the Point</param>
+        </member>
+        <member name="P:Objects.Geometry.Point.x">
+            <summary>
+            The x coordinate of the point.
+            </summary>
+        </member>
+        <member name="P:Objects.Geometry.Point.y">
+            <summary>
+            The y coordinate of the point.
+            </summary>
+        </member>
+        <member name="P:Objects.Geometry.Point.z">
+            <summary>
+            The z coordinate of the point.
+            </summary>
+        </member>
+        <member name="P:Objects.Geometry.Point.units">
+            <summary>
+            The unit's this <see cref="T:Objects.Geometry.Vector"/> is in.
+            This should be one of the units specified in <see cref="T:Speckle.Core.Kits.Units"/>
+            </summary>
+        </member>
+        <member name="M:Objects.Geometry.Point.ToList">
+            <summary>
+            Returns the coordinates of this <see cref="T:Objects.Geometry.Point"/> as a list of numbers
+            </summary>
+            <returns>A list of coordinates {x, y, z} </returns>
+        </member>
+        <member name="M:Objects.Geometry.Point.FromList(System.Collections.Generic.IList{System.Double},System.String)">
+            <summary>
+            Creates a new <see cref="T:Objects.Geometry.Point"/> based on a list of coordinates and the unit they're drawn in.
+            </summary>
+            <param name="list">The list of coordinates {x, y, z}</param>
+            <param name="units">The units the coordinates are in</param>
+            <returns>A new <see cref="T:Objects.Geometry.Point"/> with the provided coordinates.</returns>
+        </member>
+        <member name="M:Objects.Geometry.Point.Deconstruct(System.Double@,System.Double@,System.Double@,System.String@)">
+            <summary>
+            Deconstructs a <see cref="T:Objects.Geometry.Point"/> into it's coordinates and units
+            </summary>
+            <param name="x">The x coordinate</param>
+            <param name="y">The y coordinate</param>
+            <param name="z">The z coordinate</param>
+            <param name="units">The units the point's coordinates are in.</param>
+        </member>
+        <member name="M:Objects.Geometry.Point.Deconstruct(System.Double@,System.Double@,System.Double@)">
+            <summary>
+            Deconstructs a <see cref="T:Objects.Geometry.Point"/> into it's coordinates and units
+            </summary>
+            <param name="x">The x coordinate</param>
+            <param name="y">The y coordinate</param>
+            <param name="z">The z coordinate</param>
+        </member>
+        <member name="M:Objects.Geometry.Point.TransformTo(Objects.Other.Transform,Objects.Geometry.Point@)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Objects.Geometry.Point.Midpoint(Objects.Geometry.Point,Objects.Geometry.Point)">
+            <summary>
+            Computes a point equidistant from two points.
+            </summary>
+            <param name="point1">First point.</param>
+            <param name="point2">Second point.</param>
+            <returns>A point at the same distance from <paramref name="point1"/> and <paramref name="point2"/></returns>
+        </member>
+        <member name="M:Objects.Geometry.Point.Distance(Objects.Geometry.Point,Objects.Geometry.Point)">
+            <summary>
+            Computes the distance between two points
+            </summary>
+            <param name="point1">First point.</param>
+            <param name="point2">Second point.</param>
+            <returns>The distance from <paramref name="point1"/> to <paramref name="point2"/></returns>
+        </member>
+        <member name="M:Objects.Geometry.Point.TransformTo(Objects.Other.Transform,Objects.ITransformable@)">
+            <inheritdoc/>
         </member>
         <member name="M:Objects.Geometry.Pointcloud.GetPoints">
             <returns><see cref="P:Objects.Geometry.Pointcloud.points"/> as list of <see cref="T:Objects.Geometry.Point"/>s</returns>
@@ -498,11 +883,114 @@
             <returns><see cref="P:Objects.Geometry.Polyline.value"/> as List of <see cref="T:Objects.Geometry.Point"/>s</returns>
             <exception cref="T:Speckle.Core.Logging.SpeckleException">when list is malformed</exception>
         </member>
+        <member name="T:Objects.Geometry.Vector">
+            <summary>
+            A 3-dimensional vector
+            </summary>
+        </member>
         <member name="P:Objects.Geometry.Vector.value">
             <summary>
-            OBSOLETE - This is just here for backwards compatibility.
-            You should not use this for anything. Access coordinates using X,Y,Z fields.
+            Gets or sets the coordinates of the vector
             </summary>
+        </member>
+        <member name="P:Objects.Geometry.Vector.bbox">
+            <inheritdoc/>
+        </member>
+        <member name="P:Objects.Geometry.Vector.units">
+            <summary>
+            The unit's this <see cref="T:Objects.Geometry.Vector"/> is in.
+            This should be one of <see cref="T:Speckle.Core.Kits.Units"/>
+            </summary>
+        </member>
+        <member name="M:Objects.Geometry.Vector.#ctor">
+            <inheritdoc/>
+        </member>
+        <member name="M:Objects.Geometry.Vector.#ctor(System.Double,System.Double,System.String,System.String)">
+            <summary>
+            Constructs a new 2D <see cref="T:Objects.Geometry.Vector"/> from it's X and Y coordinates.
+            </summary>
+            <param name="x">The x coordinate of the vector</param>
+            <param name="y">The y coordinate of the vector</param>
+            <param name="units">The units the coordinates are in.</param>
+            <param name="applicationId">The unique application ID of the object.</param>
+        </member>
+        <member name="M:Objects.Geometry.Vector.#ctor(System.Double,System.Double,System.Double,System.String,System.String)">
+            <summary>
+            Constructs a new 2D <see cref="T:Objects.Geometry.Vector"/> from it's X and Y coordinates.
+            </summary>
+            <param name="x">The x coordinate of the vector</param>
+            <param name="y">The y coordinate of the vector</param>
+            <param name="z">The y coordinate of the vector</param>
+            <param name="units">The units the coordinates are in.</param>
+            <param name="applicationId">The unique application ID of the object.</param>
+        </member>
+        <member name="M:Objects.Geometry.Vector.#ctor(Objects.Geometry.Point,System.String)">
+            <summary>
+            Constructs a new <see cref="T:Objects.Geometry.Vector"/> from a <see cref="T:Objects.Geometry.Point"/>
+            </summary>
+            <param name="point">The point whose coordinates will be used</param>
+            <param name="applicationId">The unique application ID of the object.</param>
+        </member>
+        <member name="M:Objects.Geometry.Vector.ToList">
+            <summary>
+            Returns the coordinates of this <see cref="T:Objects.Geometry.Vector"/> as a list of numbers
+            </summary>
+            <returns>A list of coordinates {x, y, z} </returns>
+        </member>
+        <member name="M:Objects.Geometry.Vector.FromList(System.Collections.Generic.List{System.Double},System.String)">
+            <summary>
+            Creates a new vector based on a list of coordinates and the unit they're drawn in.
+            </summary>
+            <param name="list">The list of coordinates {x, y, z}</param>
+            <param name="units">The units the coordinates are in</param>
+            <returns>A new <see cref="T:Objects.Geometry.Vector"/> with the provided coordinates.</returns>
+        </member>
+        <member name="P:Objects.Geometry.Vector.x">
+            <summary>
+            The x coordinate of the vector.
+            </summary>
+        </member>
+        <member name="P:Objects.Geometry.Vector.y">
+            <summary>
+            The y coordinate of the vector.
+            </summary>
+        </member>
+        <member name="P:Objects.Geometry.Vector.z">
+            <summary>
+            The z coordinate of the vector.
+            </summary>
+        </member>
+        <member name="M:Objects.Geometry.Vector.op_Division(Objects.Geometry.Vector,System.Double)">
+            <summary>
+            Divides a vector by a numerical value. This will divide each coordinate by the provided value.
+            </summary>
+            <param name="vector">The vector to divide</param>
+            <param name="val">The value to divide by</param>
+            <returns>The resulting <see cref="T:Objects.Geometry.Vector"/></returns>
+        </member>
+        <member name="M:Objects.Geometry.Vector.op_Multiply(Objects.Geometry.Vector,System.Double)">
+            <summary>
+            Multiplies a vector by a numerical value. This will multiply each coordinate by the provided value.
+            </summary>
+            <param name="vector">The vector to multiply</param>
+            <param name="val">The value to multiply by</param>
+            <returns>The resulting <see cref="T:Objects.Geometry.Vector"/></returns>
+        </member>
+        <member name="M:Objects.Geometry.Vector.op_Addition(Objects.Geometry.Vector,Objects.Geometry.Vector)">
+            <summary>
+            Adds two vectors by adding each of their coordinates.
+            </summary>
+            <param name="vector1">The first vector</param>
+            <param name="vector2">The second vector</param>
+            <returns>The resulting <see cref="T:Objects.Geometry.Vector"/></returns>
+        </member>
+        <member name="M:Objects.Geometry.Vector.op_Subtraction(Objects.Geometry.Vector,Objects.Geometry.Vector)">
+            <summary>
+            Subtracts two vectors by subtracting each of their coordinates.
+            </summary>
+            <param name="vector1">The first vector</param>
+            <param name="vector2">The second vector</param>
+            <returns>The resulting <see cref="T:Objects.Geometry.Vector"/></returns>
         </member>
         <member name="P:Objects.Geometry.Vector.Length">
             <summary>
@@ -539,16 +1027,78 @@
             </summary>
             <returns>A copy of this vector unitized.</returns>
         </member>
+        <member name="M:Objects.Geometry.Vector.TransformTo(Objects.Other.Transform,Objects.Geometry.Vector@)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Objects.Geometry.Vector.TransformTo(Objects.Other.Transform,Objects.ITransformable@)">
+            <inheritdoc/>
+        </member>
+        <member name="T:Objects.IHasBoundingBox">
+            <summary>
+            Represents an object that has a <see cref="P:Objects.IHasBoundingBox.bbox"/>
+            </summary>
+        </member>
+        <member name="P:Objects.IHasBoundingBox.bbox">
+            <summary>
+            The bounding box containing the object.
+            </summary>
+        </member>
+        <member name="T:Objects.IHasArea">
+            <summary>
+            Represents a <see cref="T:Speckle.Core.Models.Base"/> object that has <see cref="P:Objects.IHasArea.area"/>
+            </summary>
+        </member>
+        <member name="P:Objects.IHasArea.area">
+            <summary>
+            The area of the object
+            </summary>
+        </member>
+        <member name="T:Objects.IHasVolume">
+            <summary>
+            Represents an object that has <see cref="P:Objects.IHasVolume.volume"/>
+            </summary>
+        </member>
+        <member name="P:Objects.IHasVolume.volume">
+            <summary>
+            The volume of the object
+            </summary>
+        </member>
+        <member name="T:Objects.ICurve">
+            <summary>
+            Represents 
+            </summary>
+        </member>
+        <member name="P:Objects.ICurve.length">
+            <summary>
+            The length of the curve.
+            </summary>
+        </member>
+        <member name="P:Objects.ICurve.domain">
+            <summary>
+            The numerical domain driving the curve's internal parametrization.
+            </summary>
+        </member>
         <member name="T:Objects.ITransformable`1">
             <summary>
-            Interface for transformable objects.
+            Generic Interface for transformable objects.
             </summary>
-            <typeparam name="T"></typeparam>
+            <typeparam name="T">The type of object to support transformations.</typeparam>
+        </member>
+        <member name="M:Objects.ITransformable`1.TransformTo(Objects.Other.Transform,`0@)">
+            <inheritdoc cref="M:Objects.ITransformable.TransformTo(Objects.Other.Transform,Objects.ITransformable@)"/>
         </member>
         <member name="T:Objects.ITransformable">
             <summary>
             Interface for transformable objects where the type may not be known on convert (eg ICurve implementations)
             </summary>
+        </member>
+        <member name="M:Objects.ITransformable.TransformTo(Objects.Other.Transform,Objects.ITransformable@)">
+            <summary>
+            Returns a copy of the object with it's coordinates transformed by the provided <paramref name="transform"/>
+            </summary>
+            <param name="transform">The <see cref="T:Objects.Other.Transform"/> to be applied.</param>
+            <param name="transformed">The transformed copy of the object.</param>
+            <returns>True if the transform operation was successful, false otherwise.</returns>
         </member>
         <member name="T:Objects.IDisplayValue`1">
             <summary>
@@ -571,6 +1121,26 @@
             <see cref="P:Objects.IDisplayValue`1.displayValue"/> <see cref="T:Speckle.Core.Models.Base"/>(s) will be used to display this <see cref="T:Speckle.Core.Models.Base"/>
             if a native displayable object cannot be converted.
             </summary>
+        </member>
+        <member name="T:Objects.ObjectsKit">
+            <summary>
+            The default Speckle Kit
+            </summary>
+        </member>
+        <member name="P:Objects.ObjectsKit.Description">
+            <inheritdoc/>
+        </member>
+        <member name="P:Objects.ObjectsKit.Name">
+            <inheritdoc/>
+        </member>
+        <member name="P:Objects.ObjectsKit.Author">
+            <inheritdoc/>
+        </member>
+        <member name="P:Objects.ObjectsKit.WebsiteOrEmail">
+            <inheritdoc/>
+        </member>
+        <member name="P:Objects.ObjectsKit.Types">
+            <inheritdoc/>
         </member>
         <member name="T:Objects.Organization.Container">
             <summary>

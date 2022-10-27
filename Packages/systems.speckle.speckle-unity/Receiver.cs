@@ -139,6 +139,9 @@ namespace Speckle.ConnectorUnity
           onTotalChildrenCountKnown: OnTotalChildrenCountKnown,
           disposeTransports: true
         );
+        
+        Analytics.TrackEvent(Client.Account, Analytics.Events.Receive);
+        
         Dispatcher.Instance().Enqueue(() =>
         {
           var root = new GameObject()
@@ -166,8 +169,8 @@ namespace Speckle.ConnectorUnity
         {
           streamId = StreamId,
           commitId = commitId,
-          message = "received commit from " + VersionedHostApplications.Unity,
-          sourceApplication = VersionedHostApplications.Unity
+          message = $"received commit from {Application.unityVersion}",
+          sourceApplication = HostApplications.Unity.GetVersion(CoreUtils.GetHostAppVersion())
         });
       }
       catch

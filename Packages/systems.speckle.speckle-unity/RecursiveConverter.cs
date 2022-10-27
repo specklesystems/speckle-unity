@@ -1,6 +1,7 @@
-﻿#nullable enable
-using Objects.Converter.Unity;
+﻿using Objects.Converter.Unity;
+using Speckle.ConnectorUnity.NativeCache;
 using Speckle.Core.Kits;
+using Speckle.Core.Logging;
 using UnityEngine;
 
 namespace Speckle.ConnectorUnity
@@ -12,7 +13,21 @@ namespace Speckle.ConnectorUnity
     [ExecuteAlways, DisallowMultipleComponent]
     public partial class RecursiveConverter : MonoBehaviour
     {
-        public virtual ISpeckleConverter ConverterInstance { get; set; } = new ConverterUnity();
-        
+        public ISpeckleConverter ConverterInstance { get; set; } = new ConverterUnity();
+
+        [field: SerializeField]
+        public AggregateNativeCache AssetCache { get; set; }
+
+        private void Awake()
+        {
+            Setup.Init(HostApplications.Unity.GetVersion(CoreUtils.GetHostAppVersion()), HostApplications.Unity.Slug);
+
+            if (AssetCache == null)
+            {
+                var assetCache = ScriptableObject.CreateInstance<AggregateNativeCache>();
+                assetCache.nativeCaches = NativeCacheFactory.GetDefaultNativeCacheSetup();
+                this.AssetCache = assetCache;
+            }
+        }
     }
 }
