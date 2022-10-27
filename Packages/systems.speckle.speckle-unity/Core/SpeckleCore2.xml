@@ -594,6 +594,19 @@
             </summary>
             <returns>The location of the user's `%appdata%` folder.</returns>
         </member>
+        <member name="M:Speckle.Core.Api.Helpers.UserHasInternet">
+            <summary>
+            Checks if the user has a valid internet connection by pinging 'https://google.com'
+            </summary>
+            <returns>True if the user is connected to the internet, false otherwise.</returns>
+        </member>
+        <member name="M:Speckle.Core.Api.Helpers.Ping(System.String)">
+            <summary>
+            Pings a specific url to verify it's accessible.
+            </summary>
+            <param name="url">The url to ping.</param>
+            <returns>True if the the status code is 200, false otherwise.</returns>
+        </member>
         <!-- Badly formed XML comment ignored for member "T:Speckle.Core.Api.Operations" -->
         <member name="M:Speckle.Core.Api.Operations.GetSerializerInstance">
             <summary>
@@ -930,6 +943,26 @@
             </summary>
             <param name="settings">The object representing the settings for your converter.</param>
         </member>
+        <member name="T:Speckle.Core.Kits.ReceiveMode">
+            <summary>
+            Receive modes indicate what to do and not do when receiving objects
+            </summary>
+        </member>
+        <member name="F:Speckle.Core.Kits.ReceiveMode.Update">
+            <summary>
+            Attemts updating previously received objects by ID, deletes previously received objects that do not exist anymore and creates new ones
+            </summary>
+        </member>
+        <member name="F:Speckle.Core.Kits.ReceiveMode.Create">
+            <summary>
+            Always creates new objects
+            </summary>
+        </member>
+        <member name="F:Speckle.Core.Kits.ReceiveMode.Ignore">
+            <summary>
+            Ignores updating previously received objects and does not attempt updating or deleting them, creates new objects
+            </summary>
+        </member>
         <member name="T:Speckle.Core.Kits.ISpeckleKit">
             <summary>
             Defines the basic interface for creating a "Speckle Kit"
@@ -1250,10 +1283,10 @@
         <member name="P:Speckle.Core.Models.DynamicBase.Item(System.String)">
             <summary>
             Sets and gets properties using the key accessor pattern. E.g.:
-            <para><pre>((dynamic)myObject)["superProperty"] = 42;</pre></para>
+            <para><pre>myObject["superProperty"] = 42;</pre></para>
             </summary>
-            <param name="key"></param>
-            <returns></returns>
+            <param name="key">property name</param>
+            <returns>property value</returns>
         </member>
         <member name="M:Speckle.Core.Models.DynamicBase.GetDynamicMemberNames">
             <summary>
