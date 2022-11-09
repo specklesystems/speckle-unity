@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Speckle.Core.Api;
@@ -18,13 +19,12 @@ namespace Speckle.ConnectorUnity.Components.Editor
         private bool foldOutStatus = true;
         private Texture2D? previewImage;
         
-        private CancellationTokenSource? tokenSource;
-
         public void OnEnable()
         {
             var speckleReceiver = (SpeckleReceiver) target;
             UpdatePreviewImage();
             speckleReceiver.OnCommitSelectionChange.AddListener(_ => UpdatePreviewImage());
+            Debug.Log(Assembly.GetAssembly(typeof(SpeckleReceiverEditor)).FullName);
         }
 
         private void UpdatePreviewImage()
@@ -58,14 +58,13 @@ namespace Speckle.ConnectorUnity.Components.Editor
 
         public async Task<GameObject?> Receive(SpeckleReceiver speckleReceiver)
         {
-            tokenSource?.Cancel();
+            speckleReceiver.CancellationTokenSource?.Cancel();
             if (!speckleReceiver.GetSelection(out Client? client, out _, out Commit? commit, out string? error))
             {
                 Debug.LogWarning($"Not ready to receive: {error}", speckleReceiver);
                 return null;
             }
-
-            tokenSource = new CancellationTokenSource();
+            
             Base? commitObject = await ReceiveCommit(speckleReceiver, client.ServerUrl);
 
             if (commitObject == null) return null;
@@ -141,7 +140,7 @@ namespace Speckle.ConnectorUnity.Components.Editor
                 speckleReceiver.OnTotalChildrenCountKnown.AddListener(OnTotalChildrenKnown);
                 speckleReceiver.OnReceiveProgressAction.AddListener(OnProgress);
                 speckleReceiver.OnErrorAction.AddListener(OnError);
-                commitObject = await speckleReceiver.ReceiveAsync(tokenSource?.Token ?? CancellationToken.None);
+                commitObject = await speckleReceiver.ReceiveAsync();
                 if (commitObject == null)
                 {
                     Debug.LogWarning($"Receive warning: Receive operation returned null", speckleReceiver);
@@ -160,13 +159,8 @@ namespace Speckle.ConnectorUnity.Components.Editor
 
         private void CancelReceive()
         {
-            tokenSource?.Cancel();
+            ((SpeckleReceiver)target).CancellationTokenSource?.Cancel();
             EditorApplication.delayCall += EditorUtility.ClearProgressBar;
-        }
-
-        private void OnDestroy()
-        {
-            tokenSource?.Cancel();
         }
     }
 }

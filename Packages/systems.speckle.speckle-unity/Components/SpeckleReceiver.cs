@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Speckle.ConnectorUnity.Wrappers.Selection;
@@ -13,6 +14,7 @@ using Speckle.Core.Transports;
 using UnityEngine;
 using UnityEngine.Events;
 
+[assembly: InternalsVisibleTo("Speckle.ConnectorUnity.Components.Editor")]
 namespace Speckle.ConnectorUnity.Components
 {
     [ExecuteAlways]
@@ -21,22 +23,21 @@ namespace Speckle.ConnectorUnity.Components
     public class SpeckleReceiver : MonoBehaviour, ISerializationCallbackReceiver
     {
         [field: SerializeReference]
-        public AccountSelection Account { get; protected set; }
+        public AccountSelection Account { get; private set; }
         
         [field: SerializeReference]
-        public StreamSelection Stream { get; protected set; }
+        public StreamSelection Stream { get; private set; }
         
         [field: SerializeReference]
-        public BranchSelection Branch { get; protected set; }
+        public BranchSelection Branch { get; private set; }
         
         [field: SerializeReference]
-        public CommitSelection Commit { get; protected set; }
+        public CommitSelection Commit { get; private set; }
 
-        public RecursiveConverter Converter { get; protected set; }
+        public RecursiveConverter Converter { get; private set; }
 
-        private CancellationTokenSource cancellationTokenSource;
-        
-        [Header("Events"), HideInInspector]
+        [Header("Events")]
+        [HideInInspector]
         public UnityEvent<Commit> OnCommitSelectionChange;
         [HideInInspector]
         public UnityEvent<ConcurrentDictionary<string, int>> OnReceiveProgressAction;
@@ -48,46 +49,23 @@ namespace Speckle.ConnectorUnity.Components
         public UnityEvent<Base> OnComplete;
 
 #nullable enable
-
-        public void Awake()
-        {
-            Initialise(true);
-            Converter = GetComponent<RecursiveConverter>();
-            cancellationTokenSource = new CancellationTokenSource();
-            
-        }
-
-        protected void Initialise(bool forceRefresh = false)
-        {
-            Account ??= new AccountSelection();
-            Stream ??= new StreamSelection(Account);
-            Branch ??= new BranchSelection(Stream);
-            Commit ??= new CommitSelection(Branch);
-            Stream.Initialise();
-            Branch.Initialise();
-            Commit.Initialise();
-            Commit.OnSelectionChange = () => OnCommitSelectionChange.Invoke(Commit.Selected);
-            if(Account.Options is not {Length: > 0} || forceRefresh)
-                Account.RefreshOptions();
-            
-        }
-
-
-    
-    
+        protected internal CancellationTokenSource? CancellationTokenSource { get; private set; }
+        
         /// <summary>
         /// Receives the selected commit object using async Task
         /// </summary>
-        /// <param name="token"></param>
         /// <returns>Awaitable commit object</returns>
         /// <exception cref="SpeckleException">thrown when selection is incomplete</exception>
-        public async Task<Base?> ReceiveAsync(CancellationToken token)
+        public async Task<Base?> ReceiveAsync()
         {
+            CancellationTokenSource?.Cancel();
+            CancellationTokenSource?.Dispose();
+            CancellationTokenSource = new CancellationTokenSource();
             if(!GetSelection(out Client? client, out Stream? stream, out Commit? commit, out string? error))
                 throw new SpeckleException(error);
         
             return await ReceiveAsync(
-                token: token,
+                token: CancellationTokenSource.Token,
                 client: client,
                 streamId: stream.id,
                 objectId: commit.referencedObject,
@@ -272,10 +250,32 @@ namespace Speckle.ConnectorUnity.Components
             return true;
         }
         
+        
+        public void Awake()
+        {
+            Converter = GetComponent<RecursiveConverter>();
+            Initialise(true);
+        }
+
+        protected void Initialise(bool forceRefresh = false)
+        {
+            Account ??= new AccountSelection();
+            Stream ??= new StreamSelection(Account);
+            Branch ??= new BranchSelection(Stream);
+            Commit ??= new CommitSelection(Branch);
+            Stream.Initialise();
+            Branch.Initialise();
+            Commit.Initialise();
+            Commit.OnSelectionChange = () => OnCommitSelectionChange.Invoke(Commit.Selected);
+            if(Account.Options is not {Length: > 0} || forceRefresh)
+                Account.RefreshOptions();
+            
+        }
+        
         public void OnDestroy()
         {
-            cancellationTokenSource?.Cancel();
-            cancellationTokenSource?.Dispose();
+            CancellationTokenSource?.Cancel();
+            CancellationTokenSource?.Dispose();
         }
         
         public void OnBeforeSerialize()

@@ -1,0 +1,185 @@
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Threading;
+using System.Threading.Tasks;
+using Speckle.ConnectorUnity.Wrappers.Selection;
+using Speckle.Core.Api;
+using Speckle.Core.Credentials;
+using Speckle.Core.Kits;
+using Speckle.Core.Logging;
+using Speckle.Core.Models;
+using Speckle.Core.Transports;
+using UnityEngine;
+using UnityEngine.Events;
+
+namespace Speckle.ConnectorUnity.Components
+{
+    [ExecuteAlways]
+    [AddComponentMenu("Speckle/Speckle Sender")]
+    [RequireComponent(typeof(RecursiveConverter))]
+    public class SpeckleSender : MonoBehaviour, ISerializationCallbackReceiver
+    {
+        [field: SerializeReference]
+        public AccountSelection Account { get; private set; }
+        
+        [field: SerializeReference]
+        public StreamSelection Stream { get; private set; }
+        
+        [field: SerializeReference]
+        public BranchSelection Branch { get; private set; }
+        
+        public RecursiveConverter Converter { get; private set; }
+        
+        [Header("Events")]
+        [HideInInspector]
+        public UnityEvent<Branch> OnBranchSelectionChange;
+        [HideInInspector]
+        public UnityEvent<string, Exception> OnErrorAction;
+        [HideInInspector]
+        public UnityEvent<ConcurrentDictionary<string, int>> OnSendProgressAction;
+#nullable enable
+        protected internal CancellationTokenSource? CancellationTokenSource { get; private set; }
+
+        public async Task<string> SendDataAsync(Base data, bool createCommit)
+        {
+            CancellationTokenSource?.Cancel();
+            CancellationTokenSource?.Dispose();
+            CancellationTokenSource = new CancellationTokenSource();
+            if(!GetSelection(out Client? client, out Stream? stream, out Branch? branch, out string? error))
+                throw new SpeckleException(error);
+            
+            ServerTransport transport = new ServerTransport(client.Account, stream.id);
+            transport.CancellationToken = CancellationTokenSource.Token;
+            
+            return await SendDataAsync(transport,
+                data: data,
+                client: client,
+                branchName: branch.name,
+                createCommit: createCommit,
+                cancellationToken: CancellationTokenSource.Token,
+                onProgressAction: dict => OnSendProgressAction.Invoke(dict),
+                onErrorAction: (m, e) => OnErrorAction.Invoke(m, e)
+            );
+        }
+        
+
+        public static async Task<string> SendDataAsync(ServerTransport remoteTransport,
+            Base data,
+            Client client,
+            string branchName,
+            bool createCommit,
+            CancellationToken cancellationToken,
+            Action<ConcurrentDictionary<string, int>>? onProgressAction = null,
+            Action<string, Exception>? onErrorAction = null)
+        {
+            string res = await Operations.Send(
+                data,
+                cancellationToken: cancellationToken,
+                new List<ITransport>{remoteTransport},
+                useDefaultCache: true,
+                disposeTransports: true,
+                onProgressAction: onProgressAction,
+                onErrorAction: onErrorAction
+            );
+
+            Analytics.TrackEvent(client.Account, Analytics.Events.Send);
+
+            if (createCommit && !cancellationToken.IsCancellationRequested)
+            {
+                string streamId = remoteTransport.StreamId;
+                string commitId = await CreateCommit(data, client, cancellationToken, streamId, branchName, res);
+                string url = $"{client.ServerUrl}/streams/{streamId}/commits/{commitId}";
+                Debug.Log($"Data successfully sent to <a href=\"{url}\">{url}</a>");
+            }
+
+            return res;
+        }
+        
+        public static async Task<string> CreateCommit(Base data, Client client, CancellationToken cancellationToken, string streamId, string branchName, string objectId, string? message = null)
+        {
+            long count = data.GetTotalChildrenCount();
+            string commitId = await client.CommitCreate(cancellationToken,
+                new CommitCreateInput
+                {
+                    streamId = streamId,
+                    branchName = branchName,
+                    objectId = objectId,
+                    message = message ?? $"Sent {count} objects from Unity",
+                    sourceApplication = HostApplications.Unity.Name,
+                    totalChildrenCount = (int)count,
+                });
+            
+            return commitId;
+        }
+        
+        public bool GetSelection(
+            [NotNullWhen(true)] out Client? client,
+            [NotNullWhen(true)] out Stream? stream,
+            [NotNullWhen(true)] out Branch? branch,
+            [NotNullWhen(false)] out string? error)
+        {
+            Account? account = Account.Selected;
+            stream = Stream.Selected;
+            branch = Branch.Selected;
+        
+            if (account == null)
+            {
+                error = "Selected Account is null";
+                client = null;
+                return false;
+            }
+            client = Account.Client ?? new Client(account); 
+        
+            if (stream == null)
+            {
+                error = "Selected Stream is null";
+                return false;
+            }
+        
+            if (branch == null) 
+            {
+                error = "Selected Branch is null";
+                return false;
+            }
+            error = null;
+            return true;
+        }
+        
+        
+        public void Awake()
+        {
+            Initialise(true);
+            Converter = GetComponent<RecursiveConverter>();
+        }
+        
+        protected void Initialise(bool forceRefresh = false)
+        {
+            Account ??= new AccountSelection();
+            Stream ??= new StreamSelection(Account);
+            Branch ??= new BranchSelection(Stream);
+            Stream.Initialise();
+            Branch.Initialise();
+            Branch.OnSelectionChange = () => OnBranchSelectionChange.Invoke(Branch.Selected);
+            if(Account.Options is not {Length: > 0} || forceRefresh)
+                Account.RefreshOptions();
+        }
+        
+        public void OnDestroy()
+        {
+            CancellationTokenSource?.Cancel();
+            CancellationTokenSource?.Dispose();
+        }
+        
+        public void OnBeforeSerialize()
+        {
+            //pass
+        }
+        public void OnAfterDeserialize()
+        {
+            Initialise();
+        }
+
+    }
+}

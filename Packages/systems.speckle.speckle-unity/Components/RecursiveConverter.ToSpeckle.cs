@@ -25,7 +25,7 @@ namespace Speckle.ConnectorUnity.Components
         /// <code>
         ///     GameObject parent = ...
         ///     ISet selection = ...
-        ///     Base b = RecursivelyConvertToSpeckle(parent, o => selection.contains(o));
+        ///     Base b = RecursivelyConvertToSpeckle(parent, o => selection.Contains(o));
         /// </code>
         /// </example>
         /// <param name="rootObjects">Root objects of a tree</param>

@@ -30,10 +30,11 @@ namespace Objects.Converter.Unity
         
         public virtual List<SMesh>? MeshToSpeckle(MeshFilter meshFilter)
         {
-            Material[]? materials = meshFilter.GetComponent<Renderer>()?.materials;
 #if UNITY_EDITOR
+            Material[]? materials = meshFilter.GetComponent<Renderer>()?.sharedMaterials;
             var nativeMesh = meshFilter.sharedMesh;
 #else
+            Material[]? materials = meshFilter.GetComponent<Renderer>()?.materials;
             var nativeMesh = meshFilter.mesh;
 #endif
             if (nativeMesh == null) return null;
