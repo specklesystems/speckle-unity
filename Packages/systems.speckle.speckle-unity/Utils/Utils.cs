@@ -1,8 +1,12 @@
 ﻿using System;
+using System.Collections;
+using System.Threading;
+using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.Networking;
 
 #nullable enable
-namespace Speckle.ConnectorUnity.Converter.Utils
+namespace Speckle.ConnectorUnity.Utils
 {
   public static class Utils
   {
@@ -69,5 +73,22 @@ namespace Speckle.ConnectorUnity.Converter.Utils
       return new Color(argb.R / 255f, argb.G / 255f, argb.B / 255f);
     }
 
+    
+    public static IEnumerator GetImageRoutine(string url, string authToken, Action<Texture2D?> callback)
+    {
+      using UnityWebRequest www = UnityWebRequestTexture.GetTexture(url);
+      www.SetRequestHeader("Authorization", $"Bearer {authToken}");
+      UnityWebRequestAsyncOperation request = www.SendWebRequest();
+      
+      yield return request;
+      
+      if(www.result != UnityWebRequest.Result.Success )
+      {
+        Debug.LogWarning( $"Error fetching image from {www.url}: {www.error}" );
+        yield break;
+      }
+      Texture2D? texture = DownloadHandlerTexture.GetContent(www);
+      callback.Invoke(texture);
+    }
   }
 }

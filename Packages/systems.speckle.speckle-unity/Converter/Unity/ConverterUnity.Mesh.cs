@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Speckle.ConnectorUnity.Converter.Utils;
+using Speckle.ConnectorUnity.Utils;
 using Objects.Other;
 using Objects.Utils;
 using Speckle.ConnectorUnity.NativeCache;
@@ -285,7 +285,7 @@ namespace Objects.Converter.Unity
             => MeshToNativeMesh(meshes, out nativeMesh, out _, false);
 
         
-        /// <inheritdoc cref="MeshDataToNative(System.Collections.Generic.IReadOnlyCollection{Objects.Geometry.Mesh},out UnityEngine.Mesh,out UnityEngine.Material[])"/>
+        /// <inheritdoc cref="MeshToNativeMesh(IReadOnlyCollection{Objects.Geometry.Mesh},out Mesh)"/>
         /// <param name="recenterVerts">when true, will recenter vertices</param>
         /// <param name="center">Center position for the mesh</param>
         public void MeshToNativeMesh(IReadOnlyCollection<SMesh> meshes,

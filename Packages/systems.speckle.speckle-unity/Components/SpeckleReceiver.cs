@@ -36,11 +36,15 @@ namespace Speckle.ConnectorUnity.Components
 
         private CancellationTokenSource cancellationTokenSource;
         
-        [Header("Events")]
+        [Header("Events"), HideInInspector]
         public UnityEvent<Commit> OnCommitSelectionChange;
+        [HideInInspector]
         public UnityEvent<ConcurrentDictionary<string, int>> OnReceiveProgressAction;
+        [HideInInspector]
         public UnityEvent<string, Exception> OnErrorAction;
+        [HideInInspector]
         public UnityEvent<int> OnTotalChildrenCountKnown;
+        [HideInInspector]
         public UnityEvent<Base> OnComplete;
 
 #nullable enable
@@ -62,52 +66,13 @@ namespace Speckle.ConnectorUnity.Components
             Stream.Initialise();
             Branch.Initialise();
             Commit.Initialise();
+            Commit.OnSelectionChange = () => OnCommitSelectionChange.Invoke(Commit.Selected);
             if(Account.Options is not {Length: > 0} || forceRefresh)
                 Account.RefreshOptions();
             
         }
 
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="client"></param>
-        /// <param name="stream"></param>
-        /// <param name="commit"></param>
-        /// <param name="error">error messages for </param>
-        /// <returns>true if selection is complete, as we are ready to receive</returns>
-        public bool GetSelection(
-            [NotNullWhen(true)] out Client? client,
-            [NotNullWhen(true)] out Stream? stream,
-            [NotNullWhen(true)] out Commit? commit,
-            [NotNullWhen(false)] out string? error)
-        {
-            Account? account = Account.Selected;
-            stream = Stream.Selected;
-            commit = Commit.Selected;
-        
-            if (account == null)
-            {
-                error = "Selected Account is null";
-                client = null;
-                return false;
-            }
-            client = Account.Client ?? new Client(account); 
-        
-            if (stream == null)
-            {
-                error = "Selected Stream is null";
-                return false;
-            }
-        
-            if (commit == null) 
-            {
-                error = "Selected Commit is null";
-                return false;
-            }
-            error = null;
-            return true;
-        }
     
     
         /// <summary>
@@ -246,7 +211,67 @@ namespace Speckle.ConnectorUnity.Components
             return rootObject;
         }
     
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="client"></param>
+        /// <param name="stream"></param>
+        /// <param name="commit"></param>
+        /// <param name="error">error messages for </param>
+        /// <returns>true if selection is complete, as we are ready to receive</returns>
+        public bool GetSelection(
+            [NotNullWhen(true)] out Client? client,
+            [NotNullWhen(true)] out Stream? stream,
+            [NotNullWhen(true)] out Commit? commit,
+            [NotNullWhen(false)] out string? error)
+        {
+            Account? account = Account.Selected;
+            stream = Stream.Selected;
+            commit = Commit.Selected;
+        
+            if (account == null)
+            {
+                error = "Selected Account is null";
+                client = null;
+                return false;
+            }
+            client = Account.Client ?? new Client(account); 
+        
+            if (stream == null)
+            {
+                error = "Selected Stream is null";
+                return false;
+            }
+        
+            if (commit == null) 
+            {
+                error = "Selected Commit is null";
+                return false;
+            }
+            error = null;
+            return true;
+        }
     
+        /// <summary>
+        /// Fetches the commit preview for the currently selected commit
+        /// </summary>
+        /// <param name="callback">Callback function to be called when the web request completes</param>
+        /// <returns><see langword="false"/> if <see cref="Account"/>, <see cref="Stream"/>, or <see cref="Commit"/> was <see langword="null"/></returns>
+        public bool GetPreviewImage(Action<Texture2D?> callback)
+        {
+            Account? account = Account.Selected;
+            if (account == null) return false;
+            string? streamId = Stream.Selected?.id;
+            if (streamId == null) return false;
+            string? commitId = Commit.Selected?.id;
+            if (commitId == null) return false;
+            string url = $"{account.serverInfo.url}/preview/{streamId}/commits/{commitId}";
+            string authToken = account.token;
+            
+            StartCoroutine(Utils.Utils.GetImageRoutine(url, authToken, callback));
+            return true;
+        }
+        
         public void OnDestroy()
         {
             cancellationTokenSource?.Cancel();

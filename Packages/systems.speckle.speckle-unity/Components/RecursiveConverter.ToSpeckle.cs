@@ -2,7 +2,7 @@
 
 using System;
 using System.Collections.Generic;
-using Speckle.ConnectorUnity.Converter.Utils;
+using Speckle.ConnectorUnity.Utils;
 using Speckle.Core.Models;
 using UnityEngine;
 

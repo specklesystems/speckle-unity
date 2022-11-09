@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Objects.BuiltElements;
 using Objects.Other;
-using Speckle.ConnectorUnity.Converter.Utils;
+using Speckle.ConnectorUnity.Utils;
 using Speckle.ConnectorUnity.NativeCache;
 using Speckle.ConnectorUnity.Wrappers;
 using UnityEngine;

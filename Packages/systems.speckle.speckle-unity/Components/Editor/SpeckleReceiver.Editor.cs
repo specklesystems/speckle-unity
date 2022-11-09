@@ -3,24 +3,50 @@ using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Speckle.ConnectorUnity.Components;
 using Speckle.Core.Api;
 using Speckle.Core.Models;
 using UnityEditor;
 using UnityEngine;
 
 #nullable enable
-namespace Speckle.ConnectorUnity.Editor
+namespace Speckle.ConnectorUnity.Components.Editor
 {
     [CustomEditor(typeof(SpeckleReceiver))]
     [CanEditMultipleObjects]
     public class SpeckleReceiverEditor : UnityEditor.Editor
     {
+        private bool foldOutStatus = true;
+        private Texture2D? previewImage;
+        
         private CancellationTokenSource? tokenSource;
+
+        public void OnEnable()
+        {
+            var speckleReceiver = (SpeckleReceiver) target;
+            UpdatePreviewImage();
+            speckleReceiver.OnCommitSelectionChange.AddListener(_ => UpdatePreviewImage());
+        }
+
+        private void UpdatePreviewImage()
+        {
+            previewImage = null;
+            ((SpeckleReceiver)target).GetPreviewImage(t => previewImage = t);
+        }
+        
         public override async void OnInspectorGUI()
         {
             var speckleReceiver = (SpeckleReceiver) target;
+            
+            
+            //Draw events in a collapsed region
             DrawDefaultInspector();
+
+            foldOutStatus = EditorGUILayout.Foldout(foldOutStatus, "Preview Image");
+            if (foldOutStatus)
+            {
+                Rect rect = GUILayoutUtility.GetAspectRect(7f/4f);
+                if(previewImage != null) GUI.DrawTexture(rect, previewImage);
+            }
             
             bool receive = GUILayout.Button("Receive!");
                 

@@ -1,13 +1,11 @@
 ﻿using System;
 using Objects.Geometry;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Reflection;
 using Objects.Other;
-using Speckle.ConnectorUnity;
-using Speckle.ConnectorUnity.Converter.Utils;
 using Speckle.ConnectorUnity.NativeCache;
+using Speckle.ConnectorUnity.Utils;
 using Speckle.ConnectorUnity.Wrappers;
 using Speckle.Core.Logging;
 using Speckle.Core.Models;

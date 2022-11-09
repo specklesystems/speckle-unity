@@ -2,7 +2,7 @@ using System.Linq;
 using Speckle.Core.Models;
 
 #nullable enable
-namespace Speckle.ConnectorUnity.Converter.Utils
+namespace Speckle.ConnectorUnity.Utils
 {
     /// <summary>
     /// Extension methods for <see cref="Base"/> object models

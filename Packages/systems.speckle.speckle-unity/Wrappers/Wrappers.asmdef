@@ -1,5 +1,5 @@
 {
-    "name": "Serilisation Wrappers",
+    "name": "Wrappers",
     "rootNamespace": "Speckle.ConnectorUnity",
     "references": [
         "GUID:24f666972ea7e9149abddaae766b9c1d"

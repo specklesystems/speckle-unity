@@ -73,7 +73,7 @@ namespace Speckle.ConnectorUnity.Wrappers.Selection
             }
 
             Options = optionsToAdd.ToArray();
-            Debug.Log($"{this.GetType()} updated");
+            //Debug.Log($"{this.GetType()} updated");
             OnSelectionChange?.Invoke();
         }
     }

@@ -1066,7 +1066,7 @@ GameObject:
   m_Component:
   - component: {fileID: 344004931}
   - component: {fileID: 344004930}
-  - component: {fileID: 344004929}
+  - component: {fileID: 344004932}
   m_Layer: 0
   m_Name: New Editor Receiver
   m_TagString: Untagged
@@ -1074,63 +1074,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &344004929
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 344004928}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0bc895f6cb37b674995dc13b79783c55, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  <Account>k__BackingField:
-    rid: 6366722279309049856
-  <Stream>k__BackingField:
-    rid: 6366722279309049857
-  <Branch>k__BackingField:
-    rid: 6366722279309049858
-  <Commit>k__BackingField:
-    rid: 6366722279309049859
-  OnCommitSelectionChange:
-    m_PersistentCalls:
-      m_Calls: []
-  OnReceiveProgressAction:
-    m_PersistentCalls:
-      m_Calls: []
-  OnErrorAction:
-    m_PersistentCalls:
-      m_Calls: []
-  OnTotalChildrenCountKnown:
-    m_PersistentCalls:
-      m_Calls: []
-  OnComplete:
-    m_PersistentCalls:
-      m_Calls: []
-  references:
-    version: 2
-    RefIds:
-    - rid: 6366722279309049856
-      type: {class: AccountSelection, ns: Speckle.ConnectorUnity.Wrappers.Selection, asm: Serilisation Wrappers}
-      data:
-        selectedIndex: 0
-    - rid: 6366722279309049857
-      type: {class: StreamSelection, ns: Speckle.ConnectorUnity.Wrappers.Selection, asm: Serilisation Wrappers}
-      data:
-        selectedIndex: 1
-        <StreamsLimit>k__BackingField: 50
-    - rid: 6366722279309049858
-      type: {class: BranchSelection, ns: Speckle.ConnectorUnity.Wrappers.Selection, asm: Serilisation Wrappers}
-      data:
-        selectedIndex: 0
-        <BranchesLimit>k__BackingField: 30
-        <CommitsLimit>k__BackingField: 15
-    - rid: 6366722279309049859
-      type: {class: CommitSelection, ns: Speckle.ConnectorUnity.Wrappers.Selection, asm: Serilisation Wrappers}
-      data:
-        selectedIndex: 1
 --- !u!114 &344004930
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1152,13 +1095,76 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 344004928}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 10.1570635, y: -2.743827, z: 12.879177}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &344004932
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 344004928}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0bc895f6cb37b674995dc13b79783c55, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Account>k__BackingField:
+    rid: 6366722279309049896
+  <Stream>k__BackingField:
+    rid: 6366722279309049897
+  <Branch>k__BackingField:
+    rid: 6366722279309049898
+  <Commit>k__BackingField:
+    rid: 6366722279309049899
+  OnCommitSelectionChange:
+    m_PersistentCalls:
+      m_Calls: []
+  OnReceiveProgressAction:
+    m_PersistentCalls:
+      m_Calls: []
+  OnErrorAction:
+    m_PersistentCalls:
+      m_Calls: []
+  OnTotalChildrenCountKnown:
+    m_PersistentCalls:
+      m_Calls: []
+  OnComplete:
+    m_PersistentCalls:
+      m_Calls: []
+  references:
+    version: 2
+    RefIds:
+    - rid: 6366722279309049896
+      type: {class: AccountSelection, ns: Speckle.ConnectorUnity.Wrappers.Selection, asm: Wrappers}
+      data:
+        selectedIndex: 0
+    - rid: 6366722279309049897
+      type: {class: StreamSelection, ns: Speckle.ConnectorUnity.Wrappers.Selection, asm: Wrappers}
+      data:
+        selectedIndex: 0
+        <StreamsLimit>k__BackingField: 50
+        <AccountSelection>k__BackingField:
+          rid: 6366722279309049896
+    - rid: 6366722279309049898
+      type: {class: BranchSelection, ns: Speckle.ConnectorUnity.Wrappers.Selection, asm: Wrappers}
+      data:
+        selectedIndex: 0
+        <BranchesLimit>k__BackingField: 50
+        <CommitsLimit>k__BackingField: 15
+        <StreamSelection>k__BackingField:
+          rid: 6366722279309049897
+    - rid: 6366722279309049899
+      type: {class: CommitSelection, ns: Speckle.ConnectorUnity.Wrappers.Selection, asm: Wrappers}
+      data:
+        selectedIndex: 0
+        <BranchSelection>k__BackingField:
+          rid: 6366722279309049898
 --- !u!1 &407638589
 GameObject:
   m_ObjectHideFlags: 0

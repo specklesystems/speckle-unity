@@ -1,14 +1,13 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
-using Speckle.ConnectorUnity.Wrappers.Selection;
 using Speckle.Core.Api;
 using Speckle.Core.Credentials;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
-namespace Speckle.ConnectorUnity.Components.Editor
+namespace Speckle.ConnectorUnity.Wrappers.Selection.Editor
 {
     [CustomPropertyDrawer(typeof(AccountSelection))]
     public sealed class AccountSelectionDrawer : OptionSelectionDrawer<Account>
