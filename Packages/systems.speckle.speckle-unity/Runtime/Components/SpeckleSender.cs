@@ -64,6 +64,7 @@ namespace Speckle.ConnectorUnity.Components
             );
         }
         
+        
 
         public static async Task<string> SendDataAsync(ServerTransport remoteTransport,
             Base data,
@@ -107,7 +108,7 @@ namespace Speckle.ConnectorUnity.Components
                     branchName = branchName,
                     objectId = objectId,
                     message = message ?? $"Sent {count} objects from Unity",
-                    sourceApplication = HostApplications.Unity.Name,
+                    sourceApplication = HostApplications.Unity.GetVersion(CoreUtils.GetHostAppVersion()),
                     totalChildrenCount = (int)count,
                 });
             
@@ -148,6 +149,26 @@ namespace Speckle.ConnectorUnity.Components
         }
         
         
+#if UNITY_EDITOR
+        [ContextMenu("Open Speckle Stream in Browser")]
+        protected void OpenUrlInBrowser()
+        {
+            string url = GetSelectedUrl();
+            Application.OpenURL(url);
+        }
+#endif
+        public string GetSelectedUrl()
+        {
+            string serverUrl = Account.Selected!.serverInfo.url;
+            string? streamId = Stream.Selected?.id;
+            string? branchName = Branch.Selected?.name;
+
+            if (string.IsNullOrEmpty(streamId)) return serverUrl;
+            if (!string.IsNullOrEmpty(branchName)) return $"{serverUrl}/streams/{streamId}/branches/{branchName}";
+            return $"{serverUrl}/streams/{streamId}";
+        }
+        
+        
         public void Awake()
         {
             Initialise(true);
@@ -159,6 +180,7 @@ namespace Speckle.ConnectorUnity.Components
             Account ??= new AccountSelection();
             Stream ??= new StreamSelection(Account);
             Branch ??= new BranchSelection(Stream);
+            Branch.CommitsLimit = 0;
             Stream.Initialise();
             Branch.Initialise();
             Branch.OnSelectionChange = () => OnBranchSelectionChange.Invoke(Branch.Selected);

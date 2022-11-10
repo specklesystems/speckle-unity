@@ -1,7 +1,9 @@
 {
-    "name": "Wrappers.Editor",
+    "name": "Speckle.ConnectorUnity.Wrappers.Editor",
     "rootNamespace": "Speckle.ConnectorUnity",
-    "references": ["GUID:d274441ecc3eb3f43b093eec1503d681"],
+    "references": [
+        "GUID:d274441ecc3eb3f43b093eec1503d681"
+    ],
     "includePlatforms": [
         "Editor"
     ],

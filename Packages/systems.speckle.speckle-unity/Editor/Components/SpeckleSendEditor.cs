@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.ComponentModel;
@@ -68,6 +69,11 @@ namespace Speckle.ConnectorUnity.Components.Editor
             };
             
             //TODO onError action?
+            if (data["@objects"] is IList l && l.Count == 0)
+            {
+                Debug.LogWarning($"Nothing to send", speckleSender);
+                return null;
+            }  
 
             return await speckleSender.SendDataAsync(data, true);
         }

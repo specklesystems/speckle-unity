@@ -2,7 +2,6 @@ using System;
 using System.Collections.Concurrent;
 using System.Linq;
 using System.Reflection;
-using System.Threading;
 using System.Threading.Tasks;
 using Speckle.Core.Api;
 using Speckle.Core.Models;
@@ -18,13 +17,12 @@ namespace Speckle.ConnectorUnity.Components.Editor
     {
         private bool foldOutStatus = true;
         private Texture2D? previewImage;
-        
+
         public void OnEnable()
         {
             var speckleReceiver = (SpeckleReceiver) target;
             UpdatePreviewImage();
             speckleReceiver.OnCommitSelectionChange.AddListener(_ => UpdatePreviewImage());
-            Debug.Log(Assembly.GetAssembly(typeof(SpeckleReceiverEditor)).FullName);
         }
 
         private void UpdatePreviewImage()
@@ -70,7 +68,7 @@ namespace Speckle.ConnectorUnity.Components.Editor
             if (commitObject == null) return null;
             
             var gameObject = Convert(speckleReceiver, commitObject, commit.id);
-            Debug.Log($"Successfully received and converted {commit.id}", target);
+            Debug.Log($"Successfully received and converted commit: {commit.id}", target);
             return gameObject;
         }
 

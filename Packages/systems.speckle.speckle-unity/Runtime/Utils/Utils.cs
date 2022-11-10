@@ -84,7 +84,12 @@ namespace Speckle.ConnectorUnity.Utils
       
       if(www.result != UnityWebRequest.Result.Success )
       {
-        Debug.LogWarning( $"Error fetching image from {www.url}: {www.error}" );
+        bool isDataError = www.result == UnityWebRequest.Result.DataProcessingError;
+        string error = isDataError
+          ? $"{www.result}: {www.downloadHandler.error}"
+          : www.error;
+        
+        Debug.LogWarning( $"Error fetching image from {www.url}: {error}" );
         yield break;
       }
       Texture2D? texture = DownloadHandlerTexture.GetContent(www);
