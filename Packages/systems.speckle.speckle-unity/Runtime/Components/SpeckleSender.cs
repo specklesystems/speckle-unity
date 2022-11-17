@@ -12,7 +12,6 @@ using Speckle.Core.Logging;
 using Speckle.Core.Models;
 using Speckle.Core.Transports;
 using UnityEngine;
-using UnityEngine.Events;
 
 namespace Speckle.ConnectorUnity.Components
 {
@@ -34,14 +33,16 @@ namespace Speckle.ConnectorUnity.Components
         
         [Header("Events")]
         [HideInInspector]
-        public UnityEvent<Branch> OnBranchSelectionChange;
+        public BranchSelectionEvent OnBranchSelectionChange;
         [HideInInspector]
-        public UnityEvent<string, Exception> OnErrorAction;
+        public ErrorActionEvent OnErrorAction;
         [HideInInspector]
-        public UnityEvent<ConcurrentDictionary<string, int>> OnSendProgressAction;
+        public OperationProgressEvent OnSendProgressAction;
 #nullable enable
         protected internal CancellationTokenSource? CancellationTokenSource { get; private set; }
-
+        
+        //TODO runtime sending
+        
         public async Task<string> SendDataAsync(Base data, bool createCommit)
         {
             CancellationTokenSource?.Cancel();
@@ -53,25 +54,23 @@ namespace Speckle.ConnectorUnity.Components
             ServerTransport transport = new ServerTransport(client.Account, stream.id);
             transport.CancellationToken = CancellationTokenSource.Token;
             
-            return await SendDataAsync(transport,
+            return await SendDataAsync(CancellationTokenSource.Token,
+                remoteTransport: transport,
                 data: data,
                 client: client,
                 branchName: branch.name,
                 createCommit: createCommit,
-                cancellationToken: CancellationTokenSource.Token,
                 onProgressAction: dict => OnSendProgressAction.Invoke(dict),
                 onErrorAction: (m, e) => OnErrorAction.Invoke(m, e)
             );
         }
-        
-        
 
-        public static async Task<string> SendDataAsync(ServerTransport remoteTransport,
+        public static async Task<string> SendDataAsync(CancellationToken cancellationToken,
+            ServerTransport remoteTransport,
             Base data,
             Client client,
             string branchName,
             bool createCommit,
-            CancellationToken cancellationToken,
             Action<ConcurrentDictionary<string, int>>? onProgressAction = null,
             Action<string, Exception>? onErrorAction = null)
         {
@@ -90,7 +89,7 @@ namespace Speckle.ConnectorUnity.Components
             if (createCommit && !cancellationToken.IsCancellationRequested)
             {
                 string streamId = remoteTransport.StreamId;
-                string commitId = await CreateCommit(data, client, cancellationToken, streamId, branchName, res);
+                string commitId = await CreateCommit(cancellationToken, data, client, streamId, branchName, res);
                 string url = $"{client.ServerUrl}/streams/{streamId}/commits/{commitId}";
                 Debug.Log($"Data successfully sent to <a href=\"{url}\">{url}</a>");
             }
@@ -98,7 +97,13 @@ namespace Speckle.ConnectorUnity.Components
             return res;
         }
         
-        public static async Task<string> CreateCommit(Base data, Client client, CancellationToken cancellationToken, string streamId, string branchName, string objectId, string? message = null)
+        public static async Task<string> CreateCommit(CancellationToken cancellationToken,
+            Base data,
+            Client client,
+            string streamId,
+            string branchName,
+            string objectId,
+            string? message = null)
         {
             long count = data.GetTotalChildrenCount();
             string commitId = await client.CommitCreate(cancellationToken,
@@ -183,7 +188,7 @@ namespace Speckle.ConnectorUnity.Components
             Branch.CommitsLimit = 0;
             Stream.Initialise();
             Branch.Initialise();
-            Branch.OnSelectionChange = () => OnBranchSelectionChange.Invoke(Branch.Selected);
+            Branch.OnSelectionChange = () => OnBranchSelectionChange?.Invoke(Branch.Selected);
             if(Account.Options is not {Length: > 0} || forceRefresh)
                 Account.RefreshOptions();
         }

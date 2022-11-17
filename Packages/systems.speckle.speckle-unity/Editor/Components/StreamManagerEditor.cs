@@ -14,6 +14,7 @@ using UnityEngine;
 
 namespace Speckle.ConnectorUnity.Components.Editor
 {
+    [Obsolete]
     [CustomEditor(typeof(StreamManager))]
     [CanEditMultipleObjects]
     public class StreamManagerEditor : UnityEditor.Editor

@@ -7,8 +7,9 @@ using UnityEngine;
 
 namespace Speckle.ConnectorUnity.Components
 {
+    [Obsolete("Replaced by new " + nameof(SpeckleReceiver))]
     [ExecuteAlways]
-    [AddComponentMenu("Speckle/Stream Manager")]
+    [AddComponentMenu("Speckle/Obsolete/Stream Manager")]
     [RequireComponent(typeof(RecursiveConverter))]
     public class StreamManager : MonoBehaviour
     {

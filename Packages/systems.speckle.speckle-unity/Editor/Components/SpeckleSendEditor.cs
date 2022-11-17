@@ -39,8 +39,8 @@ namespace Speckle.ConnectorUnity.Components.Editor
             //Draw events in a collapsed region
             DrawDefaultInspector();
 
-            selectedFilter = (SelectionFilter)EditorGUILayout.EnumPopup(selectedFilter);
             bool shouldSend = GUILayout.Button("Send!");
+            selectedFilter = (SelectionFilter)EditorGUILayout.EnumPopup("Selection", selectedFilter);
                 
             if (shouldSend)
             {

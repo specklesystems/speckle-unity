@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Concurrent;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 using Speckle.Core.Api;
 using Speckle.Core.Models;
@@ -11,10 +10,11 @@ using UnityEngine;
 #nullable enable
 namespace Speckle.ConnectorUnity.Components.Editor
 {
-    [CustomEditor(typeof(SpeckleReceiver))]
     [CanEditMultipleObjects]
+    [CustomEditor(typeof(SpeckleReceiver))]
     public class SpeckleReceiverEditor : UnityEditor.Editor
     {
+        private static bool generateAssets = false;
         private bool foldOutStatus = true;
         private Texture2D? previewImage;
 
@@ -23,6 +23,7 @@ namespace Speckle.ConnectorUnity.Components.Editor
             var speckleReceiver = (SpeckleReceiver) target;
             UpdatePreviewImage();
             speckleReceiver.OnCommitSelectionChange.AddListener(_ => UpdatePreviewImage());
+            UpdateGenerateAssets();
         }
 
         private void UpdatePreviewImage()
@@ -35,26 +36,45 @@ namespace Speckle.ConnectorUnity.Components.Editor
         {
             var speckleReceiver = (SpeckleReceiver) target;
             
-            
-            //Draw events in a collapsed region
             DrawDefaultInspector();
-
+            
+            //Preview image
             foldOutStatus = EditorGUILayout.Foldout(foldOutStatus, "Preview Image");
             if (foldOutStatus)
             {
                 Rect rect = GUILayoutUtility.GetAspectRect(7f/4f);
                 if(previewImage != null) GUI.DrawTexture(rect, previewImage);
             }
+
             
+            //Receive button
             bool receive = GUILayout.Button("Receive!");
-                
+
+            bool selection = EditorGUILayout.ToggleLeft("Generate Assets", generateAssets);
+            if (generateAssets != selection)
+            {
+                generateAssets = selection;
+                UpdateGenerateAssets();
+            }
+            
+            
+            //TODO: Draw events in a collapsed region
+
+            
+            
             if (receive)
             {
-                await Receive(speckleReceiver);
+                await ReceiveAndConvert(speckleReceiver);
             }
         }
 
-        public async Task<GameObject?> Receive(SpeckleReceiver speckleReceiver)
+        private void UpdateGenerateAssets()
+        {
+            var speckleReceiver = (SpeckleReceiver) target;
+            speckleReceiver.Converter.AssetCache.nativeCaches = NativeCacheFactory.GetDefaultNativeCacheSetup(generateAssets);
+        }
+
+        public async Task<GameObject?> ReceiveAndConvert(SpeckleReceiver speckleReceiver)
         {
             speckleReceiver.CancellationTokenSource?.Cancel();
             if (!speckleReceiver.GetSelection(out Client? client, out _, out Commit? commit, out string? error))
@@ -94,7 +114,6 @@ namespace Speckle.ConnectorUnity.Components.Editor
             return go;
         }
         
-
         private async Task<Base?> ReceiveCommit(SpeckleReceiver speckleReceiver, string serverLogName)
         {
             string message = $"Receiving data from {serverLogName}...";

@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
@@ -38,19 +39,35 @@ namespace Speckle.ConnectorUnity.Components
 
         [Header("Events")]
         [HideInInspector]
-        public UnityEvent<Commit> OnCommitSelectionChange;
+        public CommitSelectionEvent OnCommitSelectionChange;
         [HideInInspector]
-        public UnityEvent<ConcurrentDictionary<string, int>> OnReceiveProgressAction;
+        public OperationProgressEvent OnReceiveProgressAction;
         [HideInInspector]
-        public UnityEvent<string, Exception> OnErrorAction;
+        public ErrorActionEvent OnErrorAction;
         [HideInInspector]
-        public UnityEvent<int> OnTotalChildrenCountKnown;
+        public ChildrenCountHandler OnTotalChildrenCountKnown;
         [HideInInspector]
-        public UnityEvent<Base> OnComplete;
+        public ReceiveCompleteHandler OnComplete;
 
 #nullable enable
         protected internal CancellationTokenSource? CancellationTokenSource { get; private set; }
-        
+
+        //TODO runtime receiving
+        public IEnumerator ReceiveAndConvertRoutine(SpeckleReceiver speckleReceiver, string rootObjectName, Action<Base>? beforeConvertCallback = null)
+        {
+            Task<Base?> receiveOperation = Task.Run(ReceiveAsync);
+            
+            yield return new WaitUntil(() => receiveOperation.IsCompleted);
+
+            Base? b = receiveOperation.Result;
+            if (b == null) yield break;
+
+            //TODO make routine break for each catergory/object 
+            GameObject go = ConvertToNativeWithCategories(b, rootObjectName, beforeConvertCallback);
+            OnComplete.Invoke(go);
+        }
+
+
         /// <summary>
         /// Receives the selected commit object using async Task
         /// </summary>
@@ -289,10 +306,10 @@ namespace Speckle.ConnectorUnity.Components
             Stream.Initialise();
             Branch.Initialise();
             Commit.Initialise();
-            Commit.OnSelectionChange = () => OnCommitSelectionChange.Invoke(Commit.Selected);
+            Commit.OnSelectionChange = 
+                () => OnCommitSelectionChange?.Invoke(Commit.Selected);
             if(Account.Options is not {Length: > 0} || forceRefresh)
                 Account.RefreshOptions();
-            
         }
         
         public void OnDestroy()
@@ -310,4 +327,11 @@ namespace Speckle.ConnectorUnity.Components
             Initialise();
         }
     }
+    
+    [Serializable] public sealed class CommitSelectionEvent : UnityEvent<Commit?> { }
+    [Serializable] public sealed class BranchSelectionEvent : UnityEvent<Branch?> { }
+    [Serializable] public sealed class ErrorActionEvent : UnityEvent<string, Exception> { }
+    [Serializable] public sealed class OperationProgressEvent : UnityEvent<ConcurrentDictionary<string, int>> { }
+    [Serializable] public sealed class ReceiveCompleteHandler : UnityEvent<GameObject> { }
+    [Serializable] public sealed class ChildrenCountHandler : UnityEvent<int> { }
 }
