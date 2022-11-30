@@ -21,9 +21,11 @@ namespace Speckle.ConnectorUnity.Wrappers.Selection.Editor
             {
                 ("Id", s => s.userInfo.id),
                 ("Name", s => s.userInfo.name),
-                ("Server", s => s.userInfo.name),
-                ("URL", s => s.serverInfo.name),
-                ("Description", s => s.serverInfo.url),
+                ("Email", s => s.userInfo.email),
+                ("Company", s => s.userInfo.company),
+                ("Server", s => s.serverInfo.name),
+                ("URL", s => s.serverInfo.url),
+                ("Description", s => s.serverInfo.description),
             };
         }
     }

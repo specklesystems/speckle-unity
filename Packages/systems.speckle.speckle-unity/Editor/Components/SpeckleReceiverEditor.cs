@@ -20,6 +20,16 @@ namespace Speckle.ConnectorUnity.Components.Editor
 
         public void OnEnable()
         {
+            Init();
+        }
+        
+        public void Reset()
+        {
+            Init();
+        }
+
+        private void Init()
+        {
             var speckleReceiver = (SpeckleReceiver) target;
             UpdatePreviewImage();
             speckleReceiver.OnCommitSelectionChange.AddListener(_ => UpdatePreviewImage());
@@ -178,6 +188,26 @@ namespace Speckle.ConnectorUnity.Components.Editor
         {
             ((SpeckleReceiver)target).CancellationTokenSource?.Cancel();
             EditorApplication.delayCall += EditorUtility.ClearProgressBar;
+        }
+        
+        [MenuItem("GameObject/Speckle/Speckle Connector", false, 10)]
+        static void CreateCustomGameObject(MenuCommand menuCommand) {
+            // Create a custom game object
+            GameObject go = new GameObject("Speckle Connector");
+            // Ensure it gets reparented if this was a context click (otherwise does nothing)
+            GameObjectUtility.SetParentAndAlign(go, menuCommand.context as GameObject);
+            // Register the creation in the undo system
+            Undo.RegisterCreatedObjectUndo(go, "Create " + go.name);
+            Selection.activeObject = go;
+
+            go.AddComponent<RecursiveConverter>();
+            go.AddComponent<SpeckleReceiver>();
+            go.AddComponent<SpeckleSender>();
+            
+#if UNITY_2021_2_OR_NEWER
+            var icon = AssetDatabase.LoadAssetAtPath<Texture2D>("Packages/systems.speckle.speckle-unity/Editor/Gizmos/logo128.png");
+            EditorGUIUtility.SetIconForObject(go, icon);
+#endif
         }
     }
 }

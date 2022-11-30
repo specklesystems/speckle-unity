@@ -293,6 +293,7 @@ namespace Speckle.ConnectorUnity.Components
         
         public void Awake()
         {
+            CoreUtils.SetupInit();
             Converter = GetComponent<RecursiveConverter>();
             Initialise(true);
         }

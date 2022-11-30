@@ -89,7 +89,11 @@ namespace Speckle.ConnectorUnity.Components
             if (createCommit && !cancellationToken.IsCancellationRequested)
             {
                 string streamId = remoteTransport.StreamId;
-                string commitId = await CreateCommit(cancellationToken, data, client, streamId, branchName, res);
+                string unityVer =  $"Unity {Application.unityVersion.Substring(0,6)}";
+                data.totalChildrenCount = data.GetTotalChildrenCount();
+                string commitMessage = $"Sent {data.totalChildrenCount} objects from {unityVer}";
+                
+                string commitId = await CreateCommit(cancellationToken, data, client, streamId, branchName, res, commitMessage);
                 string url = $"{client.ServerUrl}/streams/{streamId}/commits/{commitId}";
                 Debug.Log($"Data successfully sent to <a href=\"{url}\">{url}</a>");
             }
@@ -103,18 +107,17 @@ namespace Speckle.ConnectorUnity.Components
             string streamId,
             string branchName,
             string objectId,
-            string? message = null)
+            string message)
         {
-            long count = data.GetTotalChildrenCount();
             string commitId = await client.CommitCreate(cancellationToken,
                 new CommitCreateInput
                 {
                     streamId = streamId,
                     branchName = branchName,
                     objectId = objectId,
-                    message = message ?? $"Sent {count} objects from Unity",
+                    message = message,
                     sourceApplication = HostApplications.Unity.GetVersion(CoreUtils.GetHostAppVersion()),
-                    totalChildrenCount = (int)count,
+                    totalChildrenCount = (int)data.totalChildrenCount,
                 });
             
             return commitId;
@@ -176,6 +179,7 @@ namespace Speckle.ConnectorUnity.Components
         
         public void Awake()
         {
+            CoreUtils.SetupInit();
             Initialise(true);
             Converter = GetComponent<RecursiveConverter>();
         }

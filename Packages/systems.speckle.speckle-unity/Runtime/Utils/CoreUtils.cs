@@ -1,10 +1,15 @@
 using Speckle.Core.Kits;
+using Speckle.Core.Logging;
 
 namespace Speckle.ConnectorUnity
 {
     public static class CoreUtils
     {
-
+        public static void SetupInit()
+        {
+            Setup.Init(HostApplications.Unity.GetVersion(CoreUtils.GetHostAppVersion()), HostApplications.Unity.Slug);
+        }
+        
         public static HostAppVersion GetHostAppVersion()
         {
             #if UNITY_2019
