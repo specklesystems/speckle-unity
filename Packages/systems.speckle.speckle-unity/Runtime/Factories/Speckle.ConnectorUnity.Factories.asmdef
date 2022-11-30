@@ -1,0 +1,16 @@
+{
+    "name": "Speckle.ConnectorUnity.Factories",
+    "rootNamespace": "Speckle.ConnectorUnity",
+    "references": [
+        "GUID:7383cd71541a2aa48a7baf23f74b4d5f"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

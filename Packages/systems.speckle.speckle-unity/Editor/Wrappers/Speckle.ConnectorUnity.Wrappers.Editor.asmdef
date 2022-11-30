@@ -1,0 +1,18 @@
+{
+    "name": "Speckle.ConnectorUnity.Wrappers.Editor",
+    "rootNamespace": "Speckle.ConnectorUnity",
+    "references": [
+        "GUID:d274441ecc3eb3f43b093eec1503d681"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
