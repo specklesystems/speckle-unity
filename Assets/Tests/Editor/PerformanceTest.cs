@@ -16,7 +16,7 @@ public class PerformanceTest
 {
     private static readonly string[] dataSource = new[]
     {
-        "https://latest.speckle.dev/streams/24c3741255/commits/0925840e09"
+        "https://latest.speckle.dev/streams/86ed45cd06/commits/a9c436a878"
     };
     
     
@@ -65,32 +65,6 @@ public class PerformanceTest
      //     Assert.That(stopwatch.ElapsedMilliseconds, Is.Zero);
      //     Assert.True(t.IsCompletedSuccessfully);
      // }
-    
-    
      
-     
-     //This method takes around 46 seconds to complete
-     [Test]
-     public void TestTriangulate()
-     {
-         
-         
-         Base b = Task.Run(async () =>
-         {
-             return await Helpers.Receive("https://speckle.xyz/streams/4a8fd0c6b6/commits/067bf723b1");
-         }).GetAwaiter().GetResult();
-         
-         
-         foreach (Base child in b.Traverse(b => b is Objects.Geometry.Mesh))
-         {
-             if(child is not Objects.Geometry.Mesh m) continue;
-             
-             var stopwatch = Stopwatch.StartNew();
-
-             m.TriangulateMesh();
-
-             Console.WriteLine($"took {stopwatch.ElapsedMilliseconds:ms} to triangulate {child.id}");
-         }
-     }
 
 }

@@ -4,5 +4,8 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/SpecklePlayground.unity
+    guid: 17672c7479cd1f64c85c42d113e8ad95
   m_configObjects: {}
