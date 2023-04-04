@@ -75,10 +75,29 @@ namespace Speckle.ConnectorUnity.NativeCache
             return $"{sanitisedName}{suffix}";
         }
         
-        public static string GetObjectName(Base speckleObject)
+
+        public const string OBJECT_NAME_SEPERATOR = " -- ";
+        
+        /// <param name="speckleObject">The object to be named</param>
+        /// <returns>A human-readable Object name unique to the given <paramref name="speckleObject"/></returns>
+        public static string GenerateObjectName(Base speckleObject)
         {
-            string objectName = speckleObject["name"] as string ?? speckleObject.speckle_type.Split(':').Last();
-            return $"{objectName} - {speckleObject.id}";
+            var prefix = GetFriendlyObjectName(speckleObject) ?? SimplifiedSpeckleType(speckleObject);
+            return $"{prefix}{OBJECT_NAME_SEPERATOR}{speckleObject.id}";
+        }
+
+        public static string? GetFriendlyObjectName(Base speckleObject)
+        {
+            return speckleObject["name"] as string
+                ?? speckleObject["Name"] as string
+                ?? speckleObject["family"] as string;
+        }
+        
+        /// <param name="speckleObject"></param>
+        /// <returns>The most significant type in a given <see cref="Base.speckle_type"/></returns>
+        public static string SimplifiedSpeckleType(Base speckleObject)
+        {
+            return speckleObject.speckle_type.Split(':')[^1];
         }
         
         
@@ -87,6 +106,13 @@ namespace Speckle.ConnectorUnity.NativeCache
             if (nativeType == typeof(Material)) return ".mat";
             if (nativeType == typeof(GameObject)) return ".prefab";
             return ".asset";
+        }
+        
+        [Obsolete("use " + nameof(GenerateObjectName))]
+        public static string GetObjectName(Base speckleObject)
+        {
+            string objectName = speckleObject["name"] as string ?? speckleObject.speckle_type.Split(':').Last();
+            return $"{objectName} - {speckleObject.id}";
         }
     }
 }

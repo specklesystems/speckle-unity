@@ -112,7 +112,7 @@ namespace Objects.Converter.Unity
                 case Mesh o:
                     return MeshToNative(o);
                 case BlockInstance o:
-                    return BlockToNative(o);
+                    return InstanceToNative(o);
                 default:
 
                     //Object is not a raw geometry, convert it as display value element
