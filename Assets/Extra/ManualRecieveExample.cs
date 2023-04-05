@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Threading.Tasks;
 using Speckle.ConnectorUnity;
+using Speckle.ConnectorUnity.Components;
 using Speckle.Core.Api;
 using Speckle.Core.Credentials;
 using Speckle.Core.Transports;

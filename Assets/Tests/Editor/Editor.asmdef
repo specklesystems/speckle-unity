@@ -14,7 +14,8 @@
     "overrideReferences": true,
     "precompiledReferences": [
         "nunit.framework.dll",
-        "SpeckleCore2.dll"
+        "SpeckleCore2.dll",
+        "Objects.dll"
     ],
     "autoReferenced": false,
     "defineConstraints": [
