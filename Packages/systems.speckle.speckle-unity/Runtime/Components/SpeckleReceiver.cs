@@ -90,7 +90,7 @@ namespace Speckle.ConnectorUnity.Components
                 onProgressAction: dict => OnReceiveProgressAction.Invoke(dict),
                 onErrorAction: (m, e) => OnErrorAction.Invoke(m, e),
                 onTotalChildrenCountKnown: c => OnTotalChildrenCountKnown.Invoke(c)
-            );
+            ).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -132,7 +132,7 @@ namespace Speckle.ConnectorUnity.Components
                     onErrorAction: onErrorAction,
                     onTotalChildrenCountKnown: onTotalChildrenCountKnown,
                     disposeTransports: true
-                );
+                ).ConfigureAwait(false);
 
                 token.ThrowIfCancellationRequested();
 
@@ -145,7 +145,7 @@ namespace Speckle.ConnectorUnity.Components
                         commitId = commitId,
                         message = $"received commit from {Application.unityVersion}",
                         sourceApplication = HostApplications.Unity.GetVersion(CoreUtils.GetHostAppVersion())
-                    });
+                    }).ConfigureAwait(false);;
                 }
                 catch (Exception e)
                 {

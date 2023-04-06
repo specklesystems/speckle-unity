@@ -7,6 +7,7 @@ namespace Speckle.ConnectorUnity
     {
         public static void SetupInit()
         {
+            SpeckleLog.Initialize(HostApplications.Unity.Slug, HostApplications.Unity.GetVersion(CoreUtils.GetHostAppVersion()));
             Setup.Init(HostApplications.Unity.GetVersion(CoreUtils.GetHostAppVersion()), HostApplications.Unity.Slug);
         }
         

@@ -7,7 +7,7 @@
   "targets": {
     ".NETStandard,Version=v2.0": {},
     ".NETStandard,Version=v2.0/": {
-      "SpeckleCore2/2.1.0": {
+      "SpeckleCore2/2.0.999-local": {
         "dependencies": {
           "GraphQL.Client": "5.1.1",
           "Microsoft.CSharp": "4.7.0",
@@ -555,7 +555,7 @@
     }
   },
   "libraries": {
-    "SpeckleCore2/2.1.0": {
+    "SpeckleCore2/2.0.999-local": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
