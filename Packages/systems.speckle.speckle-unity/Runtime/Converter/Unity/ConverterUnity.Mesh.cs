@@ -262,7 +262,7 @@ namespace Objects.Converter.Unity
             if (LoadedAssets.TryGetObject(element, out Mesh? existing))
             {
                 nativeMesh = existing;
-                //todo This is pretty inefficient, having to the mesh data anyway just to get the center... eek
+                //todo This is pretty inefficient, having to convert the mesh data anyway just to get the center... eek
                 MeshDataToNative(meshes,
                     out List<Vector3> verts,
                     out _,
