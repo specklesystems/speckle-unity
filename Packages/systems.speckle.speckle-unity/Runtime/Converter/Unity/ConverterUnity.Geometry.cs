@@ -252,7 +252,7 @@ namespace Objects.Converter.Unity
                 if(!TryGetMeshFromCache(instance.definition, meshes, out Mesh? nativeMesh, out _))
                 {
                     MeshToNativeMesh(meshes, out nativeMesh);
-                    string name = AssetHelpers.GetObjectName(instance.definition);
+                    string name = AssetHelpers.GenerateObjectName(instance.definition);
                     nativeMesh.name = name;
                     LoadedAssets.TrySaveObject(instance.definition, nativeMesh);
                 }

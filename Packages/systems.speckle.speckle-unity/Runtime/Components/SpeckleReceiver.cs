@@ -291,13 +291,13 @@ namespace Speckle.ConnectorUnity.Components
         
         public void Awake()
         {
-            CoreUtils.SetupInit();
             Converter = GetComponent<RecursiveConverter>();
             Initialise(true);
         }
 
         protected void Initialise(bool forceRefresh = false)
         {
+            CoreUtils.SetupInit();
             Account ??= new AccountSelection();
             Stream ??= new StreamSelection(Account);
             Branch ??= new BranchSelection(Stream);

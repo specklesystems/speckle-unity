@@ -69,7 +69,7 @@ namespace Speckle.ConnectorUnity.NativeCache
         public static string GetAssetName(Base speckleObject, Type nativeType)
         {
             string suffix = GetAssetSuffix(nativeType);
-            string name = GetObjectName(speckleObject);
+            string name = GenerateObjectName(speckleObject);
 
             string sanitisedName = new(name.Where(x => !InvalidChars.Contains(x)).ToArray());
             return $"{sanitisedName}{suffix}";
