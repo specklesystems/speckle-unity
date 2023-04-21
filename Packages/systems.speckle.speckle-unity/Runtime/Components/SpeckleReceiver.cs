@@ -51,7 +51,8 @@ namespace Speckle.ConnectorUnity.Components
 
 #nullable enable
         protected internal CancellationTokenSource? CancellationTokenSource { get; private set; }
-
+        
+        
         //TODO runtime receiving
         public IEnumerator ReceiveAndConvertRoutine(SpeckleReceiver speckleReceiver, string rootObjectName, Action<Base>? beforeConvertCallback = null)
         {

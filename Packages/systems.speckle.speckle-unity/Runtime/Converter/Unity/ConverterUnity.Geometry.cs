@@ -212,13 +212,9 @@ namespace Objects.Converter.Unity
             return sobject;
         }
 
-        public GameObject? InstanceToNative(Instance instance)
+        public GameObject InstanceToNative(Instance instance)
         {
-            if (instance.definition == null)
-            {
-                Debug.Log($"Skipping {typeof(BlockInstance)} {instance.id}, block definition was null");
-                return null;
-            }
+            if (instance.definition == null) throw new ArgumentException("Definition was null", nameof(instance));
 
             var defName = instance.definition["name"] as string ?? "";
             // Check for existing converted object
@@ -269,8 +265,14 @@ namespace Objects.Converter.Unity
             
             LoadedAssets.TrySaveObject(instance.definition, native);
             
+            
             TransformToNativeTransform(native.transform, instance.transform);
-            if (instance["name"] is string instanceName) native.name = instanceName;
+            
+            var instanceName = AssetHelpers.GetFriendlyObjectName(instance) != null
+                ? AssetHelpers.GenerateObjectName(instance)
+                : defName;
+            
+            native.name = instanceName;
             return native;
         }
 

@@ -31,6 +31,9 @@ namespace Speckle.ConnectorUnity
             return HostAppVersion.v;
             #endif
         }
+        
+        
+        public static bool Tautology<T>(T _) => true;
 
     }
 }
