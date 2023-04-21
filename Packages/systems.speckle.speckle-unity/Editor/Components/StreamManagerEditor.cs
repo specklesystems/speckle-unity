@@ -26,7 +26,7 @@ namespace Speckle.ConnectorUnity.Components.Editor
         private static bool generateAssets;
 
         public int StreamsLimit { get; set; } = 30;
-        public int BranchesLimit { get; set; } = 30;
+        public int BranchesLimit { get; set; } = 75;
         public int CommitsLimit { get; set; } = 25;
 
         private int SelectedAccountIndex

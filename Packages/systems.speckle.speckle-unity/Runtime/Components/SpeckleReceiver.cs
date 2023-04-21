@@ -147,7 +147,7 @@ namespace Speckle.ConnectorUnity.Components
                         commitId = commitId,
                         message = $"received commit from {Application.unityVersion}",
                         sourceApplication = HostApplications.Unity.GetVersion(CoreUtils.GetHostAppVersion())
-                    }).ConfigureAwait(false);;
+                    }).ConfigureAwait(false);
                 }
                 catch (Exception e)
                 {
