@@ -18,7 +18,7 @@ namespace Speckle.ConnectorUnity.Wrappers.Selection
             {
                 Account? account = Selected;
                 if (account == null) return client = null;
-                if (client == null || !client.Account.Equals(account)) return client = new Client(Selected);
+                if (client == null || !client.Account.Equals(account)) return client = new Client(account);
                 return client;
             }
         }

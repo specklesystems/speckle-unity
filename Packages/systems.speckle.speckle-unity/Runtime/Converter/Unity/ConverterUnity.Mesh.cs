@@ -223,7 +223,7 @@ namespace Objects.Converter.Unity
             {
                 //Convert a new one
                 MeshToNativeMesh(meshes, out nativeMesh, out center);
-                string name = AssetHelpers.GetObjectName(element);
+                string name = AssetHelpers.GenerateObjectName(element);
                 nativeMesh.name = name;
                 LoadedAssets.TrySaveObject(element, nativeMesh);
             }
@@ -262,7 +262,7 @@ namespace Objects.Converter.Unity
             if (LoadedAssets.TryGetObject(element, out Mesh? existing))
             {
                 nativeMesh = existing;
-                //todo This is pretty inefficient, having to the mesh data anyway just to get the center... eek
+                //todo This is pretty inefficient, having to convert the mesh data anyway just to get the center... eek
                 MeshDataToNative(meshes,
                     out List<Vector3> verts,
                     out _,
@@ -483,7 +483,7 @@ namespace Objects.Converter.Unity
             
             var c = renderMaterial.diffuse.ToUnityColor();
             mat.color = new Color(c.r, c.g, c.b, (float) renderMaterial.opacity);
-            mat.name = AssetHelpers.GetObjectName(renderMaterial);
+            mat.name = AssetHelpers.GenerateObjectName(renderMaterial);
             mat.SetFloat(Metallic, (float) renderMaterial.metalness);
             mat.SetFloat(Glossiness, 1 - (float) renderMaterial.roughness);
             if (renderMaterial.emissive != SColor.Black.ToArgb()) mat.EnableKeyword("_EMISSION");

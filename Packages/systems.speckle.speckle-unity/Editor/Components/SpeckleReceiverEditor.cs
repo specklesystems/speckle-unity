@@ -71,10 +71,9 @@ namespace Speckle.ConnectorUnity.Components.Editor
             //TODO: Draw events in a collapsed region
 
             
-            
             if (receive)
             {
-                await ReceiveAndConvert(speckleReceiver);
+                await ReceiveAndConvert(speckleReceiver).ConfigureAwait(false);;
             }
         }
 
@@ -93,7 +92,7 @@ namespace Speckle.ConnectorUnity.Components.Editor
                 return null;
             }
             
-            Base? commitObject = await ReceiveCommit(speckleReceiver, client.ServerUrl);
+            Base? commitObject = await ReceiveCommit(speckleReceiver, client.ServerUrl).ConfigureAwait(true);;
 
             if (commitObject == null) return null;
             
@@ -167,7 +166,7 @@ namespace Speckle.ConnectorUnity.Components.Editor
                 speckleReceiver.OnTotalChildrenCountKnown.AddListener(OnTotalChildrenKnown);
                 speckleReceiver.OnReceiveProgressAction.AddListener(OnProgress);
                 speckleReceiver.OnErrorAction.AddListener(OnError);
-                commitObject = await speckleReceiver.ReceiveAsync();
+                commitObject = await speckleReceiver.ReceiveAsync().ConfigureAwait(false);;
                 if (commitObject == null)
                 {
                     Debug.LogWarning($"Receive warning: Receive operation returned null", speckleReceiver);

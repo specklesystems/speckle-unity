@@ -90,7 +90,7 @@ namespace Speckle.ConnectorUnity.Components
                 onProgressAction: dict => OnReceiveProgressAction.Invoke(dict),
                 onErrorAction: (m, e) => OnErrorAction.Invoke(m, e),
                 onTotalChildrenCountKnown: c => OnTotalChildrenCountKnown.Invoke(c)
-            );
+            ).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -114,13 +114,13 @@ namespace Speckle.ConnectorUnity.Components
             Action<string, Exception>? onErrorAction = null,
             Action<int>? onTotalChildrenCountKnown = null)
         {
-            ServerTransport transport = new ServerTransport(client.Account, streamId);
+            using var transport = new ServerTransportV2(client.Account, streamId);
+            
             transport.CancellationToken = token;
         
             Base? ret = null;
             try
             {
-                Analytics.TrackEvent(client.Account, Analytics.Events.Receive);
 
                 token.ThrowIfCancellationRequested();
 
@@ -131,9 +131,11 @@ namespace Speckle.ConnectorUnity.Components
                     onProgressAction: onProgressAction,
                     onErrorAction: onErrorAction,
                     onTotalChildrenCountKnown: onTotalChildrenCountKnown,
-                    disposeTransports: true
-                );
+                    disposeTransports: false
+                ).ConfigureAwait(false);
 
+                Analytics.TrackEvent(client.Account, Analytics.Events.Receive);
+                
                 token.ThrowIfCancellationRequested();
 
                 //Read receipt
@@ -145,7 +147,7 @@ namespace Speckle.ConnectorUnity.Components
                         commitId = commitId,
                         message = $"received commit from {Application.unityVersion}",
                         sourceApplication = HostApplications.Unity.GetVersion(CoreUtils.GetHostAppVersion())
-                    });
+                    }).ConfigureAwait(false);
                 }
                 catch (Exception e)
                 {
@@ -157,11 +159,7 @@ namespace Speckle.ConnectorUnity.Components
             {
                 onErrorAction?.Invoke(e.Message, e);
             }
-            finally
-            {
-                transport?.Dispose();
-            }
-        
+
             return ret;
         }
     
@@ -293,13 +291,13 @@ namespace Speckle.ConnectorUnity.Components
         
         public void Awake()
         {
-            CoreUtils.SetupInit();
             Converter = GetComponent<RecursiveConverter>();
             Initialise(true);
         }
 
         protected void Initialise(bool forceRefresh = false)
         {
+            CoreUtils.SetupInit();
             Account ??= new AccountSelection();
             Stream ??= new StreamSelection(Account);
             Branch ??= new BranchSelection(Stream);
