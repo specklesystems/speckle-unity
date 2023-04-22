@@ -84,7 +84,11 @@ namespace Speckle.ConnectorUnity.Components
                 onErrorAction: onErrorAction
             );
 
-            Analytics.TrackEvent(client.Account, Analytics.Events.Send);
+            Analytics.TrackEvent(client.Account, Analytics.Events.Send, new Dictionary<string, object>()
+            {
+                {"mode", nameof(SpeckleSender)},
+                {"hostPlatform", Application.platform.ToString()},
+            });
 
             if (createCommit && !cancellationToken.IsCancellationRequested)
             {
