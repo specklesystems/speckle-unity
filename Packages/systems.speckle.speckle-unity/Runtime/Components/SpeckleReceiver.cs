@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -86,7 +87,7 @@ namespace Speckle.ConnectorUnity.Components
                 client: client,
                 streamId: stream.id,
                 objectId: commit.referencedObject,
-                commitId: commit.id,
+                commit: commit,
                 onProgressAction: dict => OnReceiveProgressAction.Invoke(dict),
                 onErrorAction: (m, e) => OnErrorAction.Invoke(m, e),
                 onTotalChildrenCountKnown: c => OnTotalChildrenCountKnown.Invoke(c)
@@ -100,7 +101,7 @@ namespace Speckle.ConnectorUnity.Components
         /// <param name="client"></param>
         /// <param name="streamId"></param>
         /// <param name="objectId"></param>
-        /// <param name="commitId"></param>
+        /// <param name="commit"></param>
         /// <param name="onProgressAction"></param>
         /// <param name="onErrorAction"></param>
         /// <param name="onTotalChildrenCountKnown"></param>
@@ -109,7 +110,7 @@ namespace Speckle.ConnectorUnity.Components
             Client client,
             string streamId,
             string objectId,
-            string? commitId,
+            Commit? commit,
             Action<ConcurrentDictionary<string, int>>? onProgressAction = null,
             Action<string, Exception>? onErrorAction = null,
             Action<int>? onTotalChildrenCountKnown = null)
@@ -134,7 +135,14 @@ namespace Speckle.ConnectorUnity.Components
                     disposeTransports: false
                 ).ConfigureAwait(false);
 
-                Analytics.TrackEvent(client.Account, Analytics.Events.Receive);
+                Analytics.TrackEvent(client.Account, Analytics.Events.Receive, new Dictionary<string, object>()
+                {
+                    {"mode", nameof(SpeckleReceiver)},
+                    {"sourceHostApp", HostApplications.GetHostAppFromString(commit?.sourceApplication).Slug},
+                    {"sourceHostAppVersion", commit?.sourceApplication ?? ""},
+                    {"hostPlatform", Application.platform.ToString()},
+                    {"isMultiplayer", commit != null && commit.authorId != client.Account.userInfo.id},
+                });
                 
                 token.ThrowIfCancellationRequested();
 
@@ -144,7 +152,7 @@ namespace Speckle.ConnectorUnity.Components
                     await client.CommitReceived(token, new CommitReceivedInput
                     {
                         streamId = streamId,
-                        commitId = commitId,
+                        commitId = commit?.id,
                         message = $"received commit from {Application.unityVersion}",
                         sourceApplication = HostApplications.Unity.GetVersion(CoreUtils.GetHostAppVersion())
                     }).ConfigureAwait(false);

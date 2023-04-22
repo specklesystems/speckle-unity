@@ -163,9 +163,10 @@ namespace Speckle.ConnectorUnity.Components.Editor
 
             try
             {
+                Commit selectedCommit = Branches[SelectedBranchIndex].commits.items[SelectedCommitIndex];
                 // Receive Speckle Objects
                 var @base = await Operations.Receive(
-                    Branches[SelectedBranchIndex].commits.items[SelectedCommitIndex].referencedObject,
+                    selectedCommit.referencedObject,
                     remoteTransport: transport,
                     onProgressAction: dict =>
                     {
@@ -179,8 +180,15 @@ namespace Speckle.ConnectorUnity.Components.Editor
                 );
 
                 EditorUtility.ClearProgressBar();
-
-                Analytics.TrackEvent(SelectedAccount, Analytics.Events.Receive);
+                
+                Analytics.TrackEvent(SelectedAccount, Analytics.Events.Receive, new Dictionary<string, object>()
+                {
+                    {"mode", nameof(StreamManagerEditor)},
+                    {"sourceHostApp", HostApplications.GetHostAppFromString(selectedCommit.sourceApplication).Slug},
+                    {"sourceHostAppVersion", selectedCommit.sourceApplication ?? ""},
+                    {"hostPlatform", Application.platform.ToString()},
+                    {"isMultiplayer", selectedCommit.authorId != SelectedAccount.userInfo.id},
+                });
 
                 //Convert Speckle Objects
                 int childrenConverted = 0;

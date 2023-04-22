@@ -5,8 +5,10 @@ using Speckle.Core.Logging;
 using Speckle.Core.Transports;
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using JetBrains.Annotations;
 using Sentry;
 using Speckle.ConnectorUnity.Components;
 using Speckle.Core.Kits;
@@ -93,7 +95,7 @@ namespace Speckle.ConnectorUnity
           if (!mainBranch.commits.items.Any())
             throw new Exception("This branch has no commits");
           var commit = mainBranch.commits.items[0];
-          GetAndConvertObject(commit.referencedObject, commit.id);
+          GetAndConvertObject(commit.referencedObject, commit.id, commit.sourceApplication, commit.authorId);
         }
         catch (Exception e)
         {
@@ -116,12 +118,12 @@ namespace Speckle.ConnectorUnity
       if (e.branchName == BranchName)
       {
         Debug.Log("New commit created");
-        GetAndConvertObject(e.objectId, e.id);
+        GetAndConvertObject(e.objectId, e.id, e.sourceApplication, e.authorId);
       }
     }
 
 
-    private async void GetAndConvertObject(string objectId, string commitId)
+    private async void GetAndConvertObject(string objectId, string commitId, string sourceApplication, string authorId)
     {
       try
       {
@@ -136,7 +138,14 @@ namespace Speckle.ConnectorUnity
           disposeTransports: true
         );
         
-        Analytics.TrackEvent(Client.Account, Analytics.Events.Receive);
+        Analytics.TrackEvent(Client.Account, Analytics.Events.Receive, new Dictionary<string, object>()
+        {
+            {"mode", nameof(Receiver)},
+            {"sourceHostApp", HostApplications.GetHostAppFromString(sourceApplication).Slug},
+            {"sourceHostAppVersion", sourceApplication ?? ""},
+            {"hostPlatform", Application.platform.ToString()},
+            {"isMultiplayer", authorId != null && authorId != Client.Account.userInfo.id},
+        });
         
         Dispatcher.Instance().Enqueue(() =>
         {
