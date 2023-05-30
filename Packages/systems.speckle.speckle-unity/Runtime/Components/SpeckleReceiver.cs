@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -86,11 +87,11 @@ namespace Speckle.ConnectorUnity.Components
                 client: client,
                 streamId: stream.id,
                 objectId: commit.referencedObject,
-                commitId: commit.id,
+                commit: commit,
                 onProgressAction: dict => OnReceiveProgressAction.Invoke(dict),
                 onErrorAction: (m, e) => OnErrorAction.Invoke(m, e),
                 onTotalChildrenCountKnown: c => OnTotalChildrenCountKnown.Invoke(c)
-            );
+            ).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -100,7 +101,7 @@ namespace Speckle.ConnectorUnity.Components
         /// <param name="client"></param>
         /// <param name="streamId"></param>
         /// <param name="objectId"></param>
-        /// <param name="commitId"></param>
+        /// <param name="commit"></param>
         /// <param name="onProgressAction"></param>
         /// <param name="onErrorAction"></param>
         /// <param name="onTotalChildrenCountKnown"></param>
@@ -109,18 +110,18 @@ namespace Speckle.ConnectorUnity.Components
             Client client,
             string streamId,
             string objectId,
-            string? commitId,
+            Commit? commit,
             Action<ConcurrentDictionary<string, int>>? onProgressAction = null,
             Action<string, Exception>? onErrorAction = null,
             Action<int>? onTotalChildrenCountKnown = null)
         {
-            ServerTransport transport = new ServerTransport(client.Account, streamId);
+            using var transport = new ServerTransportV2(client.Account, streamId);
+            
             transport.CancellationToken = token;
         
             Base? ret = null;
             try
             {
-                Analytics.TrackEvent(client.Account, Analytics.Events.Receive);
 
                 token.ThrowIfCancellationRequested();
 
@@ -131,9 +132,18 @@ namespace Speckle.ConnectorUnity.Components
                     onProgressAction: onProgressAction,
                     onErrorAction: onErrorAction,
                     onTotalChildrenCountKnown: onTotalChildrenCountKnown,
-                    disposeTransports: true
-                );
+                    disposeTransports: false
+                ).ConfigureAwait(false);
 
+                Analytics.TrackEvent(client.Account, Analytics.Events.Receive, new Dictionary<string, object>()
+                {
+                    {"mode", nameof(SpeckleReceiver)},
+                    {"sourceHostApp", HostApplications.GetHostAppFromString(commit?.sourceApplication).Slug},
+                    {"sourceHostAppVersion", commit?.sourceApplication ?? ""},
+                    {"hostPlatform", Application.platform.ToString()},
+                    {"isMultiplayer", commit != null && commit.authorId != client.Account.userInfo.id},
+                });
+                
                 token.ThrowIfCancellationRequested();
 
                 //Read receipt
@@ -142,10 +152,10 @@ namespace Speckle.ConnectorUnity.Components
                     await client.CommitReceived(token, new CommitReceivedInput
                     {
                         streamId = streamId,
-                        commitId = commitId,
+                        commitId = commit?.id,
                         message = $"received commit from {Application.unityVersion}",
                         sourceApplication = HostApplications.Unity.GetVersion(CoreUtils.GetHostAppVersion())
-                    });
+                    }).ConfigureAwait(false);
                 }
                 catch (Exception e)
                 {
@@ -157,11 +167,7 @@ namespace Speckle.ConnectorUnity.Components
             {
                 onErrorAction?.Invoke(e.Message, e);
             }
-            finally
-            {
-                transport?.Dispose();
-            }
-        
+
             return ret;
         }
     
@@ -293,13 +299,13 @@ namespace Speckle.ConnectorUnity.Components
         
         public void Awake()
         {
-            CoreUtils.SetupInit();
             Converter = GetComponent<RecursiveConverter>();
             Initialise(true);
         }
 
         protected void Initialise(bool forceRefresh = false)
         {
+            CoreUtils.SetupInit();
             Account ??= new AccountSelection();
             Stream ??= new StreamSelection(Account);
             Branch ??= new BranchSelection(Stream);

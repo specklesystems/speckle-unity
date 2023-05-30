@@ -3,13 +3,58 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Speckle.ConnectorUnity.NativeCache;
 using Speckle.Core.Models;
+using Speckle.Core.Models.GraphTraversal;
 using UnityEngine;
 
 namespace Speckle.ConnectorUnity.Components
 {
     public partial class RecursiveConverter
     {
+
+        public IEnumerator ConvertToNative(Base rootObject, Transform? parent, IDictionary<Base, GameObject> outCreatedObjects)
+        {
+            
+            InitializeAssetCache();
+            var traversalFunc = DefaultTraversal.CreateBIMTraverseFunc(ConverterInstance);
+
+            var convertableObjects = traversalFunc.Traverse(rootObject)
+                .Where(tc => ConverterInstance.CanConvertToNative(tc.current));
+
+            foreach (TraversalContext tc in convertableObjects)
+            {
+                Transform? nativeParent = parent;
+                if (tc.parent != null && outCreatedObjects.TryGetValue(tc.parent.current, out GameObject p))
+                    nativeParent = p.transform;
+                
+                GameObject? go = ConverterInstance.ConvertToNative(tc.current) as GameObject;
+                if (go == null) continue;
+                
+                go.transform.SetParent(parent, true);
+                outCreatedObjects.Add(tc.current, go);
+            
+                //Set some common for all created GameObjects
+                //TODO add support for more unity specific props
+                if(go.name == "New Game Object" || string.IsNullOrWhiteSpace(go.name))
+                    go.name = AssetHelpers.GenerateObjectName(tc.current);
+                //if (baseObject["tag"] is string t) go.tag = t;
+                if (tc.current["physicsLayer"] is string layerName)
+                {
+                    int layer = LayerMask.NameToLayer(layerName); //TODO: check how this can be interoperable with Unreal and Blender
+                    if (layer > -1) go.layer = layer;
+                }
+                //if (baseObject["isStatic"] is bool isStatic) go.isStatic = isStatic;
+
+                yield return go;
+            }
+        }
+        
+        
+        
+        
+        
+        
         public IEnumerator ConvertCoroutine(Base rootObject, Transform? parent, List<GameObject> outCreatedObjects)
             => ConvertCoroutine(rootObject, parent, outCreatedObjects,b => ConverterInstance.CanConvertToNative(b));
         
@@ -36,14 +81,9 @@ namespace Speckle.ConnectorUnity.Components
         /// <param name="predicate">A function to determine if an object should be converted</param>
         public virtual List<GameObject> RecursivelyConvertToNative(object? o, Transform? parent, Func<Base, bool> predicate)
         {
-            //Ensure we have A native cache
-            if (AssetCache.nativeCaches.Any(x => x == null))
-            {
-                AssetCache.nativeCaches = NativeCacheFactory.GetStandaloneCacheSetup();
-            }
+            InitializeAssetCache();
             
             var createdGameObjects = new List<GameObject>();
-            ConverterInstance.SetContextDocument(AssetCache);
             try
             {
                 AssetCache.BeginWrite();
@@ -61,23 +101,16 @@ namespace Speckle.ConnectorUnity.Components
 
         }
 
-        protected string[] namePropertyAliases = {"name", "Name"};
-        
-        protected virtual string GenerateObjectName(Base baseObject)
+        private void InitializeAssetCache()
         {
-            // 1. Use explicit name
-            foreach (var nameAlias in namePropertyAliases)
+            //Ensure we have A native cache
+            if (AssetCache.nativeCaches.Any(x => x == null))
             {
-                string? s = baseObject[nameAlias] as string;
-                if (!string.IsNullOrWhiteSpace(s)) return s; //TODO any sanitization needed?
+                AssetCache.nativeCaches = NativeCacheFactory.GetStandaloneCacheSetup();
             }
-            
-            // 2. Use type + id as fallback name
-            // Only take the most derived type from the speckle type
-            string speckleType = baseObject.speckle_type.Split(':').Last();
-            return $"{speckleType} - {baseObject.id}";
+            ConverterInstance.SetContextDocument(AssetCache);
         }
-        
+
         public virtual void RecurseTreeToNative(Base baseObject, Transform? parent, Func<Base, bool> predicate, IList<GameObject> outCreatedObjects)
         {
             object? converted = null;
@@ -96,7 +129,7 @@ namespace Speckle.ConnectorUnity.Components
                 //Set some common for all created GameObjects
                 //TODO add support for more unity specific props
                 if(go.name == "New Game Object" || string.IsNullOrWhiteSpace(go.name))
-                    go.name = GenerateObjectName(baseObject);
+                    go.name = AssetHelpers.GenerateObjectName(baseObject);
                 //if (baseObject["tag"] is string t) go.tag = t;
                 if (baseObject["physicsLayer"] is string layerName)
                 {
@@ -127,35 +160,13 @@ namespace Speckle.ConnectorUnity.Components
 
         protected virtual void ConvertChild(object? value, Transform? parent, Func<Base, bool> predicate, IList<GameObject> outCreatedObjects)
         {
-            if(value == null) return;
-            if(value.GetType().IsPrimitive) return;
-            if (value is string) return;
-            
-            if(value is Base o)
+            foreach (Base b in GraphTraversal.TraverseMember(value))
             {
-                RecurseTreeToNative(o, parent, predicate, outCreatedObjects);
-            }
-            else if (value is IDictionary dictionary)
-            {
-                foreach (object v in dictionary.Keys)
-                {
-                    ConvertChild(v, parent, predicate, outCreatedObjects);
-                }
-            }
-            else if (value is IList collection)
-            {
-                foreach (object v in collection)
-                {
-                    ConvertChild(v, parent, predicate, outCreatedObjects);
-                }
-            }
-            else if(!value.GetType().IsValueType) //don't want to output errors for structs
-            {
-                Debug.Log($"Unknown type {value.GetType()} found when traversing tree, will be safely ignored");
+                RecurseTreeToNative(b, parent, predicate, outCreatedObjects);
             }
         }
         
-        [Obsolete("Use RecursivelyConvertToNative instead")]
+        [Obsolete("Use " + nameof(RecursivelyConvertToNative), true)]
         public GameObject ConvertRecursivelyToNative(Base @base, string name)
         {
             var parentObject = new GameObject(name);

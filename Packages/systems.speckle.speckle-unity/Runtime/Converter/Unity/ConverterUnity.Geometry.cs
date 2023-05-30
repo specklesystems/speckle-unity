@@ -9,6 +9,7 @@ using Speckle.ConnectorUnity.Utils;
 using Speckle.ConnectorUnity.Wrappers;
 using Speckle.Core.Logging;
 using Speckle.Core.Models;
+using Speckle.Core.Models.GraphTraversal;
 using UnityEditor;
 using UnityEngine;
 using Mesh = UnityEngine.Mesh;
@@ -211,29 +212,35 @@ namespace Objects.Converter.Unity
             return sobject;
         }
 
-        public GameObject? BlockToNative(BlockInstance block)
+        public GameObject? InstanceToNative(Instance instance)
         {
-            if (block.blockDefinition == null)
+            if (instance.definition == null)
             {
-                Debug.Log($"Skipping {typeof(BlockInstance)} {block.id}, block definition was null");
+                Debug.Log($"Skipping {typeof(BlockInstance)} {instance.id}, block definition was null");
                 return null;
             }
 
+            var defName = instance.definition["name"] as string ?? "";
             // Check for existing converted object
-            if(LoadedAssets.TryGetObject(block.blockDefinition, out GameObject? existingGo))
+            if(LoadedAssets.TryGetObject(instance.definition, out GameObject? existingGo))
             {
                 var go = InstantiateCopy(existingGo);
-                go.name = block.blockDefinition.name ?? "";
-                TransformToNativeTransform(go.transform, block.transform);
+                go.name = defName;
+                TransformToNativeTransform(go.transform, instance.transform);
                 return go;
             }
 
             // Convert the block definition
-            GameObject native = new GameObject(block.blockDefinition.name ?? "");
+            GameObject native = new GameObject(defName);
             
             List<SMesh> meshes = new();
             List<Base> others = new();
-            foreach (Base geo in block.blockDefinition.geometry)
+
+            var geometry = instance.definition is BlockDefinition b
+                ? b.geometry
+                : GraphTraversal.TraverseMember(instance.definition["elements"]);
+            
+            foreach (Base geo in geometry)
             {
                 if (geo is SMesh m) meshes.Add(m);
                 else if (geo is IDisplayValue<List<SMesh>> s) meshes.AddRange(s.displayValue);
@@ -242,12 +249,12 @@ namespace Objects.Converter.Unity
 
             if (meshes.Any())
             {
-                if(!TryGetMeshFromCache(block.blockDefinition, meshes, out Mesh? nativeMesh, out _))
+                if(!TryGetMeshFromCache(instance.definition, meshes, out Mesh? nativeMesh, out _))
                 {
                     MeshToNativeMesh(meshes, out nativeMesh);
-                    string name = AssetHelpers.GetObjectName(block.blockDefinition);
+                    string name = AssetHelpers.GenerateObjectName(instance.definition);
                     nativeMesh.name = name;
-                    LoadedAssets.TrySaveObject(block.blockDefinition, nativeMesh);
+                    LoadedAssets.TrySaveObject(instance.definition, nativeMesh);
                 }
                 var nativeMaterials = RenderMaterialsToNative(meshes);
                 native.SafeMeshSet(nativeMesh, nativeMaterials);
@@ -260,10 +267,10 @@ namespace Objects.Converter.Unity
                 c.transform.SetParent(native.transform, false);
             }
             
-            LoadedAssets.TrySaveObject(block.blockDefinition, native);
+            LoadedAssets.TrySaveObject(instance.definition, native);
             
-            TransformToNativeTransform(native.transform, block.transform);
-            if (block["name"] is string instanceName) native.name = instanceName;
+            TransformToNativeTransform(native.transform, instance.transform);
+            if (instance["name"] is string instanceName) native.name = instanceName;
             return native;
         }
 
@@ -296,36 +303,34 @@ namespace Objects.Converter.Unity
         /// <returns>Transformation matrix in Unity's coordinate system</returns>
         public Matrix4x4 TransformToNativeMatrix(STransform speckleTransform)
         {
-            double VD(int i) => speckleTransform.value[i];
-            float V(int i) => (float) VD(i);
-
             var sf = Speckle.Core.Kits.Units.GetConversionFactor(speckleTransform.units, ModelUnits);
-
+            var smatrix = speckleTransform.matrix;
+            
             return new Matrix4x4
             {
                 // Left (X -> X)
-                [0, 0] = V(0),
-                [2, 0] = V(4),
-                [1, 0] = V(8),
-                [3, 0] = V(12),
+                [0, 0] = smatrix.M11,
+                [2, 0] = smatrix.M21,
+                [1, 0] = smatrix.M31,
+                [3, 0] = smatrix.M41,
 
                 //Up (Z -> Y)
-                [0, 2] = V(1),
-                [2, 2] = V(5),
-                [1, 2] = V(9),
-                [3, 2] = V(13),
+                [0, 2] = smatrix.M12,
+                [2, 2] = smatrix.M22,
+                [1, 2] = smatrix.M32,
+                [3, 2] = smatrix.M42,
 
                 //Forwards (Y -> Z)
-                [0, 1] = V(2),
-                [2, 1] = V(6),
-                [1, 1] = V(10),
-                [3, 1] = V(14),
+                [0, 1] = smatrix.M13,
+                [2, 1] = smatrix.M23,
+                [1, 1] = smatrix.M33,
+                [3, 1] = smatrix.M43,
 
                 //Translation
-                [0, 3] = (float) (VD(3) * sf),
-                [2, 3] = (float) (VD(7) * sf),
-                [1, 3] = (float) (VD(11) * sf),
-                [3, 3] = V(15),
+                [0, 3] = (float) (smatrix.M14 * sf),
+                [2, 3] = (float) (smatrix.M24 * sf),
+                [1, 3] = (float) (smatrix.M34 * sf),
+                [3, 3] = smatrix.M44,
             };
         }
 

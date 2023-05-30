@@ -84,7 +84,11 @@ namespace Speckle.ConnectorUnity.Components
                 onErrorAction: onErrorAction
             );
 
-            Analytics.TrackEvent(client.Account, Analytics.Events.Send);
+            Analytics.TrackEvent(client.Account, Analytics.Events.Send, new Dictionary<string, object>()
+            {
+                {"mode", nameof(SpeckleSender)},
+                {"hostPlatform", Application.platform.ToString()},
+            });
 
             if (createCommit && !cancellationToken.IsCancellationRequested)
             {
@@ -179,13 +183,13 @@ namespace Speckle.ConnectorUnity.Components
         
         public void Awake()
         {
-            CoreUtils.SetupInit();
             Initialise(true);
             Converter = GetComponent<RecursiveConverter>();
         }
         
         protected void Initialise(bool forceRefresh = false)
         {
+            CoreUtils.SetupInit();
             Account ??= new AccountSelection();
             Stream ??= new StreamSelection(Account);
             Branch ??= new BranchSelection(Stream);
