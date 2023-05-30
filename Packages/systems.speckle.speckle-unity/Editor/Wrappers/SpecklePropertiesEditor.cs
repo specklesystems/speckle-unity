@@ -5,6 +5,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using Objects.Geometry;
 using Speckle.Core.Models;
+using Objects.BuiltElements.Revit;
 using UnityEditor;
 using UnityEngine;
 using Mesh = Objects.Geometry.Mesh;
@@ -22,6 +23,7 @@ namespace Speckle.ConnectorUnity.Wrappers.Editor
         private static HashSet<string> ArrayFoldoutState = new();
         private static bool instancePropFoldoutState = true;
         private static bool dynamicPropFoldoutState = true;
+        private static bool instanceParamsFoldoutState = true;
         private static bool isEditMode = false;
 
         static SpecklePropertiesEditor()
@@ -77,11 +79,40 @@ namespace Speckle.ConnectorUnity.Wrappers.Editor
                 foreach (var propName in InstancePropertyNames)
                 {
                     if (!properties.Data.TryGetValue(propName, out object? existingValue)) continue;
-                    
                     var newValue = CreateField(existingValue, propName, propLayoutOptions);
-                    if(newValue != existingValue)
-                        properties.Data[propName] = newValue;
-                    
+                    if (propName == "parameters")
+                    {
+                        //Get all the values in this    dictionary
+                        instanceParamsFoldoutState = EditorGUILayout.Foldout(instanceParamsFoldoutState, "Parameters: ", EditorStyles.foldoutHeader);
+                        if (instanceParamsFoldoutState)
+                        {
+                            var _base = (Base)properties.Data[propName];
+                            var mems = _base.GetMembers();
+                            foreach (var mb in mems)
+                            {
+
+                                if (mb.Value.GetType() == typeof(Parameter))
+                                {
+                                    Parameter par = (Parameter)mb.Value;
+                                    var paramValue = CreateField(par.value, par.name, propLayoutOptions);
+                                }
+                                else
+                                {
+                                    var paramValue = CreateField(mb.Value, mb.Key, propLayoutOptions);
+                                }
+
+                            }
+                        }
+
+
+                    }
+                    else
+                    {
+
+                        if (newValue != existingValue)
+                            properties.Data[propName] = newValue;
+                    }
+
                 }
             }
             
@@ -102,6 +133,8 @@ namespace Speckle.ConnectorUnity.Wrappers.Editor
                     GUILayout.Space(10);
                 }
             }
+            
+            
         }
 
         private object? CreateField(object? v, string propName, params GUILayoutOption[] options)
