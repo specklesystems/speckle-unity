@@ -46,8 +46,8 @@ namespace Speckle.ConnectorUnity.Wrappers.Selection.Editor
                 ("Description", s => s.description),
                 ("Is Public", s => s.isPublic.ToString()),
                 ("Role", s => s.role),
-                ("Created at", s => s.createdAt),
-                ("Updated at", s => s.updatedAt),
+                ("Created at", s => s.createdAt.ToString()),
+                ("Updated at", s => s.updatedAt.ToString()),
             };
         }
     }
@@ -84,7 +84,7 @@ namespace Speckle.ConnectorUnity.Wrappers.Selection.Editor
             {
                 ("Commit Id", s => s.id),
                 ("Author Name", s => s.authorName),
-                ("Created At", s => s.createdAt),
+                ("Created At", s => s.createdAt.ToString()),
                 ("Source Application", s => s.sourceApplication),
                 ("Reference Object Id", s => s.referencedObject),
             };

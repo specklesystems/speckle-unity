@@ -6,19 +6,19 @@
     <members>
         <member name="T:Speckle.Core.Api.SpeckleGraphQLException`1">
             <summary>
-              Base class for GraphQL API exceptions
+            Base class for GraphQL API exceptions
             </summary>
         </member>
         <member name="T:Speckle.Core.Api.SpeckleGraphQLForbiddenException`1">
             <summary>
-              Represents a "FORBIDDEN" on "UNAUTHORIZED" GraphQL error as an exception.
-              https://www.apollographql.com/docs/apollo-server/v2/data/errors/#unauthenticated
-              https://www.apollographql.com/docs/apollo-server/v2/data/errors/#forbidden
+            Represents a "FORBIDDEN" on "UNAUTHORIZED" GraphQL error as an exception.
+            https://www.apollographql.com/docs/apollo-server/v2/data/errors/#unauthenticated
+            https://www.apollographql.com/docs/apollo-server/v2/data/errors/#forbidden
             </summary>
         </member>
         <member name="M:Speckle.Core.Api.Client.StreamGetActivity(System.String,System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.String,System.Int32)">
             <summary>
-              Gets the activity of a stream
+            Gets the activity of a stream
             </summary>
             <param name="streamId">Id of the stream to get the activity from</param>
             <param name="after">Only show activity after this DateTime</param>
@@ -30,7 +30,7 @@
         </member>
         <member name="M:Speckle.Core.Api.Client.StreamGetActivity(System.Threading.CancellationToken,System.String,System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.String,System.Int32)">
             <summary>
-              Gets the activity of a stream
+            Gets the activity of a stream
             </summary>
             <param name="cancellationToken"></param>
             <param name="id">Id of the stream to get the activity from</param>
@@ -44,7 +44,7 @@
         </member>
         <member name="M:Speckle.Core.Api.Client.StreamGetBranches(System.String,System.Int32,System.Int32)">
             <summary>
-              Get branches from a given stream
+            Get branches from a given stream
             </summary>
             <param name="streamId">Id of the stream to get the branches from</param>
             <param name="branchesLimit">Max number of branches to retrieve</param>
@@ -53,7 +53,7 @@
         </member>
         <member name="M:Speckle.Core.Api.Client.StreamGetBranches(System.Threading.CancellationToken,System.String,System.Int32,System.Int32)">
             <summary>
-              Get branches from a given stream
+            Get branches from a given stream
             </summary>
             <param name="cancellationToken"></param>
             <param name="streamId">Id of the stream to get the branches from</param>
@@ -64,21 +64,21 @@
         </member>
         <member name="M:Speckle.Core.Api.Client.BranchCreate(Speckle.Core.Api.BranchCreateInput)">
             <summary>
-              Creates a branch on a stream.
+            Creates a branch on a stream.
             </summary>
             <param name="branchInput"></param>
             <returns>The stream's id.</returns>
         </member>
         <member name="M:Speckle.Core.Api.Client.BranchCreate(System.Threading.CancellationToken,Speckle.Core.Api.BranchCreateInput)">
             <summary>
-              Creates a branch on a stream.
+            Creates a branch on a stream.
             </summary>
             <param name="branchInput"></param>
             <returns>The branch id.</returns>
         </member>
         <member name="M:Speckle.Core.Api.Client.BranchGet(System.String,System.String,System.Int32)">
             <summary>
-              Gets a given branch from a stream.
+            Gets a given branch from a stream.
             </summary>
             <param name="streamId">Id of the stream to get the branch from</param>
             <param name="branchName">Name of the branch to get</param>
@@ -86,7 +86,7 @@
         </member>
         <member name="M:Speckle.Core.Api.Client.BranchGet(System.Threading.CancellationToken,System.String,System.String,System.Int32)">
             <summary>
-              Gets a given branch from a stream.
+            Gets a given branch from a stream.
             </summary>
             <param name="cancellationToken"></param>
             <param name="streamId">Id of the stream to get the branch from</param>
@@ -95,35 +95,35 @@
         </member>
         <member name="M:Speckle.Core.Api.Client.BranchUpdate(Speckle.Core.Api.BranchUpdateInput)">
             <summary>
-              Updates a branch.
+            Updates a branch.
             </summary>
             <param name="branchInput"></param>
             <returns>The stream's id.</returns>
         </member>
         <member name="M:Speckle.Core.Api.Client.BranchUpdate(System.Threading.CancellationToken,Speckle.Core.Api.BranchUpdateInput)">
             <summary>
-              Updates a branch.
+            Updates a branch.
             </summary>
             <param name="branchInput"></param>
             <returns>The stream's id.</returns>
         </member>
         <member name="M:Speckle.Core.Api.Client.BranchDelete(Speckle.Core.Api.BranchDeleteInput)">
             <summary>
-              Deletes a stream.
+            Deletes a stream.
             </summary>
             <param name="branchInput"></param>
             <returns></returns>
         </member>
         <member name="M:Speckle.Core.Api.Client.BranchDelete(System.Threading.CancellationToken,Speckle.Core.Api.BranchDeleteInput)">
             <summary>
-              Deletes a stream.
+            Deletes a stream.
             </summary>
             <param name="branchInput"></param>
             <returns></returns>
         </member>
         <member name="M:Speckle.Core.Api.Client.StreamGetComments(System.String,System.Int32,System.String)">
             <summary>
-              Gets the comments on a Stream
+            Gets the comments on a Stream
             </summary>
             <param name="streamId">Id of the stream to get the comments from</param>
             <param name="limit">The number of comments to get</param>
@@ -132,7 +132,7 @@
         </member>
         <member name="M:Speckle.Core.Api.Client.StreamGetComments(System.Threading.CancellationToken,System.String,System.Int32,System.String)">
             <summary>
-              Gets the comments on a Stream
+             Gets the comments on a Stream
             </summary>
             <param name="cancellationToken"></param>
             <param name="streamId">Id of the stream to get the comments from</param>
@@ -143,7 +143,7 @@
         </member>
         <member name="M:Speckle.Core.Api.Client.StreamGetCommentScreenshot(System.String,System.String)">
             <summary>
-              Gets the screenshot of a Comment
+             Gets the screenshot of a Comment
             </summary>
             <param name="id">Id of the comment</param>
             <param name="streamId">Id of the stream to get the comment from</param>
@@ -151,7 +151,7 @@
         </member>
         <member name="M:Speckle.Core.Api.Client.StreamGetCommentScreenshot(System.Threading.CancellationToken,System.String,System.String)">
             <summary>
-              Gets the screenshot of a Comment
+             Gets the screenshot of a Comment
             </summary>
             <param name="cancellationToken"></param>
             <param name="id">Id of the comment</param>
@@ -161,7 +161,7 @@
         </member>
         <member name="M:Speckle.Core.Api.Client.CommitGet(System.String,System.String)">
             <summary>
-              Gets a given commit from a stream.
+            Gets a given commit from a stream.
             </summary>
             <param name="streamId">Id of the stream to get the commit from</param>
             <param name="commitId">Id of the commit to get</param>
@@ -169,7 +169,7 @@
         </member>
         <member name="M:Speckle.Core.Api.Client.CommitGet(System.Threading.CancellationToken,System.String,System.String)">
             <summary>
-              Gets a given commit from a stream.
+            Gets a given commit from a stream.
             </summary>
             <param name="cancellationToken"></param>
             <param name="streamId">Id of the stream to get the commit from</param>
@@ -178,7 +178,7 @@
         </member>
         <member name="M:Speckle.Core.Api.Client.StreamGetCommits(System.String,System.Int32)">
             <summary>
-              Gets the latest commits from a stream
+            Gets the latest commits from a stream
             </summary>
             <param name="streamId">Id of the stream to get the commits from</param>
             <param name="limit">Max number of commits to get</param>
@@ -186,7 +186,7 @@
         </member>
         <member name="M:Speckle.Core.Api.Client.StreamGetCommits(System.Threading.CancellationToken,System.String,System.Int32)">
             <summary>
-              Gets the latest commits from a stream
+            Gets the latest commits from a stream
             </summary>
             <param name="cancellationToken"></param>
             <param name="streamId">Id of the stream to get the commits from</param>
@@ -196,58 +196,58 @@
         </member>
         <member name="M:Speckle.Core.Api.Client.CommitCreate(Speckle.Core.Api.CommitCreateInput)">
             <summary>
-              Creates a commit on a branch.
+            Creates a commit on a branch.
             </summary>
             <param name="commitInput"></param>
             <returns>The commit id.</returns>
         </member>
         <member name="M:Speckle.Core.Api.Client.CommitCreate(System.Threading.CancellationToken,Speckle.Core.Api.CommitCreateInput)">
-            <inheritdoc cref="M:Speckle.Core.Api.Client.CommitCreate(Speckle.Core.Api.CommitCreateInput)" />
+            <inheritdoc cref="M:Speckle.Core.Api.Client.CommitCreate(Speckle.Core.Api.CommitCreateInput)"/>
             <param name="cancellationToken"></param>
         </member>
         <member name="M:Speckle.Core.Api.Client.CommitUpdate(Speckle.Core.Api.CommitUpdateInput)">
             <summary>
-              Updates a commit.
+            Updates a commit.
             </summary>
             <param name="commitInput"></param>
             <returns>The stream's id.</returns>
         </member>
         <member name="M:Speckle.Core.Api.Client.CommitUpdate(System.Threading.CancellationToken,Speckle.Core.Api.CommitUpdateInput)">
             <summary>
-              Updates a commit.
+            Updates a commit.
             </summary>
             <param name="commitInput"></param>
             <returns>The stream's id.</returns>
         </member>
         <member name="M:Speckle.Core.Api.Client.CommitDelete(Speckle.Core.Api.CommitDeleteInput)">
             <summary>
-              Deletes a commit.
+            Deletes a commit.
             </summary>
             <param name="commitInput"></param>
             <returns></returns>
         </member>
         <member name="M:Speckle.Core.Api.Client.CommitDelete(System.Threading.CancellationToken,Speckle.Core.Api.CommitDeleteInput)">
             <summary>
-              Deletes a commit.
+            Deletes a commit.
             </summary>
             <param name="commitInput"></param>
             <returns></returns>
         </member>
         <member name="M:Speckle.Core.Api.Client.CommitReceived(Speckle.Core.Api.CommitReceivedInput)">
             <summary>
-              Sends a commitReceived mutation, affirming a commit has been received.
+            Sends a commitReceived mutation, affirming a commit has been received.
             </summary>
             <remarks>Used for read receipts</remarks>
             <param name="commitReceivedInput"></param>
             <returns></returns>
         </member>
         <member name="M:Speckle.Core.Api.Client.CommitReceived(System.Threading.CancellationToken,Speckle.Core.Api.CommitReceivedInput)">
-            <inheritdoc cref="M:Speckle.Core.Api.Client.CommitReceived(Speckle.Core.Api.CommitReceivedInput)" />
+            <inheritdoc cref="M:Speckle.Core.Api.Client.CommitReceived(Speckle.Core.Api.CommitReceivedInput)"/>
             <param name="cancellationToken"></param>
         </member>
         <member name="M:Speckle.Core.Api.Client.ObjectGet(System.String,System.String)">
             <summary>
-              Gets a given object from a stream.
+            Gets a given object from a stream.
             </summary>
             <param name="streamId">Id of the stream to get the object from</param>
             <param name="objectId">Id of the object to get</param>
@@ -255,7 +255,7 @@
         </member>
         <member name="M:Speckle.Core.Api.Client.ObjectGet(System.Threading.CancellationToken,System.String,System.String)">
             <summary>
-              Gets a given object from a stream.
+            Gets a given object from a stream.
             </summary>
             <param name="cancellationToken"></param>
             <param name="streamId">Id of the stream to get the object from</param>
@@ -264,7 +264,7 @@
         </member>
         <member name="M:Speckle.Core.Api.Client.ObjectCountGet(System.String,System.String)">
             <summary>
-              Gets a given object from a stream.
+            Gets a given object from a stream.
             </summary>
             <param name="streamId"></param>
             <param name="objectId"></param>
@@ -272,7 +272,7 @@
         </member>
         <member name="M:Speckle.Core.Api.Client.ObjectCountGet(System.Threading.CancellationToken,System.String,System.String)">
             <summary>
-              Gets a given object from a stream.
+            Gets a given object from a stream.
             </summary>
             <param name="cancellationToken"></param>
             <param name="streamId"></param>
@@ -280,17 +280,18 @@
             <returns></returns>
         </member>
         <member name="M:Speckle.Core.Api.Client.GetServerVersion(System.Threading.CancellationToken)">
-            <summary>
-              Gets the version of the current server. Useful for guarding against unsupported api calls on newer or older servers.
-            </summary>
-            <param name="cancellationToken">[Optional] defaults to an empty cancellation token</param>
-            <returns><see cref="T:Speckle.Core.Api.Version" /> object excluding any strings (eg "2.7.2-alpha.6995" becomes "2.7.2.6995")</returns>
-            <exception cref="T:Speckle.Core.Logging.SpeckleException"></exception>
+             <summary>
+             Gets the version of the current server. Useful for guarding against unsupported api calls on newer or older servers.
+             </summary>
+             <param name="cancellationToken">[Optional] defaults to an empty cancellation token</param>
+             <returns><see cref="T:Speckle.Core.Api.Version"/> object excluding any strings (eg "2.7.2-alpha.6995" becomes "2.7.2.6995")</returns>
+             <exception cref="T:Speckle.Core.Logging.SpeckleException"></exception>
+            
         </member>
         <member name="M:Speckle.Core.Api.Client.StreamGet(System.String,System.Int32)">
             <summary>
-              Gets a stream by id including basic branch info (id, name, description, and total commit count).
-              For detailed commit and branch info, use StreamGetCommits and StreamGetBranches respectively.
+            Gets a stream by id including basic branch info (id, name, description, and total commit count).
+            For detailed commit and branch info, use StreamGetCommits and StreamGetBranches respectively.
             </summary>
             <param name="id">Id of the stream to get</param>
             <param name="branchesLimit">Max number of branches to retrieve</param>
@@ -298,8 +299,8 @@
         </member>
         <member name="M:Speckle.Core.Api.Client.StreamGet(System.Threading.CancellationToken,System.String,System.Int32)">
             <summary>
-              Gets a stream by id including basic branch info (id, name, description, and total commit count).
-              For detailed commit and branch info, use StreamGetCommits and StreamGetBranches respectively.
+            Gets a stream by id including basic branch info (id, name, description, and total commit count).
+            For detailed commit and branch info, use StreamGetCommits and StreamGetBranches respectively.
             </summary>
             <param name="id">Id of the stream to get</param>
             <param name="branchesLimit">Max number of branches to retrieve</param>
@@ -307,28 +308,28 @@
         </member>
         <member name="M:Speckle.Core.Api.Client.StreamsGet(System.Int32)">
             <summary>
-              Gets all streams for the current user
+            Gets all streams for the current user
             </summary>
             <param name="limit">Max number of streams to return</param>
             <returns></returns>
         </member>
         <member name="M:Speckle.Core.Api.Client.StreamsGet(System.Threading.CancellationToken,System.Int32)">
             <summary>
-              Gets all streams for the current user
+            Gets all streams for the current user
             </summary>
             <param name="limit">Max number of streams to return</param>
             <returns></returns>
         </member>
         <member name="M:Speckle.Core.Api.Client.FavoriteStreamsGet(System.Threading.CancellationToken,System.Int32)">
             <summary>
-              Gets all favorite streams for the current user
+            Gets all favorite streams for the current user
             </summary>
             <param name="limit">Max number of streams to return</param>
             <returns></returns>
         </member>
         <member name="M:Speckle.Core.Api.Client.StreamSearch(System.String,System.Int32)">
             <summary>
-              Searches the user's streams by name, description, and ID
+            Searches the user's streams by name, description, and ID
             </summary>
             <param name="query">String query to search for</param>
             <param name="limit">Max number of streams to return</param>
@@ -336,7 +337,7 @@
         </member>
         <member name="M:Speckle.Core.Api.Client.StreamSearch(System.Threading.CancellationToken,System.String,System.Int32)">
             <summary>
-              Searches the user's streams by name, description, and ID
+            Searches the user's streams by name, description, and ID
             </summary>
             <param name="query">String query to search for</param>
             <param name="limit">Max number of streams to return</param>
@@ -344,28 +345,28 @@
         </member>
         <member name="M:Speckle.Core.Api.Client.StreamCreate(Speckle.Core.Api.StreamCreateInput)">
             <summary>
-              Creates a stream.
+            Creates a stream.
             </summary>
             <param name="streamInput"></param>
             <returns>The stream's id.</returns>
         </member>
         <member name="M:Speckle.Core.Api.Client.StreamCreate(System.Threading.CancellationToken,Speckle.Core.Api.StreamCreateInput)">
             <summary>
-              Creates a stream.
+            Creates a stream.
             </summary>
             <param name="streamInput"></param>
             <returns>The stream's id.</returns>
         </member>
         <member name="M:Speckle.Core.Api.Client.StreamUpdate(Speckle.Core.Api.StreamUpdateInput)">
             <summary>
-              Updates a stream.
+            Updates a stream.
             </summary>
             <param name="streamInput">Note: the id field needs to be a valid stream id.</param>
             <returns>The stream's id.</returns>
         </member>
         <member name="M:Speckle.Core.Api.Client.StreamUpdate(System.Threading.CancellationToken,Speckle.Core.Api.StreamUpdateInput)">
             <summary>
-              Updates a stream.
+            Updates a stream.
             </summary>
             <param name="cancellationToken"></param>
             <param name="streamInput">Note: the id field needs to be a valid stream id.</param>
@@ -373,14 +374,14 @@
         </member>
         <member name="M:Speckle.Core.Api.Client.StreamDelete(System.String)">
             <summary>
-              Deletes a stream.
+            Deletes a stream.
             </summary>
             <param name="id">Id of the stream to be deleted</param>
             <returns></returns>
         </member>
         <member name="M:Speckle.Core.Api.Client.StreamDelete(System.Threading.CancellationToken,System.String)">
             <summary>
-              Deletes a stream.
+            Deletes a stream.
             </summary>
             <param name="cancellationToken"></param>
             <param name="id">Id of the stream to be deleted</param>
@@ -388,14 +389,14 @@
         </member>
         <member name="M:Speckle.Core.Api.Client.StreamGrantPermission(Speckle.Core.Api.StreamPermissionInput)">
             <summary>
-              Grants permissions to a user on a given stream.
+            Grants permissions to a user on a given stream.
             </summary>
             <param name="permissionInput"></param>
             <returns></returns>
         </member>
         <member name="M:Speckle.Core.Api.Client.StreamGrantPermission(System.Threading.CancellationToken,Speckle.Core.Api.StreamPermissionInput)">
             <summary>
-              Grants permissions to a user on a given stream.
+            Grants permissions to a user on a given stream.
             </summary>
             <param name="cancellationToken"></param>
             <param name="permissionInput"></param>
@@ -403,14 +404,14 @@
         </member>
         <member name="M:Speckle.Core.Api.Client.StreamRevokePermission(Speckle.Core.Api.StreamRevokePermissionInput)">
             <summary>
-              Revokes permissions of a user on a given stream.
+            Revokes permissions of a user on a given stream.
             </summary>
             <param name="permissionInput"></param>
             <returns></returns>
         </member>
         <member name="M:Speckle.Core.Api.Client.StreamRevokePermission(System.Threading.CancellationToken,Speckle.Core.Api.StreamRevokePermissionInput)">
             <summary>
-              Revokes permissions of a user on a given stream.
+            Revokes permissions of a user on a given stream.
             </summary>
             <param name="cancellationToken"></param>
             <param name="permissionInput"></param>
@@ -418,7 +419,7 @@
         </member>
         <member name="M:Speckle.Core.Api.Client.StreamUpdatePermission(Speckle.Core.Api.StreamPermissionInput,System.Threading.CancellationToken)">
             <summary>
-              Updates permissions for a user on a given stream.
+            Updates permissions for a user on a given stream.
             </summary>
             <param name="updatePermissionInput">includes the streamId, the userId of the user to update, and the user's new role</param>
             <param name="cancellationToken"></param>
@@ -427,16 +428,16 @@
         </member>
         <member name="M:Speckle.Core.Api.Client.StreamGetPendingCollaborators(System.String)">
             <summary>
-              Gets the pending collaborators of a stream by id.
-              Requires the user to be an owner of the stream.
+            Gets the pending collaborators of a stream by id.
+            Requires the user to be an owner of the stream.
             </summary>
             <param name="id">Id of the stream to get</param>
             <returns></returns>
         </member>
         <member name="M:Speckle.Core.Api.Client.StreamGetPendingCollaborators(System.Threading.CancellationToken,System.String)">
             <summary>
-              Gets the pending collaborators of a stream by id.
-              Requires the user to be an owner of the stream.
+            Gets the pending collaborators of a stream by id.
+            Requires the user to be an owner of the stream.
             </summary>
             <param name="id">Id of the stream to get</param>
             <param name="branchesLimit">Max number of branches to retrieve</param>
@@ -444,14 +445,14 @@
         </member>
         <member name="M:Speckle.Core.Api.Client.StreamInviteCreate(Speckle.Core.Api.StreamInviteCreateInput)">
             <summary>
-              Sends an email invite to join a stream and assigns them a collaborator role.
+            Sends an email invite to join a stream and assigns them a collaborator role.
             </summary>
             <param name="streamCreateInput"></param>
             <returns></returns>
         </member>
         <member name="M:Speckle.Core.Api.Client.StreamInviteCreate(System.Threading.CancellationToken,Speckle.Core.Api.StreamInviteCreateInput)">
             <summary>
-              Sends an email invite to join a stream and assigns them a collaborator role.
+            Sends an email invite to join a stream and assigns them a collaborator role.
             </summary>
             <param name="cancellationToken"></param>
             <param name="inviteCreateInput"></param>
@@ -459,7 +460,7 @@
         </member>
         <member name="M:Speckle.Core.Api.Client.StreamInviteCancel(System.String,System.String,System.Threading.CancellationToken)">
             <summary>
-              Cancels an invite to join a stream.
+            Cancels an invite to join a stream.
             </summary>
             <param name="streamId">Id of the stream</param>
             <param name="inviteId">Id of the invite to cancel</param>
@@ -468,7 +469,7 @@
         </member>
         <member name="M:Speckle.Core.Api.Client._CheckStreamInvitesSupported(System.Threading.CancellationToken)">
             <summary>
-              Checks if Speckle Server version is at least v2.6.4 meaning stream invites are supported.
+            Checks if Speckle Server version is at least v2.6.4 meaning stream invites are supported.
             </summary>
             <param name="cancellationToken"></param>
             <returns>true if invites are supported</returns>
@@ -476,7 +477,7 @@
         </member>
         <member name="M:Speckle.Core.Api.Client.StreamInviteUse(System.String,System.String,System.Boolean,System.Threading.CancellationToken)">
             <summary>
-              Accept or decline a stream invite.
+            Accept or decline a stream invite.
             </summary>
             <param name="streamId"></param>
             <param name="token"></param>
@@ -487,13 +488,13 @@
         </member>
         <member name="M:Speckle.Core.Api.Client.ActiveUserGet">
             <summary>
-              Gets the currently active user profile.
+            Gets the currently active user profile.
             </summary>
             <returns></returns>
         </member>
         <member name="M:Speckle.Core.Api.Client.ActiveUserGet(System.Threading.CancellationToken)">
             <summary>
-              Gets the currently active user profile.
+            Gets the currently active user profile.
             </summary>
             <param name="cancellationToken"></param>
             <returns></returns>
@@ -501,14 +502,14 @@
         </member>
         <member name="M:Speckle.Core.Api.Client.OtherUserGet(System.String)">
             <summary>
-              Get another user's profile by its user id.
+            Get another user's profile by its user id.
             </summary>
             <param name="id">Id of the user you are looking for</param>
             <returns></returns>
         </member>
         <member name="M:Speckle.Core.Api.Client.OtherUserGet(System.Threading.CancellationToken,System.String)">
             <summary>
-              Get another user's profile by its user id.
+            Get another user's profile by its user id.
             </summary>
             <param name="cancellationToken"></param>
             <param name="id">Id of the user you are looking for</param>
@@ -517,7 +518,7 @@
         </member>
         <member name="M:Speckle.Core.Api.Client.UserSearch(System.String,System.Int32)">
             <summary>
-              Searches for a user on the server.
+            Searches for a user on the server.
             </summary>
             <param name="query">String to search for. Must be at least 3 characters</param>
             <param name="limit">Max number of users to return</param>
@@ -525,7 +526,7 @@
         </member>
         <member name="M:Speckle.Core.Api.Client.UserSearch(System.Threading.CancellationToken,System.String,System.Int32)">
             <summary>
-              Searches for a user on the server.
+            Searches for a user on the server.
             </summary>
             <param name="query">String to search for. Must be at least 3 characters</param>
             <param name="limit">Max number of users to return</param>
@@ -533,156 +534,146 @@
         </member>
         <member name="M:Speckle.Core.Api.Client.SubscribeBranchCreated(System.String)">
             <summary>
-              Subscribe to events of branch created for a stream
+            Subscribe to events of branch created for a stream
             </summary>
             <returns></returns>
         </member>
         <member name="M:Speckle.Core.Api.Client.SubscribeBranchUpdated(System.String,System.String)">
             <summary>
-              Subscribe to events of branch updated for a stream
+            Subscribe to events of branch updated for a stream
             </summary>
             <returns></returns>
         </member>
         <member name="M:Speckle.Core.Api.Client.SubscribeBranchDeleted(System.String)">
             <summary>
-              Subscribe to events of branch deleted for a stream
+            Subscribe to events of branch deleted for a stream
             </summary>
             <returns></returns>
         </member>
         <member name="M:Speckle.Core.Api.Client.SubscribeCommitCreated(System.String)">
             <summary>
-              Subscribe to events of commit created for a stream
+            Subscribe to events of commit created for a stream
             </summary>
             <returns></returns>
         </member>
         <member name="M:Speckle.Core.Api.Client.SubscribeCommitUpdated(System.String,System.String)">
             <summary>
-              Subscribe to events of commit updated for a stream
+            Subscribe to events of commit updated for a stream
             </summary>
             <returns></returns>
         </member>
         <member name="M:Speckle.Core.Api.Client.SubscribeCommitDeleted(System.String)">
             <summary>
-              Subscribe to events of commit updated for a stream
+            Subscribe to events of commit updated for a stream
             </summary>
             <returns></returns>
         </member>
         <member name="M:Speckle.Core.Api.Client.SubscribeUserStreamAdded">
             <summary>
-              Subscribe to events of streams added for the current user
+            Subscribe to events of streams added for the current user
             </summary>
             <returns></returns>
         </member>
         <member name="M:Speckle.Core.Api.Client.SubscribeStreamUpdated(System.String)">
             <summary>
-              Subscribe to events of streams updated for a specific streamId
+            Subscribe to events of streams updated for a specific streamId
             </summary>
             <param name="id">streamId</param>
         </member>
         <member name="M:Speckle.Core.Api.Client.SubscribeUserStreamRemoved">
             <summary>
-              Subscribe to events of streams removed for the current user
+            Subscribe to events of streams removed for the current user
             </summary>
             <param name="id"></param>
         </member>
         <member name="M:Speckle.Core.Api.Client.SubscribeCommentActivity(System.String)">
-            <summary>
-              Subscribe to new comment events
-            </summary>
+             <summary>
+             Subscribe to new comment events
+             </summary>
+            
         </member>
         <member name="P:Speckle.Core.Api.Stream.branch">
             <summary>
-              Set only in the case that you've requested this through
-              <see cref="M:Speckle.Core.Api.Client.BranchGet(System.Threading.CancellationToken,System.String,System.String,System.Int32)" />.
+            Set only in the case that you've requested this through <see cref="M:Speckle.Core.Api.Client.BranchGet(System.Threading.CancellationToken,System.String,System.String,System.Int32)"/>.
             </summary>
         </member>
         <member name="P:Speckle.Core.Api.Stream.commit">
             <summary>
-              Set only in the case that you've requested this through
-              <see cref="M:Speckle.Core.Api.Client.CommitGet(System.Threading.CancellationToken,System.String,System.String)" />.
+            Set only in the case that you've requested this through <see cref="M:Speckle.Core.Api.Client.CommitGet(System.Threading.CancellationToken,System.String,System.String)"/>.
             </summary>
         </member>
         <member name="P:Speckle.Core.Api.Stream.commits">
             <summary>
-              Set only in the case that you've requested this through
-              <see cref="M:Speckle.Core.Api.Client.StreamGetCommits(System.Threading.CancellationToken,System.String,System.Int32)" />
+            Set only in the case that you've requested this through <see cref="M:Speckle.Core.Api.Client.StreamGetCommits(System.Threading.CancellationToken,System.String,System.Int32)"/>
             </summary>
         </member>
         <member name="T:Speckle.Core.Api.ActiveUserData">
             <summary>
-              GraphQL DTO model for active user data
+            GraphQL DTO model for active user data
             </summary>
         </member>
         <member name="P:Speckle.Core.Api.ActiveUserData.activeUser">
             <summary>
-              User profile of the active user.
+             User profile of the active user.
             </summary>
         </member>
         <member name="T:Speckle.Core.Api.LimitedUserData">
             <summary>
-              GraphQL DTO model for limited user data. Mostly referring to other user's profile.
+            GraphQL DTO model for limited user data. Mostly referring to other user's profile.
             </summary>
         </member>
         <member name="P:Speckle.Core.Api.LimitedUserData.otherUser">
             <summary>
-              The limited user profile of another (non active user)
+            The limited user profile of another (non active user)
             </summary>
         </member>
         <member name="T:Speckle.Core.Api.Os">
             <summary>
-              OS
-              NOTE: do not edit order and only append new items as they are serialized to ints
+            OS
+            NOTE: do not edit order and only append new items as they are serialized to ints
             </summary>
         </member>
         <member name="T:Speckle.Core.Api.Architecture">
             <summary>
-              Architecture
-              NOTE: do not edit order and only append new items as they are serialized to ints
+            Architecture
+            NOTE: do not edit order and only append new items as they are serialized to ints
             </summary>
         </member>
         <member name="F:Speckle.Core.Api.Helpers._speckleUserDataEnvVar">
             <summary>
-              Envirenment Variable that allows to overwrite the <see cref="P:Speckle.Core.Api.Helpers.UserApplicationDataPath" />
-              ///
-            </summary>
+            Envirenment Variable that allows to overwrite the <see cref="P:Speckle.Core.Api.Helpers.UserApplicationDataPath"/>
+            /// </summary>
         </member>
         <member name="P:Speckle.Core.Api.Helpers.InstallSpeckleFolderPath">
             <summary>
-              Returns the correct location of the Speckle installation folder. Usually this would be the user's %appdata%/Speckle
-              folder, unless the install was made for all users.
+            Returns the correct location of the Speckle installation folder. Usually this would be the user's %appdata%/Speckle folder, unless the install was made for all users.
             </summary>
             <returns>The location of the Speckle installation folder</returns>
         </member>
         <member name="P:Speckle.Core.Api.Helpers.UserSpeckleFolderPath">
             <summary>
-              Returns the correct location of the Speckle folder for the current user. Usually this would be the user's
-              %appdata%/Speckle folder.
+            Returns the correct location of the Speckle folder for the current user. Usually this would be the user's %appdata%/Speckle folder.
             </summary>
             <returns>The location of the Speckle installation folder</returns>
         </member>
         <member name="P:Speckle.Core.Api.Helpers.InstallApplicationDataPath">
             <summary>
-              Returns the correct location of the AppData folder where Speckle is installed. Usually this would be the user's
-              %appdata% folder, unless the install was made for all users.
-              This folder contains Kits and othe data that can be shared among users of the same machine.
+            Returns the correct location of the AppData folder where Speckle is installed. Usually this would be the user's %appdata% folder, unless the install was made for all users.
+            This folder contains Kits and othe data that can be shared among users of the same machine.
             </summary>
             <returns>The location of the AppData folder where Speckle is installed</returns>
         </member>
         <member name="P:Speckle.Core.Api.Helpers.UserApplicationDataPath">
             <summary>
-              Returns the location of the User Application Data folder for the current roaming user, which contains user specific
-              data such as accounts and cache.
+            Returns the location of the User Application Data folder for the current roaming user, which contains user specific data such as accounts and cache.
             </summary>
             <returns>The location of the user's `%appdata%` folder.</returns>
         </member>
         <member name="M:Speckle.Core.Api.Helpers.Receive(System.String,Speckle.Core.Credentials.Account,System.Action{System.Collections.Concurrent.ConcurrentDictionary{System.String,System.Int32}},System.Action{System.String,System.Exception},System.Action{System.Int32})">
             <summary>
-              Helper method to Receive from a Speckle Server.
+            Helper method to Receive from a Speckle Server.
             </summary>
-            <param name="stream">
-              Stream URL or Id to receive from. If the URL contains branchName, commitId or objectId those will
-              be used, otherwise the latest commit from main will be received.
-            </param>
+            <param name="stream">Stream URL or Id to receive from. If the URL contains branchName, commitId or objectId those will be used, otherwise the latest commit from main will be received.</param>
             <param name="account">Account to use. If not provided the default account will be used.</param>
             <param name="onProgressAction">Action invoked on progress iterations.</param>
             <param name="onErrorAction">Action invoked on internal errors.</param>
@@ -691,38 +682,44 @@
         </member>
         <member name="M:Speckle.Core.Api.Helpers.Send(System.String,Speckle.Core.Models.Base,System.String,System.String,System.Int32,Speckle.Core.Credentials.Account,System.Boolean,System.Action{System.Collections.Concurrent.ConcurrentDictionary{System.String,System.Int32}},System.Action{System.String,System.Exception})">
             <summary>
-              Helper method to Send to a Speckle Server.
+            Helper method to Send to a Speckle Server.
             </summary>
-            <param name="stream">
-              Stream URL or Id to send to. If the URL contains branchName, commitId or objectId those will be
-              used, otherwise the latest commit from main will be received.
-            </param>
+            <param name="stream">Stream URL or Id to send to. If the URL contains branchName, commitId or objectId those will be used, otherwise the latest commit from main will be received.</param>
             <param name="data">Data to send</param>
             <param name="account">Account to use. If not provided the default account will be used.</param>
-            <param name="useDefaultCache">
-              Toggle for the default cache. If set to false, it will only send to the provided
-              transports.
-            </param>
+            <param name="useDefaultCache">Toggle for the default cache. If set to false, it will only send to the provided transports.</param>
             <param name="onProgressAction">Action invoked on progress iterations.</param>
             <param name="onErrorAction">Action invoked on internal errors.</param>
             <returns></returns>
         </member>
         <member name="M:Speckle.Core.Api.Helpers.IsConnectorUpdateAvailable(System.String)">
-            <summary>
+             <summary>
+            
+             </summary>
+             <param name="slug">The connector slug eg. revit, rhino, etc</param>
+             <returns></returns>
+        </member>
+        <member name="M:Speckle.Core.Api.Helpers.TimeAgo(System.Nullable{System.DateTime},System.String)">
+            <inheritdoc cref="M:Speckle.Core.Api.Helpers.TimeAgo(System.DateTime)"/>
+            <param name="fallback">value to fallback to if the given <paramref name="timestamp"/> is <see langword="null"/></param>
+        </member>
+        <member name="M:Speckle.Core.Api.Helpers.TimeAgo(System.DateTime)">
+            <summary>Formats the given difference between the current system time and the provided <paramref name="timestamp"/>
+            into a human readable string
             </summary>
-            <param name="slug">The connector slug eg. revit, rhino, etc</param>
-            <returns></returns>
+            <param name="timestamp"></param>
+            <returns>A Human readable string</returns>
         </member>
         <!-- Badly formed XML comment ignored for member "T:Speckle.Core.Api.Operations" -->
         <member name="M:Speckle.Core.Api.Operations.GetSerializerInstance">
             <summary>
-              Convenience method to instantiate an instance of the default object serializer and settings pre-populated with it.
+            Convenience method to instantiate an instance of the default object serializer and settings pre-populated with it.
             </summary>
         </member>
         <!-- Badly formed XML comment ignored for member "M:Speckle.Core.Api.Operations.GetInternalProgressAction(System.Collections.Concurrent.ConcurrentDictionary{System.String,System.Int32},System.Action{System.Collections.Concurrent.ConcurrentDictionary{System.String,System.Int32}})" -->
         <member name="M:Speckle.Core.Api.Operations.Receive(System.String,Speckle.Core.Transports.ITransport,Speckle.Core.Transports.ITransport,System.Action{System.Collections.Concurrent.ConcurrentDictionary{System.String,System.Int32}},System.Action{System.String,System.Exception},System.Action{System.Int32},System.Boolean,Speckle.Core.Api.SerializerVersion)">
             <summary>
-              Receives an object from a transport.
+            Receives an object from a transport.
             </summary>
             <param name="objectId"></param>
             <param name="remoteTransport">The transport to receive from.</param>
@@ -734,13 +731,10 @@
         </member>
         <member name="M:Speckle.Core.Api.Operations.Receive(System.String,System.Threading.CancellationToken,Speckle.Core.Transports.ITransport,Speckle.Core.Transports.ITransport,System.Action{System.Collections.Concurrent.ConcurrentDictionary{System.String,System.Int32}},System.Action{System.String,System.Exception},System.Action{System.Int32},System.Boolean,Speckle.Core.Api.SerializerVersion)">
             <summary>
-              Receives an object from a transport.
+            Receives an object from a transport.
             </summary>
             <param name="objectId"></param>
-            <param name="cancellationToken">
-              A cancellation token that can be used by other objects or threads to send notice of
-              cancellation.
-            </param>
+            <param name="cancellationToken">A cancellation token that can be used by other objects or threads to send notice of cancellation.</param>
             <param name="remoteTransport">The transport to receive from.</param>
             <param name="localTransport">Leave null to use the default cache.</param>
             <param name="onProgressAction">Action invoked on progress iterations.</param>
@@ -750,54 +744,37 @@
         </member>
         <member name="M:Speckle.Core.Api.Operations.Send(Speckle.Core.Models.Base,System.Collections.Generic.List{Speckle.Core.Transports.ITransport},System.Boolean,System.Action{System.Collections.Concurrent.ConcurrentDictionary{System.String,System.Int32}},System.Action{System.String,System.Exception},System.Boolean,Speckle.Core.Api.SerializerVersion)">
             <summary>
-              Sends an object via the provided transports. Defaults to the local cache.
+            Sends an object via the provided transports. Defaults to the local cache.
             </summary>
             <param name="object">The object you want to send.</param>
             <param name="transports">Where you want to send them.</param>
-            <param name="useDefaultCache">
-              Toggle for the default cache. If set to false, it will only send to the provided
-              transports.
-            </param>
+            <param name="useDefaultCache">Toggle for the default cache. If set to false, it will only send to the provided transports.</param>
             <param name="onProgressAction">Action that gets triggered on every progress tick (keeps track of all transports).</param>
             <param name="onErrorAction">Use this to capture and handle any errors from within the transports.</param>
             <returns>The id (hash) of the object.</returns>
         </member>
         <member name="M:Speckle.Core.Api.Operations.Send(Speckle.Core.Models.Base,System.Threading.CancellationToken,System.Collections.Generic.List{Speckle.Core.Transports.ITransport},System.Boolean,System.Action{System.Collections.Concurrent.ConcurrentDictionary{System.String,System.Int32}},System.Action{System.String,System.Exception},System.Boolean,Speckle.Core.Api.SerializerVersion)">
             <summary>
-              Sends an object via the provided transports. Defaults to the local cache.
+            Sends an object via the provided transports. Defaults to the local cache.
             </summary>
             <param name="object">The object you want to send.</param>
-            <param name="cancellationToken">
-              A cancellation token that can be used by other objects or threads to send notice of
-              cancellation.
-            </param>
+            <param name="cancellationToken">A cancellation token that can be used by other objects or threads to send notice of cancellation.</param>
             <param name="transports">Where you want to send them.</param>
-            <param name="useDefaultCache">
-              Toggle for the default cache. If set to false, it will only send to the provided
-              transports.
-            </param>
+            <param name="useDefaultCache">Toggle for the default cache. If set to false, it will only send to the provided transports.</param>
             <param name="onProgressAction">Action that gets triggered on every progress tick (keeps track of all transports).</param>
             <param name="onErrorAction">Use this to capture and handle any errors from within the transports.</param>
             <returns>The id (hash) of the object.</returns>
         </member>
         <member name="M:Speckle.Core.Api.Operations.Serialize(Speckle.Core.Models.Base)">
             <summary>
-              Serializes a given object. Note: if you want to save and persist an object to a Speckle Transport or Server, please
-              use any of the "Send" methods. See
-              <see
-                cref="!:Send(Base, System.Collections.Generic.List&lt;Speckle.Core.Transports.ITransport&gt;, bool, System.Action&lt;System.Collections.Concurrent.ConcurrentDictionary&lt;string,int&gt;&gt;(System.Collections.Concurrent.ConcurrentDictionary&lt;string,int&gt;), Action&lt;string, Exception&gt;)" />
-              .
+            Serializes a given object. Note: if you want to save and persist an object to a Speckle Transport or Server, please use any of the "Send" methods. See <see cref="!:Send(Base, System.Collections.Generic.List&lt;Speckle.Core.Transports.ITransport&gt;, bool, System.Action&lt;System.Collections.Concurrent.ConcurrentDictionary&lt;string,int&gt;&gt;(System.Collections.Concurrent.ConcurrentDictionary&lt;string,int&gt;), Action&lt;string, Exception&gt;)"/>.
             </summary>
             <param name="object"></param>
             <returns>A json string representation of the object.</returns>
         </member>
         <member name="M:Speckle.Core.Api.Operations.Serialize(Speckle.Core.Models.Base,System.Threading.CancellationToken,Speckle.Core.Api.SerializerVersion)">
             <summary>
-              Serializes a given object. Note: if you want to save and persist an object to Speckle Transport or Server, please use
-              any of the "Send" methods. See
-              <see
-                cref="!:Send(Base, System.Collections.Generic.List&lt;Speckle.Core.Transports.ITransport&gt;, bool, System.Action&lt;System.Collections.Concurrent.ConcurrentDictionary&lt;string,int&gt;&gt;(System.Collections.Concurrent.ConcurrentDictionary&lt;string,int&gt;), Action&lt;string, Exception&gt;)" />
-              .
+            Serializes a given object. Note: if you want to save and persist an object to Speckle Transport or Server, please use any of the "Send" methods. See <see cref="!:Send(Base, System.Collections.Generic.List&lt;Speckle.Core.Transports.ITransport&gt;, bool, System.Action&lt;System.Collections.Concurrent.ConcurrentDictionary&lt;string,int&gt;&gt;(System.Collections.Concurrent.ConcurrentDictionary&lt;string,int&gt;), Action&lt;string, Exception&gt;)"/>.
             </summary>
             <param name="object"></param>
             <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
@@ -805,38 +782,28 @@
         </member>
         <member name="M:Speckle.Core.Api.Operations.Serialize(System.Collections.Generic.List{Speckle.Core.Models.Base})">
             <summary>
-              Serializes a list of objects. Note: if you want to save and persist objects to speckle, please use any of the "Send"
-              methods.
+            Serializes a list of objects. Note: if you want to save and persist objects to speckle, please use any of the "Send" methods.
             </summary>
             <param name="objects"></param>
             <returns></returns>
         </member>
         <member name="M:Speckle.Core.Api.Operations.Serialize(System.Collections.Generic.Dictionary{System.String,Speckle.Core.Models.Base})">
             <summary>
-              Serializes a list of objects. Note: if you want to save and persist objects to speckle, please use any of the "Send"
-              methods.
+            Serializes a list of objects. Note: if you want to save and persist objects to speckle, please use any of the "Send" methods.
             </summary>
             <param name="objects"></param>
             <returns></returns>
         </member>
         <member name="M:Speckle.Core.Api.Operations.Deserialize(System.String)">
             <summary>
-              Deserializes a given object. Note: if you want to pull an object from a Speckle Transport or Server, please use any
-              of the
-              <see
-                cref="!:Receive(string, Transports.ITransport, Transports.ITransport, System.Action&lt;System.Collections.Concurrent.ConcurrentDictionary&lt;string,int&gt;&gt;(System.Collections.Concurrent.ConcurrentDictionary&lt;string,int&gt;))" />
-              .
+            Deserializes a given object. Note: if you want to pull an object from a Speckle Transport or Server, please use any of the <see cref="!:Receive(string, Transports.ITransport, Transports.ITransport, System.Action&lt;System.Collections.Concurrent.ConcurrentDictionary&lt;string,int&gt;&gt;(System.Collections.Concurrent.ConcurrentDictionary&lt;string,int&gt;))"/>.
             </summary>
             <param name="object">The json string representation of a speckle object that you want to deserialise.</param>
             <returns></returns>
         </member>
         <member name="M:Speckle.Core.Api.Operations.Deserialize(System.String,System.Threading.CancellationToken,Speckle.Core.Api.SerializerVersion)">
             <summary>
-              Deserializes a given object. Note: if you want to pull an object from a Speckle Transport or Server, please use any
-              of the
-              <see
-                cref="!:Receive(string, Transports.ITransport, Transports.ITransport, System.Action&lt;System.Collections.Concurrent.ConcurrentDictionary&lt;string,int&gt;&gt;(System.Collections.Concurrent.ConcurrentDictionary&lt;string,int&gt;))" />
-              .
+            Deserializes a given object. Note: if you want to pull an object from a Speckle Transport or Server, please use any of the <see cref="!:Receive(string, Transports.ITransport, Transports.ITransport, System.Action&lt;System.Collections.Concurrent.ConcurrentDictionary&lt;string,int&gt;&gt;(System.Collections.Concurrent.ConcurrentDictionary&lt;string,int&gt;))"/>.
             </summary>
             <param name="object">The json string representation of a speckle object that you want to deserialise.</param>
             <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
@@ -844,35 +811,33 @@
         </member>
         <member name="M:Speckle.Core.Api.Operations.DeserializeArray(System.String,Speckle.Core.Api.SerializerVersion)">
             <summary>
-              Deserializes a list of objects into an array. Note: if you want to pull an object from speckle (either local or
-              remote), please use any of the "Receive" methods.
+            Deserializes a list of objects into an array. Note: if you want to pull an object from speckle (either local or remote), please use any of the "Receive" methods.
             </summary>
             <param name="objectArr"></param>
             <returns></returns>
         </member>
         <member name="M:Speckle.Core.Api.Operations.DeserializeDictionary(System.String)">
             <summary>
-              Deserializes a dictionary object. Note: if you want to pull an object from speckle (either local or remote), please
-              use any of the "Receive" methods.
+            Deserializes a dictionary object. Note: if you want to pull an object from speckle (either local or remote), please use any of the "Receive" methods.
             </summary>
             <param name="dictionary"></param>
             <returns></returns>
         </member>
         <member name="T:Speckle.Core.Credentials.AccountManager">
             <summary>
-              Manage accounts locally for desktop applications.
+            Manage accounts locally for desktop applications.
             </summary>
         </member>
         <member name="M:Speckle.Core.Credentials.AccountManager.GetServerInfo(System.String)">
             <summary>
-              Gets the basic information about a server.
+            Gets the basic information about a server.
             </summary>
             <param name="server">Server URL</param>
             <returns></returns>
         </member>
         <member name="M:Speckle.Core.Credentials.AccountManager.GetUserInfo(System.String,System.String)">
             <summary>
-              Gets basic user information given a token and a server.
+            Gets basic user information given a token and a server.
             </summary>
             <param name="token"></param>
             <param name="server">Server URL</param>
@@ -880,7 +845,7 @@
         </member>
         <member name="M:Speckle.Core.Credentials.AccountManager.GetUserServerInfo(System.String,System.String)">
             <summary>
-              Gets basic user and server information given a token and a server.
+            Gets basic user and server information given a token and a server.
             </summary>
             <param name="token"></param>
             <param name="server">Server URL</param>
@@ -888,75 +853,70 @@
         </member>
         <member name="M:Speckle.Core.Credentials.AccountManager.GetDefaultServerUrl">
             <summary>
-              The Default Server URL for authentication, can be overridden by placing a file with the alternatrive url in the
-              Speckle folder or with an ENV_VAR
+            The Default Server URL for authentication, can be overridden by placing a file with the alternatrive url in the Speckle folder or with an ENV_VAR
             </summary>
         </member>
         <member name="M:Speckle.Core.Credentials.AccountManager.GetAccounts(System.String)">
             <summary>
-              Gets all the accounts for a given server.
+            Gets all the accounts for a given server.
             </summary>
             <param name="serverUrl"></param>
             <returns></returns>
         </member>
         <member name="M:Speckle.Core.Credentials.AccountManager.GetDefaultAccount">
             <summary>
-              Gets this environment's default account if any. If there is no default, the first found will be returned and set as
-              default.
+            Gets this environment's default account if any. If there is no default, the first found will be returned and set as default.
             </summary>
             <returns>The default account or null.</returns>
         </member>
         <member name="M:Speckle.Core.Credentials.AccountManager.GetAccounts">
             <summary>
-              Gets all the accounts present in this environment.
+            Gets all the accounts present in this environment.
             </summary>
             <returns></returns>
         </member>
         <member name="M:Speckle.Core.Credentials.AccountManager.GetLocalAccounts">
             <summary>
-              Gets the local accounts
-              These are accounts not handled by Manager and are stored in json format in a local directory
+            Gets the local accounts
+            These are accounts not handled by Manager and are stored in json format in a local directory
             </summary>
             <returns></returns>
         </member>
         <member name="M:Speckle.Core.Credentials.AccountManager.UpdateAccounts">
             <summary>
-              Refetches user and server info for each account
+            Refetches user and server info for each account
             </summary>
             <returns></returns>
         </member>
         <member name="M:Speckle.Core.Credentials.AccountManager.RemoveAccount(System.String)">
             <summary>
-              Removes an account
+            Removes an account
             </summary>
             <param name="id">ID of the account to remove</param>
         </member>
         <member name="M:Speckle.Core.Credentials.AccountManager.ChangeDefaultAccount(System.String)">
             <summary>
-              Changes the default account
+            Changes the default account
             </summary>
             <param name="id"></param>
         </member>
         <member name="M:Speckle.Core.Credentials.AccountManager.AddAccount(System.String)">
             <summary>
-              Adds an account by propting the user to log in via a web flow
+            Adds an account by propting the user to log in via a web flow
             </summary>
             <param name="server">Server to use to add the account, if not provied the default Server will be used</param>
             <returns></returns>
         </member>
         <member name="M:Speckle.Core.Credentials.StreamWrapper.#ctor(System.String)">
             <summary>
-              Creates a StreamWrapper from a stream url or a stream id
+            Creates a StreamWrapper from a stream url or a stream id
             </summary>
-            <param name="streamUrlOrId">
-              Stream Url eg: http://speckle.server/streams/8fecc9aa6d/commits/76a23d7179  or stream ID
-              eg: 8fecc9aa6d
-            </param>
+            <param name="streamUrlOrId">Stream Url eg: http://speckle.server/streams/8fecc9aa6d/commits/76a23d7179  or stream ID eg: 8fecc9aa6d</param>
             <exception cref="T:System.Exception"></exception>
         </member>
         <member name="M:Speckle.Core.Credentials.StreamWrapper.#ctor(System.String,System.String,System.String)">
             <summary>
-              Creates a StreamWrapper by streamId, userId and serverUrl
+            Creates a StreamWrapper by streamId, userId and serverUrl
             </summary>
             <param name="streamId"></param>
             <param name="userId"></param>
@@ -964,375 +924,391 @@
         </member>
         <member name="P:Speckle.Core.Credentials.StreamWrapper.IsValid">
             <summary>
-              Determines if the current stream wrapper contains a valid stream.
+            Determines if the current stream wrapper contains a valid stream.
             </summary>
         </member>
         <member name="M:Speckle.Core.Credentials.StreamWrapper.GetAccount">
             <summary>
-              Gets a valid account for this stream wrapper.
-              <para>
-                Note: this method ensures that the stream exists and/or that the user has an account which has access to that
-                stream. If used in a sync manner, make sure it's not blocking.
-              </para>
+            Gets a valid account for this stream wrapper.
+            <para>Note: this method ensures that the stream exists and/or that the user has an account which has access to that stream. If used in a sync manner, make sure it's not blocking.</para>
             </summary>
-            <exception cref="T:System.Exception">
-              Throws exception if account fetching failed. This could be due to non-existent account or
-              stream.
-            </exception>
+            <exception cref="T:System.Exception">Throws exception if account fetching failed. This could be due to non-existent account or stream.</exception>
             <returns>The valid account object for this stream.</returns>
         </member>
         <member name="F:Speckle.Core.Helpers.Http.HttpRetryPolicy">
             <summary>
-              Policy for retrying failing Http requests
+            Policy for retrying failing Http requests
             </summary>
         </member>
         <member name="F:Speckle.Core.Helpers.Http.HttpRetryAsyncPolicy">
             <summary>
-              Policy for retrying failing Http requests
+            Policy for retrying failing Http requests
             </summary>
         </member>
         <member name="M:Speckle.Core.Helpers.Http.UserHasInternet">
             <summary>
-              Checks if the user has a valid internet connection by first pinging cloudfare (fast)
-              and then trying get from the default Speckle server (slower)
-              Each check is retried 3 times
+            Checks if the user has a valid internet connection by first pinging cloudfare (fast)
+            and then trying get from the default Speckle server (slower)
+            Each check is retried 3 times
             </summary>
             <returns>True if the user is connected to the internet, false otherwise.</returns>
         </member>
         <member name="M:Speckle.Core.Helpers.Http.Ping(System.String)">
             <summary>
-              Pings a specific url to verify it's accessible. Retries 3 times.
+            Pings a specific url to verify it's accessible. Retries 3 times.
             </summary>
             <param name="hostnameOrAddress">The hostname or address to ping.</param>
             <returns>True if the the status code is 200, false otherwise.</returns>
         </member>
         <member name="M:Speckle.Core.Helpers.Http.HttpPing(System.String)">
             <summary>
-              Pings and tries gettign data from a specific address to verify it's online. Retries 3 times.
+            Pings and tries gettign data from a specific address to verify it's online. Retries 3 times.
             </summary>
             <param name="address">The address to use</param>
             <returns>True if the the status code is successful, false otherwise.</returns>
         </member>
         <member name="T:Speckle.Core.Helpers.SpecklePathProvider">
             <summary>
-              Helper class dedicated for Speckle specific Path operations.
+            Helper class dedicated for Speckle specific Path operations.
             </summary>
         </member>
         <member name="P:Speckle.Core.Helpers.SpecklePathProvider.InstallApplicationDataPath">
             <summary>
-              Get the installation path.
+            Get the installation path.
             </summary>
         </member>
         <member name="P:Speckle.Core.Helpers.SpecklePathProvider.InstallSpeckleFolderPath">
             <summary>
-              Get the path where the Speckle applications should be installed
+            Get the path where the Speckle applications should be installed
             </summary>
         </member>
         <member name="P:Speckle.Core.Helpers.SpecklePathProvider.UserSpeckleFolderPath">
             <summary>
-              Get the folder where the user's Speckle data should be stored.
+            Get the folder where the user's Speckle data should be stored.
             </summary>
         </member>
         <member name="P:Speckle.Core.Helpers.SpecklePathProvider.KitsFolderPath">
             <summary>
-              Get the folder where the Speckle kits should be stored.
+            Get the folder where the Speckle kits should be stored.
             </summary>
         </member>
         <member name="P:Speckle.Core.Helpers.SpecklePathProvider.ObjectsFolderPath">
-            <summary>
-            </summary>
+             <summary>
+            
+             </summary>
         </member>
         <member name="P:Speckle.Core.Helpers.SpecklePathProvider.AccountsFolderPath">
             <summary>
-              Get the folder where the Speckle accounts data should be stored.
+            Get the folder where the Speckle accounts data should be stored.
             </summary>
         </member>
         <member name="M:Speckle.Core.Helpers.SpecklePathProvider.OverrideApplicationName(System.String)">
             <summary>
-              Override the global Speckle application name.
+            Override the global Speckle application name.
             </summary>
             <param name="applicationName"></param>
         </member>
         <member name="M:Speckle.Core.Helpers.SpecklePathProvider.OverrideApplicationDataPath(System.String)">
             <summary>
-              Override the global Speckle application data path.
+            Override the global Speckle application data path.
             </summary>
         </member>
         <member name="M:Speckle.Core.Helpers.SpecklePathProvider.OverrideBlobStorageFolder(System.String)">
             <summary>
-              Override the global Blob storage folder name.
+            Override the global Blob storage folder name.
             </summary>
         </member>
         <member name="M:Speckle.Core.Helpers.SpecklePathProvider.OverrideKitsFolderName(System.String)">
             <summary>
-              Override the global Kits folder name.
+             Override the global Kits folder name.
             </summary>
         </member>
         <member name="M:Speckle.Core.Helpers.SpecklePathProvider.OverrideAccountsFolderName(System.String)">
             <summary>
-              Override the global Accounts folder name.
+            Override the global Accounts folder name.
             </summary>
         </member>
         <member name="M:Speckle.Core.Helpers.SpecklePathProvider.OverrideObjectsFolderName(System.String)">
-            <summary>
-            </summary>
+             <summary>
+            
+             </summary>
         </member>
         <member name="M:Speckle.Core.Helpers.SpecklePathProvider.UserApplicationDataPath">
             <summary>
-              Get the platform specific user configuration folder path.
+            Get the platform specific user configuration folder path.
             </summary>
         </member>
         <member name="M:Speckle.Core.Helpers.SpecklePathProvider.BlobStoragePath(System.String)">
             <summary>
-              Get the folder where the user's Speckle blobs should be stored.
+            Get the folder where the user's Speckle blobs should be stored.
             </summary>
         </member>
         <member name="M:Speckle.Core.Helpers.SpecklePathProvider.LogFolderPath(System.String,System.String)">
             <summary>
-              Get the folder where the Speckle logs should be stored.
+            Get the folder where the Speckle logs should be stored.
             </summary>
             <param name="hostApplicationName">Name of the application using this SDK ie.: "Rhino"</param>
             <param name="hostApplicationVersion">Public version slug of the application using this SDK ie.: "2023"</param>
         </member>
         <member name="M:Speckle.Core.Kits.HostApplication.GetVersion(Speckle.Core.Kits.HostAppVersion)">
             <summary>
-              Returns the versioned app name given a specific version
+            Returns the versioned app name given a specific version
             </summary>
             <param name="version"></param>
             <returns></returns>
         </member>
         <member name="T:Speckle.Core.Kits.HostApplications">
             <summary>
-              List of Host Applications - their slugs should match our ghost tags and ci/cd slugs
+            List of Host Applications - their slugs should match our ghost tags and ci/cd slugs
             </summary>
         </member>
         <member name="M:Speckle.Core.Kits.HostApplications.GetHostAppFromString(System.String)">
             <summary>
-              Gets a HostApplication form a string. It could be the versioned name or a string coming from a process running.
+            Gets a HostApplication form a string. It could be the versioned name or a string coming from a process running.
             </summary>
             <param name="appname">String with the name of the app</param>
             <returns></returns>
         </member>
         <member name="T:Speckle.Core.Kits.SchemaMainParam">
             <summary>
-              Used to indicate which is the main input parameter of the schema builder component. Schema info will be attached to
-              this object.
+            Used to indicate which is the main input parameter of the schema builder component. Schema info will be attached to this object.
             </summary>
         </member>
         <member name="T:Speckle.Core.Kits.SchemaIgnore">
             <summary>
-              Used to ignore properties from expand objects etc
+            Used to ignore properties from expand objects etc
+            </summary>
+        </member>
+        <member name="T:Speckle.Core.Kits.KitException">
+            <summary>
+            Exception thrown when an <see cref="T:Speckle.Core.Kits.ISpeckleKit"/> fails to load/initialise
+            </summary>
+            <remarks>
+            Does NOT inherit from <see cref="T:Speckle.Core.Logging.SpeckleException"/>, because this usage of this exception is not dependent on Speckle Data (user data)
+            Ideally, this exception should contain a meaningful message, and a reference to the <see cref="T:Speckle.Core.Kits.ISpeckleKit"/>
+            </remarks>
+        </member>
+        <member name="P:Speckle.Core.Kits.KitException.Kit">
+            <summary>
+            A reference to the <see cref="T:Speckle.Core.Kits.ISpeckleKit"/> that failed to perform
+            </summary>
+        </member>
+        <member name="T:Speckle.Core.Kits.ConversionException">
+            <summary>
+            Exception thrown when conversion of an object fails
+            </summary>
+            <remarks>
+            Ideally this exception contains a meaningful message, and reference to the object that failed to be converted.
+            This exception can be used for both ToSpeckle and ToNative conversion
+            </remarks>
+        </member>
+        <member name="T:Speckle.Core.Kits.ConversionSkippedException">
+            <summary>
+            Exception thrown when an object was desirably skipped
             </summary>
         </member>
         <member name="P:Speckle.Core.Kits.ISpeckleConverter.Report">
             <summary>
-              Keeps track of the conversion process
+            Keeps track of the conversion process
             </summary>
         </member>
         <member name="P:Speckle.Core.Kits.ISpeckleConverter.ReceiveMode">
             <summary>
-              Decides what to do when an element being received already exists
+            Decides what to do when an element being received already exists
             </summary>
         </member>
         <member name="M:Speckle.Core.Kits.ISpeckleConverter.ConvertToSpeckle(System.Object)">
             <summary>
-              Converts a native object to a Speckle one
+            Converts a native object to a Speckle one
             </summary>
             <param name="object">Native object to convert</param>
             <returns></returns>
         </member>
         <member name="M:Speckle.Core.Kits.ISpeckleConverter.ConvertToSpeckle(System.Collections.Generic.List{System.Object})">
             <summary>
-              Converts a list of objects to Speckle.
+            Converts a list of objects to Speckle.
             </summary>
             <param name="objects"></param>
             <returns></returns>
         </member>
         <member name="M:Speckle.Core.Kits.ISpeckleConverter.CanConvertToSpeckle(System.Object)">
             <summary>
-              Checks if it can convert a native object to a Speckle one
+            Checks if it can convert a native object to a Speckle one
             </summary>
             <param name="object">Native object to convert</param>
             <returns></returns>
         </member>
         <member name="M:Speckle.Core.Kits.ISpeckleConverter.ConvertToNative(Speckle.Core.Models.Base)">
             <summary>
-              Converts a Speckle object to a native one
+            Converts a Speckle object to a native one
             </summary>
             <param name="object">Speckle object to convert</param>
             <returns></returns>
         </member>
         <member name="M:Speckle.Core.Kits.ISpeckleConverter.ConvertToNative(System.Collections.Generic.List{Speckle.Core.Models.Base})">
             <summary>
-              Converts a list of Speckle objects to a native ones.
+            Converts a list of Speckle objects to a native ones.
             </summary>
             <param name="objects"></param>
             <returns></returns>
         </member>
         <member name="M:Speckle.Core.Kits.ISpeckleConverter.CanConvertToNative(Speckle.Core.Models.Base)">
             <summary>
-              Checks if it can convert a Speckle object to a native one
+            Checks if it can convert a Speckle object to a native one
             </summary>
             <param name="object">Speckle object to convert</param>
             <returns></returns>
         </member>
         <member name="M:Speckle.Core.Kits.ISpeckleConverter.GetServicedApplications">
             <summary>
-              Returns a list of applications serviced by this converter
+            Returns a list of applications serviced by this converter
             </summary>
             <returns></returns>
         </member>
         <member name="M:Speckle.Core.Kits.ISpeckleConverter.SetContextDocument(System.Object)">
             <summary>
-              Sets the application document that the converter is targeting
+            Sets the application document that the converter is targeting
             </summary>
             <param name="doc">The current application document</param>
         </member>
         <member name="M:Speckle.Core.Kits.ISpeckleConverter.SetContextObjects(System.Collections.Generic.List{Speckle.Core.Models.ApplicationObject})">
             <summary>
-              Some converters need to know which other objects are being converted, in order to sort relationships between them
-              (ie, Revit). Use this method to set them.
+            Some converters need to know which other objects are being converted, in order to sort relationships between them (ie, Revit). Use this method to set them.
             </summary>
             <param name="objects"></param>
         </member>
         <member name="M:Speckle.Core.Kits.ISpeckleConverter.SetPreviousContextObjects(System.Collections.Generic.List{Speckle.Core.Models.ApplicationObject})">
             <summary>
-              Some converters need to know which objects have been converted before in order to update them (ie, Revit). Use this
-              method to set them.
+            Some converters need to know which objects have been converted before in order to update them (ie, Revit). Use this method to set them.
             </summary>
             <param name="objects"></param>
         </member>
         <member name="M:Speckle.Core.Kits.ISpeckleConverter.SetConverterSettings(System.Object)">
             <summary>
-              Some converters need to be able to receive some settings to modify their internal behaviour (i.e. Rhino's Brep
-              Meshing options). Use this method to set them.
+            Some converters need to be able to receive some settings to modify their internal behaviour (i.e. Rhino's Brep Meshing options). Use this method to set them.
             </summary>
             <param name="settings">The object representing the settings for your converter.</param>
         </member>
         <member name="T:Speckle.Core.Kits.ReceiveMode">
             <summary>
-              Receive modes indicate what to do and not do when receiving objects
+            Receive modes indicate what to do and not do when receiving objects
             </summary>
         </member>
         <member name="F:Speckle.Core.Kits.ReceiveMode.Update">
             <summary>
-              Attemts updating previously received objects by ID, deletes previously received objects that do not exist anymore and
-              creates new ones
+            Attemts updating previously received objects by ID, deletes previously received objects that do not exist anymore and creates new ones
             </summary>
         </member>
         <member name="F:Speckle.Core.Kits.ReceiveMode.Create">
             <summary>
-              Always creates new objects
+            Always creates new objects
             </summary>
         </member>
         <member name="F:Speckle.Core.Kits.ReceiveMode.Ignore">
             <summary>
-              Ignores updating previously received objects and does not attempt updating or deleting them, creates new objects
+            Ignores updating previously received objects and does not attempt updating or deleting them, creates new objects
             </summary>
         </member>
         <member name="T:Speckle.Core.Kits.ISpeckleKit">
             <summary>
-              Defines the basic interface for creating a "Speckle Kit"
+            Defines the basic interface for creating a "Speckle Kit"
             </summary>
         </member>
         <member name="P:Speckle.Core.Kits.ISpeckleKit.Types">
             <summary>
-              Gets all the object types (the object model) provided by this kit.
+            Gets all the object types (the object model) provided by this kit.
             </summary>
         </member>
         <member name="P:Speckle.Core.Kits.ISpeckleKit.Converters">
             <summary>
-              Gets all available converters for this Kit.
+            Gets all available converters for this Kit.
             </summary>
         </member>
         <member name="P:Speckle.Core.Kits.ISpeckleKit.Description">
             <summary>
-              Gets this Kit's description.
+            Gets this Kit's description.
             </summary>
         </member>
         <member name="P:Speckle.Core.Kits.ISpeckleKit.Name">
             <summary>
-              Gets this Kit's name.
+            Gets this Kit's name.
             </summary>
         </member>
         <member name="P:Speckle.Core.Kits.ISpeckleKit.Author">
             <summary>
-              Gets this Kit's author.
+            Gets this Kit's author.
             </summary>
         </member>
         <member name="P:Speckle.Core.Kits.ISpeckleKit.WebsiteOrEmail">
             <summary>
-              Gets the website (or email) to contact the Kit's author.
+            Gets the website (or email) to contact the Kit's author.
             </summary>
         </member>
         <member name="M:Speckle.Core.Kits.ISpeckleKit.LoadConverter(System.String)">
             <summary>
-              Tries to load a converter for a specific <paramref name="app" />.
+            Tries to load a converter for a specific <paramref name="app"/>.
             </summary>
-            <param name="app">
-              The host app string for which a <see cref="T:Speckle.Core.Kits.ISpeckleConverter" /> is desired. see
-              <see cref="M:Speckle.Core.Kits.ISpeckleConverter.GetServicedApplications" />
-            </param>
-            <returns>The converter for the specific <paramref name="app" /></returns>
+            <param name="app">The host app string for which a <see cref="T:Speckle.Core.Kits.ISpeckleConverter"/> is desired. see <see cref="M:Speckle.Core.Kits.ISpeckleConverter.GetServicedApplications"/></param>
+            <returns>The converter for the specific <paramref name="app"/></returns>
             <exception cref="T:Speckle.Core.Kits.KitException">Thrown if the requested converter failed to load</exception>
         </member>
         <member name="T:Speckle.Core.Kits.CoreKit">
             <summary>
-              Needed so we can properly deserialize all the Base-derived objects from Core itself.
+            Needed so we can properly deserialize all the Base-derived objects from Core itself.
             </summary>
         </member>
         <member name="P:Speckle.Core.Kits.KitManager.KitsFolder">
             <summary>
-              Local installations store kits in C:\Users\USERNAME\AppData\Roaming\Speckle\Kits
-              Admin/System-wide installations in C:\ProgramData\Speckle\Kits
+            Local installations store kits in C:\Users\USERNAME\AppData\Roaming\Speckle\Kits
+            Admin/System-wide installations in C:\ProgramData\Speckle\Kits
             </summary>
         </member>
         <member name="P:Speckle.Core.Kits.KitManager.Kits">
             <summary>
-              Returns a list of all the kits found on this user's device.
+            Returns a list of all the kits found on this user's device.
             </summary>
         </member>
         <member name="P:Speckle.Core.Kits.KitManager.Types">
             <summary>
-              Returns a list of all the types found in all the kits on this user's device.
+            Returns a list of all the types found in all the kits on this user's device.
             </summary>
         </member>
         <member name="M:Speckle.Core.Kits.KitManager.HasKit(System.String)">
             <summary>
-              Checks whether a specific kit exists.
+            Checks whether a specific kit exists.
             </summary>
             <param name="assemblyFullName"></param>
             <returns></returns>
         </member>
         <member name="M:Speckle.Core.Kits.KitManager.GetKit(System.String)">
             <summary>
-              Gets a specific kit.
+            Gets a specific kit.
             </summary>
             <param name="assemblyFullName"></param>
             <returns></returns>
         </member>
         <member name="M:Speckle.Core.Kits.KitManager.GetDefaultKit">
             <summary>
-              Gets the default Speckle provided kit, "Objects".
+            Gets the default Speckle provided kit, "Objects".
             </summary>
             <returns></returns>
         </member>
         <member name="M:Speckle.Core.Kits.KitManager.GetKitsWithConvertersForApp(System.String)">
             <summary>
-              Returns all the kits with potential converters for the software app.
+            Returns all the kits with potential converters for the software app.
             </summary>
             <param name="app"></param>
             <returns></returns>
         </member>
         <member name="M:Speckle.Core.Kits.KitManager.Initialize(System.String)">
             <summary>
-              Tells the kit manager to initialise from a specific location.
+            Tells the kit manager to initialise from a specific location.
             </summary>
             <param name="kitFolderLocation"></param>
         </member>
         <member name="M:Speckle.Core.Kits.AssemblyExtensions.IsReferencing(System.Reflection.Assembly,System.Reflection.AssemblyName)">
             <summary>
-              Indicates if a given assembly references another which is identified by its name.
+            Indicates if a given assembly references another which is identified by its name.
             </summary>
             <param name="assembly">The assembly which will be probed.</param>
             <param name="referenceName">The reference assembly name.</param>
@@ -1340,75 +1316,71 @@
         </member>
         <member name="T:Speckle.Core.Logging.Analytics">
             <summary>
-              Anonymous telemetry to help us understand how to make a better Speckle.
-              This really helps us to deliver a better open source project and product!
+             Anonymous telemetry to help us understand how to make a better Speckle.
+             This really helps us to deliver a better open source project and product!
             </summary>
         </member>
         <member name="T:Speckle.Core.Logging.Analytics.Events">
             <summary>
-              Default Mixpanel events
+            Default Mixpanel events
             </summary>
         </member>
         <member name="F:Speckle.Core.Logging.Analytics.Events.Send">
             <summary>
-              Event triggered when data is sent to a Speckle Server
+            Event triggered when data is sent to a Speckle Server
             </summary>
         </member>
         <member name="F:Speckle.Core.Logging.Analytics.Events.Receive">
             <summary>
-              Event triggered when data is received from a Speckle Server
+            Event triggered when data is received from a Speckle Server
             </summary>
         </member>
         <member name="F:Speckle.Core.Logging.Analytics.Events.NodeRun">
             <summary>
-              Event triggered when a node is executed in a visual programming environment, it should contain the name of the action
-              and the host application
+            Event triggered when a node is executed in a visual programming environment, it should contain the name of the action and the host application
             </summary>
         </member>
         <member name="F:Speckle.Core.Logging.Analytics.Events.DUIAction">
             <summary>
-              Event triggered when an action is executed in Desktop UI, it should contain the name of the action and the host
-              application
+            Event triggered when an action is executed in Desktop UI, it should contain the name of the action and the host application
             </summary>
         </member>
         <member name="F:Speckle.Core.Logging.Analytics.Events.NodeCreate">
             <summary>
-              Event triggered when a node is first created in a visual programming environment, it should contain the name of the
-              action and the host application
+            Event triggered when a node is first created in a visual programming environment, it should contain the name of the action and the host application
             </summary>
         </member>
         <member name="F:Speckle.Core.Logging.Analytics.Events.ImportExportAlert">
             <summary>
-              Event triggered when the import/export alert is launched or closed
+            Event triggered when the import/export alert is launched or closed
             </summary>
         </member>
         <member name="F:Speckle.Core.Logging.Analytics.Events.Registered">
             <summary>
-              Event triggered when the connector is registered
+            Event triggered when the connector is registered
             </summary>
         </member>
         <member name="F:Speckle.Core.Logging.Analytics.Events.MappingsAction">
             <summary>
-              Event triggered by the Mapping Tool
+            Event triggered by the Mapping Tool
             </summary>
         </member>
         <member name="P:Speckle.Core.Logging.Analytics.LastEmail">
             <summary>
-              Cached email
+            Cached email
             </summary>
         </member>
         <member name="P:Speckle.Core.Logging.Analytics.LastServer">
             <summary>
-              Cached server URL
+            Cached server URL
             </summary>
         </member>
         <member name="M:Speckle.Core.Logging.Analytics.TrackEvent(Speckle.Core.Logging.Analytics.Events,System.Collections.Generic.Dictionary{System.String,System.Object},System.Boolean)">
             <summary>
-              Tracks an event without specifying the email and server.
-              It's not always possible to know which account the user has selected, especially in visual programming.
-              Therefore we are caching the email and server values so that they can be used also when nodes such as "Serialize" are
-              used.
-              If no account info is cached, we use the default account data.
+            Tracks an event without specifying the email and server.
+            It's not always possible to know which account the user has selected, especially in visual programming.
+            Therefore we are caching the email and server values so that they can be used also when nodes such as "Serialize" are used.
+            If no account info is cached, we use the default account data.
             </summary>
             <param name="eventName">Name of the even</param>
             <param name="customProperties">Additional parameters to pass in to event</param>
@@ -1416,7 +1388,7 @@
         </member>
         <member name="M:Speckle.Core.Logging.Analytics.TrackEvent(Speckle.Core.Credentials.Account,Speckle.Core.Logging.Analytics.Events,System.Collections.Generic.Dictionary{System.String,System.Object},System.Boolean)">
             <summary>
-              Tracks an event from a specified account, anonymizes personal information
+            Tracks an event from a specified account, anonymizes personal information
             </summary>
             <param name="account">Account to use, it will be anonymized</param>
             <param name="eventName">Name of the event</param>
@@ -1425,7 +1397,7 @@
         </member>
         <member name="M:Speckle.Core.Logging.Analytics.TrackEvent(System.String,System.String,Speckle.Core.Logging.Analytics.Events,System.Collections.Generic.Dictionary{System.String,System.Object},System.Boolean)">
             <summary>
-              Tracks an event from a specified email and server, anonymizes personal information
+            Tracks an event from a specified email and server, anonymizes personal information
             </summary>
             <param name="hashedEmail">Email of the user anonymized</param>
             <param name="hashedServer">Server URL anonymized</param>
@@ -1433,94 +1405,69 @@
             <param name="customProperties">Additional parameters to pass to the event</param>
             <param name="isAction">True if it's an action performed by a logged user</param>
         </member>
-        <member name="T:Speckle.Core.Logging.OldLog">
-            <summary>
-              Anonymous telemetry to help us understand how to make a better Speckle.
-              This really helps us to deliver a better open source project and product!
-            </summary>
-        </member>
-        <member name="M:Speckle.Core.Logging.OldLog.Initialize">
-            <summary>
-              Initializes Sentry
-            </summary>
-        </member>
-        <member name="M:Speckle.Core.Logging.OldLog.CaptureException(System.Exception,Sentry.SentryLevel,System.Collections.Generic.List{System.Collections.Generic.KeyValuePair{System.String,System.Object}})">
-            <summary>
-              Captures an Exception and makes sure Sentry is initialized
-            </summary>
-            <param name="e"></param>
-            <param name="level"></param>
-            <param name="extra"></param>
-        </member>
-        <member name="M:Speckle.Core.Logging.OldLog.AddBreadcrumb(System.String)">
-            <summary>
-              Adds a Breadcrumb and makes sure Sentry is initialized
-            </summary>
-            <param name="message"></param>
-        </member>
         <member name="T:Speckle.Core.Logging.Setup">
             <summary>
-              Anonymous telemetry to help us understand how to make a better Speckle.
-              This really helps us to deliver a better open source project and product!
+             Anonymous telemetry to help us understand how to make a better Speckle.
+             This really helps us to deliver a better open source project and product!
             </summary>
         </member>
         <member name="P:Speckle.Core.Logging.Setup.HostApplication">
             <summary>
-              Set from the connectors, defines which current host application we're running on.
+            Set from the connectors, defines which current host application we're running on.
             </summary>
         </member>
         <member name="P:Speckle.Core.Logging.Setup.VersionedHostApplication">
             <summary>
-              Set from the connectors, defines which current host application we're running on - includes the version.
+            Set from the connectors, defines which current host application we're running on - includes the version.
             </summary>
         </member>
         <member name="T:Speckle.Core.Logging.SpeckleLogConfiguration">
             <summary>
-              Configuration object for the Speckle logging system.
+            Configuration object for the Speckle logging system.
             </summary>
         </member>
         <member name="F:Speckle.Core.Logging.SpeckleLogConfiguration.enhancedLogContext">
             <summary>
-              Flag to enable enhanced log context. This adds the following enrich calls:
-              - WithClientAgent
-              - WithClientIp
-              - WithExceptionDetails
+            Flag to enable enhanced log context. This adds the following enrich calls:
+            - WithClientAgent
+            - WithClientIp
+            - WithExceptionDetails
             </summary>
         </member>
         <member name="F:Speckle.Core.Logging.SpeckleLogConfiguration.logToConsole">
             <summary>
-              Flag to enable console sink
+            Flag to enable console sink
             </summary>
         </member>
         <member name="F:Speckle.Core.Logging.SpeckleLogConfiguration.logToFile">
             <summary>
-              Flag to enable File sink
+            Flag to enable File sink
             </summary>
         </member>
         <member name="F:Speckle.Core.Logging.SpeckleLogConfiguration.logToSentry">
             <summary>
-              Flag to enable Sentry sink
+            Flag to enable Sentry sink
             </summary>
         </member>
         <member name="F:Speckle.Core.Logging.SpeckleLogConfiguration.logToSeq">
             <summary>
-              Flag to enable Seq sink
+            Flag to enable Seq sink
             </summary>
         </member>
         <member name="F:Speckle.Core.Logging.SpeckleLogConfiguration.minimumLevel">
             <summary>
-              Log events bellow this level are silently dropped
+            Log events bellow this level are silently dropped
             </summary>
         </member>
         <member name="F:Speckle.Core.Logging.SpeckleLogConfiguration.sentryDns">
             <summary>
-              Flag to override the default Sentry DNS
+            Flag to override the default Sentry DNS
             </summary>
         </member>
         <member name="M:Speckle.Core.Logging.SpeckleLogConfiguration.#ctor(Serilog.Events.LogEventLevel,System.Boolean,System.Boolean,System.Boolean,System.Boolean,System.Boolean)">
             <summary>
-              Default SpeckleLogConfiguration constructor.
-              These are the sane defaults we should be using across connectors.
+            Default SpeckleLogConfiguration constructor.
+            These are the sane defaults we should be using across connectors.
             </summary>
             <param name="minimumLevel">Log events bellow this level are silently dropped</param>
             <param name="logToConsole">Flag to enable console log sink</param>
@@ -1531,17 +1478,17 @@
         </member>
         <member name="T:Speckle.Core.Logging.SpeckleLog">
             <summary>
-              Configurator class for a standardized logging system across Speckle (sharp).
+            Configurator class for a standardized logging system across Speckle (sharp).
             </summary>
         </member>
         <member name="M:Speckle.Core.Logging.SpeckleLog.Initialize(System.String,System.String,Speckle.Core.Logging.SpeckleLogConfiguration)">
             <summary>
-              Initialize logger configuration for a global Serilog.Log logger.
+            Initialize logger configuration for a global Serilog.Log logger.
             </summary>
         </member>
         <member name="M:Speckle.Core.Logging.SpeckleLog.CreateConfiguredLogger(System.String,System.String,Speckle.Core.Logging.SpeckleLogConfiguration)">
             <summary>
-              Create a new fully configured Logger instance.
+            Create a new fully configured Logger instance.
             </summary>
             <param name="hostApplicationName">Name of the application using this SDK ie.: "Rhino"</param>
             <param name="hostApplicationVersion">Public version slug of the application using this SDK ie.: "2023"</param>
@@ -1550,150 +1497,220 @@
         </member>
         <member name="T:Speckle.Core.Models.DetachProperty">
             <summary>
-              <para>Flags an object's property as being detachable.</para>
-              <para>
-                If set to true the default serialiser will persist it separately, and add a reference to the property's value
-                in the original object.
-              </para>
-              <para>Only applies to properties of types derived from the Base class.</para>
+            <para>Flags an object's property as being detachable.</para>
+            <para>If set to true the default serialiser will persist it separately, and add a reference to the property's value in the original object.</para>
+            <para>Only applies to properties of types derived from the Base class.</para>
             </summary>
         </member>
         <member name="M:Speckle.Core.Models.DetachProperty.#ctor(System.Boolean)">
             <summary>
-              <para>Flags an object's property as being detachable.</para>
-              <para>
-                If set to true the default serialiser will persist it separately, and add a reference to the property's value
-                in the original object.
-              </para>
-              <para>Only applies to properties of types derived from the Base class.</para>
+            <para>Flags an object's property as being detachable.</para>
+            <para>If set to true the default serialiser will persist it separately, and add a reference to the property's value in the original object.</para>
+            <para>Only applies to properties of types derived from the Base class.</para>
             </summary>
             <param name="_detachable">Wether to detach the property or not.</param>
         </member>
         <member name="T:Speckle.Core.Models.Chunkable">
             <summary>
-              Flags a list or array as splittable into chunks during serialisation. These chunks will be recomposed on
-              deserialisation into the original list. Note: this attribute should be used in conjunction with
-              <see cref="T:Speckle.Core.Models.DetachProperty" />.
-              <para>
-                Use this attribute on properties that can become very long and are not worth detaching into individual
-                elements.
-              </para>
-              <para>
-                Objects per chunk: for simple types, like numbers, use a high value (>10000); for other objects, use a more
-                conservative number depending on their serialised size.
-              </para>
+            Flags a list or array as splittable into chunks during serialisation. These chunks will be recomposed on deserialisation into the original list. Note: this attribute should be used in conjunction with <see cref="T:Speckle.Core.Models.DetachProperty"/>.
+            <para>Use this attribute on properties that can become very long and are not worth detaching into individual elements.</para>
+            <para>Objects per chunk: for simple types, like numbers, use a high value (>10000); for other objects, use a more conservative number depending on their serialised size.</para>
             </summary>
         </member>
         <member name="T:Speckle.Core.Models.Base">
             <summary>
-              Base class for all Speckle object definitions. Provides unified hashing, type extraction and serialisation.
-              <para>When developing a speckle kit, use this class as a parent class.</para>
-              <para>
-                <b>Dynamic properties naming conventions:</b>
-              </para>
-              <para>
-                👉 "__" at the start of a property means it will be ignored, both for hashing and serialisation (e.g.,
-                "__ignoreMe").
-              </para>
-              <para>
-                👉 "@" at the start of a property name means it will be detached (when serialised with a transport)
-                (e.g.((dynamic)obj)["@meshEquivalent"] = ...) .
-              </para>
+            Base class for all Speckle object definitions. Provides unified hashing, type extraction and serialisation.
+            <para>When developing a speckle kit, use this class as a parent class.</para>
+            <para><b>Dynamic properties naming conventions:</b></para>
+            <para>👉 "__" at the start of a property means it will be ignored, both for hashing and serialisation (e.g., "__ignoreMe").</para>
+            <para>👉 "@" at the start of a property name means it will be detached (when serialised with a transport) (e.g.((dynamic)obj)["@meshEquivalent"] = ...) .</para>
             </summary>
         </member>
         <member name="P:Speckle.Core.Models.Base.id">
             <summary>
-              A speckle object's id is an unique hash based on its properties.
-              <b>
-                NOTE: this field will be null unless the object was deserialised from a source. Use the <see cref="!:GetId(bool)" />
-                function to get it.
-              </b>
+            A speckle object's id is an unique hash based on its properties. <b>NOTE: this field will be null unless the object was deserialised from a source. Use the <see cref="!:GetId(bool)"/> function to get it.</b>
             </summary>
         </member>
         <member name="P:Speckle.Core.Models.Base.totalChildrenCount">
             <summary>
-              This property will only be populated if the object is retreieved from storage. Use
-              <see cref="M:Speckle.Core.Models.Base.GetTotalChildrenCount" /> otherwise.
+            This property will only be populated if the object is retreieved from storage. Use <see cref="M:Speckle.Core.Models.Base.GetTotalChildrenCount"/> otherwise.
             </summary>
         </member>
         <member name="P:Speckle.Core.Models.Base.applicationId">
             <summary>
-              Secondary, ideally host application driven, object identifier.
+            Secondary, ideally host application driven, object identifier.
             </summary>
         </member>
         <member name="P:Speckle.Core.Models.Base.speckle_type">
             <summary>
-              Holds the type information of this speckle object, derived automatically
-              from its assembly name and inheritance.
+            Holds the type information of this speckle object, derived automatically
+            from its assembly name and inheritance.
             </summary>
         </member>
         <member name="M:Speckle.Core.Models.Base.GetId(System.Boolean,Speckle.Core.Api.SerializerVersion)">
             <summary>
-              Gets the id (a unique hash) of this object. ⚠️ This method fully serializes the object, which in the case of large
-              objects (with many sub-objects), has a tangible cost. Avoid using it!
-              <para>
-                <b>Hint:</b> Objects that are retrieved/pulled from a server/local cache do have an id (hash) property
-                pre-populated.
-              </para>
-              <para><b>Note:</b>The hash of a decomposed object differs from the hash of a non-decomposed object.</para>
+            Gets the id (a unique hash) of this object. ⚠️ This method fully serializes the object, which in the case of large objects (with many sub-objects), has a tangible cost. Avoid using it!
+            <para><b>Hint:</b> Objects that are retrieved/pulled from a server/local cache do have an id (hash) property pre-populated.</para>
+            <para><b>Note:</b>The hash of a decomposed object differs from the hash of a non-decomposed object.</para>
             </summary>
             <param name="decompose">If true, will decompose the object in the process of hashing.</param>
             <returns></returns>
         </member>
         <member name="M:Speckle.Core.Models.Base.GetTotalChildrenCount">
             <summary>
-              Attempts to count the total number of detachable objects.
+            Attempts to count the total number of detachable objects.
             </summary>
             <returns>The total count of the detachable children + 1 (itself).</returns>
         </member>
         <member name="M:Speckle.Core.Models.Base.ShallowCopy">
             <summary>
-              Creates a shallow copy of the current base object.
-              This operation does NOT copy/duplicate the data inside each prop.
-              The new object's property values will be pointers to the original object's property value.
+            Creates a shallow copy of the current base object.
+            This operation does NOT copy/duplicate the data inside each prop.
+            The new object's property values will be pointers to the original object's property value.
             </summary>
             <returns>A shallow copy of the original object.</returns>
         </member>
         <member name="P:Speckle.Core.Models.Blob.id">
             <summary>
-              For blobs, the id is the same as the file hash. Please note, when deserialising, the id will be set from the original
-              hash generated on sending.
+            For blobs, the id is the same as the file hash. Please note, when deserialising, the id will be set from the original hash generated on sending.
             </summary>
+        </member>
+        <member name="T:Speckle.Core.Models.Collection">
+            <summary>
+            A simple container for organising objects within a model and preserving object hierarchy.
+            A container is defined by a human-readable <see cref="P:Speckle.Core.Models.Collection.name"/>, a unique <see cref="!:applicationId"/>, and its list of contained <see cref="P:Speckle.Core.Models.Collection.elements"/>.
+            The <see cref="P:Speckle.Core.Models.Collection.elements"/> can include an unrestricted number of <see cref="T:Speckle.Core.Models.Base"/> objects including additional nested <see cref="T:Speckle.Core.Models.Collection"/>s.
+            </summary>
+            <remarks>
+            A <see cref="T:Speckle.Core.Models.Collection"/> can be for example a Layer in Rhino/AutoCad, a collection in Blender, or a Category in Revit.
+            The location of each collection in the hierarchy of collections in a commit will be retrieved through commit traversal.
+            </remarks>
+        </member>
+        <member name="M:Speckle.Core.Models.Collection.#ctor(System.String,System.String)">
+            <summary>
+            Constructor for a basic collection.
+            </summary>
+            <param name="name">The human-readable name of this collection</param>
+        </member>
+        <member name="P:Speckle.Core.Models.Collection.name">
+            <summary>
+            The human-readable name of the <see cref="T:Speckle.Core.Models.Collection"/>.
+            </summary>
+            <remarks>This name is not necessarily unique within a commit. Set the applicationId for a unique identifier.</remarks>
+        </member>
+        <member name="P:Speckle.Core.Models.Collection.collectionType">
+            <summary>
+            The type of this collection
+            </summary>
+        </member>
+        <member name="P:Speckle.Core.Models.Collection.elements">
+            <summary>
+            The elements contained in this <see cref="T:Speckle.Core.Models.Collection"/>.
+            </summary>
+            <remarks>
+            This can include additional nested <see cref="T:Speckle.Core.Models.Collection"/>s.
+            </remarks>
+        </member>
+        <member name="T:Speckle.Core.Models.CommitObjectBuilder`1">
+            <summary>
+            Abstract Builder class for a root commit <see cref="T:Speckle.Core.Models.Base"/> object.
+            </summary>
+            <typeparam name="TNativeObjectData">The native object data type needed as input for building <see cref="F:Speckle.Core.Models.CommitObjectBuilder`1._parentInfos"/></typeparam>
+            <remarks>
+            It is designed to be inherited by a host app specific implementation,
+            to give connectors flexibility in constructing their objects.
+            Inheritors should also create some function to add
+            </remarks>
+        </member>
+        <member name="F:Speckle.Core.Models.CommitObjectBuilder`1.Root">
+            <summary>Special appId symbol for the root object</summary>
+        </member>
+        <member name="F:Speckle.Core.Models.CommitObjectBuilder`1.converted">
+            <summary>app id -> base</summary>
+        </member>
+        <member name="F:Speckle.Core.Models.CommitObjectBuilder`1._parentInfos">
+            <summary>Base -> Tuple{Parent App Id, propName} ordered by priority</summary>
+        </member>
+        <member name="M:Speckle.Core.Models.CommitObjectBuilder`1.IncludeObject(Speckle.Core.Models.Base,`0)">
+            <summary>
+            Given the parameters, builds connector specific <see cref="F:Speckle.Core.Models.CommitObjectBuilder`1._parentInfos"/>
+            to be applied when <see cref="M:Speckle.Core.Models.CommitObjectBuilder`1.BuildCommitObject(Speckle.Core.Models.Base)"/> is called.
+            </summary>
+            <param name="conversionResult"></param>
+            <param name="nativeElement"></param>
+        </member>
+        <member name="M:Speckle.Core.Models.CommitObjectBuilder`1.BuildCommitObject(Speckle.Core.Models.Base)">
+            <summary>
+            Iterates through the converted objects applying
+            </summary>
+            <remarks>
+            Can be overriden to adjust exactly which objects get automatically applied,
+            or to inject additional items into the <see cref="F:Speckle.Core.Models.CommitObjectBuilder`1.converted"/> dict that should not be automatically applied.
+            </remarks>
+            <param name="rootCommitObject"></param>
+        </member>
+        <member name="M:Speckle.Core.Models.CommitObjectBuilder`1.SetRelationship(Speckle.Core.Models.Base,System.ValueTuple{System.String,System.String}[])">
+            <summary>
+            Sets information on how a given object should be nested in the commit tree.
+            <paramref name="parentInfo"/> encodes the order in which we should try and nest the given <paramref name="conversionResult"/>
+            when <see cref="!:CommitObjectBuilder"/> is called
+            </summary>
+            <param name="conversionResult">The object to be nested</param>
+            <param name="parentInfo">Information about how the object ideally should be nested, in order of priority</param>
+        </member>
+        <member name="M:Speckle.Core.Models.CommitObjectBuilder`1.ApplyRelationships(System.Collections.Generic.IEnumerable{Speckle.Core.Models.Base},Speckle.Core.Models.Base)">
+            <summary>
+            For each object in <paramref name="ToAdd"/>
+            <inheritdoc cref="M:Speckle.Core.Models.CommitObjectBuilder`1.ApplyRelationship(Speckle.Core.Models.Base,Speckle.Core.Models.Base)"/>
+            </summary>
+            <param name="toAdd"></param>
+            <param name="rootCommitObject"></param>
+        </member>
+        <member name="M:Speckle.Core.Models.CommitObjectBuilder`1.ApplyRelationship(Speckle.Core.Models.Base,Speckle.Core.Models.Base)">
+            <summary>
+            Will attempt to find and nest the <paramref name="current"/> object
+            under the first valid parent according to the <see cref="F:Speckle.Core.Models.CommitObjectBuilder`1._parentInfos"/> <see cref="F:Speckle.Core.Models.CommitObjectBuilder`1.converted"/> dictionary.
+            </summary>
+            <remarks>
+            A parent is considered valid if
+            1. Is non null
+            2. Is in the <see cref="F:Speckle.Core.Models.CommitObjectBuilder`1.converted"/> dictionary
+            3. Has (or can dynamically accept) a <see cref="T:System.Collections.IList"/> typed property with the propName specified by the <see cref="F:Speckle.Core.Models.CommitObjectBuilder`1._parentInfos"/> item
+            4. Said <see cref="T:System.Collections.IList"/> can accept the <see cref="!:current"/> object's type
+            </remarks>
+            <param name="current"></param>
+            <param name="rootCommitObject"></param>
+            <exception cref="T:System.InvalidOperationException">Thrown when no valid parent was found for <see cref="!:current"/> given <see cref="F:Speckle.Core.Models.CommitObjectBuilder`1._parentInfos"/></exception>
         </member>
         <member name="T:Speckle.Core.Models.DynamicBase">
             <summary>
-              Base class implementing a bunch of nice dynamic object methods, like adding and removing props dynamically. Makes c#
-              feel like json.
-              <para>Orginally adapted from Rick Strahl 🤘</para>
-              <para>https://weblog.west-wind.com/posts/2012/feb/08/creating-a-dynamic-extensible-c-expando-object</para>
+            Base class implementing a bunch of nice dynamic object methods, like adding and removing props dynamically. Makes c# feel like json.
+            <para>Orginally adapted from Rick Strahl 🤘</para>
+            <para>https://weblog.west-wind.com/posts/2012/feb/08/creating-a-dynamic-extensible-c-expando-object</para>
             </summary>
         </member>
         <member name="F:Speckle.Core.Models.DynamicBase.DefaultIncludeMembers">
             <summary>
-              Default <see cref="T:Speckle.Core.Models.DynamicBaseMemberType" /> value for <see cref="M:Speckle.Core.Models.DynamicBase.GetMembers(Speckle.Core.Models.DynamicBaseMemberType)" />
+            Default <see cref="T:Speckle.Core.Models.DynamicBaseMemberType"/> value for <see cref="M:Speckle.Core.Models.DynamicBase.GetMembers(Speckle.Core.Models.DynamicBaseMemberType)"/>
             </summary>
         </member>
         <member name="F:Speckle.Core.Models.DynamicBase.properties">
             <summary>
-              The actual property bag, where dynamically added props are stored.
+            The actual property bag, where dynamically added props are stored.
             </summary>
         </member>
         <member name="P:Speckle.Core.Models.DynamicBase.Item(System.String)">
             <summary>
-              Sets and gets properties using the key accessor pattern. E.g.:
-              <para>
-                <pre>((dynamic)myObject)["superProperty"] = 42;</pre>
-              </para>
+            Sets and gets properties using the key accessor pattern. E.g.:
+            <para><pre>((dynamic)myObject)["superProperty"] = 42;</pre></para>
             </summary>
             <param name="key"></param>
             <returns></returns>
         </member>
         <member name="M:Speckle.Core.Models.DynamicBase.TryGetMember(System.Dynamic.GetMemberBinder,System.Object@)">
             <summary>
-              Gets properties via the dot syntax.
-              <para>
-                <pre>((dynamic)myObject).superProperty;</pre>
-              </para>
+            Gets properties via the dot syntax.
+            <para><pre>((dynamic)myObject).superProperty;</pre></para>
             </summary>
             <param name="binder"></param>
             <param name="result"></param>
@@ -1701,10 +1718,8 @@
         </member>
         <member name="M:Speckle.Core.Models.DynamicBase.TrySetMember(System.Dynamic.SetMemberBinder,System.Object)">
             <summary>
-              Sets properties via the dot syntax.
-              <para>
-                <pre>((dynamic)myObject).superProperty = something;</pre>
-              </para>
+            Sets properties via the dot syntax.
+            <para><pre>((dynamic)myObject).superProperty = something;</pre></para>
             </summary>
             <param name="binder"></param>
             <param name="value"></param>
@@ -1712,318 +1727,316 @@
         </member>
         <member name="M:Speckle.Core.Models.DynamicBase.GetDynamicMemberNames">
             <summary>
-              Gets all of the property names on this class, dynamic or not.
-            </summary>
-            <returns></returns>
+            Gets all of the property names on this class, dynamic or not.
+            </summary> <returns></returns>
         </member>
         <member name="M:Speckle.Core.Models.DynamicBase.GetInstanceMembersNames">
             <summary>
-              Gets the names of the defined class properties (typed).
+            Gets the names of the defined class properties (typed).
             </summary>
             <returns></returns>
         </member>
         <member name="M:Speckle.Core.Models.DynamicBase.GetInstanceMembers">
             <summary>
-              Gets the defined (typed) properties of this object.
+            Gets the defined (typed) properties of this object.
             </summary>
             <returns></returns>
         </member>
         <member name="M:Speckle.Core.Models.DynamicBase.GetMemberNames">
             <summary>
-              Gets the names of the typed and dynamic properties that don't have a [SchemaIgnore] attribute.
+            Gets the names of the typed and dynamic properties that don't have a [SchemaIgnore] attribute.
             </summary>
             <returns></returns>
         </member>
         <member name="M:Speckle.Core.Models.DynamicBase.GetMembers(Speckle.Core.Models.DynamicBaseMemberType)">
             <summary>
-              Gets the typed and dynamic properties.
+             Gets the typed and dynamic properties.
             </summary>
-            <param name="includeMembers">
-              Specifies which members should be included in the resulting dictionary. Can be
-              concatenated with "|"
-            </param>
+            <param name="includeMembers">Specifies which members should be included in the resulting dictionary. Can be concatenated with "|"</param>
             <returns>A dictionary containing the key's and values of the object.</returns>
         </member>
         <member name="M:Speckle.Core.Models.DynamicBase.GetDynamicMembers">
             <summary>
-              Gets the dynamically added property names only.
+            Gets the dynamically added property names only.
             </summary>
             <returns></returns>
         </member>
         <member name="T:Speckle.Core.Models.IgnoreTheItemAttribute">
             <summary>
-              This attribute is used internally to hide the this[key]{get; set;} property from inner reflection on members.
-              For more info see this discussion:
-              https://speckle.community/t/why-do-i-keep-forgetting-base-objects-cant-use-item-as-a-dynamic-member/3246/5
+            This attribute is used internally to hide the this[key]{get; set;} property from inner reflection on members.
+            For more info see this discussion: https://speckle.community/t/why-do-i-keep-forgetting-base-objects-cant-use-item-as-a-dynamic-member/3246/5
             </summary>
         </member>
         <member name="T:Speckle.Core.Models.DynamicBaseMemberType">
             <summary>
-              Represents all different types of members that can be returned by <see cref="M:Speckle.Core.Models.DynamicBase.GetMembers(Speckle.Core.Models.DynamicBaseMemberType)" />
+            Represents all different types of members that can be returned by <see cref="M:Speckle.Core.Models.DynamicBase.GetMembers(Speckle.Core.Models.DynamicBaseMemberType)"/>
             </summary>
         </member>
         <member name="F:Speckle.Core.Models.DynamicBaseMemberType.Instance">
             <summary>
-              The typed members of the DynamicBase object
+            The typed members of the DynamicBase object
             </summary>
         </member>
         <member name="F:Speckle.Core.Models.DynamicBaseMemberType.Dynamic">
             <summary>
-              The dynamically added members of the DynamicBase object
+            The dynamically added members of the DynamicBase object
             </summary>
         </member>
         <member name="F:Speckle.Core.Models.DynamicBaseMemberType.Obsolete">
             <summary>
-              The typed members flagged with <see cref="T:System.ObsoleteAttribute" /> attribute.
+            The typed members flagged with <see cref="T:System.ObsoleteAttribute"/> attribute.
             </summary>
         </member>
         <member name="F:Speckle.Core.Models.DynamicBaseMemberType.SchemaIgnored">
             <summary>
-              The typed members flagged with <see cref="T:Speckle.Core.Kits.SchemaIgnore" /> attribute.
+            The typed members flagged with <see cref="T:Speckle.Core.Kits.SchemaIgnore"/> attribute.
             </summary>
         </member>
         <member name="F:Speckle.Core.Models.DynamicBaseMemberType.SchemaComputed">
             <summary>
-              The typed methods flagged with TODO:
+            The typed methods flagged with TODO:
             </summary>
         </member>
         <member name="F:Speckle.Core.Models.DynamicBaseMemberType.InstanceAll">
             <summary>
-              All the typed members, including ones with <see cref="T:System.ObsoleteAttribute" /> or
-              <see cref="T:Speckle.Core.Kits.SchemaIgnore" /> attributes.
+            All the typed members, including ones with <see cref="T:System.ObsoleteAttribute"/> or <see cref="T:Speckle.Core.Kits.SchemaIgnore"/> attributes.
             </summary>
         </member>
         <member name="F:Speckle.Core.Models.DynamicBaseMemberType.All">
             <summary>
-              All the members, including dynamic and instance members flagged with <see cref="T:System.ObsoleteAttribute" /> or
-              <see cref="T:Speckle.Core.Kits.SchemaIgnore" /> attributes
+            All the members, including dynamic and instance members flagged with <see cref="T:System.ObsoleteAttribute"/> or <see cref="T:Speckle.Core.Kits.SchemaIgnore"/> attributes
             </summary>
         </member>
         <member name="T:Speckle.Core.Models.Extensions.BaseExtensions.BaseRecursionBreaker">
             <summary>
-              Provides access to each base object in the traverse function, and decides whether the traverse function should
-              continue traversing it's children or not.
+            Provides access to each base object in the traverse function, and decides whether the traverse function should continue traversing it's children or not.
             </summary>
             <remarks>
-              Should return 'true' if you wish to stop the traverse behaviour, 'false' otherwise.
+            Should return 'true' if you wish to stop the traverse behaviour, 'false' otherwise.
             </remarks>
         </member>
         <member name="M:Speckle.Core.Models.Extensions.BaseExtensions.Flatten(Speckle.Core.Models.Base,Speckle.Core.Models.Extensions.BaseExtensions.BaseRecursionBreaker)">
             <summary>
-              Traverses through the <paramref name="root" /> object and its children.
-              Only traverses through the first occurrence of a <see cref="T:Speckle.Core.Models.Base" /> object (to prevent infinite recursion on
-              circular references)
+            Traverses through the <paramref name="root"/> object and its children.
+            Only traverses through the first occurrence of a <see cref="T:Speckle.Core.Models.Base"/> object (to prevent infinite recursion on circular references)
             </summary>
             <param name="root">The root object of the tree to flatten</param>
-            <param name="recursionBreaker">
-              Optional predicate function to determine whether to break (or continue) traversal of a
-              <see cref="T:Speckle.Core.Models.Base" /> object's children.
-            </param>
-            <returns>A flat List of <see cref="T:Speckle.Core.Models.Base" /> objects.</returns>
-            <seealso cref="M:Speckle.Core.Models.Extensions.BaseExtensions.Traverse(Speckle.Core.Models.Base,Speckle.Core.Models.Extensions.BaseExtensions.BaseRecursionBreaker)" />
+            <param name="recursionBreaker">Optional predicate function to determine whether to break (or continue) traversal of a <see cref="T:Speckle.Core.Models.Base"/> object's children.</param>
+            <returns>A flat List of <see cref="T:Speckle.Core.Models.Base"/> objects.</returns>
+            <seealso cref="M:Speckle.Core.Models.Extensions.BaseExtensions.Traverse(Speckle.Core.Models.Base,Speckle.Core.Models.Extensions.BaseExtensions.BaseRecursionBreaker)"/>
         </member>
         <member name="M:Speckle.Core.Models.Extensions.BaseExtensions.Traverse(Speckle.Core.Models.Base,Speckle.Core.Models.Extensions.BaseExtensions.BaseRecursionBreaker)">
             <summary>
-              Depth-first traversal of the specified <paramref name="root" /> object and all of its children as a deferred
-              Enumerable, with a <paramref name="recursionBreaker" /> function to break the traversal.
+            Depth-first traversal of the specified <paramref name="root"/> object and all of its children as a deferred Enumerable, with a <paramref name="recursionBreaker"/> function to break the traversal.
             </summary>
-            <param name="root">The <see cref="T:Speckle.Core.Models.Base" /> object to traverse.</param>
-            <param name="recursionBreaker">
-              Predicate function to determine whether to break (or continue) traversal of a
-              <see cref="T:Speckle.Core.Models.Base" /> object's children.
-            </param>
-            <returns>Deferred Enumerable of the <see cref="T:Speckle.Core.Models.Base" /> objects being traversed (iterable only once).</returns>
+            <param name="root">The <see cref="T:Speckle.Core.Models.Base"/> object to traverse.</param>
+            <param name="recursionBreaker">Predicate function to determine whether to break (or continue) traversal of a <see cref="T:Speckle.Core.Models.Base"/> object's children.</param>
+            <returns>Deferred Enumerable of the <see cref="T:Speckle.Core.Models.Base"/> objects being traversed (iterable only once).</returns>
         </member>
+        <member name="M:Speckle.Core.Models.Extensions.BaseExtensions.GetDetachedProp(Speckle.Core.Models.Base,System.String)">
+            <summary>
+            see <see cref="M:Speckle.Core.Models.Extensions.BaseExtensions.GetDetachedPropName(Speckle.Core.Models.Base,System.String)"/>
+            </summary>
+            <remarks><inheritdoc cref="M:Speckle.Core.Models.Extensions.BaseExtensions.GetDetachedPropName(Speckle.Core.Models.Base,System.String)"/></remarks>
+            <param name="speckleObject"></param>
+            <returns>elements</returns>
+        </member>
+        <member name="M:Speckle.Core.Models.Extensions.BaseExtensions.SetDetachedProp(Speckle.Core.Models.Base,System.String,System.Object)">
+            <summary>
+            see <see cref="M:Speckle.Core.Models.Extensions.BaseExtensions.GetDetachedPropName(Speckle.Core.Models.Base,System.String)"/>
+            </summary>
+            <remarks><inheritdoc cref="M:Speckle.Core.Models.Extensions.BaseExtensions.GetDetachedPropName(Speckle.Core.Models.Base,System.String)"/></remarks>
+            <param name="speckleObject"></param>
+            <param name="value">Value to set</param>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:Speckle.Core.Models.Extensions.BaseExtensions.GetDetachedPropName(Speckle.Core.Models.Base,System.String)" -->
         <member name="T:Speckle.Core.Models.Abstract">
             <summary>
-              Wrapper around other, third party, classes that are not coming from a speckle kit.
-              <para>
-                Serialization and deserialization of the base object happens through default Newtonsoft converters. If your
-                object does not de/serialize correctly, this class will not prevent that from happening.
-              </para>
-              <para>
-                <b>Limitations:</b>
-              </para>
-              <para>- Base object needs to be serializable.</para>
-              <para>- Inline collection declarations with values do not behave correctly.</para>
-              <para>- Your class needs to have a void constructor.</para>
-              <para>- Probably more. File a bug!</para>
+            Wrapper around other, third party, classes that are not coming from a speckle kit.
+            <para>Serialization and deserialization of the base object happens through default Newtonsoft converters. If your object does not de/serialize correctly, this class will not prevent that from happening.</para>
+            <para><b>Limitations:</b></para>
+            <para>- Base object needs to be serializable.</para>
+            <para>- Inline collection declarations with values do not behave correctly.</para>
+            <para>- Your class needs to have a void constructor.</para>
+            <para>- Probably more. File a bug!</para>
             </summary>
         </member>
         <member name="M:Speckle.Core.Models.Abstract.#ctor">
             <summary>
-              See <see cref="T:Speckle.Core.Models.Abstract" /> for limitations of this approach.
+            See <see cref="T:Speckle.Core.Models.Abstract"/> for limitations of this approach.
             </summary>
         </member>
         <member name="M:Speckle.Core.Models.Abstract.#ctor(System.Object)">
             <summary>
-              See <see cref="T:Speckle.Core.Models.Abstract" /> for limitations of this approach.
+            See <see cref="T:Speckle.Core.Models.Abstract"/> for limitations of this approach.
             </summary>
             <param name="_original"></param>
         </member>
         <member name="P:Speckle.Core.Models.Abstract.base">
             <summary>
-              The original object.
+            The original object.
             </summary>
         </member>
         <member name="T:Speckle.Core.Models.DataChunk">
             <summary>
-              <para>In short, this helps you chunk big things into smaller things.</para>
-              See the following <see href="https://pics.me.me/chunky-boi-57848570.png">reference.</see>
+            <para>In short, this helps you chunk big things into smaller things.</para>
+            See the following <see href="https://pics.me.me/chunky-boi-57848570.png">reference.</see>
             </summary>
             <typeparam name="T"></typeparam>
         </member>
         <member name="T:Speckle.Core.Models.ApplicationObject">
             <summary>
-              A simple wrapper to keep track of the relationship between speckle objects and their host-application siblings in
-              cases where the
-              <see cref="P:Speckle.Core.Models.Base.applicationId" /> cannot correspond with the <see cref="P:Speckle.Core.Models.ApplicationObject.CreatedIds" /> (ie, on
-              receiving operations).
+            A simple wrapper to keep track of the relationship between speckle objects and their host-application siblings in cases where the
+            <see cref="P:Speckle.Core.Models.Base.applicationId"/> cannot correspond with the <see cref="P:Speckle.Core.Models.ApplicationObject.CreatedIds"/> (ie, on receiving operations).
             </summary>
         </member>
         <member name="P:Speckle.Core.Models.ApplicationObject.applicationId">
             <summary>
-              ID of the object from host application that generated it.
+            ID of the object from host application that generated it.
             </summary>
         </member>
         <member name="P:Speckle.Core.Models.ApplicationObject.Container">
             <summary>
-              The container for the object in the native application
+            The container for the object in the native application
             </summary>
         </member>
         <member name="P:Speckle.Core.Models.ApplicationObject.Convertible">
             <summary>
-              Indicates if conversion is supported by the converter
+            Indicates if conversion is supported by the converter
             </summary>
         </member>
         <member name="P:Speckle.Core.Models.ApplicationObject.Fallback">
             <summary>
-              The fallback values if direct conversion is not available, typically displayValue
+            The fallback values if direct conversion is not available, typically displayValue
             </summary>
         </member>
         <member name="P:Speckle.Core.Models.ApplicationObject.OriginalId">
             <summary>
-              The Speckle id (on receive) or native id (on send)
+            The Speckle id (on receive) or native id (on send)
             </summary>
             <remarks>
-              Used to retrieve this object in <code>ProgressReport.GetReportObject()</code>, typically to pass between connectors
-              and converters
+            Used to retrieve this object in <code>ProgressReport.GetReportObject()</code>, typically to pass between connectors and converters
             </remarks>
         </member>
         <member name="P:Speckle.Core.Models.ApplicationObject.Descriptor">
             <summary>
-              A descriptive string to describe the object. Use the object type as default.
+            A descriptive string to describe the object. Use the object type as default.
             </summary>
         </member>
         <member name="P:Speckle.Core.Models.ApplicationObject.CreatedIds">
             <summary>
-              The created object ids associated with this object
+            The created object ids associated with this object
             </summary>
             <remarks>
-              On send, this is currently left empty as generating Speckle ids would be performance expensive
+            On send, this is currently left empty as generating Speckle ids would be performance expensive
             </remarks>
         </member>
         <member name="P:Speckle.Core.Models.ApplicationObject.Status">
             <summary>
-              Conversion status of object
+            Conversion status of object
             </summary>
         </member>
         <member name="P:Speckle.Core.Models.ApplicationObject.Log">
             <summary>
-              Conversion notes or other important information to expose to the user
+            Conversion notes or other important information to expose to the user
             </summary>
         </member>
         <member name="P:Speckle.Core.Models.ApplicationObject.Converted">
             <summary>
-              Converted objects corresponding to this object
+            Converted objects corresponding to this object
             </summary>
             <remarks>
-              Used during receive for convenience, corresponds to CreatedIds
+            Used during receive for convenience, corresponds to CreatedIds
             </remarks>
         </member>
         <member name="P:Speckle.Core.Models.ProgressReport.ConversionLog">
             <summary>
-              Keeps track of the conversion process
+            Keeps track of the conversion process
             </summary>
         </member>
         <member name="P:Speckle.Core.Models.ProgressReport.ConversionErrors">
             <summary>
-              Keeps track of errors in the conversions.
+            Keeps track of errors in the conversions.
             </summary>
         </member>
         <member name="P:Speckle.Core.Models.ProgressReport.OperationErrors">
             <summary>
-              Keeps track of HANDLED errors that occur during send/recieve commands.
+            Keeps track of HANDLED errors that occur during send/recieve commands.
             </summary>
             <remarks>
-              Handled errors specific to the conversion, should be added to ConversionErrors
-              Unhandleable errors (i.e. that lead to the entire send/receive failing) should be Thrown instead.
+            Handled errors specific to the conversion, should be added to ConversionErrors
+            Unhandleable errors (i.e. that lead to the entire send/receive failing) should be Thrown instead.
             </remarks>
         </member>
         <member name="M:Speckle.Core.Models.GraphTraversal.DefaultTraversal.CreateTraverseFunc(Speckle.Core.Kits.ISpeckleConverter)">
             <summary>
-              Traverses until finds a convertable object (or fallback) then traverses members
+            Default traversal rule that ideally should be used by all connectors
             </summary>
+            <remarks>
+            Treats convertable objects <see cref="M:Speckle.Core.Kits.ISpeckleConverter.CanConvertToNative(Speckle.Core.Models.Base)"/> and objects with displayValues as "convertable" such that only elements and dynamic props will be traversed
+            </remarks>
             <param name="converter"></param>
             <returns></returns>
         </member>
         <member name="M:Speckle.Core.Models.GraphTraversal.DefaultTraversal.CreateRevitTraversalFunc(Speckle.Core.Kits.ISpeckleConverter)">
             <summary>
-              Traverses until finds a convertable object then HALTS deeper traversal
+            Traverses until finds a convertable object then HALTS deeper traversal
             </summary>
+            <remarks>
+            Current <see cref="!:Objects.Converter.Revit.ConverterRevit"/> does traversal,
+            so this traversal is a shallow traversal for directly convertable objects,
+            and a deep traversal for all other types
+            </remarks>
             <param name="converter"></param>
             <returns></returns>
         </member>
         <member name="M:Speckle.Core.Models.GraphTraversal.DefaultTraversal.CreateBIMTraverseFunc(Speckle.Core.Kits.ISpeckleConverter)">
             <summary>
-              Traverses until finds a convertable object (or fallback) then traverses members
+            Traverses until finds a convertable object (or fallback) then traverses members
             </summary>
             <param name="converter"></param>
             <returns></returns>
         </member>
         <member name="M:Speckle.Core.Models.GraphTraversal.GraphTraversal.Traverse(Speckle.Core.Models.Base)">
             <summary>
-              Given <paramref name="root" /> object, will recursively traverse members according to the provided traversal rules.
+            Given <paramref name="root"/> object, will recursively traverse members according to the provided traversal rules.
             </summary>
             <param name="root">The object to traverse members</param>
-            <returns>
-              Lazily returns <see cref="T:Speckle.Core.Models.Base" /> objects found during traversal (including <paramref name="root" />),
-              wrapped within a <see cref="T:Speckle.Core.Models.GraphTraversal.TraversalContext" />
-            </returns>
+            <returns>Lazily returns <see cref="T:Speckle.Core.Models.Base"/> objects found during traversal (including <paramref name="root"/>), wrapped within a <see cref="T:Speckle.Core.Models.GraphTraversal.TraversalContext"/></returns>
         </member>
         <member name="M:Speckle.Core.Models.GraphTraversal.GraphTraversal.TraverseMember(System.Object)">
             <summary>
-              Traverses supported Collections yielding <see cref="T:Speckle.Core.Models.Base" /> objects.
-              Does not traverse <see cref="T:Speckle.Core.Models.Base" />, only (potentially nested) collections.
+            Traverses supported Collections yielding <see cref="T:Speckle.Core.Models.Base"/> objects.
+            Does not traverse <see cref="T:Speckle.Core.Models.Base"/>, only (potentially nested) collections.
             </summary>
             <param name="value">The value to traverse</param>
         </member>
         <member name="T:Speckle.Core.Models.GraphTraversal.ITraversalRule">
             <summary>
-              Interface for a definition of conditional traversal of <see cref="T:Speckle.Core.Models.Base" /> objects.
+            Interface for a definition of conditional traversal of <see cref="T:Speckle.Core.Models.Base"/> objects.
             </summary>
         </member>
         <member name="M:Speckle.Core.Models.GraphTraversal.ITraversalRule.MembersToTraverse(Speckle.Core.Models.Base)">
             <param name="b"></param>
             <returns>The member names to traverse</returns>
-            <remarks>Return may include member names <paramref name="b" /> doesn't have</remarks>
+            <remarks>Return may include member names <paramref name="b"/> doesn't have</remarks>
         </member>
         <member name="M:Speckle.Core.Models.GraphTraversal.ITraversalRule.DoesRuleHold(Speckle.Core.Models.Base)">
             <summary>
-              Evaluates the traversal rule given <paramref name="o" />
+            Evaluates the traversal rule given <paramref name="o"/>
             </summary>
             <param name="o"></param>
             <returns></returns>
         </member>
         <member name="T:Speckle.Core.Models.GraphTraversal.DefaultRule">
             <summary>
-              The "traverse none" rule that always holds true
+            The "traverse none" rule that always holds true
             </summary>
         </member>
         <member name="T:Speckle.Core.Models.GraphTraversal.TraversalRule">
             <summary>
-              A traversal rule defines the conditional traversal behaviour when traversing a given <see cref="T:Speckle.Core.Models.Base" /> objects.
-              Specifies what members to traverse if any provided <see cref="F:Speckle.Core.Models.GraphTraversal.TraversalRule.conditions" /> are met.
+            A traversal rule defines the conditional traversal behaviour when traversing a given <see cref="T:Speckle.Core.Models.Base"/> objects.
+            Specifies what members to traverse if any provided <see cref="F:Speckle.Core.Models.GraphTraversal.TraversalRule.conditions"/> are met.
             </summary>
             <remarks>Follows the builder pattern to ensure that a rule is complete before usable, see usages</remarks>
         </member>
@@ -2032,44 +2045,41 @@
         </member>
         <member name="T:Speckle.Core.Models.GraphTraversal.ITraversalBuilderWhen">
             <summary>
-              Interface for traversal rule in a building (unusable) state
+            Interface for traversal rule in a building (unusable) state
             </summary>
         </member>
         <member name="M:Speckle.Core.Models.GraphTraversal.ITraversalBuilderWhen.When(Speckle.Core.Models.GraphTraversal.WhenCondition)">
             <summary>
-              Adds a condition to this rule. This rule will hold true when ANY of its conditions holds true.
+            Adds a condition to this rule. This rule will hold true when ANY of its conditions holds true.
             </summary>
             <param name="condition"></param>
             <returns>Traversal rule in a building (unusable) state</returns>
         </member>
         <member name="T:Speckle.Core.Models.GraphTraversal.SelectMembers">
             <summary>
-              Delegate for selecting members (by member name) of an given <see cref="T:Speckle.Core.Models.Base" /> object
+            Delegate for selecting members (by member name) of an given <see cref="T:Speckle.Core.Models.Base"/> object
             </summary>
         </member>
         <member name="T:Speckle.Core.Models.GraphTraversal.ITraversalBuilderTraverse">
             <summary>
-              Interface for traversal rule in a building (unusable) state
+            Interface for traversal rule in a building (unusable) state
             </summary>
         </member>
         <member name="M:Speckle.Core.Models.GraphTraversal.ITraversalBuilderTraverse.ContinueTraversing(Speckle.Core.Models.GraphTraversal.SelectMembers)">
-            <seealso cref="M:Speckle.Core.Models.GraphTraversal.ITraversalRule.MembersToTraverse(Speckle.Core.Models.Base)" />
-            <param name="membersToTraverse">
-              Function returning the members that should be traversed for objects where this rule
-              holds <see langword="true" />
-            </param>
+            <seealso cref="M:Speckle.Core.Models.GraphTraversal.ITraversalRule.MembersToTraverse(Speckle.Core.Models.Base)"/>
+            <param name="membersToTraverse">Function returning the members that should be traversed for objects where this rule holds <see langword = "true"/></param>
             <returns>Traversal rule in a usable state</returns>
         </member>
         <member name="M:Speckle.Core.Models.Utilities.hashString(System.String,Speckle.Core.Models.Utilities.HashingFuctions)">
             <summary>
-              Wrapper method around hashing functions. Defaults to md5.
+            Wrapper method around hashing functions. Defaults to md5.
             </summary>
             <param name="input"></param>
             <returns></returns>
         </member>
         <member name="M:Speckle.Core.Models.Utilities.GetApplicationProps(System.Object,System.Type,System.Boolean,System.Collections.Generic.List{System.String})">
             <summary>
-              Retrieves the simple type properties of an object
+            Retrieves the simple type properties of an object
             </summary>
             <param name="o"></param>
             <param name="t"></param>
@@ -2079,7 +2089,7 @@
         </member>
         <member name="M:Speckle.Core.Models.Utilities.SetApplicationProps(System.Object,System.Type,Speckle.Core.Models.Base)">
             <summary>
-              Sets the properties of an object with the properties of a base object
+            Sets the properties of an object with the properties of a base object
             </summary>
             <param name="o"></param>
             <param name="t"></param>
@@ -2087,7 +2097,7 @@
         </member>
         <member name="M:Speckle.Core.Models.Utilities.SplitList``1(System.Collections.Generic.List{``0},System.Int32)">
             <summary>
-              Chunks a list into pieces.
+            Chunks a list into pieces.
             </summary>
             <typeparam name="T"></typeparam>
             <param name="list"></param>
@@ -2096,263 +2106,254 @@
         </member>
         <member name="F:Speckle.Core.Serialisation.BaseObjectDeserializerV2.TypeDiscriminator">
             <summary>
-              Property that describes the type of the object.
+            Property that describes the type of the object.
             </summary>
         </member>
         <member name="P:Speckle.Core.Serialisation.BaseObjectDeserializerV2.ReadTransport">
             <summary>
-              The sync transport. This transport will be used synchronously.
+            The sync transport. This transport will be used synchronously.
             </summary>
         </member>
         <member name="M:Speckle.Core.Serialisation.BaseObjectDeserializerV2.Deserialize(System.String)">
-            <param name="rootObjectJson">The JSON string of the object to be deserialized <see cref="T:Speckle.Core.Models.Base" /></param>
-            <returns>A <see cref="T:Speckle.Core.Models.Base" /> typed object deserialized from the <paramref name="rootObjectJson" /></returns>
-            <exception cref="T:System.InvalidOperationException">Thrown when <see cref="F:Speckle.Core.Serialisation.BaseObjectDeserializerV2.Busy" /></exception>
-            <exception cref="T:System.ArgumentException">
-              Thrown when <paramref name="rootObjectJson" /> deserializes to a type other than
-              <see cref="T:Speckle.Core.Models.Base" />
-            </exception>
+            <param name="rootObjectJson">The JSON string of the object to be deserialized <see cref="T:Speckle.Core.Models.Base"/></param>
+            <returns>A <see cref="T:Speckle.Core.Models.Base"/> typed object deserialized from the <paramref name="rootObjectJson"/></returns>
+            <exception cref="T:System.InvalidOperationException">Thrown when <see cref="F:Speckle.Core.Serialisation.BaseObjectDeserializerV2.Busy"/></exception>
+            <exception cref="T:System.ArgumentException">Thrown when <paramref name="rootObjectJson"/> deserializes to a type other than <see cref="T:Speckle.Core.Models.Base"/></exception>
         </member>
         <!-- Badly formed XML comment ignored for member "T:Speckle.Core.Serialisation.BaseObjectSerializer" -->
         <member name="F:Speckle.Core.Serialisation.BaseObjectSerializer.TypeDiscriminator">
             <summary>
-              Property that describes the type of the object.
+            Property that describes the type of the object.
             </summary>
         </member>
         <member name="P:Speckle.Core.Serialisation.BaseObjectSerializer.ReadTransport">
             <summary>
-              The sync transport. This transport will be used synchronously.
+            The sync transport. This transport will be used synchronously.
             </summary>
         </member>
         <member name="P:Speckle.Core.Serialisation.BaseObjectSerializer.WriteTransports">
             <summary>
-              List of transports to write to.
+            List of transports to write to.
             </summary>
         </member>
         <member name="M:Speckle.Core.Serialisation.BaseObjectSerializer.ResetAndInitialize">
             <summary>
-              Reinitializes the lineage, and other variables that get used during the
-              json writing process.
+            Reinitializes the lineage, and other variables that get used during the
+            json writing process.
             </summary>
         </member>
         <member name="P:Speckle.Core.Serialisation.BaseObjectSerializer.DetachLineage">
             <summary>
-              Keeps track of wether current property pointer is marked for detachment.
+            Keeps track of wether current property pointer is marked for detachment.
             </summary>
         </member>
         <member name="P:Speckle.Core.Serialisation.BaseObjectSerializer.Lineage">
             <summary>
-              Keeps track of the hash chain through the object tree.
+            Keeps track of the hash chain through the object tree.
             </summary>
         </member>
         <member name="P:Speckle.Core.Serialisation.BaseObjectSerializer.RefMinDepthTracker">
             <summary>
-              Dictionary of object if and its subsequent closure table (a dictionary of hashes and min depth at which they are
-              found).
+            Dictionary of object if and its subsequent closure table (a dictionary of hashes and min depth at which they are found).
             </summary>
         </member>
         <member name="F:Speckle.Core.Serialisation.BaseObjectSerializerV2.TypeDiscriminator">
             <summary>
-              Property that describes the type of the object.
+            Property that describes the type of the object.
             </summary>
         </member>
         <member name="P:Speckle.Core.Serialisation.BaseObjectSerializerV2.WriteTransports">
             <summary>
-              The sync transport. This transport will be used synchronously.
+            The sync transport. This transport will be used synchronously.
             </summary>
         </member>
         <member name="M:Speckle.Core.Serialisation.SerializationUtilities.FlushCachedTypes">
             <summary>
-              Flushes kit's (discriminator, type) cache. Useful if you're dynamically loading more kits at runtime, that provide
-              better coverage of what you're deserialising, and it's now somehow poisoned because the higher level types were not
-              originally available.
+            Flushes kit's (discriminator, type) cache. Useful if you're dynamically loading more kits at runtime, that provide better coverage of what you're deserialising, and it's now somehow poisoned because the higher level types were not originally available.
             </summary>
         </member>
         <member name="T:Speckle.Core.Transports.ITransport">
             <summary>
-              Interface defining the contract for transport implementations.
+            Interface defining the contract for transport implementations.
             </summary>
         </member>
         <member name="P:Speckle.Core.Transports.ITransport.TransportName">
             <summary>
-              Human readable name for the transport
+            Human readable name for the transport
             </summary>
         </member>
         <member name="P:Speckle.Core.Transports.ITransport.TransportContext">
             <summary>
-              Extra descriptor properties of the given transport.
+            Extra descriptor properties of the given transport.
             </summary>
         </member>
         <member name="P:Speckle.Core.Transports.ITransport.Elapsed">
             <summary>
-              Show how much time the transport was busy for.
+             Show how much time the transport was busy for.
             </summary>
         </member>
         <member name="P:Speckle.Core.Transports.ITransport.SavedObjectCount">
             <summary>
-              Show how many objects the transport saved.
+             Show how many objects the transport saved.
             </summary>
         </member>
         <member name="P:Speckle.Core.Transports.ITransport.CancellationToken">
             <summary>
-              Should be checked often and gracefully stop all in progress sending if requested.
+            Should be checked often and gracefully stop all in progress sending if requested.
             </summary>
         </member>
         <member name="P:Speckle.Core.Transports.ITransport.OnProgressAction">
             <summary>
-              Used to report progress during the transport's longer operations.
+            Used to report progress during the transport's longer operations.
             </summary>
         </member>
         <member name="P:Speckle.Core.Transports.ITransport.OnErrorAction">
             <summary>
-              Used to report errors during the transport's longer operations.
+            Used to report errors during the transport's longer operations.
             </summary>
         </member>
         <member name="M:Speckle.Core.Transports.ITransport.BeginWrite">
             <summary>
-              Optional: signals to the transport that writes are about to begin.
+            Optional: signals to the transport that writes are about to begin.
             </summary>
         </member>
         <member name="M:Speckle.Core.Transports.ITransport.EndWrite">
             <summary>
-              Optional: signals to the transport that no more items will need to be written.
+            Optional: signals to the transport that no more items will need to be written.
             </summary>
         </member>
         <member name="M:Speckle.Core.Transports.ITransport.SaveObject(System.String,System.String)">
             <summary>
-              Saves an object.
+            Saves an object.
             </summary>
             <param name="id">The hash of the object.</param>
             <param name="serializedObject">The full string representation of the object.</param>
         </member>
         <member name="M:Speckle.Core.Transports.ITransport.SaveObject(System.String,Speckle.Core.Transports.ITransport)">
             <summary>
-              Saves an object, retrieving its serialised version from the provided transport.
+            Saves an object, retrieving its serialised version from the provided transport.
             </summary>
             <param name="id">The hash of the object.</param>
             <param name="sourceTransport">The transport from where to retrieve it.</param>
         </member>
         <member name="M:Speckle.Core.Transports.ITransport.WriteComplete">
             <summary>
-              Awaitable method to figure out whether writing is completed.
+            Awaitable method to figure out whether writing is completed.
             </summary>
             <returns></returns>
         </member>
         <member name="M:Speckle.Core.Transports.ITransport.GetObject(System.String)">
             <summary>
-              Gets an object.
+            Gets an object.
             </summary>
             <param name="id">The object's hash.</param>
             <returns></returns>
         </member>
         <member name="M:Speckle.Core.Transports.ITransport.CopyObjectAndChildren(System.String,Speckle.Core.Transports.ITransport,System.Action{System.Int32})">
             <summary>
-              Copies the parent object and all its children to the provided transport.
+            Copies the parent object and all its children to the provided transport.
             </summary>
             <param name="id">The id of the object you want to copy.</param>
             <param name="targetTransport">The transport you want to copy the object to.</param>
-            <param name="onTotalChildrenCountKnown">
-              (Optional) an action that will be invoked once, when the amount of object
-              children to be copied over is known.
-            </param>
+            <param name="onTotalChildrenCountKnown">(Optional) an <see cref="T:System.Action`1"/> that will be invoked once, when the number of object children to be copied over is known.</param>
             <returns>The string representation of the root object.</returns>
+            <exception cref="T:System.InvalidOperationException">The transport was in an invalid state</exception>
+            <exception cref="T:System.ArgumentException">The provided arguments are not valid</exception>
+            <exception cref="T:System.OperationCanceledException"></exception>
         </member>
         <member name="M:Speckle.Core.Transports.ITransport.HasObjects(System.Collections.Generic.List{System.String})">
             <summary>
-              Checks if objects are present in the transport
+            Checks if objects are present in the transport
             </summary>
             <param name="objectIds">List of object ids to check</param>
-            <returns>
-              A dictionary with the specified object ids as keys and boolean values, whether each object is present in the
-              transport or not
-            </returns>
+            <returns>A dictionary with the specified object ids as keys and boolean values, whether each object is present in the transport or not</returns>
         </member>
         <member name="T:Speckle.Core.Transports.MemoryTransport">
             <summary>
-              An in memory storage of speckle objects.
+            An in memory storage of speckle objects.
             </summary>
         </member>
         <member name="T:Speckle.Core.Transports.ServerTransportV1">
             <summary>
-              Sends data to a speckle server.
+            Sends data to a speckle server.
             </summary>
         </member>
         <!-- Badly formed XML comment ignored for member "M:Speckle.Core.Transports.ServerTransportV1.ConsumeNewBatch" -->
         <member name="T:Speckle.Core.Transports.GzipContent">
             <summary>
-              https://cymbeline.ch/2014/03/16/gzip-encoding-an-http-post-request-body/
+            https://cymbeline.ch/2014/03/16/gzip-encoding-an-http-post-request-body/
             </summary>
         </member>
         <member name="T:Speckle.Core.Transports.ServerUtils.GzipContent">
             <summary>
-              https://cymbeline.ch/2014/03/16/gzip-encoding-an-http-post-request-body/
+            https://cymbeline.ch/2014/03/16/gzip-encoding-an-http-post-request-body/
             </summary>
         </member>
         <member name="P:Speckle.Core.Transports.ServerUtils.ServerApi.OnBatchSent">
             <summary>
-              Callback when sending batches. Parameters: object count, total bytes sent
+            Callback when sending batches. Parameters: object count, total bytes sent
             </summary>
         </member>
         <member name="F:Speckle.Core.Transports.SQLiteTransport.WriteTimer">
             <summary>
-              Timer that ensures queue is consumed if less than MAX_TRANSACTION_SIZE objects are being sent.
+            Timer that ensures queue is consumed if less than MAX_TRANSACTION_SIZE objects are being sent.
             </summary>
         </member>
         <member name="M:Speckle.Core.Transports.SQLiteTransport.GetAllObjects">
             <summary>
-              Returns all the objects in the store. Note: do not use for large collections.
+            Returns all the objects in the store. Note: do not use for large collections.
             </summary>
             <returns></returns>
         </member>
         <member name="M:Speckle.Core.Transports.SQLiteTransport.DeleteObject(System.String)">
             <summary>
-              Deletes an object. Note: do not use for any speckle object transport, as it will corrupt the database.
+            Deletes an object. Note: do not use for any speckle object transport, as it will corrupt the database.
             </summary>
             <param name="hash"></param>
         </member>
         <member name="M:Speckle.Core.Transports.SQLiteTransport.UpdateObject(System.String,System.String)">
             <summary>
-              Updates an object.
+            Updates an object.
             </summary>
             <param name="hash"></param>
             <param name="serializedObject"></param>
         </member>
         <member name="M:Speckle.Core.Transports.SQLiteTransport.WriteComplete">
             <summary>
-              Awaits untill write completion (ie, the current queue is fully consumed).
+            Awaits untill write completion (ie, the current queue is fully consumed).
             </summary>
             <returns></returns>
         </member>
         <member name="M:Speckle.Core.Transports.SQLiteTransport.GetWriteCompletionStatus">
             <summary>
-              Returns true if the current write queue is empty and comitted.
+            Returns true if the current write queue is empty and comitted.
             </summary>
             <returns></returns>
         </member>
         <member name="M:Speckle.Core.Transports.SQLiteTransport.SaveObject(System.String,System.String)">
             <summary>
-              Adds an object to the saving queue.
+            Adds an object to the saving queue.
             </summary>
             <param name="hash"></param>
             <param name="serializedObject"></param>
         </member>
         <member name="M:Speckle.Core.Transports.SQLiteTransport.SaveObjectSync(System.String,System.String)">
             <summary>
-              Directly saves the object in the db.
+            Directly saves the object in the db.
             </summary>
             <param name="hash"></param>
             <param name="serializedObject"></param>
         </member>
         <member name="M:Speckle.Core.Transports.SQLiteTransport.GetObject(System.String)">
             <summary>
-              Gets an object.
+            Gets an object.
             </summary>
             <param name="hash"></param>
             <returns></returns>
         </member>
         <member name="M:Speckle.Core.Transports.Utilities.WaitUntil(System.Func{System.Boolean},System.Int32,System.Int32)">
             <summary>
-              Waits until the provided function returns true.
+            Waits until the provided function returns true.
             </summary>
             <param name="condition"></param>
             <param name="frequency"></param>
