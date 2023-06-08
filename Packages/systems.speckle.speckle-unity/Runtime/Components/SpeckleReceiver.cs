@@ -6,12 +6,14 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using Speckle.ConnectorUnity.Utils;
 using Speckle.ConnectorUnity.Wrappers.Selection;
 using Speckle.Core.Api;
 using Speckle.Core.Credentials;
 using Speckle.Core.Kits;
 using Speckle.Core.Logging;
 using Speckle.Core.Models;
+using Speckle.Core.Models.GraphTraversal;
 using Speckle.Core.Transports;
 using UnityEngine;
 using UnityEngine.Events;
@@ -52,124 +54,181 @@ namespace Speckle.ConnectorUnity.Components
 
 #nullable enable
         protected internal CancellationTokenSource? CancellationTokenSource { get; private set; }
+        protected internal CancellationToken CancellationToken => CancellationTokenSource?.Token ?? default;
+        public bool IsReceiving => CancellationTokenSource != null; 
         
-        
-        //TODO runtime receiving
-        public IEnumerator ReceiveAndConvertRoutine(SpeckleReceiver speckleReceiver, string rootObjectName, Action<Base>? beforeConvertCallback = null)
+        /// <summary>
+        /// Receive the selected <see cref="Commit"/> object, and converts ToNative as children of <paramref name="parent"/>
+        /// </summary>
+        /// <param name="parent"></param>
+        /// <param name="predicate"></param>
+        /// <remarks>function does not throw, instead calls <see cref="OnErrorAction"/>, and calls <see cref="OnComplete"/> on complteion</remarks>
+        public IEnumerator ReceiveAndConvert_Routine(Transform? parent, Predicate<TraversalContext>? predicate = null)
         {
-            Task<Base?> receiveOperation = Task.Run(ReceiveAsync);
+            if (IsReceiving) OnErrorAction.Invoke("Failed to receive", new InvalidOperationException("A pending receive operation has already started"));
+            
+            CancellationTokenSource?.Dispose();
+            CancellationTokenSource = new();
+            
+            // ReSharper disable once MethodSupportsCancellation
+            Task<Base> receiveOperation = Task.Run(async () =>
+            {
+                Base result = await ReceiveAsync(CancellationToken);
+                CancellationToken.ThrowIfCancellationRequested();
+                return result;
+            });
             
             yield return new WaitUntil(() => receiveOperation.IsCompleted);
 
-            Base? b = receiveOperation.Result;
-            if (b == null) yield break;
+            if (receiveOperation.IsFaulted)
+            {
+                OnErrorAction.Invoke("Failed to receive", receiveOperation.Exception);
+                yield break;
+            }
+            
+            Base b = receiveOperation.Result;
 
-            //TODO make routine break for each catergory/object 
-            GameObject go = ConvertToNativeWithCategories(b, rootObjectName, beforeConvertCallback);
-            OnComplete.Invoke(go);
+            foreach (var _ in Converter.RecursivelyConvertToNative_Enumerable(b, parent, predicate))
+            {
+                yield return null;
+            }
+
+            OnComplete.Invoke(parent);
         }
 
+
+        /// <inheritdoc cref="ReceiveAndConvert_Routine"/>
+        public async void ReceiveAndConvert_Async(Transform? parent, Predicate<TraversalContext>? predicate = null)
+        {
+            if (IsReceiving) OnErrorAction.Invoke("Failed to receive", new InvalidOperationException("A pending receive operation has already started"));
+            
+            CancellationTokenSource?.Dispose();
+            CancellationTokenSource = new();
+            
+            try
+            {
+                Base commitObject = await ReceiveAsync(CancellationToken).ConfigureAwait(true);
+                Converter.RecursivelyConvertToNative_Sync(commitObject, parent, predicate);
+            }
+            catch(Exception ex)
+            {
+                OnErrorAction.Invoke("Failed to receive", ex);
+            }
+            
+            OnComplete.Invoke(parent);
+        }
 
         /// <summary>
         /// Receives the selected commit object using async Task
         /// </summary>
         /// <returns>Awaitable commit object</returns>
+        /// <param name="token"></param>
         /// <exception cref="SpeckleException">thrown when selection is incomplete</exception>
-        public async Task<Base?> ReceiveAsync()
+        public async Task<Base> ReceiveAsync(CancellationToken token)
         {
-            CancellationTokenSource?.Cancel();
-            CancellationTokenSource?.Dispose();
-            CancellationTokenSource = new CancellationTokenSource();
-            if(!GetSelection(out Client? client, out Stream? stream, out Commit? commit, out string? error))
-                throw new SpeckleException(error);
-        
-            return await ReceiveAsync(
-                token: CancellationTokenSource.Token,
-                client: client,
-                streamId: stream.id,
-                objectId: commit.referencedObject,
-                commit: commit,
-                onProgressAction: dict => OnReceiveProgressAction.Invoke(dict),
-                onErrorAction: (m, e) => OnErrorAction.Invoke(m, e),
-                onTotalChildrenCountKnown: c => OnTotalChildrenCountKnown.Invoke(c)
-            ).ConfigureAwait(false);
+            token.ThrowIfCancellationRequested();
+            
+            ValidateSelection(out Client? client, out Stream? stream, out Commit? commit);
+
+            Base result = await ReceiveAsync(
+                    token: token,
+                    client: client,
+                    streamId: stream.id,
+                    objectId: commit.referencedObject,
+                    commit: commit,
+                    onProgressAction: dict => OnReceiveProgressAction.Invoke(dict),
+
+                    onTotalChildrenCountKnown: c => OnTotalChildrenCountKnown.Invoke(c)
+                )
+                .ConfigureAwait(false);
+            
+            return result;
         }
 
         /// <summary>
         /// Receives the requested <see cref="objectId"/> using async Task
         /// </summary>
-        /// <param name="token"></param>
         /// <param name="client"></param>
         /// <param name="streamId"></param>
         /// <param name="objectId"></param>
         /// <param name="commit"></param>
         /// <param name="onProgressAction"></param>
-        /// <param name="onErrorAction"></param>
         /// <param name="onTotalChildrenCountKnown"></param>
+        /// <param name="token"></param>
+        /// <exception cref="Exception">Throws various types of exceptions to indicate faliure</exception>
         /// <returns></returns>
-        public static async Task<Base?> ReceiveAsync(CancellationToken token,
+        public static async Task<Base> ReceiveAsync(
             Client client,
             string streamId,
             string objectId,
             Commit? commit,
             Action<ConcurrentDictionary<string, int>>? onProgressAction = null,
-            Action<string, Exception>? onErrorAction = null,
-            Action<int>? onTotalChildrenCountKnown = null)
+            Action<int>? onTotalChildrenCountKnown = null, 
+            CancellationToken token = default)
         {
             using var transport = new ServerTransportV2(client.Account, streamId);
             
             transport.CancellationToken = token;
-        
-            Base? ret = null;
+
+            token.ThrowIfCancellationRequested();
+
+            Base? requestedObject = await Operations.Receive(
+                objectId: objectId,
+                cancellationToken: token,
+                remoteTransport: transport,
+                onProgressAction: onProgressAction,
+                onErrorAction: (s, ex) =>
+                {
+                    //Don't wrap cancellation exceptions!
+                    if (ex is OperationCanceledException)
+                        throw ex;
+
+                    //HACK: Sometimes, the task was cancelled, and Operations.Receive doesn't fail in a reliable way. In this case, the exception is often simply a symptom of a cancel.
+                    if (token.IsCancellationRequested)
+                    {
+                        SpeckleLog.Logger.Warning(ex, "A task was cancelled, ignoring potentially symptomatic exception");
+                        token.ThrowIfCancellationRequested();
+                    }
+
+                    //Treat all operation errors as fatal
+                    throw new SpeckleException($"Failed to receive requested object {objectId} from server: {s}", ex);
+                },
+                onTotalChildrenCountKnown: onTotalChildrenCountKnown,
+                disposeTransports: false
+            ).ConfigureAwait(false);
+
+            Analytics.TrackEvent(client.Account, Analytics.Events.Receive, new Dictionary<string, object>()
+            {
+                {"mode", nameof(SpeckleReceiver)},
+                {"sourceHostApp", HostApplications.GetHostAppFromString(commit?.sourceApplication).Slug},
+                {"sourceHostAppVersion", commit?.sourceApplication ?? ""},
+                {"hostPlatform", Application.platform.ToString()},
+                {"isMultiplayer", commit != null && commit.authorId != client.Account.userInfo.id},
+            });
+            
+            if (requestedObject == null)
+                throw new SpeckleException($"Operation {nameof(Operations.Receive)} returned null");
+            
+            token.ThrowIfCancellationRequested();
+
+            //Read receipt
             try
             {
-
-                token.ThrowIfCancellationRequested();
-
-                ret = await Operations.Receive(
-                    objectId: objectId,
-                    cancellationToken: token,
-                    remoteTransport: transport,
-                    onProgressAction: onProgressAction,
-                    onErrorAction: onErrorAction,
-                    onTotalChildrenCountKnown: onTotalChildrenCountKnown,
-                    disposeTransports: false
-                ).ConfigureAwait(false);
-
-                Analytics.TrackEvent(client.Account, Analytics.Events.Receive, new Dictionary<string, object>()
+                await client.CommitReceived(token, new CommitReceivedInput
                 {
-                    {"mode", nameof(SpeckleReceiver)},
-                    {"sourceHostApp", HostApplications.GetHostAppFromString(commit?.sourceApplication).Slug},
-                    {"sourceHostAppVersion", commit?.sourceApplication ?? ""},
-                    {"hostPlatform", Application.platform.ToString()},
-                    {"isMultiplayer", commit != null && commit.authorId != client.Account.userInfo.id},
-                });
-                
-                token.ThrowIfCancellationRequested();
-
-                //Read receipt
-                try
-                {
-                    await client.CommitReceived(token, new CommitReceivedInput
-                    {
-                        streamId = streamId,
-                        commitId = commit?.id,
-                        message = $"received commit from {Application.unityVersion}",
-                        sourceApplication = HostApplications.Unity.GetVersion(CoreUtils.GetHostAppVersion())
-                    }).ConfigureAwait(false);
-                }
-                catch (Exception e)
-                {
-                    // Do nothing!
-                    Debug.LogWarning($"Failed to send read receipt\n{e}");
-                }
+                    streamId = streamId,
+                    commitId = commit?.id,
+                    message = $"received commit from {Application.unityVersion}",
+                    sourceApplication = HostApplications.Unity.GetVersion(CoreUtils.GetHostAppVersion())
+                }).ConfigureAwait(false);
             }
             catch (Exception e)
             {
-                onErrorAction?.Invoke(e.Message, e);
+                // Do nothing!
+                Debug.LogWarning($"Failed to send read receipt\n{e}");
             }
 
-            return ret;
+            return requestedObject;
         }
     
         /// <summary>
@@ -180,6 +239,7 @@ namespace Speckle.ConnectorUnity.Components
         /// <param name="rootObjectName">The name of the parent <see cref="GameObject"/> to create</param>
         /// <param name="beforeConvertCallback">Callback for each object converted</param>
         /// <returns>The created parent <see cref="GameObject"/></returns>
+        [Obsolete("Use " + nameof(RecursiveConverter) + " Now we have implemented support for " + nameof(Collection) + "s, receiving any collection is now the default behaviour")] 
         public GameObject ConvertToNativeWithCategories(Base @base, string rootObjectName,
             Action<Base>? beforeConvertCallback)
         {
@@ -212,7 +272,21 @@ namespace Speckle.ConnectorUnity.Components
 
             return rootObject;
         }
-    
+
+
+
+        public void ValidateSelection(out Client client, out Stream stream, out Commit commit)
+        {
+            Client? selectedClient = Account.Client;
+            client = selectedClient ?? throw new InvalidOperationException("Invalid account selection");
+            
+            Stream? selectedStream = Stream.Selected;
+            stream = selectedStream ?? throw new InvalidOperationException("Invalid stream selection");
+            
+            Commit? selectedCommit = Commit.Selected;
+            commit = selectedCommit ?? throw new InvalidOperationException("Invalid commit selection");
+        }
+        
         /// <summary>
         /// 
         /// </summary>
@@ -221,6 +295,7 @@ namespace Speckle.ConnectorUnity.Components
         /// <param name="commit"></param>
         /// <param name="error">error messages for </param>
         /// <returns>true if selection is complete, as we are ready to receive</returns>
+        [Obsolete("Use " + nameof(ValidateSelection))]
         public bool GetSelection(
             [NotNullWhen(true)] out Client? client,
             [NotNullWhen(true)] out Stream? stream,
@@ -334,12 +409,32 @@ namespace Speckle.ConnectorUnity.Components
         {
             Initialise();
         }
+        
+        #region Deprecated members
+        
+        [Obsolete("use " + nameof(ReceiveAndConvertRoutine), true)]
+        public IEnumerator ReceiveAndConvertRoutine(SpeckleReceiver speckleReceiver, string rootObjectName, Action<Base>? beforeConvertCallback = null)
+        {
+            // ReSharper disable once MethodSupportsCancellation
+            Task<Base> receiveOperation = Task.Run(async () => await ReceiveAsync(CancellationToken));
+            
+            yield return new WaitUntil(() => receiveOperation.IsCompleted);
+
+            Base? b = receiveOperation.Result;
+            if (b == null) yield break;
+
+            //NOTE: coroutine doesn't break for each catergory/object 
+            GameObject go = ConvertToNativeWithCategories(b, rootObjectName, beforeConvertCallback);
+
+        }
+        
+        #endregion
     }
     
     [Serializable] public sealed class CommitSelectionEvent : UnityEvent<Commit?> { }
     [Serializable] public sealed class BranchSelectionEvent : UnityEvent<Branch?> { }
     [Serializable] public sealed class ErrorActionEvent : UnityEvent<string, Exception> { }
     [Serializable] public sealed class OperationProgressEvent : UnityEvent<ConcurrentDictionary<string, int>> { }
-    [Serializable] public sealed class ReceiveCompleteHandler : UnityEvent<GameObject> { }
+    [Serializable] public sealed class ReceiveCompleteHandler : UnityEvent<Transform?> { }
     [Serializable] public sealed class ChildrenCountHandler : UnityEvent<int> { }
 }

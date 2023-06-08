@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
+using Speckle.ConnectorUnity.Utils;
 using Speckle.ConnectorUnity.Wrappers.Selection;
 using Speckle.Core.Api;
 using Speckle.Core.Credentials;

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Threading.Tasks;
 using Speckle.ConnectorUnity;
@@ -51,11 +52,14 @@ public class ManualReceive : MonoBehaviour
                 onErrorAction: (m, e)=> Debug.LogError(m + e),
                 disposeTransports: true
             );
-
+            
+            if (@base == null) throw new Exception("received data was null!");
+            
             Dispatcher.Instance().Enqueue(() =>
             {
                 var parentObject = new GameObject(name);
-                receiver.RecursivelyConvertToNative(@base, parentObject.transform);
+                
+                receiver.RecursivelyConvertToNative_Sync(@base, parentObject.transform);
 
                 Debug.Log($"Receive {objectId} completed");
             });

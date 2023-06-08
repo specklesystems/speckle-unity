@@ -220,7 +220,7 @@ namespace Objects.Converter.Unity
             {
                 //Convert a new one
                 MeshToNativeMesh(meshes, out nativeMesh, out center);
-                string name = AssetHelpers.GenerateObjectName(element);
+                string name = CoreUtils.GenerateObjectName(element);
                 nativeMesh.name = name;
                 LoadedAssets.TrySaveObject(element, nativeMesh);
             }
@@ -477,7 +477,7 @@ namespace Objects.Converter.Unity
             
             var c = renderMaterial.diffuse.ToUnityColor();
             mat.color = new Color(c.r, c.g, c.b, (float) renderMaterial.opacity);
-            mat.name = AssetHelpers.GenerateObjectName(renderMaterial);
+            mat.name = CoreUtils.GenerateObjectName(renderMaterial);
             mat.SetFloat(Metallic, (float) renderMaterial.metalness);
             mat.SetFloat(Glossiness, 1 - (float) renderMaterial.roughness);
             if (renderMaterial.emissive != SColor.Black.ToArgb()) mat.EnableKeyword("_EMISSION");

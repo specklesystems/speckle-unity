@@ -10,7 +10,8 @@ using UnityEngine.UI;
 using Text = UnityEngine.UI.Text;
 
 namespace Speckle.ConnectorUnity
-{
+{ 
+    [Obsolete]
   public class InteractionLogic : MonoBehaviour
   {
     private Receiver receiver;

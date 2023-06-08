@@ -9,6 +9,7 @@ using UnityEngine;
 using UnityEngine.Events;
 
 [RequireComponent(typeof(Sender)), ExecuteAlways]
+[Obsolete]
 public class SendChildrenToSpeckle : MonoBehaviour
 {
     public LayerMask layerMask;

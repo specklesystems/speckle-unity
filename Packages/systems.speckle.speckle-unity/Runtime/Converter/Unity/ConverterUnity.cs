@@ -111,7 +111,7 @@ namespace Objects.Converter.Unity
                     return View3DToNative(v);
                 case Mesh o:
                     return MeshToNative(o);
-                case BlockInstance o:
+                case Instance o:
                     return InstanceToNative(o);
                 default:
 
@@ -197,11 +197,11 @@ namespace Objects.Converter.Unity
                 //   return true;
                 // case View3D _:
                 //   return true;
-                case View2D _:
+                case View2D:
                     return false;
-                case Mesh _:
+                case Mesh:
                     return true;
-                case BlockInstance _:
+                case Instance:
                     return true;
                 default:
 
@@ -212,7 +212,7 @@ namespace Objects.Converter.Unity
                         if (@object[alias] is IList)
                             return true;
                     }
-
+ 
                     return false;
             }
         }

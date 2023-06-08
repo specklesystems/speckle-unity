@@ -1,9 +1,10 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.Collections;
+using Speckle.Core.Models;
 using UnityEngine;
 using UnityEngine.Networking;
 
-#nullable enable
 namespace Speckle.ConnectorUnity.Utils
 {
   public static class Utils
