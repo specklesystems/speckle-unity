@@ -7,10 +7,10 @@
   "targets": {
     ".NETStandard,Version=v2.0": {},
     ".NETStandard,Version=v2.0/": {
-      "Objects/2.1.1": {
+      "Objects/2.0.999-local": {
         "dependencies": {
           "NETStandard.Library": "2.0.3",
-          "Speckle.Core": "2.1.0"
+          "Speckle.Core": "2.0.999-local"
         },
         "runtime": {
           "Objects.dll": {}
@@ -541,7 +541,7 @@
     }
   },
   "libraries": {
-    "Objects/2.1.1": {
+    "Objects/2.0.999-local": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
