@@ -55,7 +55,7 @@ namespace Speckle.ConnectorUnity.Components
 #nullable enable
         protected internal CancellationTokenSource? CancellationTokenSource { get; private set; }
         protected internal CancellationToken CancellationToken => CancellationTokenSource?.Token ?? default;
-        public bool IsReceiving => CancellationTokenSource != null; 
+        public bool IsReceiving => CancellationTokenSource != null;
         
         /// <summary>
         /// Receive the selected <see cref="Commit"/> object, and converts ToNative as children of <paramref name="parent"/>
@@ -65,7 +65,11 @@ namespace Speckle.ConnectorUnity.Components
         /// <remarks>function does not throw, instead calls <see cref="OnErrorAction"/>, and calls <see cref="OnComplete"/> on complteion</remarks>
         public IEnumerator ReceiveAndConvert_Routine(Transform? parent, Predicate<TraversalContext>? predicate = null)
         {
-            if (IsReceiving) OnErrorAction.Invoke("Failed to receive", new InvalidOperationException("A pending receive operation has already started"));
+            if (IsReceiving)
+            {
+                OnErrorAction.Invoke("Failed to receive", new InvalidOperationException("A pending receive operation has already started"));
+                yield break;
+            }
             
             CancellationTokenSource?.Dispose();
             CancellationTokenSource = new();
@@ -83,6 +87,7 @@ namespace Speckle.ConnectorUnity.Components
             if (receiveOperation.IsFaulted)
             {
                 OnErrorAction.Invoke("Failed to receive", receiveOperation.Exception);
+                FinishOperation();
                 yield break;
             }
             
@@ -94,28 +99,28 @@ namespace Speckle.ConnectorUnity.Components
             }
 
             OnComplete.Invoke(parent);
+            FinishOperation();
         }
 
 
         /// <inheritdoc cref="ReceiveAndConvert_Routine"/>
         public async void ReceiveAndConvert_Async(Transform? parent, Predicate<TraversalContext>? predicate = null)
         {
-            if (IsReceiving) OnErrorAction.Invoke("Failed to receive", new InvalidOperationException("A pending receive operation has already started"));
-            
-            CancellationTokenSource?.Dispose();
-            CancellationTokenSource = new();
-            
             try
             {
+                BeginOperation();
                 Base commitObject = await ReceiveAsync(CancellationToken).ConfigureAwait(true);
                 Converter.RecursivelyConvertToNative_Sync(commitObject, parent, predicate);
+                OnComplete.Invoke(parent);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 OnErrorAction.Invoke("Failed to receive", ex);
             }
-            
-            OnComplete.Invoke(parent);
+            finally
+            {
+                FinishOperation();
+            }
         }
 
         /// <summary>
@@ -124,6 +129,12 @@ namespace Speckle.ConnectorUnity.Components
         /// <returns>Awaitable commit object</returns>
         /// <param name="token"></param>
         /// <exception cref="SpeckleException">thrown when selection is incomplete</exception>
+        /// <remarks>
+        /// This function is safe to call concurrently from any threads.
+        /// For this reason we use <paramref name="token"/> parameter, rather than use the <see cref="CancellationToken"/> property
+        /// <br/>
+        /// Additionally, <see cref="OnComplete"/> and <see cref="OnErrorAction"/> won't be called.
+        /// </remarks>
         public async Task<Base> ReceiveAsync(CancellationToken token)
         {
             token.ThrowIfCancellationRequested();
@@ -145,6 +156,38 @@ namespace Speckle.ConnectorUnity.Components
             return result;
         }
 
+        public void ValidateSelection(out Client client, out Stream stream, out Commit commit)
+        {
+            Client? selectedClient = Account.Client;
+            client = selectedClient ?? throw new InvalidOperationException("Invalid account selection");
+            
+            Stream? selectedStream = Stream.Selected;
+            stream = selectedStream ?? throw new InvalidOperationException("Invalid stream selection");
+            
+            Commit? selectedCommit = Commit.Selected;
+            commit = selectedCommit ?? throw new InvalidOperationException("Invalid commit selection");
+        }
+
+        /// <summary>
+        /// Starts a new receive operation with a <see cref="CancellationToken"/>
+        /// </summary>
+        /// <exception cref="InvalidOperationException">already receiving</exception>
+        protected internal void BeginOperation()
+        {
+            if (IsReceiving) throw new InvalidOperationException("A pending receive operation has already started");
+
+            CancellationTokenSource?.Dispose();
+            CancellationTokenSource = new();
+        }
+
+        protected internal void FinishOperation()
+        {
+            if (!IsReceiving) throw new InvalidOperationException("No pending operations to finish");
+            
+            CancellationTokenSource!.Dispose();
+            CancellationTokenSource = null;
+        }
+        
         /// <summary>
         /// Receives the requested <see cref="objectId"/> using async Task
         /// </summary>
@@ -230,7 +273,7 @@ namespace Speckle.ConnectorUnity.Components
 
             return requestedObject;
         }
-    
+
         /// <summary>
         /// Helper method for using <see cref="RecursiveConverter"/>.
         /// Creates blank GameObjects for each property/category of the root object.
@@ -271,20 +314,6 @@ namespace Speckle.ConnectorUnity.Components
             }
 
             return rootObject;
-        }
-
-
-
-        public void ValidateSelection(out Client client, out Stream stream, out Commit commit)
-        {
-            Client? selectedClient = Account.Client;
-            client = selectedClient ?? throw new InvalidOperationException("Invalid account selection");
-            
-            Stream? selectedStream = Stream.Selected;
-            stream = selectedStream ?? throw new InvalidOperationException("Invalid stream selection");
-            
-            Commit? selectedCommit = Commit.Selected;
-            commit = selectedCommit ?? throw new InvalidOperationException("Invalid commit selection");
         }
         
         /// <summary>
@@ -334,22 +363,21 @@ namespace Speckle.ConnectorUnity.Components
         /// </summary>
         /// <param name="allAngles">when <see langword="true"/>, will fetch 360 degree preview image</param>
         /// <param name="callback">Callback function to be called when the web request completes</param>
-        /// <returns><see langword="false"/> if <see cref="Account"/>, <see cref="Stream"/>, or <see cref="Commit"/> was <see langword="null"/></returns>
-        public bool GetPreviewImage(/*bool allAngles,*/ Action<Texture2D?> callback)
+        /// <returns>The executing <see cref="Coroutine"/> or <see langword="null"/> if <see cref="Account"/>, <see cref="Stream"/>, or <see cref="Commit"/> was <see langword="null"/></returns>
+        public Coroutine? GetPreviewImage(/*bool allAngles,*/ Action<Texture2D?> callback)
         {
             Account? account = Account.Selected;
-            if (account == null) return false;
+            if (account == null) return null;
             string? streamId = Stream.Selected?.id;
-            if (streamId == null) return false;
+            if (streamId == null) return null;
             string? commitId = Commit.Selected?.id;
-            if (commitId == null) return false;
+            if (commitId == null) return null;
 
             string angles = /*allAngles ? "all" :*/ "";
             string url = $"{account.serverInfo.url}/preview/{streamId}/commits/{commitId}/{angles}";
             string authToken = account.token;
             
-            StartCoroutine(Utils.Utils.GetImageRoutine(url, authToken, callback));
-            return true;
+            return StartCoroutine(Utils.Utils.GetImageRoutine(url, authToken, callback));
         }
         
 #if UNITY_EDITOR

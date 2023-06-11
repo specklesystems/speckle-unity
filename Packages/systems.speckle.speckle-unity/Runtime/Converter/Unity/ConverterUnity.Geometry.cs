@@ -235,8 +235,12 @@ namespace Objects.Converter.Unity
 
             var geometry = instance.definition is BlockDefinition b
                 ? b.geometry
-                : GraphTraversal.TraverseMember(instance.definition["elements"]);
-            
+                : GraphTraversal.TraverseMember(new[]
+                {
+                    instance.definition["elements"] ?? instance.definition["@elements"],
+                    instance.definition["displayValue"] ?? instance.definition["@displayValue"],
+                });
+
             foreach (Base geo in geometry)
             {
                 if (geo is SMesh m) meshes.Add(m);

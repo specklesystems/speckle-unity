@@ -10,9 +10,9 @@ namespace Speckle.ConnectorUnity.Wrappers.Selection
     public sealed class BranchSelection : OptionSelection<Branch>
     {
         [field: SerializeField, Range(1,100), Tooltip("Number of branches to request")]
-        public int BranchesLimit { get; set; } = 30;
+        public int BranchesLimit { get; set; } = 100;
         [field: SerializeField, Range(1,100), Tooltip("Number of commits to request")]
-        public int CommitsLimit { get; set; } = 15;
+        public int CommitsLimit { get; set; } = 25;
 
         [field: SerializeReference]
         public StreamSelection StreamSelection { get; private set; }

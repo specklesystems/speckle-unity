@@ -4,7 +4,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Speckle.ConnectorUnity.NativeCache;
 using Speckle.ConnectorUnity.Utils;
 using Speckle.Core.Logging;
 using Speckle.Core.Models;
@@ -43,7 +42,7 @@ namespace Speckle.ConnectorUnity.Components
         public ConversionResult(TraversalContext traversalContext, [NotNull] GameObject? converted)
             : this(traversalContext, converted, null)
         {
-            if (converted == null) throw new ArgumentNullException(nameof(converted));
+            if (converted is null) throw new ArgumentNullException(nameof(converted));
         }
 
         /// <summary>
@@ -57,7 +56,7 @@ namespace Speckle.ConnectorUnity.Components
             GameObject? converted = null)
             : this(traversalContext, converted, exception)
         {
-            if (exception == null) throw new ArgumentNullException(nameof(exception));
+            if (exception is null) throw new ArgumentNullException(nameof(exception));
         }
 
         private ConversionResult(TraversalContext traversalContext, GameObject? converted, Exception? exception)
@@ -137,12 +136,6 @@ namespace Speckle.ConnectorUnity.Components
             Dictionary<Base, GameObject?> created = new();
             foreach (var conversionResult in ConvertTree(objectsToConvert, parent, created))
             {
-                Base speckleObject = conversionResult.SpeckleObject;
-                if (!conversionResult.WasSuccessful(out var converted, out var ex))
-                {
-                    Debug.LogWarning($"Failed to convert Speckle object of type {speckleObject.speckle_type}\n{ex}",this);
-                }
-
                 yield return conversionResult;
             }
             
