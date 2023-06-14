@@ -1,6 +1,6 @@
 {
-    "name": "Editor",
-    "rootNamespace": "",
+    "name": "EditorTests",
+    "rootNamespace": "Speckle.ConnectorUnity.Tests",
     "references": [
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",

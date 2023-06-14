@@ -34,7 +34,7 @@ namespace Speckle.ConnectorUnity.Wrappers.Selection
         {
             get
             {
-                if (Options == null) return null;
+                if (Options is null) return null;
                 if (SelectedIndex < 0 || SelectedIndex >= Options.Length) return null;
                 return Options[SelectedIndex];
             }
@@ -52,7 +52,7 @@ namespace Speckle.ConnectorUnity.Wrappers.Selection
 
         protected void GenerateOptions(IList<TOption> source, Func<TOption, int, bool> isDefault)
         {
-            List<TOption> optionsToAdd = new List<TOption>(source.Count);
+            List<TOption> optionsToAdd = new (source.Count);
             int defaultOption = -1;
             int index = 0;
             foreach (TOption? a in source)

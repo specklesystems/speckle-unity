@@ -106,12 +106,6 @@ namespace Speckle.ConnectorUnity.Components.Editor
                 SceneManager.GetActiveScene().GetRootGameObjects(), 
                 go => go.activeInHierarchy);
         }
-        
-        private void CancelSend()
-        {
-            ((SpeckleReceiver)target).CancellationTokenSource?.Cancel();
-            EditorApplication.delayCall += EditorUtility.ClearProgressBar;
-        }
-        
+
     }
 }

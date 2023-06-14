@@ -78,8 +78,10 @@ namespace Speckle.ConnectorUnity.Components
         {
             converted = this.converted;
             exception = this.exception;
-            return this.exception == null;
+            return WasSuccessful();
         }
+        
+        public bool WasSuccessful() => this.exception == null;
         
         public Base SpeckleObject => traversalContext.current;
     }
@@ -136,10 +138,10 @@ namespace Speckle.ConnectorUnity.Components
             Dictionary<Base, GameObject?> created = new();
             foreach (var conversionResult in ConvertTree(objectsToConvert, parent, created))
             {
+                if (!isActiveAndEnabled) throw new InvalidOperationException($"Cannot convert objects while {GetType()} is disabled");
+
                 yield return conversionResult;
             }
-            
-            Debug.Log($"Finished converting {rootObject.id} to native. Created {created.Count} {nameof(GameObject)}s ",this);
         }
 
         /// <summary>

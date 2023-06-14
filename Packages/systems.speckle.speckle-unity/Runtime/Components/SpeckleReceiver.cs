@@ -40,29 +40,45 @@ namespace Speckle.ConnectorUnity.Components
 
         public RecursiveConverter Converter { get; private set; }
 
+#nullable enable
         [Header("Events")]
         [HideInInspector]
-        public CommitSelectionEvent OnCommitSelectionChange;
+        public CommitSelectionEvent OnCommitSelectionChange = new();
         [HideInInspector]
-        public OperationProgressEvent OnReceiveProgressAction;
+        public OperationProgressEvent OnReceiveProgressAction = new();
         [HideInInspector]
-        public ErrorActionEvent OnErrorAction;
+        public ErrorActionEvent OnErrorAction = new();
         [HideInInspector]
-        public ChildrenCountHandler OnTotalChildrenCountKnown;
+        public ChildrenCountHandler OnTotalChildrenCountKnown = new();
         [HideInInspector]
-        public ReceiveCompleteHandler OnComplete;
+        public ReceiveCompleteHandler OnComplete = new();
 
-#nullable enable
-        protected internal CancellationTokenSource? CancellationTokenSource { get; private set; }
-        protected internal CancellationToken CancellationToken => CancellationTokenSource?.Token ?? default;
+        protected CancellationTokenSource? CancellationTokenSource { get; private set; }
+        public CancellationToken CancellationToken => CancellationTokenSource?.Token ?? default;
         public bool IsReceiving => CancellationTokenSource != null;
+
+        /// <summary>
+        /// Cancels any current receive operations
+        /// </summary>
+        /// <remarks>
+        /// Note, this does not cancel any currently executing ConvertToNative, just the <see cref="Operations.Receive"/>.
+        /// </remarks>
+        /// <returns><see langword="true"/> if the cancellation request was made. <see langword="false"/> if there was no pending operation to cancel (see <see cref="IsReceiving"/>)</returns>
+        public bool Cancel()
+        {
+            if (CancellationTokenSource == null) return false;
+            CancellationTokenSource.Cancel();
+            return true;
+        }
         
         /// <summary>
         /// Receive the selected <see cref="Commit"/> object, and converts ToNative as children of <paramref name="parent"/>
         /// </summary>
-        /// <param name="parent"></param>
-        /// <param name="predicate"></param>
-        /// <remarks>function does not throw, instead calls <see cref="OnErrorAction"/>, and calls <see cref="OnComplete"/> on complteion</remarks>
+        /// <param name="parent">Optional parent <see cref="Transform"/> for the created root <see cref="GameObject"/>s</param>
+        /// <param name="predicate">A filter function to allow for selectively excluding certain objects from being converted</param>
+        /// <remarks>function does not throw, instead calls <see cref="OnErrorAction"/>, and calls <see cref="OnComplete"/> upon completion</remarks>
+        /// <seealso cref="ReceiveAsync(System.Threading.CancellationToken)"/>
+        /// <seealso cref="RecursiveConverter.RecursivelyConvertToNative_Enumerable"/>
         public IEnumerator ReceiveAndConvert_Routine(Transform? parent, Predicate<TraversalContext>? predicate = null)
         {
             if (IsReceiving)
@@ -172,18 +188,20 @@ namespace Speckle.ConnectorUnity.Components
         /// Starts a new receive operation with a <see cref="CancellationToken"/>
         /// </summary>
         /// <exception cref="InvalidOperationException">already receiving</exception>
-        protected internal void BeginOperation()
+        protected internal CancellationToken BeginOperation()
         {
             if (IsReceiving) throw new InvalidOperationException("A pending receive operation has already started");
 
             CancellationTokenSource?.Dispose();
             CancellationTokenSource = new();
+            
+            return CancellationTokenSource.Token;
         }
 
         protected internal void FinishOperation()
         {
             if (!IsReceiving) throw new InvalidOperationException("No pending operations to finish");
-            
+
             CancellationTokenSource!.Dispose();
             CancellationTokenSource = null;
         }
@@ -388,6 +406,8 @@ namespace Speckle.ConnectorUnity.Components
             Application.OpenURL(url);
         }
 #endif
+        
+        
         public string GetSelectedUrl()
         {
             string serverUrl = Account.Selected!.serverInfo.url;
@@ -423,12 +443,16 @@ namespace Speckle.ConnectorUnity.Components
                 Account.RefreshOptions();
         }
         
-        public void OnDestroy()
+        public void OnDisable()
         {
             CancellationTokenSource?.Cancel();
+        }
+
+        public void OnDestroy()
+        {
             CancellationTokenSource?.Dispose();
         }
-        
+
         public void OnBeforeSerialize()
         {
             //pass
