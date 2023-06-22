@@ -5,9 +5,12 @@
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
         "Speckle.ConnectorUnity.Components",
-        "Utils"
+        "Utils",
+        "Speckle.ConnectorUnity.Wrappers"
     ],
-    "includePlatforms": [],
+    "includePlatforms": [
+        "Editor"
+    ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": true,

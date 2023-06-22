@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using Speckle.Core.Api;
 using Speckle.Core.Models;
+using Speckle.Core.Serialisation;
+using Speckle.Newtonsoft.Json;
 using UnityEngine;
 
 namespace Speckle.ConnectorUnity.Wrappers
@@ -18,8 +20,10 @@ namespace Speckle.ConnectorUnity.Wrappers
 
         [SerializeField, HideInInspector]
         private string _serializedData = "";
-    
+        
+        [SerializeField, HideInInspector]
         private bool _hasChanged;
+        
         private ObservableConcurrentDictionary<string, object> _data;
         
         public IDictionary<string, object> Data
@@ -40,10 +44,7 @@ namespace Speckle.ConnectorUnity.Wrappers
         private string _serializedSpeckleType;
         private Type _speckleType = typeof(Base);
         public Type SpeckleType {
-            get
-            {
-                return _speckleType ??= typeof(Base);
-            }
+            get => _speckleType ??= typeof(Base);
             set
             {
                 
@@ -80,7 +81,9 @@ namespace Speckle.ConnectorUnity.Wrappers
     
         public void OnAfterDeserialize()
         {
-            Base speckleData = Operations.Deserialize(_serializedData);
+            var deserializer = new BaseObjectDeserializerV2();
+            Base speckleData = deserializer.Deserialize(_serializedData);
+            
             Data = speckleData.GetMembers();
             _hasChanged = false;
             
@@ -96,7 +99,7 @@ namespace Speckle.ConnectorUnity.Wrappers
         }
 
         [Serializable]
-        private class SpeckleData : Base
+        private sealed class SpeckleData : Base
         {
             public SpeckleData(IDictionary<string, object> data)
             {

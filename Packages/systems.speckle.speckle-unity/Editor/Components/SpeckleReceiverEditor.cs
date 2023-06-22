@@ -40,7 +40,7 @@ namespace Speckle.ConnectorUnity.Components.Editor
                 bool prev = GUI.enabled;
                 GUI.enabled = !speckleReceiver.IsReceiving;
                 //Receive button
-                bool receive = GUILayout.Button("Receive!");
+                bool userRequestedReceive = GUILayout.Button("Receive!");
 
                 bool selection = EditorGUILayout.ToggleLeft("Generate Assets", generateAssets);
                 if (generateAssets != selection)
@@ -50,15 +50,21 @@ namespace Speckle.ConnectorUnity.Components.Editor
                 }
                 GUI.enabled = prev;
 
-
-                if (receive && !speckleReceiver.IsReceiving)
+                if (speckleReceiver.IsReceiving)
                 {
-                    int id = Progress.Start(
+                    var value = Progress.globalProgress; //NOTE: this may include non-speckle items...
+                    var percent = Math.Max(0, Mathf.Ceil(value * 100));
+                    Debug.Log(value);
+                    var rect = EditorGUILayout.GetControlRect(false, EditorGUIUtility.singleLineHeight);
+                    EditorGUI.ProgressBar(rect, value, $"{percent}%");
+                }
+                else if (userRequestedReceive)
+                {
+                    var id = Progress.Start(
                         "Receiving Speckle data",
-                        "Fetching commit data",
-                        Progress.Options.Indefinite | Progress.Options.Sticky);
-                    Progress.SetPriority(id, Progress.Priority.High);
+                        "Fetching commit data", Progress.Options.Sticky);
                     Progress.ShowDetails();
+
                     try
                     {
                         await ReceiveSelection(id).ConfigureAwait(true);
@@ -182,7 +188,8 @@ namespace Speckle.ConnectorUnity.Components.Editor
                 if (shouldCancel) break;
             }
 
-            var resultString = $"{childrenConverted}{nameof(GameObject)}s created, {childrenFailed} objects failed to convert";
+            var resultString = $"{childrenConverted} {nameof(GameObject)}s created";
+            if (childrenFailed != 0) resultString += $", {childrenFailed} objects failed to convert!";
             
             Debug.Log(shouldCancel
                     ? $"Stopped converting to native: The operation has been cancelled - {resultString}\n "
@@ -208,6 +215,7 @@ namespace Speckle.ConnectorUnity.Components.Editor
             
             int transport = Progress.Start($"Downloading data from {serverLogName}", "Waiting...", Progress.Options.Sticky, progressId);
             int deserialize = Progress.Start("Deserializing data", "Waiting...", Progress.Options.Sticky, progressId);
+            Progress.SetPriority(transport, Progress.Priority.High);
 
             var totalObjectCount = 1;
             void OnTotalChildrenKnown(int count)
@@ -230,6 +238,7 @@ namespace Speckle.ConnectorUnity.Components.Editor
                 {
                     tsProgress--; //The root object isn't included, so we add an extra 1
                     Progress.Report(deserialize,tsProgress, totalObjectCount, $"{tsProgress}/{totalObjectCount}");
+                    Progress.Report(progressId,tsProgress, totalObjectCount);
                 }
             }
 

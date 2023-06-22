@@ -143,29 +143,28 @@ namespace Speckle.ConnectorUnity.Components
         /// Receives the selected commit object using async Task
         /// </summary>
         /// <returns>Awaitable commit object</returns>
-        /// <param name="token"></param>
+        /// <param name="cancellationToken"></param>
         /// <exception cref="SpeckleException">thrown when selection is incomplete</exception>
         /// <remarks>
         /// This function is safe to call concurrently from any threads.
-        /// For this reason we use <paramref name="token"/> parameter, rather than use the <see cref="CancellationToken"/> property
+        /// For this reason we use <paramref name="cancellationToken"/> parameter, rather than use the <see cref="CancellationToken"/> property
         /// <br/>
         /// Additionally, <see cref="OnComplete"/> and <see cref="OnErrorAction"/> won't be called.
         /// </remarks>
-        public async Task<Base> ReceiveAsync(CancellationToken token)
+        public async Task<Base> ReceiveAsync(CancellationToken cancellationToken)
         {
-            token.ThrowIfCancellationRequested();
+            cancellationToken.ThrowIfCancellationRequested();
             
             ValidateSelection(out Client? client, out Stream? stream, out Commit? commit);
 
             Base result = await ReceiveAsync(
-                    token: token,
                     client: client,
                     streamId: stream.id,
                     objectId: commit.referencedObject,
                     commit: commit,
                     onProgressAction: dict => OnReceiveProgressAction.Invoke(dict),
-
-                    onTotalChildrenCountKnown: c => OnTotalChildrenCountKnown.Invoke(c)
+                    onTotalChildrenCountKnown: c => OnTotalChildrenCountKnown.Invoke(c),
+                    cancellationToken: cancellationToken
                 )
                 .ConfigureAwait(false);
             
@@ -215,7 +214,7 @@ namespace Speckle.ConnectorUnity.Components
         /// <param name="commit"></param>
         /// <param name="onProgressAction"></param>
         /// <param name="onTotalChildrenCountKnown"></param>
-        /// <param name="token"></param>
+        /// <param name="cancellationToken"></param>
         /// <exception cref="Exception">Throws various types of exceptions to indicate faliure</exception>
         /// <returns></returns>
         public static async Task<Base> ReceiveAsync(
@@ -225,17 +224,17 @@ namespace Speckle.ConnectorUnity.Components
             Commit? commit,
             Action<ConcurrentDictionary<string, int>>? onProgressAction = null,
             Action<int>? onTotalChildrenCountKnown = null, 
-            CancellationToken token = default)
+            CancellationToken cancellationToken = default)
         {
             using var transport = new ServerTransportV2(client.Account, streamId);
             
-            transport.CancellationToken = token;
+            transport.CancellationToken = cancellationToken;
 
-            token.ThrowIfCancellationRequested();
+            cancellationToken.ThrowIfCancellationRequested();
 
             Base? requestedObject = await Operations.Receive(
                 objectId: objectId,
-                cancellationToken: token,
+                cancellationToken: cancellationToken,
                 remoteTransport: transport,
                 onProgressAction: onProgressAction,
                 onErrorAction: (s, ex) =>
@@ -245,10 +244,10 @@ namespace Speckle.ConnectorUnity.Components
                         throw ex;
 
                     //HACK: Sometimes, the task was cancelled, and Operations.Receive doesn't fail in a reliable way. In this case, the exception is often simply a symptom of a cancel.
-                    if (token.IsCancellationRequested)
+                    if (cancellationToken.IsCancellationRequested)
                     {
                         SpeckleLog.Logger.Warning(ex, "A task was cancelled, ignoring potentially symptomatic exception");
-                        token.ThrowIfCancellationRequested();
+                        cancellationToken.ThrowIfCancellationRequested();
                     }
 
                     //Treat all operation errors as fatal
@@ -270,12 +269,12 @@ namespace Speckle.ConnectorUnity.Components
             if (requestedObject == null)
                 throw new SpeckleException($"Operation {nameof(Operations.Receive)} returned null");
             
-            token.ThrowIfCancellationRequested();
+            cancellationToken.ThrowIfCancellationRequested();
 
             //Read receipt
             try
             {
-                await client.CommitReceived(token, new CommitReceivedInput
+                await client.CommitReceived(cancellationToken, new CommitReceivedInput
                 {
                     streamId = streamId,
                     commitId = commit?.id,

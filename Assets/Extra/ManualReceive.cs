@@ -8,6 +8,7 @@ using Speckle.Core.Credentials;
 using Speckle.Core.Transports;
 using UnityEngine;
 
+[AddComponentMenu("Speckle/Extras/Manual Receiver")]
 [RequireComponent(typeof(RecursiveConverter))]
 public class ManualReceive : MonoBehaviour
 {
@@ -31,7 +32,8 @@ public class ManualReceive : MonoBehaviour
         if(Time.timeSinceLevelLoad > 20) yield return null;
         Receive();
     }
-
+    
+    [ContextMenu(nameof(Receive))]
     public void Receive()
     {
         var account = new Account()
@@ -49,7 +51,7 @@ public class ManualReceive : MonoBehaviour
                 objectId,
                 remoteTransport: transport,
                 localTransport: localTransport,
-                onErrorAction: (m, e)=> Debug.LogError(m + e),
+                onErrorAction: (m, e) => Debug.LogError(m + e),
                 disposeTransports: true
             );
             

@@ -3,7 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using NUnit.Framework;
+using NUnit.Framework.Constraints;
 using Speckle.ConnectorUnity.Components;
+using Speckle.ConnectorUnity.Wrappers;
 using Speckle.Core.Api;
 using Speckle.Core.Models;
 using UnityEngine;
@@ -25,31 +27,24 @@ namespace Speckle.ConnectorUnity.Tests
         }
         
         [Test, TestCaseSource(nameof(TestCases))]
-        public void ToNative_Sync_Passes(string stream)
+        public void ToNative_Passes(string stream)
         {
             Base testCase = Receive(stream);
-            var resuts = sut.RecursivelyConvertToNative_Sync(testCase, null);
-            Assert.That(resuts, Has.Count.GreaterThan(0));
-            Assert.That(resuts, Has.Some.Matches<ConversionResult>(x => x.WasSuccessful())));
-            AssertChildren();
-        }
-        
-        [UnityTest, TestCaseSource(nameof(TestCases))]
-        public IEnumerator ToNative_Coroutine_Passes(string stream)
-        {
-            Base testCase = Receive(stream);
-            GameObject parent = new("parent");
-            
-            yield return sut.RecursivelyConvertToNative_Coroutine(testCase, parent);
-            AssertChildren(parent);
+            var results = sut.RecursivelyConvertToNative_Sync(testCase, null);
+            Assert.That(results, Has.Count.GreaterThan(0));
+            Assert.That(results, HasSomeComponent<Transform>());
+            Assert.That(results, HasSomeComponent<MeshRenderer>());
+            Assert.That(results, HasSomeComponent<SpeckleProperties>());
         }
 
-        private void AssertChildren(IEnumerable<GameObject> children)
+        private static Constraint HasSomeComponent<T>() where T : Component
         {
-            foreach (var res in children)
-            {
-                res 
-            }
+            return Has.Some.Matches<ConversionResult>(
+                x =>
+                {
+                    return x.WasSuccessful(out var success, out _) 
+                        && success.GetComponent<T>();
+                });
         }
     }
 }

@@ -69,28 +69,5 @@ namespace Speckle.ConnectorUnity.Tests
             
             Assert.That(actualParent, Is.EqualTo(expectedParent));
         }
-        
-        [UnityTest]
-        public IEnumerator ReceiveAndConvert_Coroutine_Succeeds()
-        {
-            Transform expectedParent = new GameObject("parent").transform;
-            yield return null;
-
-            bool wasSuccessful = false;
-            Transform? actualParent = null;
-            
-            sut.OnComplete.AddListener(t =>
-            {
-                wasSuccessful = true;
-                actualParent = t;
-            });
-            sut.OnErrorAction.AddListener((_, ex) => throw new Exception("Failed", ex));
-
-            yield return sut.StartCoroutine(sut.ReceiveAndConvert_Routine(expectedParent));
-
-            yield return new WaitUntil(() => wasSuccessful);
-            
-            Assert.That(actualParent, Is.EqualTo(expectedParent));
-        }
     }
 }

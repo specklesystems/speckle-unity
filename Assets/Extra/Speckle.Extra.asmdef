@@ -1,4 +1,4 @@
 {
 	"name": "Speckle.Extra",
-	"references":[ "GUID:eed1b8b83e2c0074d9e5de2348e3ff72", "GUID:e6adfdc4e436206479f48eafc82f32b5", "GUID:d274441ecc3eb3f43b093eec1503d681" ]
+	"references":[ "GUID:eed1b8b83e2c0074d9e5de2348e3ff72", "GUID:e6adfdc4e436206479f48eafc82f32b5", "GUID:d274441ecc3eb3f43b093eec1503d681", "GUID:50d889142fdf9de4b8501c6eaa4b3225" ]
 }
