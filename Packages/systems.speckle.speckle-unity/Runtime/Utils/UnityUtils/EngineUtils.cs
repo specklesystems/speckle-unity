@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
 
-namespace Speckle.ConnectorUnity.Utils
+namespace Speckle.ConnectorUnity.UnityUtils
 {
-  public static class Utils
+  public static class EngineUtils
   {
 
     public static void SafeDestroy(UnityEngine.Object obj)
@@ -122,6 +122,34 @@ namespace Speckle.ConnectorUnity.Utils
             this.Task = System.Threading.Tasks.Task.Run(function);
         }
     }
+    
+    
+    public sealed class PerformanceThrottle : IEnumerator
+    {
+        private readonly IEnumerator _routine;
+        public PerformanceThrottle(IEnumerator routine)
+        {
+            _routine = routine;
+            
+        }
 
+        public bool MoveNext()
+        {
+            while (_routine.MoveNext())
+            {
+                _ = 0;
+            }
+
+            return false;
+        }
+
+        public void Reset()
+        {
+            _routine.Reset();
+        }
+
+        public object? Current => _routine.Current;
+    }
+    
   }
 }
