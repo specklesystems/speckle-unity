@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Objects.BuiltElements;
+using Objects.Organization;
 using Objects.Other;
 using Speckle.ConnectorUnity.Utils;
 using Speckle.ConnectorUnity.NativeCache;
@@ -111,8 +112,10 @@ namespace Objects.Converter.Unity
                     return View3DToNative(v);
                 case Mesh o:
                     return MeshToNative(o);
-                case BlockInstance o:
+                case Instance o:
                     return InstanceToNative(o);
+                case Collection c:
+                    return CollectionToNative(c);
                 default:
 
                     //Object is not a raw geometry, convert it as display value element
@@ -183,6 +186,19 @@ namespace Objects.Converter.Unity
             }
         }
 
+        public GameObject CollectionToNative(Collection collection)
+        {
+            var name = collection.name ?? $"{collection.collectionType} -- {collection.applicationId ?? collection.id}";
+            var go = new GameObject(name);
+            AttachSpeckleProperties(go, collection.GetType(), GetProperties(collection));
+            if (name == "Rooms")
+            {
+                go.SetActive(false);
+            }
+                
+            return go;
+        }
+        
         public bool CanConvertToNative(Base @object)
         {
             switch (@object)
@@ -195,13 +211,17 @@ namespace Objects.Converter.Unity
                 //   return true;
                 // case Curve _:
                 //   return true;
-                // case View3D _:
+                // case View2D:
+                //     return false;
+                // case View _:
                 //   return true;
-                case View2D _:
-                    return false;
-                case Mesh _:
+                case Model:
+                    return false; //This allows us to traverse older commits pre-collections
+                case Collection:
                     return true;
-                case BlockInstance _:
+                case Mesh:
+                    return true;
+                case Instance:
                     return true;
                 default:
 
@@ -212,7 +232,7 @@ namespace Objects.Converter.Unity
                         if (@object[alias] is IList)
                             return true;
                     }
-
+ 
                     return false;
             }
         }

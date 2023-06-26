@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using JetBrains.Annotations;
 using Sentry;
 using Speckle.ConnectorUnity.Components;
+using Speckle.ConnectorUnity.Utils;
 using Speckle.Core.Kits;
 using UnityEngine;
 
@@ -20,7 +21,8 @@ namespace Speckle.ConnectorUnity
   /// A Speckle Receiver, it's a wrapper around a basic Speckle Client
   /// that handles conversions and subscriptions for you
   /// </summary>
-  [RequireComponent( typeof( RecursiveConverter ) )]
+  [RequireComponent(typeof(RecursiveConverter))]
+  [Obsolete]
   public class Receiver : MonoBehaviour
   {
     public string StreamId;

@@ -1,14 +1,15 @@
+#nullable enable
 using Speckle.Core.Kits;
 using Speckle.Core.Logging;
+using Speckle.Core.Models;
 
-namespace Speckle.ConnectorUnity
+namespace Speckle.ConnectorUnity.Utils
 {
     public static class CoreUtils
     {
         public static void SetupInit()
         {
-            SpeckleLog.Initialize(HostApplications.Unity.Slug, HostApplications.Unity.GetVersion(CoreUtils.GetHostAppVersion()));
-            Setup.Init(HostApplications.Unity.GetVersion(CoreUtils.GetHostAppVersion()), HostApplications.Unity.Slug);
+            Setup.Init(HostApplications.Unity.GetVersion(GetHostAppVersion()), HostApplications.Unity.Slug);
         }
         
         public static HostAppVersion GetHostAppVersion()
@@ -31,6 +32,30 @@ namespace Speckle.ConnectorUnity
             return HostAppVersion.v;
             #endif
         }
+        
+        public const string ObjectNameSeparator = " -- ";
+    
+        /// <param name="speckleObject">The object to be named</param>
+        /// <returns>A human-readable Object name unique to the given <paramref name="speckleObject"/></returns>
+        public static string GenerateObjectName(Base speckleObject)
+        {
+            var prefix = GetFriendlyObjectName(speckleObject) ?? SimplifiedSpeckleType(speckleObject);
+            return $"{prefix}{ObjectNameSeparator}{speckleObject.id}";
+        }
 
+        public static string? GetFriendlyObjectName(Base speckleObject)
+        {
+            return speckleObject["name"] as string
+                ?? speckleObject["Name"] as string
+                ?? speckleObject["family"] as string;
+        }
+        
+        /// <param name="speckleObject"></param>
+        /// <returns>The most significant type in a given <see cref="Base.speckle_type"/></returns>
+        public static string SimplifiedSpeckleType(Base speckleObject)
+        {
+            return speckleObject.speckle_type.Split(':')[^1];
+        }
+        
     }
 }

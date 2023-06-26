@@ -1,15 +1,16 @@
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using Speckle.ConnectorUnity.Utils;
 using Speckle.Core.Models;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
 namespace Speckle.ConnectorUnity.NativeCache
 {
-    #nullable enable
     [ExecuteAlways]
     public abstract class AbstractNativeCache : ScriptableObject
     {
@@ -69,38 +70,12 @@ namespace Speckle.ConnectorUnity.NativeCache
         public static string GetAssetName(Base speckleObject, Type nativeType)
         {
             string suffix = GetAssetSuffix(nativeType);
-            string name = GenerateObjectName(speckleObject);
+            string name = CoreUtils.GenerateObjectName(speckleObject);
 
             string sanitisedName = new(name.Where(x => !InvalidChars.Contains(x)).ToArray());
             return $"{sanitisedName}{suffix}";
         }
-        
 
-        public const string OBJECT_NAME_SEPERATOR = " -- ";
-        
-        /// <param name="speckleObject">The object to be named</param>
-        /// <returns>A human-readable Object name unique to the given <paramref name="speckleObject"/></returns>
-        public static string GenerateObjectName(Base speckleObject)
-        {
-            var prefix = GetFriendlyObjectName(speckleObject) ?? SimplifiedSpeckleType(speckleObject);
-            return $"{prefix}{OBJECT_NAME_SEPERATOR}{speckleObject.id}";
-        }
-
-        public static string? GetFriendlyObjectName(Base speckleObject)
-        {
-            return speckleObject["name"] as string
-                ?? speckleObject["Name"] as string
-                ?? speckleObject["family"] as string;
-        }
-        
-        /// <param name="speckleObject"></param>
-        /// <returns>The most significant type in a given <see cref="Base.speckle_type"/></returns>
-        public static string SimplifiedSpeckleType(Base speckleObject)
-        {
-            return speckleObject.speckle_type.Split(':')[^1];
-        }
-        
-        
         public static string GetAssetSuffix(Type nativeType)
         {
             if (nativeType == typeof(Material)) return ".mat";
@@ -108,7 +83,7 @@ namespace Speckle.ConnectorUnity.NativeCache
             return ".asset";
         }
         
-        [Obsolete("use " + nameof(GenerateObjectName))]
+        [Obsolete("use " + nameof(CoreUtils.GenerateObjectName))]
         public static string GetObjectName(Base speckleObject)
         {
             string objectName = speckleObject["name"] as string ?? speckleObject.speckle_type.Split(':').Last();

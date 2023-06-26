@@ -1,5 +1,6 @@
 ﻿using Speckle.ConnectorUnity.Factories;
 using Speckle.ConnectorUnity.NativeCache;
+using Speckle.ConnectorUnity.Utils;
 using Speckle.Core.Kits;
 using Speckle.Core.Logging;
 using UnityEngine;
@@ -18,7 +19,12 @@ namespace Speckle.ConnectorUnity.Components
         [field: SerializeField]
         public AggregateNativeCache AssetCache { get; set; }
 
-        private void Awake()
+        protected void Awake()
+        {
+            Init();
+        }
+
+        protected void Init()
         {
             Setup.Init(HostApplications.Unity.GetVersion(CoreUtils.GetHostAppVersion()), HostApplications.Unity.Slug);
 

@@ -1,9 +1,10 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.Collections;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
 
-#nullable enable
 namespace Speckle.ConnectorUnity.Utils
 {
   public static class Utils
@@ -92,6 +93,34 @@ namespace Speckle.ConnectorUnity.Utils
       }
       Texture2D? texture = DownloadHandlerTexture.GetContent(www);
       callback.Invoke(texture);
+    }
+    
+    /// <summary>
+    /// Coroutine <see cref="CustomYieldInstruction"/> that starts and waits for an async <see cref="System.Threading.Tasks.Task"/>
+    /// to complete.
+    /// </summary>
+    /// <remarks>Useful for running async tasks from coroutines</remarks>
+    public class WaitForTask : CustomYieldInstruction
+    {
+        public readonly Task Task;
+        public override bool keepWaiting => !Task.IsCompleted;
+
+        public WaitForTask(Func<Task> function)
+        {
+            Task = Task.Run(function);
+        }
+    }
+    
+    /// <inheritdoc cref="WaitForTask"/>
+    public sealed class WaitForTask<TResult> : CustomYieldInstruction
+    {
+        public readonly Task<TResult> Task;
+        public TResult Result => Task.Result; 
+        public override bool keepWaiting => !Task.IsCompleted;
+        public WaitForTask(Func<Task<TResult>> function)
+        {
+            this.Task = System.Threading.Tasks.Task.Run(function);
+        }
     }
   }
 }

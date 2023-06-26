@@ -34,12 +34,16 @@ namespace Speckle.ConnectorUnity.Wrappers.Editor
                 .Where(x => x.FullName != null)
                 .Select(x => x.FullName!.Replace('.', '/'));
             
+            var manualTypes = new [] { typeof(Base), typeof(Collection)};
+            var manualStrings = new []{ nameof(Base), nameof(Collection)};
+            
+            //Manually Add `Base`
+            SpeckleTypeOptions = options.Concat(manualTypes).ToArray();
+            SpeckleTypeOptionStrings = strings.Concat(manualStrings).ToArray();
 
-            SpeckleTypeOptionStrings = strings.Append(nameof(Base)).ToArray();
-            SpeckleTypeOptions = options.Append(typeof(Base)).ToArray();
             Debug.Assert(SpeckleTypeOptions.Length == SpeckleTypeOptionStrings.Length);
         }
-        
+
         private static GUILayoutOption[] propLayoutOptions = { GUILayout.ExpandWidth(true) };
         
         public override void OnInspectorGUI()

@@ -1,7 +1,7 @@
 {
     "name": "Speckle.ConnectorUnity.NativeCache",
     "rootNamespace": "Speckle.ConnectorUnity",
-    "references": [],
+    "references": ["GUID:50d889142fdf9de4b8501c6eaa4b3225"],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

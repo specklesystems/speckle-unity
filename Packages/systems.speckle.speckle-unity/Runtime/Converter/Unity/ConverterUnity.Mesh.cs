@@ -6,6 +6,7 @@ using Speckle.ConnectorUnity.Utils;
 using Objects.Other;
 using Objects.Utils;
 using Speckle.ConnectorUnity.NativeCache;
+using Speckle.Core.Logging;
 using Speckle.Core.Models;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -209,13 +210,9 @@ namespace Objects.Converter.Unity
         /// <param name="element">The <see cref="Base"/> object being converted</param>
         /// <param name="meshes">Collection of <see cref="Objects.Geometry.Mesh"/>es that shall be converted</param>
         /// <returns>A <see cref="GameObject"/> with the converted <see cref="UnityEngine.Mesh"/>, <see cref="MeshFilter"/>, and <see cref="MeshRenderer"/></returns>
-        public GameObject? MeshesToNative(Base element, IReadOnlyCollection<SMesh> meshes)
+        public GameObject MeshesToNative(Base element, IReadOnlyCollection<SMesh> meshes)
         {
-            if (!meshes.Any())
-            {
-                Debug.Log($"Skipping {element.GetType()} {element.id}, zero {typeof(SMesh)} provided");
-                return null;
-            }
+            if (!meshes.Any()) throw new ArgumentException("Expected at least one Mesh", nameof(meshes));
 
             Material[] nativeMaterials = RenderMaterialsToNative(meshes);
 
@@ -223,7 +220,7 @@ namespace Objects.Converter.Unity
             {
                 //Convert a new one
                 MeshToNativeMesh(meshes, out nativeMesh, out center);
-                string name = AssetHelpers.GenerateObjectName(element);
+                string name = CoreUtils.GenerateObjectName(element);
                 nativeMesh.name = name;
                 LoadedAssets.TrySaveObject(element, nativeMesh);
             }
@@ -241,15 +238,12 @@ namespace Objects.Converter.Unity
         /// </summary>
         /// <param name="speckleMesh">Mesh to convert</param>
         /// <returns></returns>
-        public GameObject? MeshToNative(SMesh speckleMesh)
+        public GameObject MeshToNative(SMesh speckleMesh)
         {
             if (speckleMesh.vertices.Count == 0 || speckleMesh.faces.Count == 0)
-            {
-                Debug.Log($"Skipping mesh {speckleMesh.id}, mesh data was empty");
-                return null;
-            }
-
-            GameObject? converted = MeshesToNative(speckleMesh, new[] {speckleMesh});
+                throw new ArgumentException("mesh data was empty", nameof(speckleMesh));
+                    
+            GameObject converted = MeshesToNative(speckleMesh, new[] {speckleMesh});
 
             // Raw meshes shouldn't have dynamic props to attach
             //if (converted != null) AttachSpeckleProperties(converted,speckleMesh.GetType(), GetProperties(speckleMesh, typeof(Mesh)));
@@ -483,7 +477,7 @@ namespace Objects.Converter.Unity
             
             var c = renderMaterial.diffuse.ToUnityColor();
             mat.color = new Color(c.r, c.g, c.b, (float) renderMaterial.opacity);
-            mat.name = AssetHelpers.GenerateObjectName(renderMaterial);
+            mat.name = CoreUtils.GenerateObjectName(renderMaterial);
             mat.SetFloat(Metallic, (float) renderMaterial.metalness);
             mat.SetFloat(Glossiness, 1 - (float) renderMaterial.roughness);
             if (renderMaterial.emissive != SColor.Black.ToArgb()) mat.EnableKeyword("_EMISSION");

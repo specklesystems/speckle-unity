@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Threading.Tasks;
 using Speckle.ConnectorUnity;
@@ -7,6 +8,7 @@ using Speckle.Core.Credentials;
 using Speckle.Core.Transports;
 using UnityEngine;
 
+[AddComponentMenu("Speckle/Extras/Manual Receiver")]
 [RequireComponent(typeof(RecursiveConverter))]
 public class ManualReceive : MonoBehaviour
 {
@@ -30,7 +32,8 @@ public class ManualReceive : MonoBehaviour
         if(Time.timeSinceLevelLoad > 20) yield return null;
         Receive();
     }
-
+    
+    [ContextMenu(nameof(Receive))]
     public void Receive()
     {
         var account = new Account()
@@ -48,14 +51,17 @@ public class ManualReceive : MonoBehaviour
                 objectId,
                 remoteTransport: transport,
                 localTransport: localTransport,
-                onErrorAction: (m, e)=> Debug.LogError(m + e),
+                onErrorAction: (m, e) => Debug.LogError(m + e),
                 disposeTransports: true
             );
-
+            
+            if (@base == null) throw new Exception("received data was null!");
+            
             Dispatcher.Instance().Enqueue(() =>
             {
                 var parentObject = new GameObject(name);
-                receiver.RecursivelyConvertToNative(@base, parentObject.transform);
+                
+                receiver.RecursivelyConvertToNative_Sync(@base, parentObject.transform);
 
                 Debug.Log($"Receive {objectId} completed");
             });

@@ -21,6 +21,7 @@ namespace Speckle.ConnectorUnity
   /// that handles conversions for you
   /// </summary>
   [RequireComponent(typeof(RecursiveConverter)), ExecuteAlways]
+  [Obsolete]
   public class Sender : MonoBehaviour
   {
    

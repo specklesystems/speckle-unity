@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Speckle.Core.Credentials;
@@ -8,6 +9,7 @@ using Stream = Speckle.Core.Api.Stream;
 
 namespace Speckle.ConnectorUnity
 {
+    [Obsolete]
   public class SpeckleExamples : MonoBehaviour
   {
     public Text SelectStreamText;

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Objects.Other;
+using Speckle.ConnectorUnity;
 using Speckle.ConnectorUnity.NativeCache;
 using Speckle.ConnectorUnity.Utils;
 using Speckle.ConnectorUnity.Wrappers;
@@ -212,15 +213,11 @@ namespace Objects.Converter.Unity
             return sobject;
         }
 
-        public GameObject? InstanceToNative(Instance instance)
+        public GameObject InstanceToNative(Instance instance)
         {
-            if (instance.definition == null)
-            {
-                Debug.Log($"Skipping {typeof(BlockInstance)} {instance.id}, block definition was null");
-                return null;
-            }
+            if (instance.definition == null) throw new ArgumentException("Definition was null", nameof(instance));
 
-            var defName = instance.definition["name"] as string ?? "";
+            var defName = CoreUtils.GenerateObjectName(instance.definition);
             // Check for existing converted object
             if(LoadedAssets.TryGetObject(instance.definition, out GameObject? existingGo))
             {
@@ -231,15 +228,19 @@ namespace Objects.Converter.Unity
             }
 
             // Convert the block definition
-            GameObject native = new GameObject(defName);
+            GameObject native = new(defName);
             
             List<SMesh> meshes = new();
             List<Base> others = new();
 
             var geometry = instance.definition is BlockDefinition b
                 ? b.geometry
-                : GraphTraversal.TraverseMember(instance.definition["elements"]);
-            
+                : GraphTraversal.TraverseMember(new[]
+                {
+                    instance.definition["elements"] ?? instance.definition["@elements"],
+                    instance.definition["displayValue"] ?? instance.definition["@displayValue"],
+                });
+
             foreach (Base geo in geometry)
             {
                 if (geo is SMesh m) meshes.Add(m);
@@ -252,7 +253,7 @@ namespace Objects.Converter.Unity
                 if(!TryGetMeshFromCache(instance.definition, meshes, out Mesh? nativeMesh, out _))
                 {
                     MeshToNativeMesh(meshes, out nativeMesh);
-                    string name = AssetHelpers.GenerateObjectName(instance.definition);
+                    string name = CoreUtils.GenerateObjectName(instance.definition);
                     nativeMesh.name = name;
                     LoadedAssets.TrySaveObject(instance.definition, nativeMesh);
                 }
@@ -269,8 +270,14 @@ namespace Objects.Converter.Unity
             
             LoadedAssets.TrySaveObject(instance.definition, native);
             
+            
             TransformToNativeTransform(native.transform, instance.transform);
-            if (instance["name"] is string instanceName) native.name = instanceName;
+            
+            var instanceName = CoreUtils.GetFriendlyObjectName(instance) != null
+                ? CoreUtils.GenerateObjectName(instance)
+                : defName;
+            
+            native.name = instanceName;
             return native;
         }
 

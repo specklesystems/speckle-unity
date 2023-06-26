@@ -377,6 +377,165 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!1 &50753198
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 50753202}
+  - component: {fileID: 50753201}
+  - component: {fileID: 50753200}
+  - component: {fileID: 50753199}
+  m_Layer: 0
+  m_Name: Speckle Connector
+  m_TagString: Untagged
+  m_Icon: {fileID: 2800000, guid: ee2ed9d8fff3a1d4db5590491978062e, type: 3}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &50753199
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 50753198}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b95e704835cc48444b81e33c978f6f7f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Account>k__BackingField:
+    rid: 3905486442366500889
+  <Stream>k__BackingField:
+    rid: 3905486442366500890
+  <Branch>k__BackingField:
+    rid: 3905486442366500891
+  OnBranchSelectionChange:
+    m_PersistentCalls:
+      m_Calls: []
+  OnErrorAction:
+    m_PersistentCalls:
+      m_Calls: []
+  OnSendProgressAction:
+    m_PersistentCalls:
+      m_Calls: []
+  references:
+    version: 2
+    RefIds:
+    - rid: 3905486442366500889
+      type: {class: AccountSelection, ns: Speckle.ConnectorUnity.Wrappers.Selection, asm: Speckle.ConnectorUnity.Wrappers}
+      data:
+        selectedIndex: 0
+    - rid: 3905486442366500890
+      type: {class: StreamSelection, ns: Speckle.ConnectorUnity.Wrappers.Selection, asm: Speckle.ConnectorUnity.Wrappers}
+      data:
+        selectedIndex: 0
+        <StreamsLimit>k__BackingField: 50
+        <AccountSelection>k__BackingField:
+          rid: 3905486442366500889
+    - rid: 3905486442366500891
+      type: {class: BranchSelection, ns: Speckle.ConnectorUnity.Wrappers.Selection, asm: Speckle.ConnectorUnity.Wrappers}
+      data:
+        selectedIndex: 0
+        <BranchesLimit>k__BackingField: 100
+        <CommitsLimit>k__BackingField: 0
+        <StreamSelection>k__BackingField:
+          rid: 3905486442366500890
+--- !u!114 &50753200
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 50753198}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0bc895f6cb37b674995dc13b79783c55, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Account>k__BackingField:
+    rid: 3905486442366500885
+  <Stream>k__BackingField:
+    rid: 3905486442366500886
+  <Branch>k__BackingField:
+    rid: 3905486442366500887
+  <Commit>k__BackingField:
+    rid: 3905486442366500888
+  OnCommitSelectionChange:
+    m_PersistentCalls:
+      m_Calls: []
+  OnReceiveProgressAction:
+    m_PersistentCalls:
+      m_Calls: []
+  OnErrorAction:
+    m_PersistentCalls:
+      m_Calls: []
+  OnTotalChildrenCountKnown:
+    m_PersistentCalls:
+      m_Calls: []
+  OnComplete:
+    m_PersistentCalls:
+      m_Calls: []
+  references:
+    version: 2
+    RefIds:
+    - rid: 3905486442366500885
+      type: {class: AccountSelection, ns: Speckle.ConnectorUnity.Wrappers.Selection, asm: Speckle.ConnectorUnity.Wrappers}
+      data:
+        selectedIndex: 0
+    - rid: 3905486442366500886
+      type: {class: StreamSelection, ns: Speckle.ConnectorUnity.Wrappers.Selection, asm: Speckle.ConnectorUnity.Wrappers}
+      data:
+        selectedIndex: 0
+        <StreamsLimit>k__BackingField: 50
+        <AccountSelection>k__BackingField:
+          rid: 3905486442366500885
+    - rid: 3905486442366500887
+      type: {class: BranchSelection, ns: Speckle.ConnectorUnity.Wrappers.Selection, asm: Speckle.ConnectorUnity.Wrappers}
+      data:
+        selectedIndex: 0
+        <BranchesLimit>k__BackingField: 100
+        <CommitsLimit>k__BackingField: 25
+        <StreamSelection>k__BackingField:
+          rid: 3905486442366500886
+    - rid: 3905486442366500888
+      type: {class: CommitSelection, ns: Speckle.ConnectorUnity.Wrappers.Selection, asm: Speckle.ConnectorUnity.Wrappers}
+      data:
+        selectedIndex: 0
+        <BranchSelection>k__BackingField:
+          rid: 3905486442366500887
+--- !u!114 &50753201
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 50753198}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed6cbf9ce4dca0349997d163ec9bce7e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <AssetCache>k__BackingField: {fileID: 1490514812}
+--- !u!4 &50753202
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 50753198}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 9
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &73017256
 GameObject:
   m_ObjectHideFlags: 0
@@ -928,165 +1087,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 194696812}
   m_CullTransparentMesh: 1
---- !u!1 &218987857
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 218987861}
-  - component: {fileID: 218987860}
-  - component: {fileID: 218987859}
-  - component: {fileID: 218987858}
-  m_Layer: 0
-  m_Name: Speckle Connector
-  m_TagString: Untagged
-  m_Icon: {fileID: 2800000, guid: ee2ed9d8fff3a1d4db5590491978062e, type: 3}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &218987858
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 218987857}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b95e704835cc48444b81e33c978f6f7f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  <Account>k__BackingField:
-    rid: 5855987529328361546
-  <Stream>k__BackingField:
-    rid: 5855987529328361547
-  <Branch>k__BackingField:
-    rid: 5855987529328361548
-  OnBranchSelectionChange:
-    m_PersistentCalls:
-      m_Calls: []
-  OnErrorAction:
-    m_PersistentCalls:
-      m_Calls: []
-  OnSendProgressAction:
-    m_PersistentCalls:
-      m_Calls: []
-  references:
-    version: 2
-    RefIds:
-    - rid: 5855987529328361546
-      type: {class: AccountSelection, ns: Speckle.ConnectorUnity.Wrappers.Selection, asm: Speckle.ConnectorUnity.Wrappers}
-      data:
-        selectedIndex: 0
-    - rid: 5855987529328361547
-      type: {class: StreamSelection, ns: Speckle.ConnectorUnity.Wrappers.Selection, asm: Speckle.ConnectorUnity.Wrappers}
-      data:
-        selectedIndex: 0
-        <StreamsLimit>k__BackingField: 50
-        <AccountSelection>k__BackingField:
-          rid: 5855987529328361546
-    - rid: 5855987529328361548
-      type: {class: BranchSelection, ns: Speckle.ConnectorUnity.Wrappers.Selection, asm: Speckle.ConnectorUnity.Wrappers}
-      data:
-        selectedIndex: 0
-        <BranchesLimit>k__BackingField: 30
-        <CommitsLimit>k__BackingField: 0
-        <StreamSelection>k__BackingField:
-          rid: 5855987529328361547
---- !u!114 &218987859
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 218987857}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0bc895f6cb37b674995dc13b79783c55, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  <Account>k__BackingField:
-    rid: 5855987529328361542
-  <Stream>k__BackingField:
-    rid: 5855987529328361543
-  <Branch>k__BackingField:
-    rid: 5855987529328361544
-  <Commit>k__BackingField:
-    rid: 5855987529328361545
-  OnCommitSelectionChange:
-    m_PersistentCalls:
-      m_Calls: []
-  OnReceiveProgressAction:
-    m_PersistentCalls:
-      m_Calls: []
-  OnErrorAction:
-    m_PersistentCalls:
-      m_Calls: []
-  OnTotalChildrenCountKnown:
-    m_PersistentCalls:
-      m_Calls: []
-  OnComplete:
-    m_PersistentCalls:
-      m_Calls: []
-  references:
-    version: 2
-    RefIds:
-    - rid: 5855987529328361542
-      type: {class: AccountSelection, ns: Speckle.ConnectorUnity.Wrappers.Selection, asm: Speckle.ConnectorUnity.Wrappers}
-      data:
-        selectedIndex: 0
-    - rid: 5855987529328361543
-      type: {class: StreamSelection, ns: Speckle.ConnectorUnity.Wrappers.Selection, asm: Speckle.ConnectorUnity.Wrappers}
-      data:
-        selectedIndex: 0
-        <StreamsLimit>k__BackingField: 50
-        <AccountSelection>k__BackingField:
-          rid: 5855987529328361542
-    - rid: 5855987529328361544
-      type: {class: BranchSelection, ns: Speckle.ConnectorUnity.Wrappers.Selection, asm: Speckle.ConnectorUnity.Wrappers}
-      data:
-        selectedIndex: 0
-        <BranchesLimit>k__BackingField: 30
-        <CommitsLimit>k__BackingField: 15
-        <StreamSelection>k__BackingField:
-          rid: 5855987529328361543
-    - rid: 5855987529328361545
-      type: {class: CommitSelection, ns: Speckle.ConnectorUnity.Wrappers.Selection, asm: Speckle.ConnectorUnity.Wrappers}
-      data:
-        selectedIndex: 0
-        <BranchSelection>k__BackingField:
-          rid: 5855987529328361544
---- !u!114 &218987860
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 218987857}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ed6cbf9ce4dca0349997d163ec9bce7e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  <AssetCache>k__BackingField: {fileID: 1710028308}
---- !u!4 &218987861
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 218987857}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 9
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &234733581
 GameObject:
   m_ObjectHideFlags: 0
@@ -1135,6 +1135,19 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &236313388
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2a4a29c776298714c88f406ad39c6095, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  matchByName: 1
 --- !u!1 &310693430
 GameObject:
   m_ObjectHideFlags: 0
@@ -1616,18 +1629,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &540478226
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b3354e8208862c341940152f5340d41a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &641375517
 GameObject:
   m_ObjectHideFlags: 0
@@ -3176,6 +3177,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1465364520}
   m_CullTransparentMesh: 1
+--- !u!114 &1490514812
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88d6b4f2f80eaa14f9f07505f7e44ec2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nativeCaches:
+  - {fileID: 236313388}
+  - {fileID: 1545552959}
 --- !u!1 &1506703863
 GameObject:
   m_ObjectHideFlags: 0
@@ -3341,6 +3357,18 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
+--- !u!114 &1545552959
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b3354e8208862c341940152f5340d41a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1587881868
 GameObject:
   m_ObjectHideFlags: 0
@@ -3599,21 +3627,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1707872729}
   m_CullTransparentMesh: 1
---- !u!114 &1710028308
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 88d6b4f2f80eaa14f9f07505f7e44ec2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  nativeCaches:
-  - {fileID: 1771830985}
-  - {fileID: 540478226}
 --- !u!1 &1729237655
 GameObject:
   m_ObjectHideFlags: 0
@@ -3726,19 +3739,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1762991479}
   m_CullTransparentMesh: 1
---- !u!114 &1771830985
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2a4a29c776298714c88f406ad39c6095, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  matchByName: 1
 --- !u!1 &1885647142
 GameObject:
   m_ObjectHideFlags: 0
