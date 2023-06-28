@@ -2027,14 +2027,14 @@
             <param name="converter"></param>
             <returns></returns>
         </member>
-        <member name="M:Speckle.Core.Models.GraphTraversal.GraphTraversal.Traverse(Speckle.Core.Models.Base)">
+        <member name="M:Speckle.Core.Models.GraphTraversal.GraphTraversal`1.Traverse(Speckle.Core.Models.Base)">
             <summary>
             Given <paramref name="root"/> object, will recursively traverse members according to the provided traversal rules.
             </summary>
             <param name="root">The object to traverse members</param>
             <returns>Lazily returns <see cref="T:Speckle.Core.Models.Base"/> objects found during traversal (including <paramref name="root"/>), wrapped within a <see cref="T:Speckle.Core.Models.GraphTraversal.TraversalContext"/></returns>
         </member>
-        <member name="M:Speckle.Core.Models.GraphTraversal.GraphTraversal.TraverseMember(System.Object)">
+        <member name="M:Speckle.Core.Models.GraphTraversal.GraphTraversal`1.TraverseMember(System.Object)">
             <summary>
             Traverses supported Collections yielding <see cref="T:Speckle.Core.Models.Base"/> objects.
             Does not traverse <see cref="T:Speckle.Core.Models.Base"/>, only (potentially nested) collections.

@@ -19,6 +19,16 @@
             Name of parent alignment if this is an offset alignment
             </summary>
         </member>
+        <member name="P:Objects.BuiltElements.Civil.CivilProfile.pvis">
+            <summary>
+            Points of vertical intersection
+            </summary>
+        </member>
+        <member name="P:Objects.BuiltElements.Civil.CivilProfile.parent">
+            <summary>
+            Name of parent profile if this is an offset profile
+            </summary>
+        </member>
         <member name="M:Objects.BuiltElements.Area.#ctor(System.String,System.String,Objects.BuiltElements.Level,Objects.Geometry.Point)">
             <summary>
             SchemaBuilder constructor for a Room

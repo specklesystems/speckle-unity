@@ -1,3 +1,4 @@
+#nullable enable
 using System;
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
@@ -6,7 +7,6 @@ using Speckle.Core.Models.GraphTraversal;
 using UnityEditor;
 using UnityEngine;
 
-#nullable enable
 namespace Speckle.ConnectorUnity.Components.Editor
 {
     [CanEditMultipleObjects]
@@ -54,7 +54,6 @@ namespace Speckle.ConnectorUnity.Components.Editor
                 {
                     var value = Progress.globalProgress; //NOTE: this may include non-speckle items...
                     var percent = Math.Max(0, Mathf.Ceil(value * 100));
-                    Debug.Log(value);
                     var rect = EditorGUILayout.GetControlRect(false, EditorGUIUtility.singleLineHeight);
                     EditorGUI.ProgressBar(rect, value, $"{percent}%");
                 }
@@ -277,7 +276,7 @@ namespace Speckle.ConnectorUnity.Components.Editor
         static void CreateCustomGameObject(MenuCommand menuCommand)
         {
             // Create a custom game object
-            GameObject go = new GameObject("Speckle Connector");
+            GameObject go = new("Speckle Connector");
             // Ensure it gets reparented if this was a context click (otherwise does nothing)
             GameObjectUtility.SetParentAndAlign(go, menuCommand.context as GameObject);
             // Register the creation in the undo system
@@ -286,6 +285,7 @@ namespace Speckle.ConnectorUnity.Components.Editor
 
             go.AddComponent<RecursiveConverter>();
             go.AddComponent<SpeckleReceiver>();
+            go.AddComponent<ReceiveFromURL>();
             go.AddComponent<SpeckleSender>();
             
 #if UNITY_2021_2_OR_NEWER
