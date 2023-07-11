@@ -16,6 +16,7 @@ using Object = UnityEngine.Object;
 
 namespace Objects.Converter.Unity
 {
+    [Serializable]
     public partial class ConverterUnity : ISpeckleConverter
     {
         #region implemented methods
@@ -30,7 +31,8 @@ namespace Objects.Converter.Unity
         public ProgressReport Report { get; }
         public ReceiveMode ReceiveMode { get; set; }
 
-        public IEnumerable<string> GetServicedApplications() => new string[] {HostApplications.Unity.Name};
+        public IEnumerable<string> GetServicedApplications() =>
+            new string[] { HostApplications.Unity.Name };
 
         public AbstractNativeCache LoadedAssets { get; private set; }
 
@@ -38,13 +40,23 @@ namespace Objects.Converter.Unity
         {
             if (doc is not AbstractNativeCache context)
                 throw new ArgumentException(
-                    $"Expected {nameof(doc)} to be of type {typeof(Dictionary<string, Object>)}", nameof(doc));
+                    $"Expected {nameof(doc)} to be of type {typeof(Dictionary<string, Object>)}",
+                    nameof(doc)
+                );
             LoadedAssets = context;
+
+            if (OpaqueMaterialShader == null)
+                OpaqueMaterialShader = Shader.Find(DefaultShader);
+
+            if (TranslucentMaterialShader == null)
+                TranslucentMaterialShader = Shader.Find(DefaultShader);
         }
 
-        public void SetContextObjects(List<ApplicationObject> objects) => throw new NotImplementedException();
+        public void SetContextObjects(List<ApplicationObject> objects) =>
+            throw new NotImplementedException();
 
-        public void SetPreviousContextObjects(List<ApplicationObject> objects) => throw new NotImplementedException();
+        public void SetPreviousContextObjects(List<ApplicationObject> objects) =>
+            throw new NotImplementedException();
 
 #nullable enable
         public object? ConvertToNative(Base @object) => ConvertToNativeGameObject(@object);
@@ -52,7 +64,9 @@ namespace Objects.Converter.Unity
         public Base ConvertToSpeckle(object @object)
         {
             if (!(@object is GameObject go))
-                throw new NotSupportedException($"Cannot convert object of type {@object.GetType()} to Speckle");
+                throw new NotSupportedException(
+                    $"Cannot convert object of type {@object.GetType()} to Speckle"
+                );
             return ConvertGameObjectToSpeckle(go);
         }
 
@@ -88,13 +102,15 @@ namespace Objects.Converter.Unity
                 }
                 catch (Exception e)
                 {
-                    Debug.LogError($"Failed to convert {component.GetType()} component\n{e}", component);
+                    Debug.LogError(
+                        $"Failed to convert {component.GetType()} component\n{e}",
+                        component
+                    );
                 }
             }
 
             return speckleObject;
         }
-
 
         public GameObject? ConvertToNativeGameObject(Base speckleObject)
         {
@@ -123,7 +139,11 @@ namespace Objects.Converter.Unity
                     if (element != null)
                     {
                         if (!speckleObject.speckle_type.Contains("Objects.Geometry"))
-                            AttachSpeckleProperties(element, speckleObject.GetType(), GetProperties(speckleObject));
+                            AttachSpeckleProperties(
+                                element,
+                                speckleObject.GetType(),
+                                GetProperties(speckleObject)
+                            );
 
                         return element;
                     }
@@ -132,9 +152,8 @@ namespace Objects.Converter.Unity
             }
         }
 
-
         public IList<string> DisplayValuePropertyAliases { get; set; } =
-            new[] {"displayValue", "@displayValue", "displayMesh", "@displayMesh"};
+            new[] { "displayValue", "@displayValue", "displayMesh", "@displayMesh" };
 
         public GameObject? DisplayValueToNative(Base @object)
         {
@@ -146,7 +165,7 @@ namespace Objects.Converter.Unity
                     case IList dvCollection:
                         return MeshesToNative(@object, dvCollection.OfType<Mesh>().ToList());
                     case Mesh dvMesh:
-                        return MeshesToNative(@object, new[] {dvMesh});
+                        return MeshesToNative(@object, new[] { dvMesh });
                     case Base dvBase:
                         return ConvertToNativeGameObject(dvBase);
                 }
@@ -154,16 +173,18 @@ namespace Objects.Converter.Unity
 
             return null;
         }
-        
-        private SpeckleProperties AttachSpeckleProperties(GameObject go, Type speckleType,
-            IDictionary<string, object?> properties)
+
+        private SpeckleProperties AttachSpeckleProperties(
+            GameObject go,
+            Type speckleType,
+            IDictionary<string, object?> properties
+        )
         {
             var sd = go.AddComponent<SpeckleProperties>();
             sd.Data = properties;
             sd.SpeckleType = speckleType;
             return sd;
         }
-        
 
         public List<Base> ConvertToSpeckle(List<object> objects)
         {
@@ -188,17 +209,19 @@ namespace Objects.Converter.Unity
 
         public GameObject CollectionToNative(Collection collection)
         {
-            var name = collection.name ?? $"{collection.collectionType} -- {collection.applicationId ?? collection.id}";
+            var name =
+                collection.name
+                ?? $"{collection.collectionType} -- {collection.applicationId ?? collection.id}";
             var go = new GameObject(name);
             AttachSpeckleProperties(go, collection.GetType(), GetProperties(collection));
             if (name == "Rooms")
             {
                 go.SetActive(false);
             }
-                
+
             return go;
         }
-        
+
         public bool CanConvertToNative(Base @object)
         {
             switch (@object)
@@ -213,8 +236,8 @@ namespace Objects.Converter.Unity
                 //   return true;
                 // case View2D:
                 //     return false;
-                // case View _:
-                //   return true;
+                case View3D _:
+                    return shouldConvertViews;
                 case Model:
                     return false; //This allows us to traverse older commits pre-collections
                 case Collection:
@@ -232,7 +255,7 @@ namespace Objects.Converter.Unity
                         if (@object[alias] is IList)
                             return true;
                     }
- 
+
                     return false;
             }
         }

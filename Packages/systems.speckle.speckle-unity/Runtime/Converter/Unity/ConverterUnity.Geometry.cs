@@ -4,8 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Objects.Other;
-using Speckle.ConnectorUnity;
-using Speckle.ConnectorUnity.NativeCache;
 using Speckle.ConnectorUnity.Utils;
 using Speckle.ConnectorUnity.Wrappers;
 using Speckle.Core.Logging;
@@ -24,7 +22,6 @@ namespace Objects.Converter.Unity
 {
     public partial class ConverterUnity
     {
-
         #region helper methods
 
 
@@ -35,29 +32,33 @@ namespace Objects.Converter.Unity
         public Vector3 VectorByCoordinates(double x, double y, double z, double scaleFactor = 1d)
         {
             // switch y and z //TODO is this correct? LH -> RH
-            return new Vector3((float) (x * scaleFactor), (float) (z * scaleFactor), (float) (y * scaleFactor));
+            return new Vector3(
+                (float)(x * scaleFactor),
+                (float)(z * scaleFactor),
+                (float)(y * scaleFactor)
+            );
         }
 
         public Vector3 VectorByCoordinates(double x, double y, double z, string units)
         {
-            var f = Speckle.Core.Kits.Units.GetConversionFactor(units, ModelUnits);
+            var f = GetConversionFactor(units);
             return VectorByCoordinates(x, y, z, f);
         }
 
         public Vector3 VectorFromPoint(Point p) => VectorByCoordinates(p.x, p.y, p.z, p.units);
 
-
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="arr"></param>
         /// <returns></returns>
         public Vector3[] ArrayToPoints(IList<double> arr, string units)
         {
-            if (arr.Count % 3 != 0) throw new Exception("Array malformed: length%3 != 0.");
+            if (arr.Count % 3 != 0)
+                throw new Exception("Array malformed: length not a multiple of 3");
 
             Vector3[] points = new Vector3[arr.Count / 3];
-            var f = Speckle.Core.Kits.Units.GetConversionFactor(units, ModelUnits);
+            var f = GetConversionFactor(units);
 
             for (int i = 2, k = 0; i < arr.Count; i += 3)
                 points[k++] = VectorByCoordinates(arr[i - 2], arr[i - 1], arr[i], f);
@@ -72,7 +73,7 @@ namespace Objects.Converter.Unity
         //TODO: more of these
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
@@ -81,7 +82,6 @@ namespace Objects.Converter.Unity
             //switch y and z
             return new Point(p.x, p.z, p.y);
         }
-        
 
         #endregion
 
@@ -90,7 +90,8 @@ namespace Objects.Converter.Unity
 
         protected GameObject? NewPointBasedGameObject(Vector3[] points, string name)
         {
-            if (points.Length == 0) return null;
+            if (points.Length == 0)
+                return null;
 
             float pointDiameter = 1; //TODO: figure out how best to change this?
 
@@ -116,10 +117,9 @@ namespace Objects.Converter.Unity
         {
             Vector3 newPt = VectorByCoordinates(point.x, point.y, point.z, point.units);
 
-            var go = NewPointBasedGameObject(new Vector3[] {newPt, newPt}, point.speckle_type);
+            var go = NewPointBasedGameObject(new Vector3[] { newPt, newPt }, point.speckle_type);
             return go;
         }
-
 
         /// <summary>
         /// Converts a Speckle <paramref name="line"/> to a <see cref="GameObject"/> with a <see cref="LineRenderer"/>
@@ -128,7 +128,11 @@ namespace Objects.Converter.Unity
         /// <returns></returns>
         public GameObject? LineToNative(Line line)
         {
-            var points = new List<Vector3> {VectorFromPoint(line.start), VectorFromPoint(line.end)};
+            var points = new List<Vector3>
+            {
+                VectorFromPoint(line.start),
+                VectorFromPoint(line.end)
+            };
 
             var go = NewPointBasedGameObject(points.ToArray(), line.speckle_type);
             return go;
@@ -158,15 +162,16 @@ namespace Objects.Converter.Unity
             var go = NewPointBasedGameObject(points, curve.speckle_type);
             return go;
         }
-        
 
         public Dictionary<string, object?> GetProperties(Base o) => GetProperties(o, typeof(Base));
 
         public Dictionary<string, object?> GetProperties(Base o, Type excludeType)
         {
-            var excludeProps = new HashSet<string>(excludeType
-                .GetProperties(BindingFlags.Instance | BindingFlags.Public)
-                .Select(x => x.Name));
+            var excludeProps = new HashSet<string>(
+                excludeType
+                    .GetProperties(BindingFlags.Instance | BindingFlags.Public)
+                    .Select(x => x.Name)
+            );
 
             foreach (string alias in DisplayValuePropertyAliases)
             {
@@ -180,15 +185,19 @@ namespace Objects.Converter.Unity
             excludeProps.Add("physicsLayer");
 
             return o.GetMembers()
-                .Where(x => !(excludeProps.Contains(x.Key) || excludeProps.Contains(x.Key.TrimStart('@'))))
-                .ToDictionary(x => x.Key, x => (object?) x.Value);
+                .Where(
+                    x =>
+                        !(
+                            excludeProps.Contains(x.Key)
+                            || excludeProps.Contains(x.Key.TrimStart('@'))
+                        )
+                )
+                .ToDictionary(x => x.Key, x => (object?)x.Value);
         }
-        
-        
 
         #endregion
-        
-        
+
+
 
         private Base CreateSpeckleObjectFromProperties(GameObject go)
         {
@@ -196,7 +205,7 @@ namespace Objects.Converter.Unity
             if (sd == null || sd.Data == null)
                 return new Base();
 
-            Base sobject = (Base) Activator.CreateInstance(sd.SpeckleType);
+            Base sobject = (Base)Activator.CreateInstance(sd.SpeckleType);
 
             foreach (var key in sd.Data.Keys)
             {
@@ -215,11 +224,12 @@ namespace Objects.Converter.Unity
 
         public GameObject InstanceToNative(Instance instance)
         {
-            if (instance.definition == null) throw new ArgumentException("Definition was null", nameof(instance));
+            if (instance.definition == null)
+                throw new ArgumentException("Definition was null", nameof(instance));
 
             var defName = CoreUtils.GenerateObjectName(instance.definition);
             // Check for existing converted object
-            if(LoadedAssets.TryGetObject(instance.definition, out GameObject? existingGo))
+            if (LoadedAssets.TryGetObject(instance.definition, out GameObject? existingGo))
             {
                 var go = InstantiateCopy(existingGo);
                 go.name = defName;
@@ -229,28 +239,33 @@ namespace Objects.Converter.Unity
 
             // Convert the block definition
             GameObject native = new(defName);
-            
+
             List<SMesh> meshes = new();
             List<Base> others = new();
 
             var geometry = instance.definition is BlockDefinition b
                 ? b.geometry
-                : GraphTraversal.TraverseMember(new[]
-                {
-                    instance.definition["elements"] ?? instance.definition["@elements"],
-                    instance.definition["displayValue"] ?? instance.definition["@displayValue"],
-                });
+                : GraphTraversal.TraverseMember(
+                    new[]
+                    {
+                        instance.definition["elements"] ?? instance.definition["@elements"],
+                        instance.definition["displayValue"] ?? instance.definition["@displayValue"],
+                    }
+                );
 
             foreach (Base geo in geometry)
             {
-                if (geo is SMesh m) meshes.Add(m);
-                else if (geo is IDisplayValue<List<SMesh>> s) meshes.AddRange(s.displayValue);
-                else others.Add(geo);
+                if (geo is SMesh m)
+                    meshes.Add(m);
+                else if (geo is IDisplayValue<List<SMesh>> s)
+                    meshes.AddRange(s.displayValue);
+                else
+                    others.Add(geo);
             }
 
             if (meshes.Any())
             {
-                if(!TryGetMeshFromCache(instance.definition, meshes, out Mesh? nativeMesh, out _))
+                if (!TryGetMeshFromCache(instance.definition, meshes, out Mesh? nativeMesh, out _))
                 {
                     MeshToNativeMesh(meshes, out nativeMesh);
                     string name = CoreUtils.GenerateObjectName(instance.definition);
@@ -264,55 +279,57 @@ namespace Objects.Converter.Unity
             foreach (Base child in others)
             {
                 GameObject? c = ConvertToNativeGameObject(child);
-                if (c == null) continue;
+                if (c == null)
+                    continue;
                 c.transform.SetParent(native.transform, false);
             }
-            
+
             LoadedAssets.TrySaveObject(instance.definition, native);
-            
-            
+
             TransformToNativeTransform(native.transform, instance.transform);
-            
-            var instanceName = CoreUtils.GetFriendlyObjectName(instance) != null
-                ? CoreUtils.GenerateObjectName(instance)
-                : defName;
-            
+
+            var instanceName =
+                CoreUtils.GetFriendlyObjectName(instance) != null
+                    ? CoreUtils.GenerateObjectName(instance)
+                    : defName;
+
             native.name = instanceName;
             return native;
         }
-
 
         private static GameObject InstantiateCopy(GameObject existingGo)
         {
 #if UNITY_EDITOR
             GameObject? prefabInstance = null;
-            bool isPrefab = PrefabUtility.GetPrefabAssetType(existingGo) != PrefabAssetType.NotAPrefab;
+            bool isPrefab =
+                PrefabUtility.GetPrefabAssetType(existingGo) != PrefabAssetType.NotAPrefab;
             if (isPrefab)
             {
-                GameObject? prefabAsset = PrefabUtility.GetCorrespondingObjectFromSource(existingGo);
-                if (prefabAsset == null) prefabAsset = existingGo;
-                prefabInstance = (GameObject) PrefabUtility.InstantiatePrefab(prefabAsset);
+                GameObject? prefabAsset = PrefabUtility.GetCorrespondingObjectFromSource(
+                    existingGo
+                );
+                if (prefabAsset == null)
+                    prefabAsset = existingGo;
+                prefabInstance = (GameObject)PrefabUtility.InstantiatePrefab(prefabAsset);
             }
 
             if (prefabInstance != null)
                 return prefabInstance;
 #endif
-            
             return Object.Instantiate(existingGo);
         }
 
-
         /// <summary>
         /// Converts a 4x4 transformation matrix from Speckle's <see cref="Other.Transform"/> format,
-        /// to a Unity <see cref="Matrix4x4"/>. Applying Z -> Y up conversion, and applying units to the translation 
+        /// to a Unity <see cref="Matrix4x4"/>. Applying Z -> Y up conversion, and applying units to the translation
         /// </summary>
         /// <param name="speckleTransform"></param>
         /// <returns>Transformation matrix in Unity's coordinate system</returns>
         public Matrix4x4 TransformToNativeMatrix(STransform speckleTransform)
         {
-            var sf = Speckle.Core.Kits.Units.GetConversionFactor(speckleTransform.units, ModelUnits);
+            var sf = GetConversionFactor(speckleTransform.units);
             var smatrix = speckleTransform.matrix;
-            
+
             return new Matrix4x4
             {
                 // Left (X -> X)
@@ -320,23 +337,20 @@ namespace Objects.Converter.Unity
                 [2, 0] = smatrix.M21,
                 [1, 0] = smatrix.M31,
                 [3, 0] = smatrix.M41,
-
                 //Up (Z -> Y)
                 [0, 2] = smatrix.M12,
                 [2, 2] = smatrix.M22,
                 [1, 2] = smatrix.M32,
                 [3, 2] = smatrix.M42,
-
                 //Forwards (Y -> Z)
                 [0, 1] = smatrix.M13,
                 [2, 1] = smatrix.M23,
                 [1, 1] = smatrix.M33,
                 [3, 1] = smatrix.M43,
-
                 //Translation
-                [0, 3] = (float) (smatrix.M14 * sf),
-                [2, 3] = (float) (smatrix.M24 * sf),
-                [1, 3] = (float) (smatrix.M34 * sf),
+                [0, 3] = (float)(smatrix.M14 * sf),
+                [2, 3] = (float)(smatrix.M24 * sf),
+                [1, 3] = (float)(smatrix.M34 * sf),
                 [3, 3] = smatrix.M44,
             };
         }
@@ -349,16 +363,11 @@ namespace Objects.Converter.Unity
 
         protected static void ApplyMatrixToTransform(Transform transform, Matrix4x4 m)
         {
-            transform.localScale =
-                m.lossyScale; //doesn't work for non TRS, maybe we could fallback to squareSum approach (see TransformVectorized::SetFromMatrix in UE src)
+            transform.localScale = m.lossyScale; //doesn't work for non TRS, maybe we could fallback to squareSum approach (see TransformVectorized::SetFromMatrix in UE src)
 
             //We can't use m.rotation, as it gives us incorrect results (perhaps because of RH -> LH? or maybe our MatrixToNative is broken?)
-            transform.localRotation = Quaternion.LookRotation(
-                m.GetColumn(2),
-                m.GetColumn(1)
-            );
+            transform.localRotation = Quaternion.LookRotation(m.GetColumn(2), m.GetColumn(1));
             transform.localPosition = m.GetPosition();
         }
     }
-
 }
