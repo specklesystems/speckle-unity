@@ -103,7 +103,10 @@ namespace Objects.Converter.Unity
                         true
                     );
                 }
-                
+                else if (shader.name == "Lit") //URP lit
+                {
+                    ShaderHelpers.SetupMaterialWithBlendMode_URP(mat, true, 1);
+                }
             }
 
             LoadedAssets.TrySaveObject(renderMaterial, mat);
