@@ -1525,6 +1525,11 @@
             <param name="logConfiguration">Input configuration object.</param>
             <returns>Logger instance</returns>
         </member>
+        <member name="T:Speckle.Core.Logging.SpeckleNonUserFacingException">
+            <summary>
+            These are exceptions who's message is not user friendly
+            </summary>
+        </member>
         <member name="T:Speckle.Core.Models.DetachProperty">
             <summary>
             <para>Flags an object's property as being detachable.</para>
@@ -2013,7 +2018,7 @@
             Traverses until finds a convertable object then HALTS deeper traversal
             </summary>
             <remarks>
-            Current <see cref="!:Objects.Converter.Revit.ConverterRevit"/> does traversal,
+            Current <see cref="!:Converter&lt;TInput,TOutput&gt;.Revit.ConverterRevit"/> does traversal,
             so this traversal is a shallow traversal for directly convertable objects,
             and a deep traversal for all other types
             </remarks>
