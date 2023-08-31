@@ -178,8 +178,14 @@ namespace Objects.Converter.Unity
                 excludeProps.Add(alias);
             }
 
+            excludeProps.Add("@Materials");
+            excludeProps.Add("@Views");
             excludeProps.Add("renderMaterial");
+            excludeProps.Add("typedDefinition");
+            excludeProps.Add("definition");
+            excludeProps.Add("geometry");
             excludeProps.Add("elements");
+            excludeProps.Add("transform");
             excludeProps.Add("name");
             //excludeProps.Add("tag");
             excludeProps.Add("physicsLayer");
@@ -294,6 +300,9 @@ namespace Objects.Converter.Unity
                     : defName;
 
             native.name = instanceName;
+
+            AttachSpeckleProperties(native, instance.GetType(), () => GetProperties(instance));
+
             return native;
         }
 
