@@ -5,6 +5,7 @@ namespace Objects.Converter.Unity
 {
     public partial class ConverterUnity
     {
+        [Tooltip("Enable/Disable the converting of Speckle View objects to Unity Cameras")]
         public bool shouldConvertViews;
 
         public GameObject View3DToNative(View3D speckleView)
@@ -15,7 +16,7 @@ namespace Objects.Converter.Unity
             var matrix = View3DToMatrix(speckleView).transpose;
             ApplyMatrixToTransform(go.transform, matrix);
 
-            AttachSpeckleProperties(go, speckleView.GetType(), speckleView.GetMembers());
+            AttachSpeckleProperties(go, speckleView.GetType(), () => speckleView.GetMembers());
             return go;
         }
 

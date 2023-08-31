@@ -9,10 +9,10 @@ namespace Speckle.ConnectorUnity.Wrappers.Selection
     [Serializable]
     public sealed class StreamSelection : OptionSelection<Stream>
     {
-        private const int DEFAULT_REQUEST_LIMIT = 50;
+        private const int DefaultRequestLimit = 50;
 
         [field: SerializeField, Range(1, 100), Tooltip("Number of streams to request")]
-        public int StreamsLimit { get; set; } = DEFAULT_REQUEST_LIMIT;
+        public int StreamsLimit { get; set; } = DefaultRequestLimit;
 
         [field: SerializeReference]
         public AccountSelection AccountSelection { get; private set; }

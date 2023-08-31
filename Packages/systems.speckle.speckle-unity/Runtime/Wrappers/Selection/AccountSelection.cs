@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Linq;
 using Speckle.Core.Api;
 using Speckle.Core.Credentials;
@@ -11,17 +10,17 @@ namespace Speckle.ConnectorUnity.Wrappers.Selection
     [Serializable]
     public sealed class AccountSelection : OptionSelection<Account>, IDisposable
     {
-        private Client? client;
+        private Client? _client;
         public override Client? Client
         {
             get
             {
                 Account? account = Selected;
                 if (account == null)
-                    return client = null;
-                if (client == null || !client.Account.Equals(account))
-                    return client = new Client(account);
-                return client;
+                    return _client = null;
+                if (_client == null || !_client.Account.Equals(account))
+                    return _client = new Client(account);
+                return _client;
             }
         }
 
@@ -46,7 +45,7 @@ namespace Speckle.ConnectorUnity.Wrappers.Selection
 
         public void Dispose()
         {
-            client?.Dispose();
+            _client?.Dispose();
         }
     }
 }

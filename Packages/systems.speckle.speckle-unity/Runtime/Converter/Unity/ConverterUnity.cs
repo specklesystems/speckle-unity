@@ -18,6 +18,11 @@ namespace Objects.Converter.Unity
     [Serializable]
     public partial class ConverterUnity : ISpeckleConverter
     {
+        [Tooltip(
+            "Enable/Disable attaching non-converted properties to received objects. Disabling this will lead to lighter weight objects that serialize much faster."
+        )]
+        public bool shouldAttachProperties = true;
+
         #region implemented methods
 
         public void SetConverterSettings(object settings) => throw new NotImplementedException();
@@ -141,7 +146,7 @@ namespace Objects.Converter.Unity
                             AttachSpeckleProperties(
                                 element,
                                 speckleObject.GetType(),
-                                GetProperties(speckleObject)
+                                () => GetProperties(speckleObject)
                             );
 
                         return element;
@@ -173,14 +178,16 @@ namespace Objects.Converter.Unity
             return null;
         }
 
-        private SpeckleProperties AttachSpeckleProperties(
+        private SpeckleProperties? AttachSpeckleProperties(
             GameObject go,
             Type speckleType,
-            IDictionary<string, object?> properties
+            Func<IDictionary<string, object?>> properties
         )
         {
+            if (!shouldAttachProperties)
+                return null;
             var sd = go.AddComponent<SpeckleProperties>();
-            sd.Data = properties;
+            sd.Data = properties.Invoke();
             sd.SpeckleType = speckleType;
             return sd;
         }
@@ -212,7 +219,7 @@ namespace Objects.Converter.Unity
                 collection.name
                 ?? $"{collection.collectionType} -- {collection.applicationId ?? collection.id}";
             var go = new GameObject(name);
-            AttachSpeckleProperties(go, collection.GetType(), GetProperties(collection));
+            AttachSpeckleProperties(go, collection.GetType(), () => GetProperties(collection));
             if (name == "Rooms")
             {
                 go.SetActive(false);
