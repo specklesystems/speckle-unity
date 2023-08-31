@@ -107,15 +107,6 @@ namespace Speckle.ConnectorUnity.Utils
                 material.renderQueue = defaultRenderQueue;
             }
         }
-
-        public static void SetupMaterialWithBlendMode_URP(
-            Material material,
-            bool transparent,
-            int blendMode
-        )
-        {
-            material.SetFloat("__surface", 1);
-            material.SetFloat("__blend", blendMode);
-        }
+        
     }
 }

@@ -10,16 +10,19 @@ namespace Speckle.ConnectorUnity.Wrappers.Selection
     public sealed class StreamSelection : OptionSelection<Stream>
     {
         private const int DEFAULT_REQUEST_LIMIT = 50;
-        [field: SerializeField, Range(1,100), Tooltip("Number of streams to request")]
+
+        [field: SerializeField, Range(1, 100), Tooltip("Number of streams to request")]
         public int StreamsLimit { get; set; } = DEFAULT_REQUEST_LIMIT;
+
         [field: SerializeReference]
         public AccountSelection AccountSelection { get; private set; }
-        
+
         public StreamSelection(AccountSelection accountSelection)
         {
             AccountSelection = accountSelection;
             Initialise();
         }
+
         public void Initialise()
         {
             AccountSelection.OnSelectionChange = RefreshOptions;
@@ -28,15 +31,17 @@ namespace Speckle.ConnectorUnity.Wrappers.Selection
         public override Client? Client => AccountSelection.Client;
 
         protected override string? KeyFunction(Stream? value) => value?.id;
+
         public override void RefreshOptions()
         {
-            if (Client == null) return;
+            if (Client == null)
+                return;
             IList<Stream> streams;
             try
             {
                 streams = Client.StreamsGet(StreamsLimit).GetAwaiter().GetResult();
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Debug.LogWarning($"Unable to refresh {this}\n{e}");
                 streams = Array.Empty<Stream>();

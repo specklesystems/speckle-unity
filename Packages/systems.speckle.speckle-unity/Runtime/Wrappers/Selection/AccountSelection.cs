@@ -17,31 +17,33 @@ namespace Speckle.ConnectorUnity.Wrappers.Selection
             get
             {
                 Account? account = Selected;
-                if (account == null) return client = null;
-                if (client == null || !client.Account.Equals(account)) return client = new Client(account);
+                if (account == null)
+                    return client = null;
+                if (client == null || !client.Account.Equals(account))
+                    return client = new Client(account);
                 return client;
             }
         }
-        
+
         protected override string? KeyFunction(Account? value) => value?.id;
-        
+
         public override void RefreshOptions()
         {
             Account[] accounts;
             try
             {
                 accounts = AccountManager.GetAccounts().ToArray();
-                if(accounts.Length == 0)
+                if (accounts.Length == 0)
                     Debug.LogWarning("No Accounts found, please login in Manager");
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 accounts = Array.Empty<Account>();
                 Debug.LogWarning($"Unable to refresh {this}\n{e}");
             }
             GenerateOptions(accounts, isDefault: (a, i) => a.isDefault || i == 0);
         }
-        
+
         public void Dispose()
         {
             client?.Dispose();

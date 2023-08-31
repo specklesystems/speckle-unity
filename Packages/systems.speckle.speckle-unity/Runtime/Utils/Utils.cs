@@ -4,7 +4,6 @@ using System.Collections;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
-using UnityEngine.Rendering;
 
 namespace Speckle.ConnectorUnity.Utils
 {

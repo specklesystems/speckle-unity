@@ -137,7 +137,7 @@ namespace Objects.Converter.Unity
             }
 
             var nColors = nativeMesh.colors.Skip(indexOffset).Take(vertexTake).ToArray();
-            ;
+
             List<int> sColors = new List<int>(nColors.Length);
             sColors.AddRange(nColors.Select(c => c.ToIntColor()));
 

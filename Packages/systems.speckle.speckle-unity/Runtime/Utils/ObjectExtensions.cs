@@ -16,9 +16,13 @@ namespace Speckle.ConnectorUnity.Utils
         /// <param name="propertyName"></param>
         /// <param name="value"></param>
 #pragma warning disable CS0618
-        public static void SetDetachedPropertyChecked(this Base speckleObject, string propertyName, object? value)
+        public static void SetDetachedPropertyChecked(
+            this Base speckleObject,
+            string propertyName,
+            object? value
+        )
         {
-            if(speckleObject.GetInstanceMembersNames().Any(name => name == propertyName))
+            if (speckleObject.GetInstanceMembersNames().Any(name => name == propertyName))
                 speckleObject[propertyName] = value;
             else
                 speckleObject[$"@{propertyName}"] = value;

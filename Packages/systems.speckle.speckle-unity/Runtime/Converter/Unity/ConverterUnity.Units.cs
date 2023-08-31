@@ -1,12 +1,4 @@
-﻿using Objects.Geometry;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEngine;
-using UnityEngine.Serialization;
-using Mesh = Objects.Geometry.Mesh;
+﻿using UnityEngine;
 
 namespace Objects.Converter.Unity
 {

@@ -13,28 +13,29 @@ namespace Speckle.ConnectorUnity.Components.Editor
     [CustomEditor(typeof(SpeckleReceiver))]
     public class SpeckleReceiverEditor : UnityEditor.Editor
     {
-        private static bool generateAssets = false;
-        private bool foldOutStatus = true;
-        private Texture2D? previewImage;
+        private static bool _generateAssets = false;
+        private bool _foldOutStatus = true;
+        private Texture2D? _previewImage;
 
         public override async void OnInspectorGUI()
         {
             var speckleReceiver = (SpeckleReceiver)target;
-            
+
             DrawDefaultInspector();
 
             //Preview image
             {
-                foldOutStatus = EditorGUILayout.Foldout(foldOutStatus, "Preview Image");
-                if (foldOutStatus)
+                _foldOutStatus = EditorGUILayout.Foldout(_foldOutStatus, "Preview Image");
+                if (_foldOutStatus)
                 {
                     Rect rect = GUILayoutUtility.GetAspectRect(7f / 4f);
-                    if (previewImage != null) GUI.DrawTexture(rect, previewImage);
+                    if (_previewImage != null)
+                        GUI.DrawTexture(rect, _previewImage);
                 }
             }
 
             //TODO: Draw events in a collapsed region
-            
+
             //Receive settings
             {
                 bool prev = GUI.enabled;
@@ -42,10 +43,10 @@ namespace Speckle.ConnectorUnity.Components.Editor
                 //Receive button
                 bool userRequestedReceive = GUILayout.Button("Receive!");
 
-                bool selection = EditorGUILayout.ToggleLeft("Generate Assets", generateAssets);
-                if (generateAssets != selection)
+                bool selection = EditorGUILayout.ToggleLeft("Generate Assets", _generateAssets);
+                if (_generateAssets != selection)
                 {
-                    generateAssets = selection;
+                    _generateAssets = selection;
                     UpdateGenerateAssets();
                 }
                 GUI.enabled = prev;
@@ -54,14 +55,19 @@ namespace Speckle.ConnectorUnity.Components.Editor
                 {
                     var value = Progress.globalProgress; //NOTE: this may include non-speckle items...
                     var percent = Math.Max(0, Mathf.Ceil(value * 100));
-                    var rect = EditorGUILayout.GetControlRect(false, EditorGUIUtility.singleLineHeight);
+                    var rect = EditorGUILayout.GetControlRect(
+                        false,
+                        EditorGUIUtility.singleLineHeight
+                    );
                     EditorGUI.ProgressBar(rect, value, $"{percent}%");
                 }
                 else if (userRequestedReceive)
                 {
                     var id = Progress.Start(
                         "Receiving Speckle data",
-                        "Fetching commit data", Progress.Options.Sticky);
+                        "Fetching commit data",
+                        Progress.Options.Sticky
+                    );
                     Progress.ShowDetails();
 
                     try
@@ -86,21 +92,20 @@ namespace Speckle.ConnectorUnity.Components.Editor
                 }
             }
         }
-        
+
         public void OnEnable()
         {
             Init();
         }
-        
+
         public void Reset()
         {
             Init();
         }
 
-        
         private void Init()
         {
-            var speckleReceiver = (SpeckleReceiver) target;
+            var speckleReceiver = (SpeckleReceiver)target;
             UpdatePreviewImage();
             speckleReceiver.OnCommitSelectionChange.AddListener(_ => UpdatePreviewImage());
             UpdateGenerateAssets();
@@ -108,31 +113,35 @@ namespace Speckle.ConnectorUnity.Components.Editor
 
         private void UpdatePreviewImage()
         {
-            previewImage = null;
-            ((SpeckleReceiver)target).GetPreviewImage(t => previewImage = t);
+            _previewImage = null;
+            ((SpeckleReceiver)target).GetPreviewImage(t => _previewImage = t);
         }
-        
+
         private async Task ReceiveSelection(int progressId)
         {
             var speckleReceiver = (SpeckleReceiver)target;
-            
+
             bool shouldCancel = false;
 
-            Progress.RegisterCancelCallback(progressId, () =>
-            {
-                speckleReceiver.Cancel();
-                shouldCancel = true;
-                return true;
-            });
-            
+            Progress.RegisterCancelCallback(
+                progressId,
+                () =>
+                {
+                    speckleReceiver.Cancel();
+                    shouldCancel = true;
+                    return true;
+                }
+            );
+
             Base commitObject;
             try
             {
                 var token = speckleReceiver.BeginOperation();
-                commitObject = await Task.Run(async () => await ReceiveCommit(progressId).ConfigureAwait(false),
-                    token
-                )
-                .ConfigureAwait(true);
+                commitObject = await Task.Run(
+                        async () => await ReceiveCommit(progressId).ConfigureAwait(false),
+                        token
+                    )
+                    .ConfigureAwait(true);
             }
             finally
             {
@@ -142,32 +151,42 @@ namespace Speckle.ConnectorUnity.Components.Editor
             int childrenConverted = 0;
             int childrenFailed = 0;
 
-            int totalChildren = (int) Math.Min(commitObject.totalChildrenCount, int.MaxValue);
+            int totalChildren = (int)Math.Min(commitObject.totalChildrenCount, int.MaxValue);
             float totalChildrenFloat = commitObject.totalChildrenCount;
-            
-            var convertProgress = Progress.Start("Converting To Native", "Preparing...", Progress.Options.Indefinite | Progress.Options.Sticky, progressId);
-            
+
+            var convertProgress = Progress.Start(
+                "Converting To Native",
+                "Preparing...",
+                Progress.Options.Indefinite | Progress.Options.Sticky,
+                progressId
+            );
+
             bool BeforeConvert(TraversalContext context)
             {
                 Base b = context.current;
 
                 //NOTE: progress wont reach 100% because not all objects are convertable
                 float progress = (childrenConverted + childrenFailed) / totalChildrenFloat;
-                
-                if (shouldCancel) return false;
-                
+
+                if (shouldCancel)
+                    return false;
+
                 shouldCancel = EditorUtility.DisplayCancelableProgressBar(
                     "Converting To Native...",
                     $"{b.speckle_type} - {b.id}",
-                    progress);
-                
+                    progress
+                );
+
                 return !shouldCancel;
             }
 
-            foreach (var conversionResult in speckleReceiver.Converter.RecursivelyConvertToNative_Enumerable(
-                         commitObject,
-                         speckleReceiver.transform,
-                         BeforeConvert))
+            foreach (
+                var conversionResult in speckleReceiver.Converter.RecursivelyConvertToNative_Enumerable(
+                    commitObject,
+                    speckleReceiver.transform,
+                    BeforeConvert
+                )
+            )
             {
                 Base speckleObject = conversionResult.SpeckleObject;
                 if (conversionResult.WasSuccessful(out _, out var ex))
@@ -179,31 +198,45 @@ namespace Speckle.ConnectorUnity.Components.Editor
                     childrenFailed++;
                     Debug.LogWarning(
                         $"Failed to convert Speckle object of type {speckleObject.speckle_type}\n{ex}",
-                        this);
+                        this
+                    );
                 }
 
-                Progress.Report(progressId, childrenConverted + childrenFailed, totalChildren, "Receiving objects");
+                Progress.Report(
+                    progressId,
+                    childrenConverted + childrenFailed,
+                    totalChildren,
+                    "Receiving objects"
+                );
 
-                if (shouldCancel) break;
+                if (shouldCancel)
+                    break;
             }
 
             var resultString = $"{childrenConverted} {nameof(GameObject)}s created";
-            if (childrenFailed != 0) resultString += $", {childrenFailed} objects failed to convert!";
-            
-            Debug.Log(shouldCancel
+            if (childrenFailed != 0)
+                resultString += $", {childrenFailed} objects failed to convert!";
+
+            Debug.Log(
+                shouldCancel
                     ? $"Stopped converting to native: The operation has been cancelled - {resultString}\n "
                     : $"Finished converting to native.\n{resultString}",
-                speckleReceiver);
-            
+                speckleReceiver
+            );
+
             Progress.Finish(convertProgress);
 
-            if (shouldCancel) throw new OperationCanceledException("Conversion operation canceled through editor dialogue");
+            if (shouldCancel)
+                throw new OperationCanceledException(
+                    "Conversion operation canceled through editor dialogue"
+                );
         }
 
         private void UpdateGenerateAssets()
         {
-            var speckleReceiver = (SpeckleReceiver) target;
-            speckleReceiver.Converter.AssetCache.nativeCaches = NativeCacheFactory.GetDefaultNativeCacheSetup(generateAssets);
+            var speckleReceiver = (SpeckleReceiver)target;
+            speckleReceiver.Converter.AssetCache.nativeCaches =
+                NativeCacheFactory.GetDefaultNativeCacheSetup(_generateAssets);
         }
 
         private async Task<Base> ReceiveCommit(int progressId)
@@ -211,9 +244,19 @@ namespace Speckle.ConnectorUnity.Components.Editor
             var speckleReceiver = (SpeckleReceiver)target;
 
             string serverLogName = speckleReceiver.Account.Client?.ServerUrl ?? "Speckle";
-            
-            int transport = Progress.Start($"Downloading data from {serverLogName}", "Waiting...", Progress.Options.Sticky, progressId);
-            int deserialize = Progress.Start("Deserializing data", "Waiting...", Progress.Options.Sticky, progressId);
+
+            int transport = Progress.Start(
+                $"Downloading data from {serverLogName}",
+                "Waiting...",
+                Progress.Options.Sticky,
+                progressId
+            );
+            int deserialize = Progress.Start(
+                "Deserializing data",
+                "Waiting...",
+                Progress.Options.Sticky,
+                progressId
+            );
             Progress.SetPriority(transport, Progress.Priority.High);
 
             var totalObjectCount = 1;
@@ -222,7 +265,7 @@ namespace Speckle.ConnectorUnity.Components.Editor
                 totalObjectCount = count;
                 Progress.Report(progressId, 0, totalObjectCount, "Receiving objects");
             }
-            
+
             void OnProgress(ConcurrentDictionary<string, int> dict)
             {
                 bool r = dict.TryGetValue("RemoteTransport", out int rtProgress);
@@ -230,14 +273,24 @@ namespace Speckle.ConnectorUnity.Components.Editor
                 if (r || l)
                 {
                     var fetched = (rtProgress + ltProgress);
-                    Progress.Report(transport, fetched, totalObjectCount, $"{fetched}/{totalObjectCount}");
+                    Progress.Report(
+                        transport,
+                        fetched,
+                        totalObjectCount,
+                        $"{fetched}/{totalObjectCount}"
+                    );
                 }
 
                 if (dict.TryGetValue("DS", out int tsProgress))
                 {
                     tsProgress--; //The root object isn't included, so we add an extra 1
-                    Progress.Report(deserialize,tsProgress, totalObjectCount, $"{tsProgress}/{totalObjectCount}");
-                    Progress.Report(progressId,tsProgress, totalObjectCount);
+                    Progress.Report(
+                        deserialize,
+                        tsProgress,
+                        totalObjectCount,
+                        $"{tsProgress}/{totalObjectCount}"
+                    );
+                    Progress.Report(progressId, tsProgress, totalObjectCount);
                 }
             }
 
@@ -246,18 +299,19 @@ namespace Speckle.ConnectorUnity.Components.Editor
             {
                 speckleReceiver.OnTotalChildrenCountKnown.AddListener(OnTotalChildrenKnown);
                 speckleReceiver.OnReceiveProgressAction.AddListener(OnProgress);
-                commitObject = await speckleReceiver.ReceiveAsync(speckleReceiver.CancellationToken)
+                commitObject = await speckleReceiver
+                    .ReceiveAsync(speckleReceiver.CancellationToken)
                     .ConfigureAwait(false);
                 Progress.Finish(transport);
                 Progress.Finish(deserialize);
             }
-            catch(OperationCanceledException)
+            catch (OperationCanceledException)
             {
                 Progress.Finish(transport, Progress.Status.Canceled);
                 Progress.Finish(deserialize, Progress.Status.Canceled);
                 throw;
             }
-            catch(Exception)
+            catch (Exception)
             {
                 Progress.Finish(transport, Progress.Status.Failed);
                 Progress.Finish(deserialize, Progress.Status.Failed);
@@ -287,12 +341,13 @@ namespace Speckle.ConnectorUnity.Components.Editor
             go.AddComponent<SpeckleReceiver>();
             go.AddComponent<ReceiveFromURL>();
             go.AddComponent<SpeckleSender>();
-            
+
 #if UNITY_2021_2_OR_NEWER
-            var icon = AssetDatabase.LoadAssetAtPath<Texture2D>("Packages/systems.speckle.speckle-unity/Editor/Gizmos/logo128.png");
+            var icon = AssetDatabase.LoadAssetAtPath<Texture2D>(
+                "Packages/systems.speckle.speckle-unity/Editor/Gizmos/logo128.png"
+            );
             EditorGUIUtility.SetIconForObject(go, icon);
 #endif
         }
-        
     }
 }

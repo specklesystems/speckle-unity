@@ -5,7 +5,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Objects.BuiltElements;
-using Objects.Organization;
 using Objects.Other;
 using Speckle.ConnectorUnity.Utils;
 using Speckle.ConnectorUnity.NativeCache;
@@ -28,11 +27,11 @@ namespace Objects.Converter.Unity
         public string Author => "Speckle";
         public string WebsiteOrEmail => "https://speckle.systems";
 
-        public ProgressReport Report { get; }
+        public ProgressReport Report => throw new NotImplementedException();
         public ReceiveMode ReceiveMode { get; set; }
 
         public IEnumerable<string> GetServicedApplications() =>
-            new string[] { HostApplications.Unity.Name };
+            new[] { HostApplications.Unity.Name };
 
         public AbstractNativeCache LoadedAssets { get; private set; }
 
@@ -238,8 +237,6 @@ namespace Objects.Converter.Unity
                 //     return false;
                 case View3D _:
                     return shouldConvertViews;
-                case Model:
-                    return false; //This allows us to traverse older commits pre-collections
                 case Collection:
                     return true;
                 case Mesh:

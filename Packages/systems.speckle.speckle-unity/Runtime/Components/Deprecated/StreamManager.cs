@@ -29,16 +29,18 @@ namespace Speckle.ConnectorUnity.Components
         public List<Branch> Branches;
 
         public RecursiveConverter RC { get; private set; }
-        
+
 #nullable enable
         private void Awake()
         {
             RC = GetComponent<RecursiveConverter>();
         }
-        
-        
-        public GameObject ConvertRecursivelyToNative(Base @base, string rootObjectName,
-            Action<Base>? beforeConvertCallback)
+
+        public GameObject ConvertRecursivelyToNative(
+            Base @base,
+            string rootObjectName,
+            Action<Base>? beforeConvertCallback
+        )
         {
             var rootObject = new GameObject(rootObjectName);
 
@@ -46,9 +48,8 @@ namespace Speckle.ConnectorUnity.Components
             {
                 beforeConvertCallback?.Invoke(o);
                 return RC.ConverterInstance.CanConvertToNative(o) //Accept geometry
-                       || o.speckle_type == nameof(Base) && o.totalChildrenCount > 0; // Or Base objects that have children  
+                    || o.speckle_type == nameof(Base) && o.totalChildrenCount > 0; // Or Base objects that have children
             }
-
 
             // For the rootObject only, we will create property GameObjects
             // i.e. revit categories
@@ -57,13 +58,15 @@ namespace Speckle.ConnectorUnity.Components
                 var converted = RC.RecursivelyConvertToNative(prop.Value, null, Predicate);
 
                 //Skip empties
-                if (converted.Count <= 0) continue;
+                if (converted.Count <= 0)
+                    continue;
 
                 var propertyObject = new GameObject(prop.Key);
                 propertyObject.transform.SetParent(rootObject.transform);
                 foreach (var o in converted)
                 {
-                    if (o.transform.parent == null) o.transform.SetParent(propertyObject.transform);
+                    if (o.transform.parent == null)
+                        o.transform.SetParent(propertyObject.transform);
                 }
             }
 

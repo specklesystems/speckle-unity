@@ -1,6 +1,4 @@
 ﻿using Objects.BuiltElements;
-using Speckle.Core.Kits;
-using UnityEditor;
 using UnityEngine;
 
 namespace Objects.Converter.Unity

@@ -46,7 +46,8 @@ namespace Objects.Converter.Unity
         }
 
         //Just used as cache key for the default (null) material
-        private static RenderMaterial defaultMaterialPlaceholder = new() { id = "defaultMaterial" };
+        private static readonly RenderMaterial DefaultMaterialPlaceholder =
+            new() { id = "defaultMaterial" };
 
         public virtual Material RenderMaterialToNative(RenderMaterial? renderMaterial)
         {
@@ -57,13 +58,13 @@ namespace Objects.Converter.Unity
             {
                 if (
                     !LoadedAssets.TryGetObject(
-                        defaultMaterialPlaceholder,
+                        DefaultMaterialPlaceholder,
                         out Material? defaultMaterial
                     )
                 )
                 {
                     defaultMaterial = new Material(OpaqueMaterialShader);
-                    LoadedAssets.TrySaveObject(defaultMaterialPlaceholder, defaultMaterial);
+                    LoadedAssets.TrySaveObject(DefaultMaterialPlaceholder, defaultMaterial);
                 }
                 return defaultMaterial;
             }
@@ -104,9 +105,7 @@ namespace Objects.Converter.Unity
                     );
                 }
                 else if (shader.name == "Lit") //URP lit
-                {
-                    ShaderHelpers.SetupMaterialWithBlendMode_URP(mat, true, 1);
-                }
+                { }
             }
 
             LoadedAssets.TrySaveObject(renderMaterial, mat);

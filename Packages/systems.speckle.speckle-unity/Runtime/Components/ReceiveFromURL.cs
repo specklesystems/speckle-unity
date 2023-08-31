@@ -17,11 +17,12 @@ namespace Speckle.ConnectorUnity.Components
     {
         [Tooltip("Url of your speckle object/commit/branch/stream")]
         public string url;
-    
+
         private RecursiveConverter _converter;
-    
+
 #nullable enable
         private CancellationTokenSource? _tokenSource;
+
         void Awake()
         {
             _converter = GetComponent<RecursiveConverter>();
@@ -32,38 +33,49 @@ namespace Speckle.ConnectorUnity.Components
         {
             StartCoroutine(Receive_Routine());
         }
-    
+
         public IEnumerator Receive_Routine()
         {
-            if (IsBusy()) throw new InvalidOperationException("A receive operation has already started");
+            if (IsBusy())
+                throw new InvalidOperationException("A receive operation has already started");
             _tokenSource = new CancellationTokenSource();
             try
             {
                 StreamWrapper sw = new(url);
 
                 if (!sw.IsValid)
-                    throw new InvalidOperationException("Speckle url input is not a valid speckle stream/branch/commit");
+                    throw new InvalidOperationException(
+                        "Speckle url input is not a valid speckle stream/branch/commit"
+                    );
 
-                var accountTask = new Utils.Utils.WaitForTask<Account>(async () => await GetAccount(sw));
+                var accountTask = new Utils.Utils.WaitForTask<Account>(
+                    async () => await GetAccount(sw)
+                );
                 yield return accountTask;
-            
+
                 _tokenSource.Token.ThrowIfCancellationRequested();
                 using Client c = new(accountTask.Result);
 
-                var objectIdTask = new Utils.Utils.WaitForTask<(string, Commit?)>(async () => await GetObjectID(sw, c));
+                var objectIdTask = new Utils.Utils.WaitForTask<(string, Commit?)>(
+                    async () => await GetObjectID(sw, c)
+                );
                 yield return objectIdTask;
                 (string objectId, Commit? commit) = objectIdTask.Result;
-            
+
                 Debug.Log($"Receiving from {sw.ServerUrl}...");
-            
-                var receiveTask = new Utils.Utils.WaitForTask<Base>(async () => await SpeckleReceiver.ReceiveAsync(
-                    c,
-                    sw.StreamId,
-                    objectId,
-                    commit,
-                    cancellationToken: _tokenSource.Token));
+
+                var receiveTask = new Utils.Utils.WaitForTask<Base>(
+                    async () =>
+                        await SpeckleReceiver.ReceiveAsync(
+                            c,
+                            sw.StreamId,
+                            objectId,
+                            commit,
+                            cancellationToken: _tokenSource.Token
+                        )
+                );
                 yield return receiveTask;
-            
+
                 Debug.Log("Converting to native...");
                 _converter.RecursivelyConvertToNative_Sync(receiveTask.Result, transform);
             }
@@ -74,8 +86,10 @@ namespace Speckle.ConnectorUnity.Components
             }
         }
 
-
-        private async Task<(string objectId, Commit? commit)> GetObjectID(StreamWrapper sw, Client client)
+        private async Task<(string objectId, Commit? commit)> GetObjectID(
+            StreamWrapper sw,
+            Client client
+        )
         {
             string objectId;
             Commit? commit = null;
@@ -95,7 +109,9 @@ namespace Speckle.ConnectorUnity.Components
             {
                 var branchName = string.IsNullOrEmpty(sw.BranchName) ? "main" : sw.BranchName;
 
-                var branch = await client.BranchGet(sw.StreamId, branchName, 1).ConfigureAwait(false);
+                var branch = await client
+                    .BranchGet(sw.StreamId, branchName, 1)
+                    .ConfigureAwait(false);
                 if (!branch.commits.items.Any())
                     throw new SpeckleException("The selected branch has no commits.");
 
@@ -105,19 +121,23 @@ namespace Speckle.ConnectorUnity.Components
 
             return (objectId, commit);
         }
+
         [ContextMenu(nameof(Cancel))]
         public void Cancel()
         {
-            if (IsNotBusy()) throw new InvalidOperationException("There are no pending receive operations to cancel");
+            if (IsNotBusy())
+                throw new InvalidOperationException(
+                    "There are no pending receive operations to cancel"
+                );
             _tokenSource!.Cancel();
         }
-    
+
         [ContextMenu(nameof(Cancel), true)]
         public bool IsBusy()
         {
             return _tokenSource is not null;
         }
-    
+
         [ContextMenu(nameof(Receive), true)]
         internal bool IsNotBusy() => !IsBusy();
 
@@ -126,7 +146,6 @@ namespace Speckle.ConnectorUnity.Components
             _tokenSource?.Cancel();
         }
 
-
         private async Task<Account> GetAccount(StreamWrapper sw)
         {
             Account account;
@@ -134,10 +153,10 @@ namespace Speckle.ConnectorUnity.Components
             {
                 account = await sw.GetAccount().ConfigureAwait(false);
             }
-            catch (SpeckleException e)
+            catch (SpeckleException)
             {
                 if (string.IsNullOrEmpty(sw.StreamId))
-                    throw e;
+                    throw;
 
                 //Fallback to a non authed account
                 account = new Account
