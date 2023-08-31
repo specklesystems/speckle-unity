@@ -10,12 +10,14 @@ namespace Speckle.ConnectorUnity.NativeCache
     {
         [SerializeField, SerializeReference]
         public List<AbstractNativeCache> nativeCaches;
-        
-        public override bool TryGetObject<T>(Base speckleObject, out T nativeObject) where T : class
+
+        public override bool TryGetObject<T>(Base speckleObject, out T nativeObject)
+            where T : class
         {
             foreach (var c in nativeCaches)
             {
-                if (c.TryGetObject(speckleObject, out nativeObject)) return true;
+                if (c.TryGetObject(speckleObject, out nativeObject))
+                    return true;
             }
             nativeObject = null;
             return false;
@@ -24,12 +26,13 @@ namespace Speckle.ConnectorUnity.NativeCache
         public override bool TrySaveObject(Base speckleObject, Object nativeObject)
         {
             bool hasSavedSomewhere = false;
-            
+
             foreach (var c in nativeCaches)
             {
-                hasSavedSomewhere = hasSavedSomewhere || c.TrySaveObject(speckleObject, nativeObject);
+                hasSavedSomewhere =
+                    hasSavedSomewhere || c.TrySaveObject(speckleObject, nativeObject);
             }
-            
+
             return hasSavedSomewhere;
         }
 
@@ -57,6 +60,5 @@ namespace Speckle.ConnectorUnity.NativeCache
             }
             base.FinishWrite();
         }
-        
     }
 }

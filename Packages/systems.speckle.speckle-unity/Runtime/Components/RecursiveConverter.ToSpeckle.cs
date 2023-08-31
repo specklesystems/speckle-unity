@@ -8,7 +8,6 @@ using UnityEngine;
 
 namespace Speckle.ConnectorUnity.Components
 {
-
     public partial class RecursiveConverter
     {
         /// <summary>
@@ -31,37 +30,44 @@ namespace Speckle.ConnectorUnity.Components
         /// <param name="rootObjects">Root objects of a tree</param>
         /// <param name="predicate">A function to determine if an object should be converted</param>
         /// <returns>A simple <see cref="Base"/> wrapping converted objects</returns>
-        public virtual Base RecursivelyConvertToSpeckle(IEnumerable<GameObject> rootObjects, Func<GameObject, bool> predicate)
+        public virtual Base RecursivelyConvertToSpeckle(
+            IEnumerable<GameObject> rootObjects,
+            Func<GameObject, bool> predicate
+        )
         {
             List<Base> convertedRootObjects = new List<Base>();
             foreach (GameObject rootObject in rootObjects)
             {
                 RecurseTreeToSpeckle(rootObject, predicate, convertedRootObjects);
             }
-            
-            return new Base()
-            {
-                ["@objects"] = convertedRootObjects,
-            };
+
+            return new Base() { ["@objects"] = convertedRootObjects, };
         }
-        
-        public virtual Base RecursivelyConvertToSpeckle(GameObject rootObject, Func<GameObject, bool> predicate)
+
+        public virtual Base RecursivelyConvertToSpeckle(
+            GameObject rootObject,
+            Func<GameObject, bool> predicate
+        )
         {
-            return RecursivelyConvertToSpeckle(new[] {rootObject}, predicate);
+            return RecursivelyConvertToSpeckle(new[] { rootObject }, predicate);
         }
-        
-        public virtual void RecurseTreeToSpeckle(GameObject currentObject, Func<GameObject, bool> predicate, List<Base> outConverted)
+
+        public virtual void RecurseTreeToSpeckle(
+            GameObject currentObject,
+            Func<GameObject, bool> predicate,
+            List<Base> outConverted
+        )
         {
             // Convert children first
             var convertedChildren = new List<Base>(currentObject.transform.childCount);
-            foreach(Transform child in currentObject.transform)
+            foreach (Transform child in currentObject.transform)
             {
                 RecurseTreeToSpeckle(child.gameObject, predicate, convertedChildren);
             }
-            
+
             if (ConverterInstance.CanConvertToSpeckle(currentObject) && predicate(currentObject))
             {
-                // Convert and output 
+                // Convert and output
                 Base converted = ConverterInstance.ConvertToSpeckle(currentObject);
                 converted.SetDetachedPropertyChecked("elements", convertedChildren);
                 outConverted.Add(converted);
@@ -71,7 +77,6 @@ namespace Speckle.ConnectorUnity.Components
                 // Skip this object, and output any children
                 outConverted.AddRange(convertedChildren);
             }
-
         }
     }
 }

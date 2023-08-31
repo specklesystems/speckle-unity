@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Linq;
 using Speckle.Core.Api;
 using Speckle.Core.Credentials;
@@ -11,40 +10,42 @@ namespace Speckle.ConnectorUnity.Wrappers.Selection
     [Serializable]
     public sealed class AccountSelection : OptionSelection<Account>, IDisposable
     {
-        private Client? client;
+        private Client? _client;
         public override Client? Client
         {
             get
             {
                 Account? account = Selected;
-                if (account == null) return client = null;
-                if (client == null || !client.Account.Equals(account)) return client = new Client(account);
-                return client;
+                if (account == null)
+                    return _client = null;
+                if (_client == null || !_client.Account.Equals(account))
+                    return _client = new Client(account);
+                return _client;
             }
         }
-        
+
         protected override string? KeyFunction(Account? value) => value?.id;
-        
+
         public override void RefreshOptions()
         {
             Account[] accounts;
             try
             {
                 accounts = AccountManager.GetAccounts().ToArray();
-                if(accounts.Length == 0)
+                if (accounts.Length == 0)
                     Debug.LogWarning("No Accounts found, please login in Manager");
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 accounts = Array.Empty<Account>();
                 Debug.LogWarning($"Unable to refresh {this}\n{e}");
             }
             GenerateOptions(accounts, isDefault: (a, i) => a.isDefault || i == 0);
         }
-        
+
         public void Dispose()
         {
-            client?.Dispose();
+            _client?.Dispose();
         }
     }
 }

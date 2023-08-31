@@ -1,29 +1,50 @@
 ﻿using Objects.BuiltElements;
-
 using UnityEngine;
 
 namespace Objects.Converter.Unity
 {
-  public partial class ConverterUnity
-  {
-    /// <summary>
-    /// Converts a Speckle View3D to a GameObject
-    /// </summary>
-    /// <param name="point"></param>
-    /// <returns></returns>
-    public GameObject View3DToNative(View3D speckleView)
+    public partial class ConverterUnity
     {
-      var go = new GameObject(speckleView.name);
-      var camera = go.AddComponent<Camera>();
-      camera.transform.position = VectorByCoordinates(speckleView.origin.x, speckleView.origin.y, speckleView.origin.z,
-        speckleView.origin.units);
-      camera.transform.forward = VectorByCoordinates(speckleView.forwardDirection.x, speckleView.forwardDirection.y,
-        speckleView.forwardDirection.z, speckleView.forwardDirection.units);
-      camera.transform.up = VectorByCoordinates(speckleView.upDirection.x, speckleView.upDirection.y,
-        speckleView.upDirection.z, speckleView.upDirection.units);
+        [Tooltip("Enable/Disable the converting of Speckle View objects to Unity Cameras")]
+        public bool shouldConvertViews;
 
-      AttachSpeckleProperties(go, speckleView.GetType(),speckleView.GetMembers());
-      return go;
+        public GameObject View3DToNative(View3D speckleView)
+        {
+            var go = new GameObject(speckleView.name);
+            go.AddComponent<Camera>();
+
+            var matrix = View3DToMatrix(speckleView).transpose;
+            ApplyMatrixToTransform(go.transform, matrix);
+
+            AttachSpeckleProperties(go, speckleView.GetType(), () => speckleView.GetMembers());
+            return go;
+        }
+
+        protected Matrix4x4 View3DToMatrix(View3D view)
+        {
+            var sf = GetConversionFactor(view.units);
+            var tx = (float)(view.origin.x * sf);
+            var ty = (float)(view.origin.z * sf); //Y up -> Z up coordinate transformation
+            var tz = (float)(view.origin.y * sf);
+
+            var forward = new Vector3(
+                (float)view.forwardDirection.x,
+                (float)view.forwardDirection.z,
+                (float)view.forwardDirection.y
+            );
+            var up = new Vector3(
+                (float)view.upDirection.x,
+                (float)view.upDirection.z,
+                (float)view.upDirection.y
+            );
+            var right = Vector3.Cross(forward, up).normalized;
+
+            return new Matrix4x4(
+                new Vector4(right.x, up.x, forward.x, tx),
+                new Vector4(right.y, up.y, forward.y, ty),
+                new Vector4(right.z, up.z, forward.z, tz),
+                new Vector4(0, 0, 0, 1)
+            );
+        }
     }
-  }
 }

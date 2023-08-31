@@ -17,21 +17,20 @@ namespace Speckle.ConnectorUnity.Wrappers
     [Serializable, DisallowMultipleComponent]
     public class SpeckleProperties : MonoBehaviour, ISerializationCallbackReceiver
     {
-
         [SerializeField, HideInInspector]
         private string _serializedData = "";
-        
+
         [SerializeField, HideInInspector]
         private bool _hasChanged;
-        
+
         private ObservableConcurrentDictionary<string, object> _data;
-        
+
         public IDictionary<string, object> Data
         {
             get => _data;
             set
             {
-                ((ICollection<KeyValuePair<string, object>>) _data).Clear();
+                ((ICollection<KeyValuePair<string, object>>)_data).Clear();
 
                 foreach (var kvp in value)
                 {
@@ -43,18 +42,17 @@ namespace Speckle.ConnectorUnity.Wrappers
         [SerializeField, HideInInspector]
         private string _serializedSpeckleType;
         private Type _speckleType = typeof(Base);
-        public Type SpeckleType {
+        public Type SpeckleType
+        {
             get => _speckleType ??= typeof(Base);
             set
             {
-                
                 Debug.Assert(typeof(Base).IsAssignableFrom(value));
                 Debug.Assert(!value.IsAbstract);
-                
+
                 _speckleType = value;
                 _hasChanged = true;
             }
-            
         }
 
         public SpeckleProperties()
@@ -64,7 +62,7 @@ namespace Speckle.ConnectorUnity.Wrappers
             _hasChanged = true;
             SpeckleType = typeof(Base);
         }
-    
+
         private void CollectionChangeHandler(object sender, NotifyCollectionChangedEventArgs e)
         {
             _hasChanged = true;
@@ -72,21 +70,22 @@ namespace Speckle.ConnectorUnity.Wrappers
 
         public void OnBeforeSerialize()
         {
-            if (!_hasChanged) return;
-      
+            if (!_hasChanged)
+                return;
+
             _serializedData = Operations.Serialize(new SpeckleData(Data));
             _hasChanged = false;
             _serializedSpeckleType = SpeckleType.AssemblyQualifiedName;
         }
-    
+
         public void OnAfterDeserialize()
         {
             var deserializer = new BaseObjectDeserializerV2();
             Base speckleData = deserializer.Deserialize(_serializedData);
-            
+
             Data = speckleData.GetMembers();
             _hasChanged = false;
-            
+
             try
             {
                 _speckleType = Type.GetType(_serializedSpeckleType);

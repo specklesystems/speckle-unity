@@ -288,6 +288,13 @@
              <exception cref="T:Speckle.Core.Logging.SpeckleException"></exception>
             
         </member>
+        <member name="M:Speckle.Core.Api.Client.IsStreamAccessible(System.String,System.Threading.CancellationToken)">
+            <summary>
+            Cheks if a stream exists by id.
+            </summary>
+            <param name="id">Id of the stream to get</param>
+            <returns></returns>
+        </member>
         <member name="M:Speckle.Core.Api.Client.StreamGet(System.String,System.Int32)">
             <summary>
             Gets a stream by id including basic branch info (id, name, description, and total commit count).
@@ -927,6 +934,29 @@
             Determines if the current stream wrapper contains a valid stream.
             </summary>
         </member>
+        <member name="F:Speckle.Core.Credentials.StreamWrapper.Fe2UrlRegex">
+            <summary>
+            The ReGex pattern to determine if a URL's AbsolutePath is a Frontend2 URL or not.
+            This is used in conjunction with <see cref="M:Speckle.Core.Credentials.StreamWrapper.ParseFe2ModelValue(System.String)"/> to extract the correct values into the instance.
+            </summary>
+        </member>
+        <member name="M:Speckle.Core.Credentials.StreamWrapper.ParseFe2RegexMatch(System.Text.RegularExpressions.Match)">
+            <summary>
+            Parses a FrontEnd2 URL Regex match and assigns it's data to this StreamWrapper instance.
+            </summary>
+            <param name="match">A regex match coming from <see cref="F:Speckle.Core.Credentials.StreamWrapper.Fe2UrlRegex"/></param>
+            <exception cref="T:Speckle.Core.Logging.SpeckleException">Will throw when the URL is not properly formatted.</exception>
+            <exception cref="T:System.NotSupportedException">Will throw when the URL is correct, but is not currently supported by the StreamWrapper class.</exception>
+        </member>
+        <member name="M:Speckle.Core.Credentials.StreamWrapper.ParseFe2ModelValue(System.String)">
+            <summary>
+            Parses the segment of the FE2 URL that represents a modelID, modelID@versionID or objectID.
+            It is meant to parse a single value. If url is multi-model it should be used once per model.
+            </summary>
+            <param name="modelValue">The a single value of the model url segment</param>
+            <returns>A tuple containing the branch, commit and object information for that value. Each value can be null</returns>
+            <remarks>Determines if a modelValue is an ObjectId by checking it's length is exactly 32 chars long.</remarks>
+        </member>
         <member name="M:Speckle.Core.Credentials.StreamWrapper.GetAccount">
             <summary>
             Gets a valid account for this stream wrapper.
@@ -1495,6 +1525,11 @@
             <param name="logConfiguration">Input configuration object.</param>
             <returns>Logger instance</returns>
         </member>
+        <member name="T:Speckle.Core.Logging.SpeckleNonUserFacingException">
+            <summary>
+            These are exceptions who's message is not user friendly
+            </summary>
+        </member>
         <member name="T:Speckle.Core.Models.DetachProperty">
             <summary>
             <para>Flags an object's property as being detachable.</para>
@@ -1983,7 +2018,7 @@
             Traverses until finds a convertable object then HALTS deeper traversal
             </summary>
             <remarks>
-            Current <see cref="!:Objects.Converter.Revit.ConverterRevit"/> does traversal,
+            Current <see cref="!:Converter&lt;TInput,TOutput&gt;.Revit.ConverterRevit"/> does traversal,
             so this traversal is a shallow traversal for directly convertable objects,
             and a deep traversal for all other types
             </remarks>
@@ -1997,14 +2032,14 @@
             <param name="converter"></param>
             <returns></returns>
         </member>
-        <member name="M:Speckle.Core.Models.GraphTraversal.GraphTraversal.Traverse(Speckle.Core.Models.Base)">
+        <member name="M:Speckle.Core.Models.GraphTraversal.GraphTraversal`1.Traverse(Speckle.Core.Models.Base)">
             <summary>
             Given <paramref name="root"/> object, will recursively traverse members according to the provided traversal rules.
             </summary>
             <param name="root">The object to traverse members</param>
             <returns>Lazily returns <see cref="T:Speckle.Core.Models.Base"/> objects found during traversal (including <paramref name="root"/>), wrapped within a <see cref="T:Speckle.Core.Models.GraphTraversal.TraversalContext"/></returns>
         </member>
-        <member name="M:Speckle.Core.Models.GraphTraversal.GraphTraversal.TraverseMember(System.Object)">
+        <member name="M:Speckle.Core.Models.GraphTraversal.GraphTraversal`1.TraverseMember(System.Object)">
             <summary>
             Traverses supported Collections yielding <see cref="T:Speckle.Core.Models.Base"/> objects.
             Does not traverse <see cref="T:Speckle.Core.Models.Base"/>, only (potentially nested) collections.
@@ -2036,7 +2071,7 @@
         <member name="T:Speckle.Core.Models.GraphTraversal.TraversalRule">
             <summary>
             A traversal rule defines the conditional traversal behaviour when traversing a given <see cref="T:Speckle.Core.Models.Base"/> objects.
-            Specifies what members to traverse if any provided <see cref="F:Speckle.Core.Models.GraphTraversal.TraversalRule.conditions"/> are met.
+            Specifies what members to traverse if any provided <see cref="F:Speckle.Core.Models.GraphTraversal.TraversalRule._conditions"/> are met.
             </summary>
             <remarks>Follows the builder pattern to ensure that a rule is complete before usable, see usages</remarks>
         </member>

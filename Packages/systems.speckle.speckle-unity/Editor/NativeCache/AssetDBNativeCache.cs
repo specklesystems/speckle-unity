@@ -1,8 +1,6 @@
 using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using System.Linq;
 using Speckle.Core.Models;
 using UnityEditor;
 using UnityEngine;
@@ -18,23 +16,28 @@ namespace Speckle.ConnectorUnity.NativeCache.Editor
         public const string DefaultPath = "Assets/Resources";
         public string path = DefaultPath;
 
-        private MemoryNativeCache readCache;
-        
+        private MemoryNativeCache _readCache;
+
 #nullable enable
-        
+
         void Awake()
         {
-            readCache = CreateInstance<MemoryNativeCache>();
+            _readCache = CreateInstance<MemoryNativeCache>();
         }
-       
-        public override bool TryGetObject<T>(Base speckleObject, [NotNullWhen(true)] out T? nativeObject) where T : class
+
+        public override bool TryGetObject<T>(
+            Base speckleObject,
+            [NotNullWhen(true)] out T? nativeObject
+        )
+            where T : class
         {
-            if(readCache.TryGetObject(speckleObject, out nativeObject))
+            if (_readCache.TryGetObject(speckleObject, out nativeObject))
                 return true;
-            
+
             Type nativeType = typeof(T);
-            if (!GetAssetPath(nativeType, speckleObject, out string? assetPath)) return false;
-            
+            if (!GetAssetPath(nativeType, speckleObject, out string? assetPath))
+                return false;
+
             nativeObject = AssetDatabase.LoadAssetAtPath<T>(assetPath);
             return nativeObject != null;
         }
@@ -43,32 +46,39 @@ namespace Speckle.ConnectorUnity.NativeCache.Editor
         {
             return WriteObject(speckleObject, nativeObject);
         }
-        
+
         private bool WriteObject(Base speckleObject, Object nativeObject)
         {
             Type nativeType = nativeObject.GetType();
-            if (!GetAssetPath(nativeType, speckleObject, out string? assetPath)) return false;
-            
+            if (!GetAssetPath(nativeType, speckleObject, out string? assetPath))
+                return false;
+
             // Special case for GameObjects, we want to use PrefabUtility
             if (nativeObject is GameObject go)
             {
-                var prefab = PrefabUtility.SaveAsPrefabAssetAndConnect(go, assetPath, InteractionMode.AutomatedAction);
-                return readCache.TrySaveObject(speckleObject, prefab);
+                var prefab = PrefabUtility.SaveAsPrefabAssetAndConnect(
+                    go,
+                    assetPath,
+                    InteractionMode.AutomatedAction
+                );
+                return _readCache.TrySaveObject(speckleObject, prefab);
             }
-            
+
             // Exit early if there's already an asset
             Object? existing = AssetDatabase.LoadAssetAtPath(assetPath, nativeObject.GetType());
             if (existing != null)
             {
-                Debug.LogWarning($"Failed to write asset as one already existed at path: {assetPath}", this);
+                Debug.LogWarning(
+                    $"Failed to write asset as one already existed at path: {assetPath}",
+                    this
+                );
                 return false;
             }
 
             AssetDatabase.CreateAsset(nativeObject, $"{assetPath}");
-            return readCache.TrySaveObject(speckleObject, nativeObject);
+            return _readCache.TrySaveObject(speckleObject, nativeObject);
         }
-        
-        
+
         public override void BeginWrite()
         {
             base.BeginWrite();
@@ -77,32 +87,40 @@ namespace Speckle.ConnectorUnity.NativeCache.Editor
 
         public override void FinishWrite()
         {
-            if (!isWriting) return;
+            if (!isWriting)
+                return;
             //AssetDatabase.StopAssetEditing();
             AssetDatabase.SaveAssets();
 
-            if (readCache != null) readCache.LoadedAssets.Clear();
-            
+            if (_readCache != null)
+                _readCache.LoadedAssets.Clear();
+
             base.FinishWrite();
         }
-        
-        private bool GetAssetPath(Type nativeType, Base speckleObject, [NotNullWhen(true)] out string? outPath)
+
+        private bool GetAssetPath(
+            Type nativeType,
+            Base speckleObject,
+            [NotNullWhen(true)] out string? outPath
+        )
         {
             string? folder = AssetHelpers.GetAssetFolder(nativeType, path);
             outPath = null;
-            if (folder == null) return false;
-            if (!CreateDirectory(folder)) return false;
+            if (folder == null)
+                return false;
+            if (!CreateDirectory(folder))
+                return false;
 
             string assetName = AssetHelpers.GetAssetName(speckleObject, nativeType);
             outPath = $"{folder}/{assetName}";
             return true;
         }
-        
+
         private static bool CreateDirectory(string directoryPath)
         {
             if (Directory.Exists(directoryPath))
                 return true;
-            
+
             var info = Directory.CreateDirectory(directoryPath);
             AssetDatabase.Refresh();
             return info.Exists;
@@ -111,16 +129,20 @@ namespace Speckle.ConnectorUnity.NativeCache.Editor
         [ContextMenu("SetPath")]
         public void SetPath_Menu()
         {
-            var selection = EditorUtility.OpenFolderPanel("Set Assets Path", "Assets/Resources", "");
-            
-            if (selection.StartsWith(Application.dataPath)) {
+            var selection = EditorUtility.OpenFolderPanel(
+                "Set Assets Path",
+                "Assets/Resources",
+                ""
+            );
+
+            if (selection.StartsWith(Application.dataPath))
+            {
                 path = "Assets" + selection.Substring(Application.dataPath.Length);
             }
             else
             {
                 Debug.LogError($"Expected selection to be within {Application.dataPath}");
             }
-
         }
     }
 }
