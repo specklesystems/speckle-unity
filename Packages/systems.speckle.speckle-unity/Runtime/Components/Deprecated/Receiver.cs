@@ -21,7 +21,7 @@ namespace Speckle.ConnectorUnity
     /// that handles conversions and subscriptions for you
     /// </summary>
     [RequireComponent(typeof(RecursiveConverter))]
-    [Obsolete]
+    [Obsolete("See " + nameof(SpeckleReceiver))]
     public class Receiver : MonoBehaviour
     {
         public string StreamId;

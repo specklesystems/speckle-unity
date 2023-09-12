@@ -21,7 +21,7 @@ namespace Speckle.ConnectorUnity
     /// that handles conversions for you
     /// </summary>
     [RequireComponent(typeof(RecursiveConverter)), ExecuteAlways]
-    [Obsolete]
+    [Obsolete("See " + nameof(SpeckleSender))]
     public class Sender : MonoBehaviour
     {
         private ServerTransport transport;
