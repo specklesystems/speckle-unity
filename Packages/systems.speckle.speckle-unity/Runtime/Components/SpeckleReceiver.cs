@@ -185,6 +185,13 @@ namespace Speckle.ConnectorUnity.Components
             return result;
         }
 
+        /// <summary>
+        /// Gets the current selection
+        /// </summary>
+        /// <param name="client">The selected Account's Client</param>
+        /// <param name="stream">The selected <see cref="Stream"/></param>
+        /// <param name="commit">The selected <see cref="Commit"/></param>
+        /// <exception cref="InvalidOperationException">Selection was not complete or invalid</exception>
         public void ValidateSelection(out Client client, out Stream stream, out Commit commit)
         {
             Client? selectedClient = Account.Client;
@@ -237,7 +244,7 @@ namespace Speckle.ConnectorUnity.Components
         /// <param name="onTotalChildrenCountKnown"></param>
         /// <param name="cancellationToken"></param>
         /// <exception cref="Exception">Throws various types of exceptions to indicate faliure</exception>
-        /// <returns></returns>
+        /// <returns>The requested Speckle object</returns>
         public static async Task<Base> ReceiveAsync(
             Client client,
             string streamId,
@@ -301,7 +308,7 @@ namespace Speckle.ConnectorUnity.Components
                     { "hostPlatform", Application.platform.ToString() },
                     {
                         "isMultiplayer",
-                        commit != null && commit.authorId != client.Account.userInfo.id
+                        commit?.authorId != null && commit?.authorId != client.Account?.userInfo?.id
                     },
                 }
             );

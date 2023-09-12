@@ -163,9 +163,24 @@ namespace Objects.Converter.Unity
             return go;
         }
 
-        public Dictionary<string, object?> GetProperties(Base o) => GetProperties(o, typeof(Base));
+        /// <summary>Gets all properties of <paramref name="o"/> except ignored ones. <br/>
+        /// Ignored properties include properties of <see cref="Base"/>
+        /// And some hardcoded ones that are likely to be converted (such as material, elements, and name)
+        /// </summary>
+        /// <param name="o">The speckle object to grab properties from</param>
+        /// <returns>The properties</returns>
+        /// <remarks>If you don't want to filter any properties, simply use <see cref="Base.GetMembers"/></remarks>
+        public static Dictionary<string, object?> GetProperties(Base o) =>
+            GetProperties(o, typeof(Base));
 
-        public Dictionary<string, object?> GetProperties(Base o, Type excludeType)
+        /// <summary>
+        /// Gets all properties of <paramref name="o"/> except ignored ones.<br/>
+        /// Ignored properties include properties of <paramref name="excludeType"/>
+        /// And some hardcoded ones that are likely to be converted (such as material, elements, and name)
+        /// </summary>
+        /// <inheritdoc cref="GetProperties(Base)"/>
+        /// <param name="excludeType">A <see cref="Type"/> whose properties should be ignored</param>
+        public static Dictionary<string, object?> GetProperties(Base o, Type excludeType)
         {
             var excludeProps = new HashSet<string>(
                 excludeType

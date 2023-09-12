@@ -156,7 +156,7 @@ namespace Objects.Converter.Unity
             }
         }
 
-        public IList<string> DisplayValuePropertyAliases { get; set; } =
+        public static IList<string> DisplayValuePropertyAliases { get; set; } =
             new[] { "displayValue", "@displayValue", "displayMesh", "@displayMesh" };
 
         public GameObject? DisplayValueToNative(Base @object)
