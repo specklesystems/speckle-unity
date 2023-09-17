@@ -8,11 +8,12 @@ using Speckle.ConnectorUnity.NativeCache.Editor;
 
 namespace Speckle.ConnectorUnity
 {
-    #nullable enable
+#nullable enable
     public static class NativeCacheFactory
     {
-
-        public static List<AbstractNativeCache> GetDefaultNativeCacheSetup(bool generateAssets = false)
+        public static List<AbstractNativeCache> GetDefaultNativeCacheSetup(
+            bool generateAssets = false
+        )
         {
 #if UNITY_EDITOR
             if (generateAssets)
@@ -21,7 +22,6 @@ namespace Speckle.ConnectorUnity
             }
 #endif
             return GetStandaloneCacheSetup();
-
         }
 
         public static List<AbstractNativeCache> GetStandaloneCacheSetup()
@@ -32,7 +32,7 @@ namespace Speckle.ConnectorUnity
                 ScriptableObject.CreateInstance<MemoryNativeCache>(),
             };
         }
-        
+
 #if UNITY_EDITOR
         public static List<AbstractNativeCache> GetEditorCacheSetup()
         {
@@ -46,4 +46,3 @@ namespace Speckle.ConnectorUnity
 #endif
     }
 }
-

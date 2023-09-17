@@ -15,109 +15,124 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Speckle.ConnectorUnity.Utils;
 using Speckle.Core.Kits;
 using Speckle.Core.Logging;
 using UnityEngine;
 
 namespace Speckle.ConnectorUnity
 {
-	/// Author: Pim de Witte (pimdewitte.com) and contributors, https://github.com/PimDeWitte/UnityMainThreadDispatcher
-	/// <summary>
-	/// A thread-safe class which holds a queue with actions to execute on the next Update() method. It can be used to make calls to the main thread for
-	/// things such as UI Manipulation in Unity. It was developed for use in combination with the Firebase Unity plugin, which uses separate threads for event handling
-	/// </summary>
-	public class Dispatcher : MonoBehaviour {
+    /// Author: Pim de Witte (pimdewitte.com) and contributors, https://github.com/PimDeWitte/UnityMainThreadDispatcher
+    /// <summary>
+    /// A thread-safe class which holds a queue with actions to execute on the next Update() method. It can be used to make calls to the main thread for
+    /// things such as UI Manipulation in Unity. It was developed for use in combination with the Firebase Unity plugin, which uses separate threads for event handling
+    /// </summary>
+    public class Dispatcher : MonoBehaviour
+    {
+        private static readonly Queue<Action> _executionQueue = new Queue<Action>();
 
-		private static readonly Queue<Action> _executionQueue = new Queue<Action>();
+        public void Update()
+        {
+            lock (_executionQueue)
+            {
+                while (_executionQueue.Count > 0)
+                {
+                    _executionQueue.Dequeue().Invoke();
+                }
+            }
+        }
 
-		public void Update() {
-			lock(_executionQueue) {
-				while (_executionQueue.Count > 0) {
-					_executionQueue.Dequeue().Invoke();
-				}
-			}
-		}
+        /// <summary>
+        /// Locks the queue and adds the IEnumerator to the queue
+        /// </summary>
+        /// <param name="action">IEnumerator function that will be executed from the main thread.</param>
+        public void Enqueue(IEnumerator action)
+        {
+            lock (_executionQueue)
+            {
+                _executionQueue.Enqueue(() =>
+                {
+                    StartCoroutine(action);
+                });
+            }
+        }
 
-		/// <summary>
-		/// Locks the queue and adds the IEnumerator to the queue
-		/// </summary>
-		/// <param name="action">IEnumerator function that will be executed from the main thread.</param>
-		public void Enqueue(IEnumerator action) {
-			lock (_executionQueue) {
-				_executionQueue.Enqueue (() => {
-					StartCoroutine (action);
-				});
-			}
-		}
+        /// <summary>
+        /// Locks the queue and adds the Action to the queue
+        /// </summary>
+        /// <param name="action">function that will be executed from the main thread.</param>
+        public void Enqueue(Action action)
+        {
+            Enqueue(ActionWrapper(action));
+        }
 
-		/// <summary>
-		/// Locks the queue and adds the Action to the queue
-		/// </summary>
-		/// <param name="action">function that will be executed from the main thread.</param>
-		public void Enqueue(Action action)
-		{
-			Enqueue(ActionWrapper(action));
-		}
-	
-		/// <summary>
-		/// Locks the queue and adds the Action to the queue, returning a Task which is completed when the action completes
-		/// </summary>
-		/// <param name="action">function that will be executed from the main thread.</param>
-		/// <returns>A Task that can be awaited until the action completes</returns>
-		public Task EnqueueAsync(Action action)
-		{
-			var tcs = new TaskCompletionSource<bool>();
+        /// <summary>
+        /// Locks the queue and adds the Action to the queue, returning a Task which is completed when the action completes
+        /// </summary>
+        /// <param name="action">function that will be executed from the main thread.</param>
+        /// <returns>A Task that can be awaited until the action completes</returns>
+        public Task EnqueueAsync(Action action)
+        {
+            var tcs = new TaskCompletionSource<bool>();
 
-			void WrappedAction() {
-				try 
-				{
-					action();
-					tcs.TrySetResult(true);
-				} catch (Exception ex) 
-				{
-					tcs.TrySetException(ex);
-				}
-			}
+            void WrappedAction()
+            {
+                try
+                {
+                    action();
+                    tcs.TrySetResult(true);
+                }
+                catch (Exception ex)
+                {
+                    tcs.TrySetException(ex);
+                }
+            }
 
-			Enqueue(ActionWrapper(WrappedAction));
-			return tcs.Task;
-		}
+            Enqueue(ActionWrapper(WrappedAction));
+            return tcs.Task;
+        }
 
-	
-		IEnumerator ActionWrapper(Action a)
-		{
-			a();
-			yield return null;
-		}
+        IEnumerator ActionWrapper(Action a)
+        {
+            a();
+            yield return null;
+        }
 
+        private static Dispatcher _instance = null;
 
-		private static Dispatcher _instance = null;
+        public static bool Exists()
+        {
+            return _instance != null;
+        }
 
-		public static bool Exists() {
-			return _instance != null;
-		}
+        public static Dispatcher Instance()
+        {
+            if (!Exists())
+            {
+                throw new Exception(
+                    "Could not find the Dispatcher object. Please ensure you have added a Dispatcher object with this script to your scene."
+                );
+            }
+            return _instance;
+        }
 
-		public static Dispatcher Instance() {
-			if (!Exists ()) {
-				throw new Exception ("Could not find the Dispatcher object. Please ensure you have added a Dispatcher object with this script to your scene.");
-			}
-			return _instance;
-		}
+        void Awake()
+        {
+            Setup.Init(
+                HostApplications.Unity.GetVersion(CoreUtils.GetHostAppVersion()),
+                HostApplications.Unity.Slug
+            );
 
+            if (_instance == null)
+            {
+                _instance = this;
+                DontDestroyOnLoad(this.gameObject);
+            }
+        }
 
-		void Awake() {
-			Setup.Init(HostApplications.Unity.GetVersion(CoreUtils.GetHostAppVersion()), HostApplications.Unity.Slug);
-			
-			if (_instance == null) {
-				_instance = this;
-				DontDestroyOnLoad(this.gameObject);
-			}
-		}
-
-		void OnDestroy() {
-			_instance = null;
-		}
-
-
-	}
+        void OnDestroy()
+        {
+            _instance = null;
+        }
+    }
 }

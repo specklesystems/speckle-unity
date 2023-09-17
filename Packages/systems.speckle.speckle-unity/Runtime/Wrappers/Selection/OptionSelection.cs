@@ -18,7 +18,8 @@ namespace Speckle.ConnectorUnity.Wrappers.Selection
     public abstract class OptionSelection<TOption>
         where TOption : class
     {
-        [SerializeField] private int selectedIndex = -1;
+        [SerializeField]
+        private int selectedIndex = -1;
 
         public int SelectedIndex
         {
@@ -34,8 +35,10 @@ namespace Speckle.ConnectorUnity.Wrappers.Selection
         {
             get
             {
-                if (Options == null) return null;
-                if (SelectedIndex < 0 || SelectedIndex >= Options.Length) return null;
+                if (Options is null)
+                    return null;
+                if (SelectedIndex < 0 || SelectedIndex >= Options.Length)
+                    return null;
                 return Options[SelectedIndex];
             }
         }
@@ -52,22 +55,28 @@ namespace Speckle.ConnectorUnity.Wrappers.Selection
 
         protected void GenerateOptions(IList<TOption> source, Func<TOption, int, bool> isDefault)
         {
-            List<TOption> optionsToAdd = new List<TOption>(source.Count);
+            List<TOption> optionsToAdd = new(source.Count);
             int defaultOption = -1;
             int index = 0;
             foreach (TOption? a in source)
             {
-                if (a == null) continue;
+                if (a == null)
+                    continue;
                 optionsToAdd.Add(a);
-                if (isDefault(a, index)) defaultOption = index;
+                if (isDefault(a, index))
+                    defaultOption = index;
                 index++;
             }
 
             TOption? currentSelected = Selected;
             bool selectionOutOfRange = SelectedIndex < 0 || SelectedIndex >= optionsToAdd.Count;
-            if (selectionOutOfRange
-                || (currentSelected != null
-                    && KeyFunction(currentSelected) != KeyFunction(optionsToAdd[SelectedIndex])))
+            if (
+                selectionOutOfRange
+                || (
+                    currentSelected != null
+                    && KeyFunction(currentSelected) != KeyFunction(optionsToAdd[SelectedIndex])
+                )
+            )
             {
                 selectedIndex = defaultOption;
             }

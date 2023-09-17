@@ -20,10 +20,10 @@ namespace Speckle.ConnectorUnity.Components.Editor
     public class StreamManagerEditor : UnityEditor.Editor
     {
         private bool _foldOutAccount;
-        private int _totalChildrenCount = 0;
+        private int _totalChildrenCount;
         private StreamManager _streamManager;
 
-        private static bool generateAssets;
+        private static bool _generateAssets;
 
         public int StreamsLimit { get; set; } = 30;
         public int BranchesLimit { get; set; } = 75;
@@ -98,7 +98,6 @@ namespace Speckle.ConnectorUnity.Components.Editor
         private List<Branch> Branches
         {
             get => _streamManager.Branches;
-
             set => _streamManager.Branches = value;
         }
 
@@ -142,7 +141,11 @@ namespace Speckle.ConnectorUnity.Components.Editor
             SelectedStream = Streams[i];
 
             EditorUtility.DisplayProgressBar("Loading stream details...", "", 0);
-            Branches = await Client.StreamGetBranches(SelectedStream.id, BranchesLimit, CommitsLimit);
+            Branches = await Client.StreamGetBranches(
+                SelectedStream.id,
+                BranchesLimit,
+                CommitsLimit
+            );
             if (Branches.Any())
             {
                 SelectedBranchIndex = 0;
@@ -155,7 +158,6 @@ namespace Speckle.ConnectorUnity.Components.Editor
             EditorUtility.ClearProgressBar();
         }
 
-
         private async Task Receive()
         {
             var transport = new ServerTransport(SelectedAccount, SelectedStream.id);
@@ -163,53 +165,82 @@ namespace Speckle.ConnectorUnity.Components.Editor
 
             try
             {
-                Commit selectedCommit = Branches[SelectedBranchIndex].commits.items[SelectedCommitIndex];
+                Commit selectedCommit = Branches[SelectedBranchIndex].commits.items[
+                    SelectedCommitIndex
+                ];
                 // Receive Speckle Objects
                 var @base = await Operations.Receive(
                     selectedCommit.referencedObject,
                     remoteTransport: transport,
                     onProgressAction: dict =>
                     {
-                        UnityEditor.EditorApplication.delayCall += () =>
+                        EditorApplication.delayCall += () =>
                         {
-                            EditorUtility.DisplayProgressBar($"Receiving data from {transport.BaseUri}...", "",
-                                Convert.ToSingle(dict.Values.Average() / _totalChildrenCount));
+                            EditorUtility.DisplayProgressBar(
+                                $"Receiving data from {transport.BaseUri}...",
+                                "",
+                                Convert.ToSingle(dict.Values.Average() / _totalChildrenCount)
+                            );
                         };
                     },
-                    onTotalChildrenCountKnown: count => { _totalChildrenCount = count; }
+                    onTotalChildrenCountKnown: count =>
+                    {
+                        _totalChildrenCount = count;
+                    }
                 );
+                if (@base is null)
+                    throw new InvalidOperationException("Received object was null");
 
                 EditorUtility.ClearProgressBar();
-                
-                Analytics.TrackEvent(SelectedAccount, Analytics.Events.Receive, new Dictionary<string, object>()
-                {
-                    {"mode", nameof(StreamManagerEditor)},
-                    {"sourceHostApp", HostApplications.GetHostAppFromString(selectedCommit.sourceApplication).Slug},
-                    {"sourceHostAppVersion", selectedCommit.sourceApplication ?? ""},
-                    {"hostPlatform", Application.platform.ToString()},
-                    {"isMultiplayer", selectedCommit.authorId != SelectedAccount.userInfo.id},
-                });
+
+                Analytics.TrackEvent(
+                    SelectedAccount,
+                    Analytics.Events.Receive,
+                    new Dictionary<string, object>()
+                    {
+                        { "mode", nameof(StreamManagerEditor) },
+                        {
+                            "sourceHostApp",
+                            HostApplications
+                                .GetHostAppFromString(selectedCommit.sourceApplication)
+                                .Slug
+                        },
+                        { "sourceHostAppVersion", selectedCommit.sourceApplication ?? "" },
+                        { "hostPlatform", Application.platform.ToString() },
+                        { "isMultiplayer", selectedCommit.authorId != SelectedAccount.userInfo.id },
+                    }
+                );
 
                 //Convert Speckle Objects
                 int childrenConverted = 0;
 
                 void BeforeConvertCallback(Base b)
                 {
-                    EditorUtility.DisplayProgressBar("Converting To Native...", $"{b.speckle_type} - {b.id}",
-                        Convert.ToSingle(childrenConverted++ / _totalChildrenCount));
+                    EditorUtility.DisplayProgressBar(
+                        "Converting To Native...",
+                        $"{b.speckle_type} - {b.id}",
+                        Convert.ToSingle(childrenConverted++ / _totalChildrenCount)
+                    );
                 }
 
-                var go = _streamManager.ConvertRecursivelyToNative(@base,
-                    Branches[SelectedBranchIndex].commits.items[SelectedCommitIndex].id, BeforeConvertCallback);
+                _streamManager.ConvertRecursivelyToNative(
+                    @base,
+                    Branches[SelectedBranchIndex].commits.items[SelectedCommitIndex].id,
+                    BeforeConvertCallback
+                );
 
                 // Read Receipt
-                await Client.CommitReceived(new CommitReceivedInput
-                {
-                    streamId = SelectedStream.id,
-                    commitId = Branches[SelectedBranchIndex].commits.items[SelectedCommitIndex].id,
-                    message = $"received commit from {HostApplications.Unity.Name} Editor",
-                    sourceApplication = HostApplications.Unity.Name
-                });
+                await Client.CommitReceived(
+                    new CommitReceivedInput
+                    {
+                        streamId = SelectedStream.id,
+                        commitId = Branches[SelectedBranchIndex].commits.items[
+                            SelectedCommitIndex
+                        ].id,
+                        message = $"received commit from {HostApplications.Unity.Name} Editor",
+                        sourceApplication = HostApplications.Unity.Name
+                    }
+                );
             }
             catch (Exception e)
             {
@@ -223,8 +254,7 @@ namespace Speckle.ConnectorUnity.Components.Editor
 
         public override async void OnInspectorGUI()
         {
-            _streamManager = (StreamManager) target;
-
+            _streamManager = (StreamManager)target;
 
             #region Account GUI
 
@@ -234,12 +264,15 @@ namespace Speckle.ConnectorUnity.Components.Editor
                 return;
             }
 
-
             EditorGUILayout.BeginHorizontal();
 
-            SelectedAccountIndex = EditorGUILayout.Popup("Accounts", SelectedAccountIndex,
+            SelectedAccountIndex = EditorGUILayout.Popup(
+                "Accounts",
+                SelectedAccountIndex,
                 Accounts.Select(x => x.userInfo.email + " | " + x.serverInfo.name).ToArray(),
-                GUILayout.ExpandWidth(true), GUILayout.Height(20));
+                GUILayout.ExpandWidth(true),
+                GUILayout.Height(20)
+            );
 
             if (OldSelectedAccountIndex != SelectedAccountIndex)
             {
@@ -255,26 +288,37 @@ namespace Speckle.ConnectorUnity.Components.Editor
 
             EditorGUILayout.EndHorizontal();
 
-
             #region Speckle Account Info
 
-            _foldOutAccount = EditorGUILayout.BeginFoldoutHeaderGroup(_foldOutAccount, "Account Info");
+            _foldOutAccount = EditorGUILayout.BeginFoldoutHeaderGroup(
+                _foldOutAccount,
+                "Account Info"
+            );
 
             if (_foldOutAccount)
             {
                 EditorGUI.BeginDisabledGroup(true);
 
-                EditorGUILayout.TextField("Name", SelectedAccount.userInfo.name,
+                EditorGUILayout.TextField(
+                    "Name",
+                    SelectedAccount.userInfo.name,
                     GUILayout.Height(20),
-                    GUILayout.ExpandWidth(true));
+                    GUILayout.ExpandWidth(true)
+                );
 
-                EditorGUILayout.TextField("Server", SelectedAccount.serverInfo.name,
+                EditorGUILayout.TextField(
+                    "Server",
+                    SelectedAccount.serverInfo.name,
                     GUILayout.Height(20),
-                    GUILayout.ExpandWidth(true));
+                    GUILayout.ExpandWidth(true)
+                );
 
-                EditorGUILayout.TextField("URL", SelectedAccount.serverInfo.url,
+                EditorGUILayout.TextField(
+                    "URL",
+                    SelectedAccount.serverInfo.url,
                     GUILayout.Height(20),
-                    GUILayout.ExpandWidth(true));
+                    GUILayout.ExpandWidth(true)
+                );
 
                 EditorGUI.EndDisabledGroup();
             }
@@ -292,9 +336,13 @@ namespace Speckle.ConnectorUnity.Components.Editor
 
             EditorGUILayout.BeginHorizontal();
 
-            SelectedStreamIndex = EditorGUILayout.Popup("Streams",
-                SelectedStreamIndex, Streams.Select(x => x.name).ToArray(), GUILayout.Height(20),
-                GUILayout.ExpandWidth(true));
+            SelectedStreamIndex = EditorGUILayout.Popup(
+                "Streams",
+                SelectedStreamIndex,
+                Streams.Select(x => x.name).ToArray(),
+                GUILayout.Height(20),
+                GUILayout.ExpandWidth(true)
+            );
 
             if (OldSelectedStreamIndex != SelectedStreamIndex)
             {
@@ -319,23 +367,29 @@ namespace Speckle.ConnectorUnity.Components.Editor
 
             EditorGUILayout.BeginHorizontal();
 
-            SelectedBranchIndex = EditorGUILayout.Popup("Branches",
-                SelectedBranchIndex, Branches.Select(x => x.name).ToArray(), GUILayout.Height(20),
-                GUILayout.ExpandWidth(true));
+            SelectedBranchIndex = EditorGUILayout.Popup(
+                "Branches",
+                SelectedBranchIndex,
+                Branches.Select(x => x.name).ToArray(),
+                GUILayout.Height(20),
+                GUILayout.ExpandWidth(true)
+            );
             EditorGUILayout.EndHorizontal();
-
 
             if (!Branches[SelectedBranchIndex].commits.items.Any())
                 return;
 
-
             EditorGUILayout.BeginHorizontal();
 
-            SelectedCommitIndex = EditorGUILayout.Popup("Commits",
+            SelectedCommitIndex = EditorGUILayout.Popup(
+                "Commits",
                 SelectedCommitIndex,
-                Branches[SelectedBranchIndex].commits.items.Select(x => $"{x.message} - {x.id}").ToArray(),
+                Branches[SelectedBranchIndex].commits.items
+                    .Select(x => $"{x.message} - {x.id}")
+                    .ToArray(),
                 GUILayout.Height(20),
-                GUILayout.ExpandWidth(true));
+                GUILayout.ExpandWidth(true)
+            );
 
             EditorGUILayout.EndHorizontal();
 
@@ -347,12 +401,12 @@ namespace Speckle.ConnectorUnity.Components.Editor
 
             GUILayout.Label("Generate assets");
             GUILayout.FlexibleSpace();
-            bool selection = GUILayout.Toggle(generateAssets, "");
-            if (generateAssets != selection)
+            bool selection = GUILayout.Toggle(_generateAssets, "");
+            if (_generateAssets != selection)
             {
-                
-                generateAssets = selection;
-                _streamManager.RC.AssetCache.nativeCaches = NativeCacheFactory.GetDefaultNativeCacheSetup(generateAssets);
+                _generateAssets = selection;
+                _streamManager.RC.AssetCache.nativeCaches =
+                    NativeCacheFactory.GetDefaultNativeCacheSetup(_generateAssets);
             }
 
             EditorGUILayout.EndHorizontal();

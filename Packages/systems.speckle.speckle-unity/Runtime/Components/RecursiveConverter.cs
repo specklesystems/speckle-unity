@@ -1,5 +1,6 @@
 ﻿using Speckle.ConnectorUnity.Factories;
 using Speckle.ConnectorUnity.NativeCache;
+using Speckle.ConnectorUnity.Utils;
 using Speckle.Core.Kits;
 using Speckle.Core.Logging;
 using UnityEngine;
@@ -13,14 +14,24 @@ namespace Speckle.ConnectorUnity.Components
     [ExecuteAlways, DisallowMultipleComponent]
     public partial class RecursiveConverter : MonoBehaviour
     {
-        public ISpeckleConverter ConverterInstance { get; set; } = ConverterFactory.GetDefaultConverter();
+        [field: SerializeReference]
+        public ISpeckleConverter ConverterInstance { get; set; } =
+            ConverterFactory.GetDefaultConverter();
 
         [field: SerializeField]
         public AggregateNativeCache AssetCache { get; set; }
 
-        private void Awake()
+        protected void Awake()
         {
-            Setup.Init(HostApplications.Unity.GetVersion(CoreUtils.GetHostAppVersion()), HostApplications.Unity.Slug);
+            Init();
+        }
+
+        protected void Init()
+        {
+            Setup.Init(
+                HostApplications.Unity.GetVersion(CoreUtils.GetHostAppVersion()),
+                HostApplications.Unity.Slug
+            );
 
             if (AssetCache == null)
             {
@@ -28,6 +39,8 @@ namespace Speckle.ConnectorUnity.Components
                 assetCache.nativeCaches = NativeCacheFactory.GetDefaultNativeCacheSetup();
                 this.AssetCache = assetCache;
             }
+
+            InitializeAssetCache();
         }
     }
 }
