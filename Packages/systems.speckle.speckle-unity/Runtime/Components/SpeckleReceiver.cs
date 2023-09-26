@@ -79,7 +79,11 @@ namespace Speckle.ConnectorUnity.Components
 
         /// <summary>
         /// Receive the selected <see cref="Commit"/> object, and converts ToNative as children of <paramref name="parent"/>
+        /// This function is designed to be run as a coroutine
         /// </summary>
+        /// <example><c>
+        /// StartCoroutine(mySpeckleReceiver.ReceiveAndConvert_Routine(null);
+        /// </c></example
         /// <param name="parent">Optional parent <see cref="Transform"/> for the created root <see cref="GameObject"/>s</param>
         /// <param name="predicate">A filter function to allow for selectively excluding certain objects from being converted</param>
         /// <remarks>function does not throw, instead calls <see cref="OnErrorAction"/>, and calls <see cref="OnComplete"/> upon completion</remarks>
