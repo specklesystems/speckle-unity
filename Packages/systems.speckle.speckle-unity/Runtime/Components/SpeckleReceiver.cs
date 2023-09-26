@@ -77,20 +77,13 @@ namespace Speckle.ConnectorUnity.Components
             return true;
         }
 
-        /// <summary>
-        /// Receive the selected <see cref="Commit"/> object, and converts ToNative as children of <paramref name="parent"/>
-        /// This function is designed to be run as a coroutine
-        /// </summary>
-        /// <example><c>
-        /// StartCoroutine(mySpeckleReceiver.ReceiveAndConvert_Routine(null);
-        /// </c></example
-        /// <param name="parent">Optional parent <see cref="Transform"/> for the created root <see cref="GameObject"/>s</param>
-        /// <param name="predicate">A filter function to allow for selectively excluding certain objects from being converted</param>
-        /// <remarks>function does not throw, instead calls <see cref="OnErrorAction"/>, and calls <see cref="OnComplete"/> upon completion</remarks>
-        /// <seealso cref="ReceiveAsync(System.Threading.CancellationToken)"/>
-        /// <seealso cref="RecursiveConverter.RecursivelyConvertToNative_Enumerable"/>
+        /// <inheritdoc cref="ReceiveAndConvert_Async"/>
+        /// <example>
+        /// This function is designed to run as a coroutine i.e.
+        /// <c>StartCoroutine(mySpeckleReceiver.ReceiveAndConvert_Routine());</c>
+        /// </example>
         public IEnumerator ReceiveAndConvert_Routine(
-            Transform? parent,
+            Transform? parent = null,
             Predicate<TraversalContext>? predicate = null
         )
         {
@@ -134,9 +127,16 @@ namespace Speckle.ConnectorUnity.Components
             FinishOperation();
         }
 
-        /// <inheritdoc cref="ReceiveAndConvert_Routine"/>
+        /// <summary>
+        /// Receive the selected <see cref="Commit"/> object, and converts ToNative as children of <paramref name="parent"/>
+        /// </summary>
+        /// <param name="parent">Optional parent <see cref="Transform"/> for the created root <see cref="GameObject"/>s</param>
+        /// <param name="predicate">A filter function to allow for selectively excluding certain objects from being converted</param>
+        /// <remarks>function does not throw, instead calls <see cref="OnErrorAction"/>, and calls <see cref="OnComplete"/> upon completion</remarks>
+        /// <seealso cref="ReceiveAsync(System.Threading.CancellationToken)"/>
+        /// <seealso cref="RecursiveConverter.RecursivelyConvertToNative_Enumerable"/>
         public async void ReceiveAndConvert_Async(
-            Transform? parent,
+            Transform? parent = null,
             Predicate<TraversalContext>? predicate = null
         )
         {
