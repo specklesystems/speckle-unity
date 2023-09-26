@@ -90,7 +90,7 @@ namespace Speckle.ConnectorUnity.Components
         /// <seealso cref="ReceiveAsync(System.Threading.CancellationToken)"/>
         /// <seealso cref="RecursiveConverter.RecursivelyConvertToNative_Enumerable"/>
         public IEnumerator ReceiveAndConvert_Routine(
-            Transform? parent = null,
+            Transform? parent,
             Predicate<TraversalContext>? predicate = null
         )
         {
