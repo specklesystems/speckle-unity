@@ -357,25 +357,25 @@ namespace Objects.Converter.Unity
             return new Matrix4x4
             {
                 // Left (X -> X)
-                [0, 0] = smatrix.M11,
-                [2, 0] = smatrix.M21,
-                [1, 0] = smatrix.M31,
-                [3, 0] = smatrix.M41,
+                [0, 0] = (float)smatrix.M11,
+                [2, 0] = (float)smatrix.M21,
+                [1, 0] = (float)smatrix.M31,
+                [3, 0] = (float)smatrix.M41,
                 //Up (Z -> Y)
-                [0, 2] = smatrix.M12,
-                [2, 2] = smatrix.M22,
-                [1, 2] = smatrix.M32,
-                [3, 2] = smatrix.M42,
+                [0, 2] = (float)smatrix.M12,
+                [2, 2] = (float)smatrix.M22,
+                [1, 2] = (float)smatrix.M32,
+                [3, 2] = (float)smatrix.M42,
                 //Forwards (Y -> Z)
-                [0, 1] = smatrix.M13,
-                [2, 1] = smatrix.M23,
-                [1, 1] = smatrix.M33,
-                [3, 1] = smatrix.M43,
+                [0, 1] = (float)smatrix.M13,
+                [2, 1] = (float)smatrix.M23,
+                [1, 1] = (float)smatrix.M33,
+                [3, 1] = (float)smatrix.M43,
                 //Translation
                 [0, 3] = (float)(smatrix.M14 * sf),
                 [2, 3] = (float)(smatrix.M24 * sf),
                 [1, 3] = (float)(smatrix.M34 * sf),
-                [3, 3] = smatrix.M44,
+                [3, 3] = (float)smatrix.M44,
             };
         }
 

@@ -202,6 +202,18 @@ namespace Objects.Converter.Unity
             return objects.Select(x => ConvertToNative(x)).ToList();
         }
 
+        public object ConvertToNativeDisplayable(Base @object)
+        {
+            throw new NotImplementedException(
+                $"{nameof(ConvertToNativeDisplayable)} is not implemented by this converter, use {nameof(ConvertToNative)} instead"
+            );
+        }
+
+        public bool CanConvertToNativeDisplayable(Base @object)
+        {
+            throw new NotImplementedException();
+        }
+
         public bool CanConvertToSpeckle(object @object)
         {
             switch (@object)
