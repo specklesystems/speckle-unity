@@ -180,6 +180,12 @@
             <param name="baseGeometries">A list of base classes to represent the direct shape (only mesh and brep are allowed, anything else will be ignored.)</param>
             <param name="parameters">Optional Parameters for this instance.</param>
         </member>
+        <member name="T:Objects.BuiltElements.Revit.RevitFamilyCategory">
+            <summary>
+            FamilyDocuments can only be assigned these categories
+            This is a subset of the list above which was manually retrieved from Revit's UI
+            </summary>
+        </member>
         <member name="P:Objects.BuiltElements.Revit.FreeformElement.baseGeometry">
             <summary>
             DEPRECATED. Sets the geometry contained in the FreeformElement. This field has been deprecated in favor of `baseGeometries`
@@ -2154,7 +2160,7 @@
             <param name="units"></param>
             <exception cref="T:Speckle.Core.Logging.SpeckleException"></exception>
         </member>
-        <member name="M:Objects.Other.Transform.#ctor(System.Numerics.Matrix4x4,System.String)">
+        <member name="M:Objects.Other.Transform.#ctor(System.DoubleNumerics.Matrix4x4,System.String)">
             <summary>
             Construct a transform from a 4x4 matrix and translation units
             </summary>
@@ -2184,7 +2190,7 @@
             Units for translation
             </summary>
         </member>
-        <member name="M:Objects.Other.Transform.Decompose(System.Numerics.Vector3@,System.Numerics.Quaternion@,System.Numerics.Vector4@)">
+        <member name="M:Objects.Other.Transform.Decompose(System.DoubleNumerics.Vector3@,System.DoubleNumerics.Quaternion@,System.DoubleNumerics.Vector4@)">
             <summary>
             Decomposes matrix into its scaling, rotation, and translation components
             </summary>

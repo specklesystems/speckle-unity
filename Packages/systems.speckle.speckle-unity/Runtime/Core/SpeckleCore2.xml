@@ -774,15 +774,25 @@
         </member>
         <member name="M:Speckle.Core.Api.Operations.Serialize(Speckle.Core.Models.Base)">
             <summary>
-            Serializes a given object. Note: if you want to save and persist an object to a Speckle Transport or Server, please use any of the "Send" methods. See <see cref="!:Send(Base, System.Collections.Generic.List&lt;Speckle.Core.Transports.ITransport&gt;, bool, System.Action&lt;System.Collections.Concurrent.ConcurrentDictionary&lt;string,int&gt;&gt;(System.Collections.Concurrent.ConcurrentDictionary&lt;string,int&gt;), Action&lt;string, Exception&gt;)"/>.
+            Serializes a given object.
+            <remarks>
+            if you want to save and persist an object to a Speckle Transport or Server,
+            please use any of the "Send" methods.
+            See <see cref="M:Speckle.Core.Api.Operations.Send(Speckle.Core.Models.Base,System.Collections.Generic.List{Speckle.Core.Transports.ITransport},System.Boolean,System.Action{System.Collections.Concurrent.ConcurrentDictionary{System.String,System.Int32}},System.Action{System.String,System.Exception},System.Boolean,Speckle.Core.Api.SerializerVersion)"/>
+            </remarks>
             </summary>
             <param name="object"></param>
             <returns>A json string representation of the object.</returns>
         </member>
         <member name="M:Speckle.Core.Api.Operations.Serialize(Speckle.Core.Models.Base,System.Threading.CancellationToken,Speckle.Core.Api.SerializerVersion)">
             <summary>
-            Serializes a given object. Note: if you want to save and persist an object to Speckle Transport or Server, please use any of the "Send" methods. See <see cref="!:Send(Base, System.Collections.Generic.List&lt;Speckle.Core.Transports.ITransport&gt;, bool, System.Action&lt;System.Collections.Concurrent.ConcurrentDictionary&lt;string,int&gt;&gt;(System.Collections.Concurrent.ConcurrentDictionary&lt;string,int&gt;), Action&lt;string, Exception&gt;)"/>.
+            Serializes a given object.
             </summary>
+            <remarks>
+            If you want to save and persist an object to Speckle Transport or Server,
+            please use any of the "Send" methods.
+            <see cref="M:Speckle.Core.Api.Operations.Send(Speckle.Core.Models.Base,System.Collections.Generic.List{Speckle.Core.Transports.ITransport},System.Boolean,System.Action{System.Collections.Concurrent.ConcurrentDictionary{System.String,System.Int32}},System.Action{System.String,System.Exception},System.Boolean,Speckle.Core.Api.SerializerVersion)"/>
+            </remarks>
             <param name="object"></param>
             <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
             <returns>A json string representation of the object.</returns>
@@ -803,15 +813,24 @@
         </member>
         <member name="M:Speckle.Core.Api.Operations.Deserialize(System.String)">
             <summary>
-            Deserializes a given object. Note: if you want to pull an object from a Speckle Transport or Server, please use any of the <see cref="!:Receive(string, Transports.ITransport, Transports.ITransport, System.Action&lt;System.Collections.Concurrent.ConcurrentDictionary&lt;string,int&gt;&gt;(System.Collections.Concurrent.ConcurrentDictionary&lt;string,int&gt;))"/>.
+            Deserializes a given object.
             </summary>
+            <remarks>
+            Note: if you want to pull an object from a Speckle Transport or Server,
+            please use any of the <see cref="M:Speckle.Core.Api.Operations.Receive(System.String,Speckle.Core.Transports.ITransport,Speckle.Core.Transports.ITransport,System.Action{System.Collections.Concurrent.ConcurrentDictionary{System.String,System.Int32}},System.Action{System.String,System.Exception},System.Action{System.Int32},System.Boolean,Speckle.Core.Api.SerializerVersion)"/>
+            </remarks>
             <param name="object">The json string representation of a speckle object that you want to deserialise.</param>
             <returns></returns>
         </member>
         <member name="M:Speckle.Core.Api.Operations.Deserialize(System.String,System.Threading.CancellationToken,Speckle.Core.Api.SerializerVersion)">
             <summary>
-            Deserializes a given object. Note: if you want to pull an object from a Speckle Transport or Server, please use any of the <see cref="!:Receive(string, Transports.ITransport, Transports.ITransport, System.Action&lt;System.Collections.Concurrent.ConcurrentDictionary&lt;string,int&gt;&gt;(System.Collections.Concurrent.ConcurrentDictionary&lt;string,int&gt;))"/>.
+            Deserializes a given object.
             </summary>
+            <remarks>
+            Note: if you want to pull an object from a Speckle Transport or Server,
+            please use any of the
+            <see cref="M:Speckle.Core.Api.Operations.Receive(System.String,Speckle.Core.Transports.ITransport,Speckle.Core.Transports.ITransport,System.Action{System.Collections.Concurrent.ConcurrentDictionary{System.String,System.Int32}},System.Action{System.String,System.Exception},System.Action{System.Int32},System.Boolean,Speckle.Core.Api.SerializerVersion)"/>.
+            </remarks>
             <param name="object">The json string representation of a speckle object that you want to deserialise.</param>
             <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
             <returns></returns>
@@ -880,7 +899,8 @@
             <summary>
             Gets all the accounts present in this environment.
             </summary>
-            <returns></returns>
+            <remarks>This function does have potential side effects. Any invalid accounts found while enumerating will be removed</remarks>
+            <returns>Un-enumerated enumerable of accounts</returns>
         </member>
         <member name="M:Speckle.Core.Credentials.AccountManager.GetLocalAccounts">
             <summary>
@@ -1137,6 +1157,11 @@
             Exception thrown when an object was desirably skipped
             </summary>
         </member>
+        <member name="T:Speckle.Core.Kits.ConversionNotReadyException">
+            <summary>
+            Exception thrown when an object was not ready to be baked into the document (i.e. the element's host doesn't exist yet)
+            </summary>
+        </member>
         <member name="P:Speckle.Core.Kits.ISpeckleConverter.Report">
             <summary>
             Keeps track of the conversion process
@@ -1182,12 +1207,43 @@
             <param name="objects"></param>
             <returns></returns>
         </member>
+        <member name="M:Speckle.Core.Kits.ISpeckleConverter.ConvertToNativeDisplayable(Speckle.Core.Models.Base)">
+            <summary>
+            Converts a given speckle objects as a generic native object.
+            This should assume <see cref="M:Speckle.Core.Kits.ISpeckleConverter.CanConvertToNativeDisplayable(Speckle.Core.Models.Base)"/> has been called and returned True,
+            or call it within this method's implementation to ensure non-displayable objects are gracefully handled.
+            </summary>
+            <remarks>
+            This method should not try to convert an object to it's native representation (i.e Speckle Wall -> Wall),
+            but rather use the 'displayValue' of that wall to create a geometrically correct representation of that object
+            in the native application.
+            An object may be able to be converted both with <see cref="M:Speckle.Core.Kits.ISpeckleConverter.ConvertToNative(Speckle.Core.Models.Base)"/> and <see cref="M:Speckle.Core.Kits.ISpeckleConverter.ConvertToNativeDisplayable(Speckle.Core.Models.Base)"/>.
+            In this case, deciding which to use is dependent on each connector developer.
+            Preferably, <see cref="M:Speckle.Core.Kits.ISpeckleConverter.ConvertToNativeDisplayable(Speckle.Core.Models.Base)"/> should be used as a fallback to the <see cref="M:Speckle.Core.Kits.ISpeckleConverter.ConvertToNative(Speckle.Core.Models.Base)"/> logic.
+            </remarks>
+            <param name="object">Speckle object to convert</param>
+            <returns>The native object that resulted after converting the input <paramref name="object"/></returns>
+        </member>
         <member name="M:Speckle.Core.Kits.ISpeckleConverter.CanConvertToNative(Speckle.Core.Models.Base)">
             <summary>
             Checks if it can convert a Speckle object to a native one
             </summary>
             <param name="object">Speckle object to convert</param>
             <returns></returns>
+        </member>
+        <member name="M:Speckle.Core.Kits.ISpeckleConverter.CanConvertToNativeDisplayable(Speckle.Core.Models.Base)">
+            <summary>
+            Checks to verify if a given object is: 1) displayable and  2) can be supported for conversion to the native application.
+            An object is considered "displayable" if it has a 'displayValue' property (defined in its class or dynamically attached to it, detached or not).
+            </summary>
+            <remarks>
+            An object may return "True" for both <see cref="M:Speckle.Core.Kits.ISpeckleConverter.CanConvertToNative(Speckle.Core.Models.Base)"/> and <see cref="M:Speckle.Core.Kits.ISpeckleConverter.CanConvertToNativeDisplayable(Speckle.Core.Models.Base)"/>
+            In this case, deciding which to use is dependent on each connector developer.
+            Preferably, <see cref="M:Speckle.Core.Kits.ISpeckleConverter.CanConvertToNativeDisplayable(Speckle.Core.Models.Base)"/> should be used as a fallback to the <see cref="M:Speckle.Core.Kits.ISpeckleConverter.CanConvertToNative(Speckle.Core.Models.Base)"/> logic.
+            Objects found in the 'displayValue' property are assumed to be universally convertible by all converters and the viewer, but are not guaranteed to be so.
+            </remarks>
+            <param name="object">Speckle object to convert</param>
+            <returns>True if the object is "displayable" and the converter supports native conversion of the given speckle object in particular.</returns>
         </member>
         <member name="M:Speckle.Core.Kits.ISpeckleConverter.GetServicedApplications">
             <summary>
@@ -1650,7 +1706,7 @@
             <summary>
             Abstract Builder class for a root commit <see cref="T:Speckle.Core.Models.Base"/> object.
             </summary>
-            <typeparam name="TNativeObjectData">The native object data type needed as input for building <see cref="F:Speckle.Core.Models.CommitObjectBuilder`1._parentInfos"/></typeparam>
+            <typeparam name="TNativeObjectData">The native object data type needed as input for building <see cref="!:_parentInfos"/></typeparam>
             <remarks>
             It is designed to be inherited by a host app specific implementation,
             to give connectors flexibility in constructing their objects.
@@ -1663,12 +1719,12 @@
         <member name="F:Speckle.Core.Models.CommitObjectBuilder`1.converted">
             <summary>app id -> base</summary>
         </member>
-        <member name="F:Speckle.Core.Models.CommitObjectBuilder`1._parentInfos">
-            <summary>Base -> Tuple{Parent App Id, propName} ordered by priority</summary>
+        <member name="F:Speckle.Core.Models.CommitObjectBuilder`1._nestingInstructions">
+            <summary>Base -> NestingInstructions ordered by priority</summary>
         </member>
         <member name="M:Speckle.Core.Models.CommitObjectBuilder`1.IncludeObject(Speckle.Core.Models.Base,`0)">
             <summary>
-            Given the parameters, builds connector specific <see cref="F:Speckle.Core.Models.CommitObjectBuilder`1._parentInfos"/>
+            Given the parameters, builds connector specific <see cref="!:_parentInfos"/>
             to be applied when <see cref="M:Speckle.Core.Models.CommitObjectBuilder`1.BuildCommitObject(Speckle.Core.Models.Base)"/> is called.
             </summary>
             <param name="conversionResult"></param>
@@ -1684,7 +1740,7 @@
             </remarks>
             <param name="rootCommitObject"></param>
         </member>
-        <member name="M:Speckle.Core.Models.CommitObjectBuilder`1.SetRelationship(Speckle.Core.Models.Base,System.ValueTuple{System.String,System.String}[])">
+        <member name="M:Speckle.Core.Models.CommitObjectBuilder`1.SetRelationship(Speckle.Core.Models.Base,System.Collections.Generic.IList{Speckle.Core.Models.NestingInstructions})">
             <summary>
             Sets information on how a given object should be nested in the commit tree.
             <paramref name="parentInfo"/> encodes the order in which we should try and nest the given <paramref name="conversionResult"/>
@@ -1704,18 +1760,18 @@
         <member name="M:Speckle.Core.Models.CommitObjectBuilder`1.ApplyRelationship(Speckle.Core.Models.Base,Speckle.Core.Models.Base)">
             <summary>
             Will attempt to find and nest the <paramref name="current"/> object
-            under the first valid parent according to the <see cref="F:Speckle.Core.Models.CommitObjectBuilder`1._parentInfos"/> <see cref="F:Speckle.Core.Models.CommitObjectBuilder`1.converted"/> dictionary.
+            under the first valid parent according to the <see cref="!:_parentInfos"/> <see cref="F:Speckle.Core.Models.CommitObjectBuilder`1.converted"/> dictionary.
             </summary>
             <remarks>
             A parent is considered valid if
             1. Is non null
             2. Is in the <see cref="F:Speckle.Core.Models.CommitObjectBuilder`1.converted"/> dictionary
-            3. Has (or can dynamically accept) a <see cref="T:System.Collections.IList"/> typed property with the propName specified by the <see cref="F:Speckle.Core.Models.CommitObjectBuilder`1._parentInfos"/> item
+            3. Has (or can dynamically accept) a <see cref="T:System.Collections.IList"/> typed property with the propName specified by the <see cref="!:_parentInfos"/> item
             4. Said <see cref="T:System.Collections.IList"/> can accept the <see cref="!:current"/> object's type
             </remarks>
             <param name="current"></param>
             <param name="rootCommitObject"></param>
-            <exception cref="T:System.InvalidOperationException">Thrown when no valid parent was found for <see cref="!:current"/> given <see cref="F:Speckle.Core.Models.CommitObjectBuilder`1._parentInfos"/></exception>
+            <exception cref="T:System.InvalidOperationException">Thrown when no valid parent was found for <see cref="!:current"/> given <see cref="!:_parentInfos"/></exception>
         </member>
         <member name="T:Speckle.Core.Models.DynamicBase">
             <summary>
@@ -1885,6 +1941,15 @@
             <param name="value">Value to set</param>
         </member>
         <!-- Badly formed XML comment ignored for member "M:Speckle.Core.Models.Extensions.BaseExtensions.GetDetachedPropName(Speckle.Core.Models.Base,System.String)" -->
+        <member name="M:Speckle.Core.Models.Extensions.BaseExtensions.IsDisplayableObject(Speckle.Core.Models.Base)">
+            <summary>
+            Checks if an object "is displayable" i.e. has a displayValue property that is a list of base.
+            This is to mirror the selection logic of our viewer package, where any "displayable object" will become
+            a single selectable entity.
+            </summary>
+            <param name="speckleObject">The Base object to check.</param>
+            <returns>True if the object is displayable, false otherwise.</returns>
+        </member>
         <member name="T:Speckle.Core.Models.Abstract">
             <summary>
             Wrapper around other, third party, classes that are not coming from a speckle kit.
@@ -2105,14 +2170,20 @@
             <param name="membersToTraverse">Function returning the members that should be traversed for objects where this rule holds <see langword = "true"/></param>
             <returns>Traversal rule in a usable state</returns>
         </member>
-        <member name="M:Speckle.Core.Models.Utilities.hashString(System.String,Speckle.Core.Models.Utilities.HashingFuctions)">
+        <member name="T:Speckle.Core.Models.NestingInstructions">
             <summary>
-            Wrapper method around hashing functions. Defaults to md5.
+            Container for a reference to a parent's applicationId and an Action to
+            execute in order to nest the child on the parent
+            </summary>
+        </member>
+        <member name="M:Speckle.Core.Models.Utilities.HashString(System.String,Speckle.Core.Models.Utilities.HashingFunctions)">
+            <summary>
+            Wrapper method around hashing functions..
             </summary>
             <param name="input"></param>
             <returns></returns>
         </member>
-        <member name="M:Speckle.Core.Models.Utilities.GetApplicationProps(System.Object,System.Type,System.Boolean,System.Collections.Generic.List{System.String})">
+        <member name="M:Speckle.Core.Models.Utilities.GetApplicationProps(System.Object,System.Type,System.Boolean,System.Collections.Generic.IReadOnlyList{System.String})">
             <summary>
             Retrieves the simple type properties of an object
             </summary>
@@ -2152,7 +2223,7 @@
         <member name="M:Speckle.Core.Serialisation.BaseObjectDeserializerV2.Deserialize(System.String)">
             <param name="rootObjectJson">The JSON string of the object to be deserialized <see cref="T:Speckle.Core.Models.Base"/></param>
             <returns>A <see cref="T:Speckle.Core.Models.Base"/> typed object deserialized from the <paramref name="rootObjectJson"/></returns>
-            <exception cref="T:System.InvalidOperationException">Thrown when <see cref="F:Speckle.Core.Serialisation.BaseObjectDeserializerV2.Busy"/></exception>
+            <exception cref="T:System.InvalidOperationException">Thrown when <see cref="F:Speckle.Core.Serialisation.BaseObjectDeserializerV2._busy"/></exception>
             <exception cref="T:System.ArgumentException">Thrown when <paramref name="rootObjectJson"/> deserializes to a type other than <see cref="T:Speckle.Core.Models.Base"/></exception>
         </member>
         <!-- Badly formed XML comment ignored for member "T:Speckle.Core.Serialisation.BaseObjectSerializer" -->
@@ -2278,11 +2349,9 @@
             <returns></returns>
         </member>
         <member name="M:Speckle.Core.Transports.ITransport.GetObject(System.String)">
-            <summary>
-            Gets an object.
-            </summary>
             <param name="id">The object's hash.</param>
-            <returns></returns>
+            <returns>The serialized object data, or <see langword="null"/> if the transport cannot find the object</returns>
+            <exception cref="T:System.OperationCanceledException"></exception>
         </member>
         <member name="M:Speckle.Core.Transports.ITransport.CopyObjectAndChildren(System.String,Speckle.Core.Transports.ITransport,System.Action{System.Int32})">
             <summary>
@@ -2296,7 +2365,7 @@
             <exception cref="T:System.ArgumentException">The provided arguments are not valid</exception>
             <exception cref="T:System.OperationCanceledException"></exception>
         </member>
-        <member name="M:Speckle.Core.Transports.ITransport.HasObjects(System.Collections.Generic.List{System.String})">
+        <member name="M:Speckle.Core.Transports.ITransport.HasObjects(System.Collections.Generic.IReadOnlyList{System.String})">
             <summary>
             Checks if objects are present in the transport
             </summary>
@@ -2329,7 +2398,7 @@
             Callback when sending batches. Parameters: object count, total bytes sent
             </summary>
         </member>
-        <member name="F:Speckle.Core.Transports.SQLiteTransport.WriteTimer">
+        <member name="F:Speckle.Core.Transports.SQLiteTransport._writeTimer">
             <summary>
             Timer that ensures queue is consumed if less than MAX_TRANSACTION_SIZE objects are being sent.
             </summary>
@@ -2369,7 +2438,7 @@
             <summary>
             Adds an object to the saving queue.
             </summary>
-            <param name="hash"></param>
+            <param name="id"></param>
             <param name="serializedObject"></param>
         </member>
         <member name="M:Speckle.Core.Transports.SQLiteTransport.SaveObjectSync(System.String,System.String)">
@@ -2383,7 +2452,7 @@
             <summary>
             Gets an object.
             </summary>
-            <param name="hash"></param>
+            <param name="id"></param>
             <returns></returns>
         </member>
         <member name="M:Speckle.Core.Transports.Utilities.WaitUntil(System.Func{System.Boolean},System.Int32,System.Int32)">
