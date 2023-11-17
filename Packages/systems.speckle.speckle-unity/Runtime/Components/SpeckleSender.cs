@@ -141,7 +141,6 @@ namespace Speckle.ConnectorUnity.Components
         )
         {
             string commitId = await client.CommitCreate(
-                cancellationToken,
                 new CommitCreateInput
                 {
                     streamId = streamId,
@@ -152,7 +151,8 @@ namespace Speckle.ConnectorUnity.Components
                         CoreUtils.GetHostAppVersion()
                     ),
                     totalChildrenCount = (int)data.totalChildrenCount,
-                }
+                },
+                cancellationToken
             );
 
             return commitId;

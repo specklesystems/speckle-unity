@@ -359,6 +359,112 @@
             Retrieves the elements for this link
             </summary>
         </member>
+        <member name="T:Objects.BuiltElements.RebarGroup`1">
+            <summary>
+            A reinforcement bar group comprised of reinforcing bars of the same type and shape.
+            </summary>
+            <remarks>
+            This class is not suitable for freeform rebar, which can have multiple shapes.
+            </remarks>
+        </member>
+        <member name="P:Objects.BuiltElements.RebarGroup`1.shape">
+            <summary>
+            The shape of the rebar group
+            </summary>
+        </member>
+        <member name="P:Objects.BuiltElements.RebarGroup`1.number">
+            <summary>
+            The number of rebars in the rebar group
+            </summary>
+            <remarks>
+            Excluded end bars are not included in the count
+            </remarks>
+        </member>
+        <member name="P:Objects.BuiltElements.RebarGroup`1.hasFirstBar">
+            <summary>
+            Indicates if rebar set includes the first bar
+            </summary>
+            <remarks>
+            Only applicable to stirrup (transverse) rebar
+            </remarks>
+        </member>
+        <member name="P:Objects.BuiltElements.RebarGroup`1.hasLastBar">
+            <summary>
+            Indicates if rebar set includes the last bar
+            </summary>
+            <remarks>
+            Only applicable to stirrup (transverse) rebar
+            </remarks>
+        </member>
+        <member name="P:Objects.BuiltElements.RebarGroup`1.startHook">
+            <summary>
+            The start hook of bars in the rebar group
+            </summary>
+            <remarks>
+            Null indicates no start hook
+            </remarks>
+        </member>
+        <member name="P:Objects.BuiltElements.RebarGroup`1.endHook">
+            <summary>
+            The end hook of bars in the rebar group
+            </summary>
+            <remarks>
+            Null indicates no end hook
+            </remarks>
+        </member>
+        <member name="P:Objects.BuiltElements.RebarGroup`1.displayValue">
+            <summary>
+            The display representation of the rebar group as centerline curves
+            </summary>
+        </member>
+        <member name="P:Objects.BuiltElements.RebarGroup`1.volume">
+            <summary>
+            The total volume of the rebar group.
+            </summary>
+        </member>
+        <member name="T:Objects.BuiltElements.RebarShape">
+            <summary>
+            The shape describing the geometry and geometry parameters of a reinforcing bar
+            </summary>
+        </member>
+        <member name="P:Objects.BuiltElements.RebarShape.name">
+            <summary>
+            The name of the rebar shape
+            </summary>
+        </member>
+        <member name="P:Objects.BuiltElements.RebarShape.rebarType">
+            <summary>
+            The type of the rebar shape
+            </summary>
+        </member>
+        <member name="P:Objects.BuiltElements.RebarShape.curves">
+            <summary>
+            The curves of the rebar shape
+            </summary>
+            <remarks>
+            Typically suppresses hooks and bend radius
+            </remarks>
+        </member>
+        <member name="P:Objects.BuiltElements.RebarShape.barDiameter">
+            <summary>
+            The diameter of the rebar bar
+            </summary>
+        </member>
+        <member name="P:Objects.BuiltElements.RebarHook.angle">
+            <summary>
+            The angle of the hook in radians.
+            </summary>
+        </member>
+        <member name="P:Objects.BuiltElements.RebarHook.length">
+            <summary>
+            The length of the hook.
+            </summary>
+        </member>
+        <member name="P:Objects.BuiltElements.RebarHook.radius">
+            <summary>
+            The radius of the bend of the hook.
+            </summary>
+        </member>
         <member name="M:Objects.BuiltElements.Room.#ctor(System.String,System.String,Objects.BuiltElements.Level,Objects.Geometry.Point)">
             <summary>
             SchemaBuilder constructor for a Room
