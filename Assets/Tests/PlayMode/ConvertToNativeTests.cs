@@ -1,5 +1,3 @@
-
-using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using NUnit.Framework;
@@ -9,7 +7,6 @@ using Speckle.ConnectorUnity.Wrappers;
 using Speckle.Core.Api;
 using Speckle.Core.Models;
 using UnityEngine;
-using UnityEngine.TestTools;
 
 namespace Speckle.ConnectorUnity.Tests
 {
@@ -25,7 +22,7 @@ namespace Speckle.ConnectorUnity.Tests
         {
             return Task.Run(async () => await Helpers.Receive(stream)).Result;
         }
-        
+
         [Test, TestCaseSource(nameof(TestCases))]
         public void ToNative_Passes(string stream)
         {
@@ -37,14 +34,13 @@ namespace Speckle.ConnectorUnity.Tests
             Assert.That(results, HasSomeComponent<SpeckleProperties>());
         }
 
-        private static Constraint HasSomeComponent<T>() where T : Component
+        private static Constraint HasSomeComponent<T>()
+            where T : Component
         {
-            return Has.Some.Matches<ConversionResult>(
-                x =>
-                {
-                    return x.WasSuccessful(out var success, out _) 
-                        && success.GetComponent<T>();
-                });
+            return Has.Some.Matches<ConversionResult>(x =>
+            {
+                return x.WasSuccessful(out var success, out _) && success.GetComponent<T>();
+            });
         }
     }
 }

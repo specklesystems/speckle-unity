@@ -230,7 +230,7 @@ namespace Speckle.ConnectorUnity.Components
             Stream.Initialise();
             Branch.Initialise();
             Branch.OnSelectionChange = () => OnBranchSelectionChange?.Invoke(Branch.Selected);
-            if (Account.Options is not { Length: > 0 } || forceRefresh)
+            if (Account.Options is not { Count: > 0 } || forceRefresh)
                 Account.RefreshOptions();
         }
 

@@ -9,8 +9,12 @@ namespace Speckle.ConnectorUnity.Wrappers.Selection
     [Serializable]
     public sealed class BranchSelection : OptionSelection<Branch>
     {
-        [field: SerializeField, Range(1, 100), Tooltip("Number of branches to request")]
-        public int BranchesLimit { get; set; } = 100;
+        [field:
+            SerializeField,
+            Range(1, ServerLimits.BRANCH_GET_LIMIT),
+            Tooltip("Number of branches to request")
+        ]
+        public int BranchesLimit { get; set; } = ServerLimits.OLD_BRANCH_GET_LIMIT;
 
         [field: SerializeField, Range(1, 100), Tooltip("Number of commits to request")]
         public int CommitsLimit { get; set; } = 25;
@@ -30,14 +34,14 @@ namespace Speckle.ConnectorUnity.Wrappers.Selection
             StreamSelection.OnSelectionChange = RefreshOptions;
         }
 
-        protected override string? KeyFunction(Branch? value) => value?.name;
+        protected override string? KeyFunction(Branch? value) => value?.id;
 
         public override void RefreshOptions()
         {
             Stream? stream = StreamSelection.Selected;
             if (stream == null)
                 return;
-            IList<Branch> branches;
+            IReadOnlyList<Branch> branches;
             try
             {
                 branches = Client!

@@ -79,12 +79,6 @@ namespace Speckle.ConnectorUnity.NativeCache.Editor
             return _readCache.TrySaveObject(speckleObject, nativeObject);
         }
 
-        public override void BeginWrite()
-        {
-            base.BeginWrite();
-            //AssetDatabase.StartAssetEditing();
-        }
-
         public override void FinishWrite()
         {
             if (!isWriting)
