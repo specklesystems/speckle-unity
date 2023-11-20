@@ -13,7 +13,7 @@ namespace Speckle.ConnectorUnity.Components.Editor
     [CustomEditor(typeof(SpeckleReceiver))]
     public class SpeckleReceiverEditor : UnityEditor.Editor
     {
-        private static bool _generateAssets = false;
+        private static bool _generateAssets;
         private bool _foldOutStatus = true;
         private Texture2D? _previewImage;
 
