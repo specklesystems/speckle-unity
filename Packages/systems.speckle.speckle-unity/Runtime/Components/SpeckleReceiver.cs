@@ -327,7 +327,6 @@ namespace Speckle.ConnectorUnity.Components
             {
                 await client
                     .CommitReceived(
-                        cancellationToken,
                         new CommitReceivedInput
                         {
                             streamId = streamId,
@@ -336,7 +335,8 @@ namespace Speckle.ConnectorUnity.Components
                             sourceApplication = HostApplications.Unity.GetVersion(
                                 CoreUtils.GetHostAppVersion()
                             )
-                        }
+                        },
+                        cancellationToken
                     )
                     .ConfigureAwait(false);
             }
