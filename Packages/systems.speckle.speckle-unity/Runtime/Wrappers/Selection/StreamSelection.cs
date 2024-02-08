@@ -36,7 +36,7 @@ namespace Speckle.ConnectorUnity.Wrappers.Selection
         {
             if (Client == null)
                 return;
-            IList<Stream> streams;
+            IReadOnlyList<Stream> streams;
             try
             {
                 streams = Client.StreamsGet(StreamsLimit).GetAwaiter().GetResult();

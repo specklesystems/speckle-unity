@@ -29,7 +29,7 @@ namespace Speckle.ConnectorUnity.Wrappers.Selection
 
         public override void RefreshOptions()
         {
-            Branch? branch = BranchSelection!.Selected;
+            Branch? branch = BranchSelection.Selected;
             if (branch == null)
                 return;
             List<Commit> commits = branch.commits.items;

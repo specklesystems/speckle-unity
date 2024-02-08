@@ -327,7 +327,6 @@ namespace Speckle.ConnectorUnity.Components
             {
                 await client
                     .CommitReceived(
-                        cancellationToken,
                         new CommitReceivedInput
                         {
                             streamId = streamId,
@@ -336,7 +335,8 @@ namespace Speckle.ConnectorUnity.Components
                             sourceApplication = HostApplications.Unity.GetVersion(
                                 CoreUtils.GetHostAppVersion()
                             )
-                        }
+                        },
+                        cancellationToken
                     )
                     .ConfigureAwait(false);
             }
@@ -514,7 +514,7 @@ namespace Speckle.ConnectorUnity.Components
             Branch.Initialise();
             Commit.Initialise();
             Commit.OnSelectionChange = () => OnCommitSelectionChange?.Invoke(Commit.Selected);
-            if (Account.Options is not { Length: > 0 } || forceRefresh)
+            if (Account.Options is not { Count: > 0 } || forceRefresh)
                 Account.RefreshOptions();
         }
 
@@ -540,7 +540,7 @@ namespace Speckle.ConnectorUnity.Components
 
         #region Deprecated members
 
-        [Obsolete("use " + nameof(ReceiveAndConvertRoutine), true)]
+        [Obsolete("use " + nameof(ReceiveAndConvert_Routine), true)]
         public IEnumerator ReceiveAndConvertRoutine(
             SpeckleReceiver speckleReceiver,
             string rootObjectName,

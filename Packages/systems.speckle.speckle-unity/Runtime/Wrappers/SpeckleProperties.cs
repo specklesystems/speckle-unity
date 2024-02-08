@@ -5,7 +5,6 @@ using System.Collections.Specialized;
 using Speckle.Core.Api;
 using Speckle.Core.Models;
 using Speckle.Core.Serialisation;
-using Speckle.Newtonsoft.Json;
 using UnityEngine;
 
 namespace Speckle.ConnectorUnity.Wrappers

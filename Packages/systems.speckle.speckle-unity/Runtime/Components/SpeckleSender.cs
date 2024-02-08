@@ -141,7 +141,6 @@ namespace Speckle.ConnectorUnity.Components
         )
         {
             string commitId = await client.CommitCreate(
-                cancellationToken,
                 new CommitCreateInput
                 {
                     streamId = streamId,
@@ -152,7 +151,8 @@ namespace Speckle.ConnectorUnity.Components
                         CoreUtils.GetHostAppVersion()
                     ),
                     totalChildrenCount = (int)data.totalChildrenCount,
-                }
+                },
+                cancellationToken
             );
 
             return commitId;
@@ -230,7 +230,7 @@ namespace Speckle.ConnectorUnity.Components
             Stream.Initialise();
             Branch.Initialise();
             Branch.OnSelectionChange = () => OnBranchSelectionChange?.Invoke(Branch.Selected);
-            if (Account.Options is not { Length: > 0 } || forceRefresh)
+            if (Account.Options is not { Count: > 0 } || forceRefresh)
                 Account.RefreshOptions();
         }
 
