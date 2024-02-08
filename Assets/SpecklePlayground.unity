@@ -902,18 +902,18 @@ MonoBehaviour:
     - rid: 1485638386691080198
       type: {class: AccountSelection, ns: Speckle.ConnectorUnity.Wrappers.Selection, asm: Speckle.ConnectorUnity.Wrappers}
       data:
-        selectedIndex: 1
+        selectedId: 
     - rid: 1485638386691080199
       type: {class: StreamSelection, ns: Speckle.ConnectorUnity.Wrappers.Selection, asm: Speckle.ConnectorUnity.Wrappers}
       data:
-        selectedIndex: 0
+        selectedId: 
         <StreamsLimit>k__BackingField: 50
         <AccountSelection>k__BackingField:
           rid: 1485638386691080198
     - rid: 1485638386691080200
       type: {class: BranchSelection, ns: Speckle.ConnectorUnity.Wrappers.Selection, asm: Speckle.ConnectorUnity.Wrappers}
       data:
-        selectedIndex: 0
+        selectedId: 
         <BranchesLimit>k__BackingField: 100
         <CommitsLimit>k__BackingField: 0
         <StreamSelection>k__BackingField:
@@ -972,18 +972,18 @@ MonoBehaviour:
     - rid: 1485638386691080194
       type: {class: AccountSelection, ns: Speckle.ConnectorUnity.Wrappers.Selection, asm: Speckle.ConnectorUnity.Wrappers}
       data:
-        selectedIndex: 0
+        selectedId: 
     - rid: 1485638386691080195
       type: {class: StreamSelection, ns: Speckle.ConnectorUnity.Wrappers.Selection, asm: Speckle.ConnectorUnity.Wrappers}
       data:
-        selectedIndex: 0
+        selectedId: 
         <StreamsLimit>k__BackingField: 50
         <AccountSelection>k__BackingField:
           rid: 1485638386691080194
     - rid: 1485638386691080196
       type: {class: BranchSelection, ns: Speckle.ConnectorUnity.Wrappers.Selection, asm: Speckle.ConnectorUnity.Wrappers}
       data:
-        selectedIndex: 0
+        selectedId: 
         <BranchesLimit>k__BackingField: 100
         <CommitsLimit>k__BackingField: 25
         <StreamSelection>k__BackingField:
@@ -991,7 +991,7 @@ MonoBehaviour:
     - rid: 1485638386691080197
       type: {class: CommitSelection, ns: Speckle.ConnectorUnity.Wrappers.Selection, asm: Speckle.ConnectorUnity.Wrappers}
       data:
-        selectedIndex: 0
+        selectedId: 
         <BranchSelection>k__BackingField:
           rid: 1485638386691080196
 --- !u!114 &161249246
@@ -1162,6 +1162,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &300223686
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b3354e8208862c341940152f5340d41a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &310693430
 GameObject:
   m_ObjectHideFlags: 0
@@ -1770,18 +1782,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 641375517}
   m_CullTransparentMesh: 1
---- !u!114 &701880765
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b3354e8208862c341940152f5340d41a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &712628247
 GameObject:
   m_ObjectHideFlags: 0
@@ -2643,6 +2643,19 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &1242741158
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2a4a29c776298714c88f406ad39c6095, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  matchByName: 1
 --- !u!1 &1279250012
 GameObject:
   m_ObjectHideFlags: 0
@@ -3059,8 +3072,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   nativeCaches:
-  - {fileID: 1923150226}
-  - {fileID: 701880765}
+  - {fileID: 1242741158}
+  - {fileID: 300223686}
 --- !u!1 &1464556211
 GameObject:
   m_ObjectHideFlags: 0
@@ -4057,19 +4070,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1903798475}
   m_CullTransparentMesh: 1
---- !u!114 &1923150226
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2a4a29c776298714c88f406ad39c6095, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  matchByName: 1
 --- !u!1 &2014586909
 GameObject:
   m_ObjectHideFlags: 0
