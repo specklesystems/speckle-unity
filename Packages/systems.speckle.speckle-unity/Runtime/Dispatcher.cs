@@ -98,7 +98,7 @@ namespace Speckle.ConnectorUnity
             yield return null;
         }
 
-        private static Dispatcher _instance = null;
+        private static Dispatcher _instance;
 
         public static bool Exists()
         {

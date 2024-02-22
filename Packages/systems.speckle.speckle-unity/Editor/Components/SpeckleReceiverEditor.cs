@@ -163,7 +163,7 @@ namespace Speckle.ConnectorUnity.Components.Editor
 
             bool BeforeConvert(TraversalContext context)
             {
-                Base b = context.current;
+                Base b = context.Current;
 
                 //NOTE: progress wont reach 100% because not all objects are convertable
                 float progress = (childrenConverted + childrenFailed) / totalChildrenFloat;

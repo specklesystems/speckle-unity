@@ -77,7 +77,6 @@ namespace Speckle.ConnectorUnity.Components.Editor
                     ),
             };
 
-            //TODO onError action?
             if (data["@objects"] is IList l && l.Count == 0)
             {
                 Debug.LogWarning($"Nothing to send", speckleSender);

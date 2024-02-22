@@ -49,7 +49,8 @@ namespace Speckle.ConnectorUnity.Components
                     );
 
                 var accountTask = new Utils.Utils.WaitForTask<Account>(
-                    async () => await GetAccount(sw)
+                    async () => await GetAccount(sw),
+                    _tokenSource.Token
                 );
                 yield return accountTask;
 
@@ -57,8 +58,10 @@ namespace Speckle.ConnectorUnity.Components
                 using Client c = new(accountTask.Result);
 
                 var objectIdTask = new Utils.Utils.WaitForTask<(string, Commit?)>(
-                    async () => await GetObjectID(sw, c)
+                    async () => await GetObjectID(sw, c),
+                    _tokenSource.Token
                 );
+
                 yield return objectIdTask;
                 (string objectId, Commit? commit) = objectIdTask.Result;
 
@@ -72,7 +75,8 @@ namespace Speckle.ConnectorUnity.Components
                             objectId,
                             commit,
                             cancellationToken: _tokenSource.Token
-                        )
+                        ),
+                    _tokenSource.Token
                 );
                 yield return receiveTask;
 

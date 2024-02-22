@@ -30,7 +30,7 @@ namespace Speckle.ConnectorUnity.Wrappers.Selection
             if (value is null)
                 return null;
 
-            return value.id + Crypt.Hash(value.serverInfo.url ?? "");
+            return value.id + Crypt.Md5(value.serverInfo.url ?? "", "X2");
         }
 
         public override void RefreshOptions()

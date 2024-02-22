@@ -1,6 +1,7 @@
 ﻿#nullable enable
 using System;
 using System.Collections;
+using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -111,9 +112,9 @@ namespace Speckle.ConnectorUnity.Utils
             public readonly Task Task;
             public override bool keepWaiting => !Task.IsCompleted;
 
-            public WaitForTask(Func<Task> function)
+            public WaitForTask(Func<Task> function, CancellationToken cancellationToken = default)
             {
-                Task = Task.Run(function);
+                Task = Task.Run(function, cancellationToken);
             }
         }
 
@@ -124,9 +125,12 @@ namespace Speckle.ConnectorUnity.Utils
             public TResult Result => Task.Result;
             public override bool keepWaiting => !Task.IsCompleted;
 
-            public WaitForTask(Func<Task<TResult>> function)
+            public WaitForTask(
+                Func<Task<TResult>> function,
+                CancellationToken cancellationToken = default
+            )
             {
-                this.Task = System.Threading.Tasks.Task.Run(function);
+                this.Task = System.Threading.Tasks.Task.Run(function, cancellationToken);
             }
         }
     }

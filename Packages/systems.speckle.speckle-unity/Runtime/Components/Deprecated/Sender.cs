@@ -64,7 +64,7 @@ namespace Speckle.ConnectorUnity
 
                 cancellationTokenSource = new CancellationTokenSource();
 
-                var client = new Client(account ?? AccountManager.GetDefaultAccount());
+                var client = new Client(account ?? AccountManager.GetDefaultAccount()!);
                 transport = new ServerTransport(client.Account, streamId);
                 transport.CancellationToken = cancellationTokenSource.Token;
 
