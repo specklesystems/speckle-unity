@@ -200,15 +200,15 @@ namespace Speckle.ConnectorUnity.Components
         {
             Client? selectedClient = Account.Client;
             client =
-                selectedClient ?? throw new InvalidOperationException("Invalid account selection");
+                selectedClient ?? throw new InvalidOperationException("Invalid Speckle account selection");
 
             Stream? selectedStream = Stream.Selected;
             stream =
-                selectedStream ?? throw new InvalidOperationException("Invalid stream selection");
+                selectedStream ?? throw new InvalidOperationException("Invalid Speckle project selection");
 
             Commit? selectedCommit = Commit.Selected;
             commit =
-                selectedCommit ?? throw new InvalidOperationException("Invalid commit selection");
+                selectedCommit ?? throw new InvalidOperationException("Invalid Speckle version selection");
         }
 
         /// <summary>
@@ -445,7 +445,7 @@ namespace Speckle.ConnectorUnity.Components
         }
 
 #if UNITY_EDITOR
-        [ContextMenu("Open Speckle Stream in Browser")]
+        [ContextMenu("Open Speckle Model in Browser")]
         protected void OpenUrlInBrowser()
         {
             Uri url = GetSelectedUrl();

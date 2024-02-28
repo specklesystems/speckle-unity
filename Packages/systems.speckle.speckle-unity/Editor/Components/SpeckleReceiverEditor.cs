@@ -1,4 +1,3 @@
-#nullable enable
 using System;
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
@@ -13,6 +12,12 @@ namespace Speckle.ConnectorUnity.Components.Editor
     [CustomEditor(typeof(SpeckleReceiver))]
     public class SpeckleReceiverEditor : UnityEditor.Editor
     {
+        private SerializedProperty _accountSelection;
+        private SerializedProperty _streamSelection;
+        private SerializedProperty _branchSelection;
+        private SerializedProperty _commitSelection;
+
+#nullable enable
         private static bool _generateAssets;
         private bool _foldOutStatus = true;
         private Texture2D? _previewImage;
@@ -21,7 +26,21 @@ namespace Speckle.ConnectorUnity.Components.Editor
         {
             var speckleReceiver = (SpeckleReceiver)target;
 
-            DrawDefaultInspector();
+            //Selection
+            bool isFrontend2 = speckleReceiver.Account.Selected?.serverInfo.frontend2 ?? true;
+            EditorGUILayout.PropertyField(_accountSelection);
+            EditorGUILayout.PropertyField(
+                _streamSelection,
+                new GUIContent(isFrontend2 ? "Project" : "Stream")
+            );
+            EditorGUILayout.PropertyField(
+                _branchSelection,
+                new GUIContent(isFrontend2 ? "Model" : "Branch")
+            );
+            EditorGUILayout.PropertyField(
+                _commitSelection,
+                new GUIContent(isFrontend2 ? "Version" : "Commit")
+            );
 
             //Preview image
             {
@@ -64,8 +83,8 @@ namespace Speckle.ConnectorUnity.Components.Editor
                 else if (userRequestedReceive)
                 {
                     var id = Progress.Start(
-                        "Receiving Speckle data",
-                        "Fetching commit data",
+                        "Receiving Speckle Model",
+                        "Fetching data from Speckle",
                         Progress.Options.Sticky
                     );
                     Progress.ShowDetails();
@@ -96,6 +115,19 @@ namespace Speckle.ConnectorUnity.Components.Editor
         public void OnEnable()
         {
             Init();
+
+            _accountSelection = serializedObject.FindProperty(
+                $"<{nameof(SpeckleReceiver.Account)}>k__BackingField"
+            );
+            _streamSelection = serializedObject.FindProperty(
+                $"<{nameof(SpeckleReceiver.Stream)}>k__BackingField"
+            );
+            _branchSelection = serializedObject.FindProperty(
+                $"<{nameof(SpeckleReceiver.Branch)}>k__BackingField"
+            );
+            _commitSelection = serializedObject.FindProperty(
+                $"<{nameof(SpeckleReceiver.Commit)}>k__BackingField"
+            );
         }
 
         public void Reset()
