@@ -57,18 +57,10 @@ namespace Speckle.ConnectorUnity.Components.Editor
 
         public override async void OnInspectorGUI()
         {
-            var speckleSender = (SpeckleSender)target;
             //Selection
-            bool isFrontend2 = speckleSender.Account.Selected?.serverInfo.frontend2 ?? true;
             EditorGUILayout.PropertyField(_accountSelection);
-            EditorGUILayout.PropertyField(
-                _streamSelection,
-                new GUIContent(isFrontend2 ? "Project" : "Stream")
-            );
-            EditorGUILayout.PropertyField(
-                _branchSelection,
-                new GUIContent(isFrontend2 ? "Model" : "Branch")
-            );
+            EditorGUILayout.PropertyField(_streamSelection, new GUIContent("Project"));
+            EditorGUILayout.PropertyField(_branchSelection, new GUIContent("Model"));
 
             bool shouldSend = GUILayout.Button("Send!");
             _selectedFilter = (SelectionFilter)

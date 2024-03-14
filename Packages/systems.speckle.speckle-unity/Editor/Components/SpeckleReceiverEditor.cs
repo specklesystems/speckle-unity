@@ -27,20 +27,10 @@ namespace Speckle.ConnectorUnity.Components.Editor
             var speckleReceiver = (SpeckleReceiver)target;
 
             //Selection
-            bool isFrontend2 = speckleReceiver.Account.Selected?.serverInfo.frontend2 ?? true;
             EditorGUILayout.PropertyField(_accountSelection);
-            EditorGUILayout.PropertyField(
-                _streamSelection,
-                new GUIContent(isFrontend2 ? "Project" : "Stream")
-            );
-            EditorGUILayout.PropertyField(
-                _branchSelection,
-                new GUIContent(isFrontend2 ? "Model" : "Branch")
-            );
-            EditorGUILayout.PropertyField(
-                _commitSelection,
-                new GUIContent(isFrontend2 ? "Version" : "Commit")
-            );
+            EditorGUILayout.PropertyField(_streamSelection, new GUIContent("Project"));
+            EditorGUILayout.PropertyField(_branchSelection, new GUIContent("Model"));
+            EditorGUILayout.PropertyField(_commitSelection, new GUIContent("Version"));
 
             //Preview image
             {
