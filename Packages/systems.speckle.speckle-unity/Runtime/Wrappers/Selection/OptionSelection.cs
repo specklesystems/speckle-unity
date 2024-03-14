@@ -87,7 +87,7 @@ namespace Speckle.ConnectorUnity.Wrappers.Selection
                 index++;
             }
 
-            string? currentSelected = KeyFunction(Selected);
+            string? currentSelected = selectedId;
             if (currentSelected is null || !indexMap.ContainsKey(currentSelected))
             {
                 selectedId = defaultOption;

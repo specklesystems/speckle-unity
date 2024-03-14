@@ -46,7 +46,7 @@ namespace Speckle.ConnectorUnity.Wrappers.Selection.Editor
 
             details = new (string, Func<Stream, string>)[]
             {
-                ("Stream id", s => s.id),
+                ("Project id", s => s.id),
                 ("Description", s => s.description),
                 ("Is Public", s => s.isPublic.ToString()),
                 ("Role", s => s.role),
@@ -88,7 +88,7 @@ namespace Speckle.ConnectorUnity.Wrappers.Selection.Editor
         {
             details = new (string, Func<Commit, string>)[]
             {
-                ("Commit Id", s => s.id),
+                ("Version Id", s => s.id),
                 ("Author Name", s => s.authorName),
                 ("Created At", s => s.createdAt.ToString(CultureInfo.InvariantCulture)),
                 ("Source Application", s => s.sourceApplication),

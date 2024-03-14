@@ -10,9 +10,7 @@ using UnityEngine.Rendering;
 using Material = UnityEngine.Material;
 using Mesh = UnityEngine.Mesh;
 using SMesh = Objects.Geometry.Mesh;
-using SColor = System.Drawing.Color;
 using Transform = UnityEngine.Transform;
-using STransform = Objects.Other.Transform;
 
 #nullable enable
 namespace Objects.Converter.Unity

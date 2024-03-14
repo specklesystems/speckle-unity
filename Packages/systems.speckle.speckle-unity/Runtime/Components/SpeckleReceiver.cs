@@ -200,15 +200,15 @@ namespace Speckle.ConnectorUnity.Components
         {
             Client? selectedClient = Account.Client;
             client =
-                selectedClient ?? throw new InvalidOperationException("Invalid account selection");
+                selectedClient ?? throw new InvalidOperationException("Invalid Speckle account selection");
 
             Stream? selectedStream = Stream.Selected;
             stream =
-                selectedStream ?? throw new InvalidOperationException("Invalid stream selection");
+                selectedStream ?? throw new InvalidOperationException("Invalid Speckle project selection");
 
             Commit? selectedCommit = Commit.Selected;
             commit =
-                selectedCommit ?? throw new InvalidOperationException("Invalid commit selection");
+                selectedCommit ?? throw new InvalidOperationException("Invalid Speckle version selection");
         }
 
         /// <summary>
@@ -259,42 +259,20 @@ namespace Speckle.ConnectorUnity.Components
             CancellationToken cancellationToken = default
         )
         {
-            using var transport = new ServerTransportV2(client.Account, streamId);
+            using var transport = new ServerTransport(client.Account, streamId);
 
             transport.CancellationToken = cancellationToken;
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            Base? requestedObject = await Operations
+            Base requestedObject = await Operations
                 .Receive(
-                    objectId: objectId,
-                    cancellationToken: cancellationToken,
-                    remoteTransport: transport,
-                    onProgressAction: onProgressAction,
-                    onErrorAction: (s, ex) =>
-                    {
-                        //Don't wrap cancellation exceptions!
-                        if (ex is OperationCanceledException)
-                            throw ex;
-
-                        //HACK: Sometimes, the task was cancelled, and Operations.Receive doesn't fail in a reliable way. In this case, the exception is often simply a symptom of a cancel.
-                        if (cancellationToken.IsCancellationRequested)
-                        {
-                            SpeckleLog.Logger.Warning(
-                                ex,
-                                "A task was cancelled, ignoring potentially symptomatic exception"
-                            );
-                            cancellationToken.ThrowIfCancellationRequested();
-                        }
-
-                        //Treat all operation errors as fatal
-                        throw new SpeckleException(
-                            $"Failed to receive requested object {objectId} from server: {s}",
-                            ex
-                        );
-                    },
-                    onTotalChildrenCountKnown: onTotalChildrenCountKnown,
-                    disposeTransports: false
+                    objectId,
+                    transport,
+                    null,
+                    onProgressAction,
+                    onTotalChildrenCountKnown,
+                    cancellationToken
                 )
                 .ConfigureAwait(false);
 
@@ -317,9 +295,6 @@ namespace Speckle.ConnectorUnity.Components
                 }
             );
 
-            if (requestedObject == null)
-                throw new SpeckleException($"Operation {nameof(Operations.Receive)} returned null");
-
             cancellationToken.ThrowIfCancellationRequested();
 
             //Read receipt
@@ -340,10 +315,10 @@ namespace Speckle.ConnectorUnity.Components
                     )
                     .ConfigureAwait(false);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
                 // Do nothing!
-                Debug.LogWarning($"Failed to send read receipt\n{e}");
+                Debug.LogWarning($"Failed to send read receipt\n{ex}");
             }
 
             return requestedObject;
@@ -447,12 +422,9 @@ namespace Speckle.ConnectorUnity.Components
         /// <summary>
         /// Fetches the commit preview for the currently selected commit
         /// </summary>
-        /// <param name="allAngles">when <see langword="true"/>, will fetch 360 degree preview image</param>
         /// <param name="callback">Callback function to be called when the web request completes</param>
         /// <returns>The executing <see cref="Coroutine"/> or <see langword="null"/> if <see cref="Account"/>, <see cref="Stream"/>, or <see cref="Commit"/> was <see langword="null"/></returns>
-        public Coroutine? GetPreviewImage( /*bool allAngles,*/
-            Action<Texture2D?> callback
-        )
+        public Coroutine? GetPreviewImage(Action<Texture2D?> callback)
         {
             Account? account = Account.Selected;
             if (account == null)
@@ -473,28 +445,28 @@ namespace Speckle.ConnectorUnity.Components
         }
 
 #if UNITY_EDITOR
-        [ContextMenu("Open Speckle Stream in Browser")]
+        [ContextMenu("Open Speckle Model in Browser")]
         protected void OpenUrlInBrowser()
         {
-            string url = GetSelectedUrl();
-            Application.OpenURL(url);
+            Uri url = GetSelectedUrl();
+            Application.OpenURL(url.ToString());
         }
 #endif
 
-        public string GetSelectedUrl()
+        public Uri GetSelectedUrl()
         {
-            string serverUrl = Account.Selected!.serverInfo.url;
-            string? streamId = Stream.Selected?.id;
-            string? branchName = Branch.Selected?.name;
-            string? commitId = Commit.Selected?.id;
+            Account selectedAccount = Account.Selected!;
+            StreamWrapper sw =
+                new()
+                {
+                    ServerUrl = selectedAccount.serverInfo.url,
+                    StreamId = Stream.Selected!.id,
+                    BranchName = Branch.Selected?.id,
+                    CommitId = Commit.Selected?.id
+                };
+            sw.SetAccount(selectedAccount);
 
-            if (string.IsNullOrEmpty(streamId))
-                return serverUrl;
-            if (!string.IsNullOrEmpty(commitId))
-                return $"{serverUrl}/streams/{streamId}/commits/{commitId}";
-            if (!string.IsNullOrEmpty(branchName))
-                return $"{serverUrl}/streams/{streamId}/branches/{branchName}";
-            return $"{serverUrl}/streams/{streamId}";
+            return sw.ToServerUri();
         }
 
         public void Awake()
