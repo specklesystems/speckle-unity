@@ -64,7 +64,7 @@ We encourage everyone interested to hack / contribute / debug / give feedback to
 ### Requirements
 
 - Unity 2021 or greater
-- Have created an account on [speckle.xyz](https://speckle.xyz) (or your own server)
+- Have created an account on [app.speckle.systems](https://app.speckle.systems) (or your own server)
 - Installed [Speckle Manager](https://speckle.guide/user/manager.html) (recommended, otherwise you'll need to implement your own authentication system in Unity)
 
 ### Dependencies
