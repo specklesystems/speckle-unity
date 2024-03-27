@@ -14,7 +14,7 @@ namespace Speckle.ConnectorUnity.NativeCache
     [ExecuteAlways]
     public abstract class AbstractNativeCache : ScriptableObject
     {
-        protected bool isWriting = false;
+        protected bool isWriting;
         public abstract bool TryGetObject<T>(
             Base speckleObject,
             [NotNullWhen(true)] out T? nativeObject

@@ -23,7 +23,7 @@ public class AttachSpecklePropertiesExample : MonoBehaviour
 
     public virtual void Start()
     {
-        Client speckleClient = new(AccountManager.GetDefaultAccount());
+        Client speckleClient = new(AccountManager.GetDefaultAccount()!);
 
         StartCoroutine(AttachSpeckleProperties(speckleClient, streamId, objectId));
     }

@@ -47,21 +47,27 @@ namespace Objects.Converter.Unity
 
         public Vector3 VectorFromPoint(Point p) => VectorByCoordinates(p.x, p.y, p.z, p.units);
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="arr"></param>
+        /// <param name="arr">flat list of x,y,z values</param>
+        /// <param name="units"></param>
         /// <returns></returns>
-        public Vector3[] ArrayToPoints(IList<double> arr, string units)
+        /// <exception cref="ArgumentException">Length of <paramref name="arr"/> must be a multiple of 3</exception>
+        public Vector3[] ArrayToPoints(IReadOnlyList<double> arr, string units)
         {
             if (arr.Count % 3 != 0)
-                throw new Exception("Array malformed: length not a multiple of 3");
+            {
+                throw new ArgumentException(
+                    "Array malformed: length not a multiple of 3",
+                    nameof(arr)
+                );
+            }
 
             Vector3[] points = new Vector3[arr.Count / 3];
-            var f = GetConversionFactor(units);
+            double f = GetConversionFactor(units);
 
             for (int i = 2, k = 0; i < arr.Count; i += 3)
+            {
                 points[k++] = VectorByCoordinates(arr[i - 2], arr[i - 1], arr[i], f);
+            }
 
             return points;
         }
@@ -70,13 +76,7 @@ namespace Objects.Converter.Unity
 
         #region ToSpeckle
 
-        //TODO: more of these
-
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="obj"></param>
-        /// <returns></returns>
+        [Obsolete("", true)]
         public virtual Point PointToSpeckle(Vector3 p)
         {
             //switch y and z
@@ -117,7 +117,7 @@ namespace Objects.Converter.Unity
         {
             Vector3 newPt = VectorByCoordinates(point.x, point.y, point.z, point.units);
 
-            var go = NewPointBasedGameObject(new Vector3[] { newPt, newPt }, point.speckle_type);
+            var go = NewPointBasedGameObject(new[] { newPt, newPt }, point.speckle_type);
             return go;
         }
 
@@ -352,30 +352,30 @@ namespace Objects.Converter.Unity
         public Matrix4x4 TransformToNativeMatrix(STransform speckleTransform)
         {
             var sf = GetConversionFactor(speckleTransform.units);
-            var smatrix = speckleTransform.matrix;
+            var sMatrix = speckleTransform.matrix;
 
             return new Matrix4x4
             {
                 // Left (X -> X)
-                [0, 0] = (float)smatrix.M11,
-                [2, 0] = (float)smatrix.M21,
-                [1, 0] = (float)smatrix.M31,
-                [3, 0] = (float)smatrix.M41,
+                [0, 0] = (float)sMatrix.M11,
+                [2, 0] = (float)sMatrix.M21,
+                [1, 0] = (float)sMatrix.M31,
+                [3, 0] = (float)sMatrix.M41,
                 //Up (Z -> Y)
-                [0, 2] = (float)smatrix.M12,
-                [2, 2] = (float)smatrix.M22,
-                [1, 2] = (float)smatrix.M32,
-                [3, 2] = (float)smatrix.M42,
+                [0, 2] = (float)sMatrix.M12,
+                [2, 2] = (float)sMatrix.M22,
+                [1, 2] = (float)sMatrix.M32,
+                [3, 2] = (float)sMatrix.M42,
                 //Forwards (Y -> Z)
-                [0, 1] = (float)smatrix.M13,
-                [2, 1] = (float)smatrix.M23,
-                [1, 1] = (float)smatrix.M33,
-                [3, 1] = (float)smatrix.M43,
+                [0, 1] = (float)sMatrix.M13,
+                [2, 1] = (float)sMatrix.M23,
+                [1, 1] = (float)sMatrix.M33,
+                [3, 1] = (float)sMatrix.M43,
                 //Translation
-                [0, 3] = (float)(smatrix.M14 * sf),
-                [2, 3] = (float)(smatrix.M24 * sf),
-                [1, 3] = (float)(smatrix.M34 * sf),
-                [3, 3] = (float)smatrix.M44,
+                [0, 3] = (float)(sMatrix.M14 * sf),
+                [2, 3] = (float)(sMatrix.M24 * sf),
+                [1, 3] = (float)(sMatrix.M34 * sf),
+                [3, 3] = (float)sMatrix.M44,
             };
         }
 

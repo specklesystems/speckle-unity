@@ -14,6 +14,32 @@
             Station equation direction for the corresponding station equation should be true for increasing or false for decreasing
             </summary>
         </member>
+        <member name="M:Objects.BuiltElements.Archicad.ComponentProperties.ToBase(System.Collections.Generic.List{Objects.BuiltElements.Archicad.ComponentProperties})">
+            <summary>
+            Turns a List of ComponentProperties into a Base so that it can be used with the Speckle properties prop
+            </summary>
+            <param name="componentPropertiesList"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Objects.BuiltElements.Archicad.Property.ToBase(System.Collections.Generic.List{Objects.BuiltElements.Archicad.Property})">
+            <summary>
+            Turns a List of Property into a Base so that it can be used with the Speckle properties prop
+            </summary>
+            <param name="properties"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Objects.BuiltElements.Archicad.PropertyGroup.ToBase(System.Collections.Generic.List{Objects.BuiltElements.Archicad.PropertyGroup})">
+            <summary>
+            Turns a List of PropertyGroup into a Base so that it can be used with the Speckle properties prop
+            </summary>
+            <param name="propertyGroups"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Objects.BuiltElements.Area.#ctor(System.String,System.String,Objects.BuiltElements.Level,Objects.Geometry.Point)">
+            <summary>
+            SchemaBuilder constructor for an Area
+            </summary>
+        </member>
         <member name="P:Objects.BuiltElements.Civil.CivilAlignment.parent">
             <summary>
             Name of parent alignment if this is an offset alignment
@@ -29,11 +55,238 @@
             Name of parent profile if this is an offset profile
             </summary>
         </member>
-        <member name="M:Objects.BuiltElements.Area.#ctor(System.String,System.String,Objects.BuiltElements.Level,Objects.Geometry.Point)">
+        <member name="M:Objects.BuiltElements.Duct.#ctor(Objects.Geometry.Line,System.Double,System.Double,System.Double,System.Double)">
             <summary>
-            SchemaBuilder constructor for a Room
+            SchemaBuilder constructor for a Speckle duct
             </summary>
-            <remarks>Assign units when using this constructor due to <paramref name="height"/> param</remarks>
+            <param name="baseLine"></param>
+            <param name="width"></param>
+            <param name="height"></param>
+            <param name="diameter"></param>
+            <param name="velocity"></param>
+            <remarks>Assign units when using this constructor due to <paramref name="width"/>, <paramref name="height"/>, and <paramref name="diameter"/> params</remarks>
+        </member>
+        <member name="M:Objects.BuiltElements.Duct.#ctor(Objects.ICurve,System.Double,System.Double,System.Double,System.Double)">
+            <summary>
+            SchemaBuilder constructor for a Speckle duct
+            </summary>
+            <param name="baseCurve"></param>
+            <param name="width"></param>
+            <param name="height"></param>
+            <param name="diameter"></param>
+            <param name="velocity"></param>
+            <remarks>Assign units when using this constructor due to <paramref name="width"/>, <paramref name="height"/>, and <paramref name="diameter"/> params</remarks>
+        </member>
+        <member name="P:Objects.BuiltElements.Featureline.curve">
+            <summary>
+            The base curve of the featureline
+            </summary>
+        </member>
+        <member name="P:Objects.BuiltElements.Featureline.points">
+            <summary>
+            The points constructing the Featureline
+            </summary>
+            <remarks>
+            Can include both intersection and elevation points
+            </remarks>
+        </member>
+        <member name="P:Objects.BuiltElements.Featureline.displayValue">
+            <summary>
+            The 3D curves generated from the curve and points of the featureline
+            </summary>
+        </member>
+        <member name="M:Objects.BuiltElements.Level.#ctor(System.String,System.Double)">
+            <summary>
+            SchemaBuilder constructor for a Speckle level
+            </summary>
+            <param name="name"></param>
+            <param name="elevation"></param>
+            <remarks>Assign units when using this constructor due to <paramref name="elevation"/> param</remarks>
+        </member>
+        <member name="T:Objects.BuiltElements.Network">
+            <summary>
+            Represents graph connections between built elements objects
+            </summary>
+            <remarks>
+            Network <see cref="P:Objects.BuiltElements.Network.elements"/> may need to be created first in native applications before they are linked.
+            </remarks>
+        </member>
+        <member name="P:Objects.BuiltElements.Network.elements">
+            <summary>
+            The elements contained in the network
+            </summary>
+        </member>
+        <member name="P:Objects.BuiltElements.Network.links">
+            <summary>
+            The connections between <see cref="P:Objects.BuiltElements.Network.elements"/>
+            </summary>
+        </member>
+        <member name="P:Objects.BuiltElements.NetworkElement.elements">
+            <summary>
+            The Base object representing the element in the network (eg Pipe, Duct, etc)
+            </summary>
+            <remarks>
+            Currently named "elements" to assist with receiving in connector flatten method.
+            </remarks>
+        </member>
+        <member name="P:Objects.BuiltElements.NetworkElement.linkIndices">
+            <summary>
+            The index of the links in <see cref="P:Objects.BuiltElements.NetworkElement.network"/> that are connected to this element
+            </summary>
+        </member>
+        <member name="P:Objects.BuiltElements.NetworkElement.links">
+            <summary>
+            Retrieves the links for this element
+            </summary>
+        </member>
+        <member name="P:Objects.BuiltElements.NetworkLink.elementIndices">
+            <summary>
+            The index of the elements in <see cref="P:Objects.BuiltElements.NetworkLink.network"/> that are connected by this link
+            </summary>
+        </member>
+        <member name="P:Objects.BuiltElements.NetworkLink.elements">
+            <summary>
+            Retrieves the elements for this link
+            </summary>
+        </member>
+        <member name="T:Objects.BuiltElements.RebarGroup`1">
+            <summary>
+            A reinforcement bar group comprised of reinforcing bars of the same type and shape.
+            </summary>
+            <remarks>
+            This class is not suitable for freeform rebar, which can have multiple shapes.
+            </remarks>
+        </member>
+        <member name="P:Objects.BuiltElements.RebarGroup`1.shape">
+            <summary>
+            The shape of the rebar group
+            </summary>
+        </member>
+        <member name="P:Objects.BuiltElements.RebarGroup`1.number">
+            <summary>
+            The number of rebars in the rebar group
+            </summary>
+            <remarks>
+            Excluded end bars are not included in the count
+            </remarks>
+        </member>
+        <member name="P:Objects.BuiltElements.RebarGroup`1.hasFirstBar">
+            <summary>
+            Indicates if rebar set includes the first bar
+            </summary>
+            <remarks>
+            Only applicable to stirrup (transverse) rebar
+            </remarks>
+        </member>
+        <member name="P:Objects.BuiltElements.RebarGroup`1.hasLastBar">
+            <summary>
+            Indicates if rebar set includes the last bar
+            </summary>
+            <remarks>
+            Only applicable to stirrup (transverse) rebar
+            </remarks>
+        </member>
+        <member name="P:Objects.BuiltElements.RebarGroup`1.startHook">
+            <summary>
+            The start hook of bars in the rebar group
+            </summary>
+            <remarks>
+            Null indicates no start hook
+            </remarks>
+        </member>
+        <member name="P:Objects.BuiltElements.RebarGroup`1.endHook">
+            <summary>
+            The end hook of bars in the rebar group
+            </summary>
+            <remarks>
+            Null indicates no end hook
+            </remarks>
+        </member>
+        <member name="P:Objects.BuiltElements.RebarGroup`1.displayValue">
+            <summary>
+            The display representation of the rebar group as centerline curves
+            </summary>
+        </member>
+        <member name="P:Objects.BuiltElements.RebarGroup`1.volume">
+            <summary>
+            The total volume of the rebar group.
+            </summary>
+        </member>
+        <member name="T:Objects.BuiltElements.RebarShape">
+            <summary>
+            The shape describing the geometry and geometry parameters of a reinforcing bar
+            </summary>
+        </member>
+        <member name="P:Objects.BuiltElements.RebarShape.name">
+            <summary>
+            The name of the rebar shape
+            </summary>
+        </member>
+        <member name="P:Objects.BuiltElements.RebarShape.rebarType">
+            <summary>
+            The type of the rebar shape
+            </summary>
+        </member>
+        <member name="P:Objects.BuiltElements.RebarShape.curves">
+            <summary>
+            The curves of the rebar shape
+            </summary>
+            <remarks>
+            Typically suppresses hooks and bend radius
+            </remarks>
+        </member>
+        <member name="P:Objects.BuiltElements.RebarShape.barDiameter">
+            <summary>
+            The diameter of the rebar bar
+            </summary>
+        </member>
+        <member name="P:Objects.BuiltElements.RebarHook.angle">
+            <summary>
+            The angle of the hook in radians.
+            </summary>
+        </member>
+        <member name="P:Objects.BuiltElements.RebarHook.length">
+            <summary>
+            The length of the hook.
+            </summary>
+        </member>
+        <member name="P:Objects.BuiltElements.RebarHook.radius">
+            <summary>
+            The radius of the bend of the hook.
+            </summary>
+        </member>
+        <member name="M:Objects.BuiltElements.Revit.DirectShape.#ctor(System.String,Objects.BuiltElements.Revit.RevitCategory,System.Collections.Generic.List{Speckle.Core.Models.Base},System.Collections.Generic.List{Objects.BuiltElements.Revit.Parameter})">
+            <summary>
+             Constructs a new <see cref="T:Objects.BuiltElements.Revit.DirectShape"/> instance given a list of <see cref="T:Speckle.Core.Models.Base"/> objects.
+            </summary>
+            <param name="name">The name of the <see cref="T:Objects.BuiltElements.Revit.DirectShape"/></param>
+            <param name="category">The <see cref="T:Objects.BuiltElements.Revit.RevitCategory"/> of this instance.</param>
+            <param name="baseGeometries">A list of base classes to represent the direct shape (only mesh and brep are allowed, anything else will be ignored.)</param>
+            <param name="parameters">Optional Parameters for this instance.</param>
+        </member>
+        <member name="T:Objects.BuiltElements.Revit.RevitFamilyCategory">
+            <summary>
+            FamilyDocuments can only be assigned these categories
+            This is a subset of the list above which was manually retrieved from Revit's UI
+            </summary>
+        </member>
+        <member name="P:Objects.BuiltElements.Revit.FreeformElement.baseGeometry">
+            <summary>
+            DEPRECATED. Sets the geometry contained in the FreeformElement. This field has been deprecated in favor of `baseGeometries`
+            to align with Revit's API. It remains as a setter-only property for backwards compatibility.
+            It will set the first item on the baseGeometries list, and instantiate a list if necessary.
+            </summary>
+        </member>
+        <member name="P:Objects.BuiltElements.Revit.Parameter.isShared">
+            <summary>
+            If True it's a Shared Parameter, in which case the ApplicationId field will contain this parameter GUID,
+            otherwise it will store its BuiltInParameter name
+            </summary>
+        </member>
+        <member name="P:Objects.BuiltElements.Revit.Parameter.isTypeParameter">
+            <summary>
+            True = Type Parameter, False = Instance Parameter
+            </summary>
         </member>
         <member name="M:Objects.BuiltElements.Revit.RevitColumn.#ctor(System.String,System.String,Objects.ICurve,Objects.BuiltElements.Level,Objects.BuiltElements.Level,System.Double,System.Double,System.Boolean,System.Double,System.Collections.Generic.List{Objects.BuiltElements.Revit.Parameter})">
             <summary>
@@ -101,6 +354,27 @@
             <param name="velocity"></param>
             <param name="parameters"></param>
             <remarks>Assign units when using this constructor due to <paramref name="width"/>, <paramref name="height"/>, and <paramref name="diameter"/> params</remarks>
+        </member>
+        <member name="T:Objects.BuiltElements.Revit.RevitElement">
+            <summary>
+            A generic Revit element for which we don't have direct conversions
+            </summary>
+        </member>
+        <member name="T:Objects.BuiltElements.Revit.RevitSymbolElementType">
+            <summary>
+            Represents the FamilySymbol subclass of ElementType in Revit
+            </summary>
+        </member>
+        <member name="P:Objects.BuiltElements.Revit.RevitSymbolElementType.placementType">
+            <summary>
+            The type of placement for this family symbol
+            </summary>
+            <remarks> See https://www.revitapidocs.com/2023/2abb8627-1da3-4069-05c9-19e4be5e02ad.htm </remarks>
+        </member>
+        <member name="P:Objects.BuiltElements.Revit.RevitSymbolElementType.elements">
+            <summary>
+            Subcomponents found in this family symbol
+            </summary>
         </member>
         <member name="M:Objects.BuiltElements.Revit.RevitLevel.#ctor(System.String,System.Double,System.Boolean,System.Collections.Generic.List{Objects.BuiltElements.Revit.Parameter})">
             <summary>
@@ -171,60 +445,6 @@
             <param name="topLevel"></param>
             <param name="parameters"></param>
         </member>
-        <member name="M:Objects.BuiltElements.Revit.DirectShape.#ctor(System.String,Objects.BuiltElements.Revit.RevitCategory,System.Collections.Generic.List{Speckle.Core.Models.Base},System.Collections.Generic.List{Objects.BuiltElements.Revit.Parameter})">
-            <summary>
-             Constructs a new <see cref="T:Objects.BuiltElements.Revit.DirectShape"/> instance given a list of <see cref="T:Speckle.Core.Models.Base"/> objects.
-            </summary>
-            <param name="name">The name of the <see cref="T:Objects.BuiltElements.Revit.DirectShape"/></param>
-            <param name="category">The <see cref="T:Objects.BuiltElements.Revit.RevitCategory"/> of this instance.</param>
-            <param name="baseGeometries">A list of base classes to represent the direct shape (only mesh and brep are allowed, anything else will be ignored.)</param>
-            <param name="parameters">Optional Parameters for this instance.</param>
-        </member>
-        <member name="T:Objects.BuiltElements.Revit.RevitFamilyCategory">
-            <summary>
-            FamilyDocuments can only be assigned these categories
-            This is a subset of the list above which was manually retrieved from Revit's UI
-            </summary>
-        </member>
-        <member name="P:Objects.BuiltElements.Revit.FreeformElement.baseGeometry">
-            <summary>
-            DEPRECATED. Sets the geometry contained in the FreeformElement. This field has been deprecated in favor of `baseGeometries`
-            to align with Revit's API. It remains as a setter-only property for backwards compatibility.
-            It will set the first item on the baseGeometries list, and instantiate a list if necessary.
-            </summary>
-        </member>
-        <member name="P:Objects.BuiltElements.Revit.Parameter.isShared">
-            <summary>
-            If True it's a Shared Parameter, in which case the ApplicationId field will contain this parameter GUID,
-            otherwise it will store its BuiltInParameter name
-            </summary>
-        </member>
-        <member name="P:Objects.BuiltElements.Revit.Parameter.isTypeParameter">
-            <summary>
-            True = Type Parameter, False = Instance Parameter
-            </summary>
-        </member>
-        <member name="T:Objects.BuiltElements.Revit.RevitElement">
-            <summary>
-            A generic Revit element for which we don't have direct conversions
-            </summary>
-        </member>
-        <member name="T:Objects.BuiltElements.Revit.RevitSymbolElementType">
-            <summary>
-            Represents the FamilySymbol subclass of ElementType in Revit
-            </summary>
-        </member>
-        <member name="P:Objects.BuiltElements.Revit.RevitSymbolElementType.placementType">
-            <summary>
-            The type of placement for this family symbol
-            </summary>
-            <remarks> See https://www.revitapidocs.com/2023/2abb8627-1da3-4069-05c9-19e4be5e02ad.htm </remarks>
-        </member>
-        <member name="P:Objects.BuiltElements.Revit.RevitSymbolElementType.elements">
-            <summary>
-            Subcomponents found in this family symbol
-            </summary>
-        </member>
         <member name="M:Objects.BuiltElements.Revit.RevitRoof.RevitExtrusionRoof.#ctor(System.String,System.String,System.Double,System.Double,Objects.Geometry.Line,Objects.BuiltElements.Level,System.Collections.Generic.List{Speckle.Core.Models.Base},System.Collections.Generic.List{Objects.BuiltElements.Revit.Parameter})">
             <summary>
             SchemaBuilder constructor for a Revit extrusion roof
@@ -273,103 +493,17 @@
             <param name="parameters"></param>
             <remarks>Assign units when using this constructor due to <paramref name="height"/>, <paramref name="baseOffset"/>, and <paramref name="topOffset"/> params</remarks>
         </member>
-        <member name="M:Objects.BuiltElements.Duct.#ctor(Objects.Geometry.Line,System.Double,System.Double,System.Double,System.Double)">
-            <summary>
-            SchemaBuilder constructor for a Speckle duct
-            </summary>
-            <param name="baseLine"></param>
-            <param name="width"></param>
-            <param name="height"></param>
-            <param name="diameter"></param>
-            <param name="velocity"></param>
-            <remarks>Assign units when using this constructor due to <paramref name="width"/>, <paramref name="height"/>, and <paramref name="diameter"/> params</remarks>
-        </member>
-        <member name="M:Objects.BuiltElements.Duct.#ctor(Objects.ICurve,System.Double,System.Double,System.Double,System.Double)">
-            <summary>
-            SchemaBuilder constructor for a Speckle duct
-            </summary>
-            <param name="baseCurve"></param>
-            <param name="width"></param>
-            <param name="height"></param>
-            <param name="diameter"></param>
-            <param name="velocity"></param>
-            <remarks>Assign units when using this constructor due to <paramref name="width"/>, <paramref name="height"/>, and <paramref name="diameter"/> params</remarks>
-        </member>
-        <member name="P:Objects.BuiltElements.Featureline.curve">
-            <summary>
-            The base curve of the featureline
-            </summary>
-        </member>
-        <member name="P:Objects.BuiltElements.Featureline.points">
-            <summary>
-            The points constructing the Featureline
-            </summary>
-            <remarks>
-            Can include both intersection and elevation points
-            </remarks>
-        </member>
-        <member name="P:Objects.BuiltElements.Featureline.displayValue">
-            <summary>
-            The 3D curves generated from the curve and points of the featureline
-            </summary>
-        </member>
-        <member name="M:Objects.BuiltElements.Level.#ctor(System.String,System.Double)">
-            <summary>
-            SchemaBuilder constructor for a Speckle level
-            </summary>
-            <param name="name"></param>
-            <param name="elevation"></param>
-            <remarks>Assign units when using this constructor due to <paramref name="elevation"/> param</remarks>
-        </member>
-        <member name="T:Objects.BuiltElements.Network">
-            <summary>
-            Represents graph connections between built elements objects
-            </summary>
-            <remarks>
-            Network <see cref="P:Objects.BuiltElements.Network.elements"/> may need to be created first in native applications before they are linked.
-            </remarks>
-        </member>
-        <member name="P:Objects.BuiltElements.Network.elements">
-            <summary>
-            The elements contained in the network
-            </summary>
-        </member>
-        <member name="P:Objects.BuiltElements.Network.links">
-            <summary>
-            The connections between <see cref="P:Objects.BuiltElements.Network.elements"/>
-            </summary>
-        </member>
-        <member name="P:Objects.BuiltElements.NetworkElement.linkIndices">
-            <summary>
-            The index of the links in <see cref="P:Objects.BuiltElements.NetworkElement.network"/> that are connected to this element
-            </summary>
-        </member>
-        <member name="P:Objects.BuiltElements.NetworkElement.links">
-            <summary>
-            Retrieves the links for this element
-            </summary>
-        </member>
-        <member name="P:Objects.BuiltElements.NetworkLink.elementIndices">
-            <summary>
-            The index of the elements in <see cref="P:Objects.BuiltElements.NetworkLink.network"/> that are connected by this link
-            </summary>
-        </member>
-        <member name="P:Objects.BuiltElements.NetworkLink.elements">
-            <summary>
-            Retrieves the elements for this link
-            </summary>
-        </member>
         <member name="M:Objects.BuiltElements.Room.#ctor(System.String,System.String,Objects.BuiltElements.Level,Objects.Geometry.Point)">
             <summary>
             SchemaBuilder constructor for a Room
             </summary>
-            <remarks>Assign units when using this constructor due to <paramref name="height"/> param</remarks>
+            <remarks>Assign units when using this constructor due to <see cref="P:Objects.BuiltElements.Room.height"/> prop</remarks>
         </member>
         <member name="M:Objects.BuiltElements.Room.#ctor(System.String,System.String,Objects.BuiltElements.Level,Objects.Geometry.Point,System.Collections.Generic.List{Objects.BuiltElements.Revit.Parameter})">
             <summary>
             SchemaBuilder constructor for a Room
             </summary>
-            <remarks>Assign units when using this constructor due to <paramref name="height"/> param</remarks>
+            <remarks>Assign units when using this constructor due to <see cref="P:Objects.BuiltElements.Room.height"/> prop</remarks>
         </member>
         <member name="M:Objects.BuiltElements.Wall.#ctor(System.Double,Objects.ICurve,System.Collections.Generic.List{Speckle.Core.Models.Base})">
             <summary>
@@ -833,7 +967,6 @@
         <member name="P:Objects.Geometry.ControlPoint.value">
             <summary>
             OBSOLETE - This is just here for backwards compatibility.
-            You should not use this for anything. Access coordinates using X,Y,Z and weight fields.
             </summary>
         </member>
         <member name="M:Objects.Geometry.Curve.#ctor">
@@ -896,7 +1029,7 @@
         </member>
         <member name="M:Objects.Geometry.Curve.ToList">
             <summary>
-            Returns the vales of this <see cref="T:Objects.Geometry.Curve"/> as a list of numbers
+            Returns the values of this <see cref="T:Objects.Geometry.Curve"/> as a list of numbers
             </summary>
             <returns>A list of values representing the <see cref="T:Objects.Geometry.Curve"/></returns>
         </member>
@@ -1025,10 +1158,10 @@
         </member>
         <member name="M:Objects.Geometry.Mesh.GetTextureCoordinate(System.Int32)">
             <summary>
-            Gets a texture coordinate as a <see cref="!:(T1, T2)"/> by <paramref name="index"/>
+            Gets a texture coordinate as a <see cref="T:System.ValueTuple`2"/> by <paramref name="index"/>
             </summary>
             <param name="index">The index of the texture coordinate</param>
-            <returns>Texture coordinate as a <see cref="!:(T1, T2)"/></returns>
+            <returns>Texture coordinate as a <see cref="T:System.ValueTuple`2"/></returns>
         </member>
         <member name="M:Objects.Geometry.Mesh.AlignVerticesWithTexCoordsByIndex">
             <summary>
@@ -1129,7 +1262,7 @@
             <param name="x">The x coordinate</param>
             <param name="y">The y coordinate</param>
             <param name="z">The z coordinate</param>
-            <param name="units">The units the point's coordinates are in.</param>
+            <param name="units">The units of the point's coordinates. Defaults to Meters. </param>
             <param name="applicationId">The object's unique application ID</param>
         </member>
         <member name="M:Objects.Geometry.Point.#ctor(Objects.Geometry.Vector)">
@@ -1160,12 +1293,9 @@
         </member>
         <member name="P:Objects.Geometry.Point.units">
             <summary>
-            The unit's this <see cref="T:Objects.Geometry.Vector"/> is in.
+            The units this <see cref="T:Objects.Geometry.Point"/> is in.
             This should be one of the units specified in <see cref="T:Speckle.Core.Kits.Units"/>
             </summary>
-        </member>
-        <member name="P:Objects.Geometry.Point.bbox">
-            <inheritdoc/>
         </member>
         <member name="M:Objects.Geometry.Point.TransformTo(Objects.Other.Transform,Objects.Geometry.Point@)">
             <inheritdoc/>
@@ -1587,7 +1717,7 @@
             Sets the control points of this <see cref="T:Objects.Geometry.Surface"/>.
             </summary>
             <param name="value">A 2-dimensional array of <see cref="T:Objects.Geometry.ControlPoint"/> instances.</param>
-            <remarks>The <see cref="!:value"/> must be ordered following directions "[u][v]"</remarks>
+            <remarks>The <paramref name="value"/> must be ordered following directions "[u][v]"</remarks>
         </member>
         <member name="M:Objects.Geometry.Surface.ToList">
             <summary>
@@ -1882,7 +2012,7 @@
         </member>
         <member name="T:Objects.Organization.ModelInfo">
             <summary>
-            Basic model info class to be attached to the <see cref="!:Model.info"/> field on a <see cref="!:Model"/> object.
+            Basic model info class
             It contains general information about the model and can be extended or subclassed to include more application-specific
             information.
             </summary>
@@ -1899,8 +2029,7 @@
         </member>
         <member name="T:Objects.Organization.BIMModelInfo">
             <summary>
-            Extended <see cref="T:Objects.Organization.ModelInfo"/> to be attached to the <see cref="!:Model.info"/> field on a <see cref="!:Model"/> object.
-            This contains additional properties applicable to AEC projects.
+            Extended <see cref="T:Objects.Organization.ModelInfo"/> to contain additional properties applicable to AEC projects.
             </summary>
         </member>
         <member name="P:Objects.Organization.BIMModelInfo.clientName">
@@ -2097,18 +2226,6 @@
             <remarks>This method will skip scaling. If you need scaling, we recommend using the transform instead.</remarks>
             <returns>A Plane on the insertion point of this Block Instance, with the correct 3-axis rotations.</returns>
         </member>
-        <member name="M:Objects.Other.Revit.RevitInstance.GetInsertionPlane">
-            <summary>
-            Returns a plane representing the insertion point and orientation of this revit instance.
-            </summary>
-            <remarks>This method will skip scaling. If you need scaling, we recommend using the transform instead.</remarks>
-            <returns>A Plane on the insertion point of this Block Instance, with the correct 3-axis rotations.</returns>
-        </member>
-        <member name="T:Objects.Other.Revit.RevitMaterial">
-            <summary>
-            Material in Revit defininf all revit properties from Autodesk.Revit.DB.Material
-            </summary>
-        </member>
         <member name="T:Objects.Other.Material">
             <summary>
             Generic class for materials containing generic parameters
@@ -2133,6 +2250,18 @@
              See: https://docs.unrealengine.com/en-US/RenderingAndGraphics/Materials/PhysicallyBased/index.html
              And: https://blogs.unity3d.com/2014/10/29/physically-based-shading-in-unity-5-a-primer/
              </summary>
+        </member>
+        <member name="M:Objects.Other.Revit.RevitInstance.GetInsertionPlane">
+            <summary>
+            Returns a plane representing the insertion point and orientation of this revit instance.
+            </summary>
+            <remarks>This method will skip scaling. If you need scaling, we recommend using the transform instead.</remarks>
+            <returns>A Plane on the insertion point of this Block Instance, with the correct 3-axis rotations.</returns>
+        </member>
+        <member name="T:Objects.Other.Revit.RevitMaterial">
+            <summary>
+            Material in Revit defininf all revit properties from Autodesk.Revit.DB.Material
+            </summary>
         </member>
         <member name="T:Objects.Other.Text">
             <summary>
@@ -2261,7 +2390,6 @@
             <summary>
             SchemaBuilder constructor for a structural model object
             </summary>
-            <param name="modelInfo"></param>
             <param name="nodes"></param>
             <param name="elements"></param>
             <param name="loads"></param>
@@ -2329,18 +2457,6 @@
             <param name="orientationNode"></param>
             <param name="orientationAngle"></param>
         </member>
-        <member name="M:Objects.Structural.GSA.Geometry.GSANode.#ctor(System.Int32,Objects.Geometry.Point,Objects.Structural.Geometry.Restraint,Objects.Structural.Geometry.Axis,Objects.Structural.Properties.PropertySpring,Objects.Structural.Properties.PropertyMass,Objects.Structural.Properties.PropertyDamper,System.Double,System.String)">
-            <summary>
-            SchemaBuilder constructor for a GSA node
-            </summary>
-            <param name="basePoint"></param>
-            <param name="restraint"></param>
-            <param name="constraintAxis"></param>
-            <param name="springProperty"></param>
-            <param name="massProperty"></param>
-            <param name="damperProperty"></param>
-            <param name="localElementSize"></param>
-        </member>
         <member name="M:Objects.Structural.Geometry.Element1D.#ctor(Objects.Geometry.Line,Objects.Structural.Properties.Property1D,Objects.Structural.Geometry.ElementType1D,System.String,Objects.Structural.Geometry.Restraint,Objects.Structural.Geometry.Restraint,Objects.Geometry.Vector,Objects.Geometry.Vector,Objects.Geometry.Plane)">
             <summary>
             SchemaBuilder constructor for structural 1D element (based on local axis)
@@ -2376,6 +2492,18 @@
             </summary>
             <param name="name">The name of the storey</param>
             <param name="elevation">The elevation of the storey (along the global z-axis, ie. storey exists in the global XY plane)</param>
+        </member>
+        <member name="M:Objects.Structural.GSA.Geometry.GSANode.#ctor(System.Int32,Objects.Geometry.Point,Objects.Structural.Geometry.Restraint,Objects.Structural.Geometry.Axis,Objects.Structural.Properties.PropertySpring,Objects.Structural.Properties.PropertyMass,Objects.Structural.Properties.PropertyDamper,System.Double,System.String)">
+            <summary>
+            SchemaBuilder constructor for a GSA node
+            </summary>
+            <param name="basePoint"></param>
+            <param name="restraint"></param>
+            <param name="constraintAxis"></param>
+            <param name="springProperty"></param>
+            <param name="massProperty"></param>
+            <param name="damperProperty"></param>
+            <param name="localElementSize"></param>
         </member>
         <member name="M:Objects.Structural.Loading.Load.#ctor(System.String,Objects.Structural.Loading.LoadCase)">
             <summary>
@@ -2514,7 +2642,7 @@
         </member>
         <member name="M:Objects.Utils.MeshTriangulationHelper.TriangulateMesh(Objects.Geometry.Mesh,System.Boolean)">
             <summary>
-            Triangulates all faces in <paramref name="Mesh"/>.
+            Triangulates all faces in <paramref name="mesh"/>.
             </summary>
             <param name="mesh">The mesh to triangulate.</param>
             <param name="preserveQuads">If <see langword="true"/>, will not triangulate quad faces.</param>
@@ -2525,13 +2653,13 @@
         </member>
         <member name="M:Objects.Utils.MeshTriangulationHelper.TriangulateFace(System.Int32,System.Collections.Generic.IReadOnlyList{System.Int32},System.Collections.Generic.IReadOnlyList{System.Double},System.Boolean)">
             <summary>
-            Calculates the triangulation of the face at <paramref name="faceIndex"/> in <paramref name="mesh"/>.
+            Calculates the triangulation of the face at <paramref name="faceIndex"/> in <paramref name="faces"/> list.
             </summary>
             <remarks>
             This implementation is based the ear clipping method
             Proposed by "Christer Ericson (2005) <i>Real-Time Collision Detection</i>".
             </remarks>
-            <param name="faceIndex">The index of the face's cardinality indicator <c>n</c> in <paramref name="mesh"/>.<see cref="P:Objects.Geometry.Mesh.faces"/></param>.
+            <param name="faceIndex">The index of the face's cardinality indicator <c>n</c> in <paramref name="faces"/> list</param>.
             <param name="faces"></param>
             <param name="vertices"></param>
             <param name="includeIndicators">if <see langword="true"/>, the returned list will include cardinality indicators for each triangle

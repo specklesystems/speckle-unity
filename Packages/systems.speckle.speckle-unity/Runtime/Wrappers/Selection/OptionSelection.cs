@@ -10,7 +10,7 @@ namespace Speckle.ConnectorUnity.Wrappers.Selection
     /// <summary>
     /// Reusable <see langword="abstract"/> serializable type that abstracts
     /// the fetching of <typeparamref name="TOption"/> objects.
-    /// And exposes an <see cref="Array"/> of <see cref="Options"/>
+    /// And exposes an list of <see cref="Options"/>
     /// with serialised selection.
     /// </summary>
     /// <typeparam name="TOption"></typeparam>
@@ -18,32 +18,42 @@ namespace Speckle.ConnectorUnity.Wrappers.Selection
     public abstract class OptionSelection<TOption>
         where TOption : class
     {
-        [SerializeField]
-        private int selectedIndex = -1;
+        public IReadOnlyList<TOption> Options { get; protected set; } = Array.Empty<TOption>();
 
-        public int SelectedIndex
-        {
-            get => selectedIndex;
-            set
-            {
-                selectedIndex = value;
-                OnSelectionChange?.Invoke();
-            }
-        }
+        private Dictionary<string, int>? _indexMap;
+
+        [SerializeField]
+        private string? selectedId;
 
         public TOption? Selected
         {
             get
             {
-                if (Options is null)
+                if (selectedId == null)
                     return null;
-                if (SelectedIndex < 0 || SelectedIndex >= Options.Length)
-                    return null;
-                return Options[SelectedIndex];
+
+                TryGetOption(selectedId, out var value);
+                return value;
+            }
+            set
+            {
+                selectedId = KeyFunction(value);
+                OnSelectionChange?.Invoke();
             }
         }
 
-        public TOption[] Options { get; protected set; } = Array.Empty<TOption>();
+        public bool TryGetOption(string key, [NotNullWhen(true)] out TOption? value)
+        {
+            if (_indexMap is not null && _indexMap.TryGetValue(key, out int index))
+            {
+                value = Options[index];
+                return true;
+            }
+
+            value = null;
+            return false;
+        }
+
         public Action? OnSelectionChange { get; set; }
 
         public abstract Client? Client { get; }
@@ -53,36 +63,38 @@ namespace Speckle.ConnectorUnity.Wrappers.Selection
 
         public abstract void RefreshOptions();
 
-        protected void GenerateOptions(IList<TOption> source, Func<TOption, int, bool> isDefault)
+        protected void GenerateOptions(
+            IReadOnlyCollection<TOption?> source,
+            Func<TOption, int, bool> isDefault
+        )
         {
             List<TOption> optionsToAdd = new(source.Count);
-            int defaultOption = -1;
+            Dictionary<string, int> indexMap = new(source.Count);
+            string? defaultOption = null;
             int index = 0;
             foreach (TOption? a in source)
             {
                 if (a == null)
                     continue;
+
+                var key = KeyFunction(a);
                 optionsToAdd.Add(a);
+                indexMap.Add(key, index);
+
                 if (isDefault(a, index))
-                    defaultOption = index;
+                    defaultOption = key;
+
                 index++;
             }
 
-            TOption? currentSelected = Selected;
-            bool selectionOutOfRange = SelectedIndex < 0 || SelectedIndex >= optionsToAdd.Count;
-            if (
-                selectionOutOfRange
-                || (
-                    currentSelected != null
-                    && KeyFunction(currentSelected) != KeyFunction(optionsToAdd[SelectedIndex])
-                )
-            )
+            string? currentSelected = selectedId;
+            if (currentSelected is null || !indexMap.ContainsKey(currentSelected))
             {
-                selectedIndex = defaultOption;
+                selectedId = defaultOption;
             }
 
-            Options = optionsToAdd.ToArray();
-            //Debug.Log($"{this.GetType()} updated");
+            Options = optionsToAdd;
+            _indexMap = indexMap;
             OnSelectionChange?.Invoke();
         }
     }

@@ -1,6 +1,7 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using Speckle.Core.Api;
 using Speckle.Core.Credentials;
 using UnityEditor;
@@ -45,12 +46,12 @@ namespace Speckle.ConnectorUnity.Wrappers.Selection.Editor
 
             details = new (string, Func<Stream, string>)[]
             {
-                ("Stream id", s => s.id),
+                ("Project id", s => s.id),
                 ("Description", s => s.description),
                 ("Is Public", s => s.isPublic.ToString()),
                 ("Role", s => s.role),
-                ("Created at", s => s.createdAt.ToString()),
-                ("Updated at", s => s.updatedAt.ToString()),
+                ("Created at", s => s.createdAt.ToString(CultureInfo.InvariantCulture)),
+                ("Updated at", s => s.updatedAt.ToString(CultureInfo.InvariantCulture)),
             };
         }
     }
@@ -70,7 +71,11 @@ namespace Speckle.ConnectorUnity.Wrappers.Selection.Editor
                 $"<{nameof(BranchSelection.CommitsLimit)}>k__BackingField",
             };
 
-            details = new (string, Func<Branch, string>)[] { ("Description", s => s.description), };
+            details = new (string, Func<Branch, string>)[]
+            {
+                ("Model Id", s => s.id),
+                ("Description", s => s.description),
+            };
         }
     }
 
@@ -83,9 +88,9 @@ namespace Speckle.ConnectorUnity.Wrappers.Selection.Editor
         {
             details = new (string, Func<Commit, string>)[]
             {
-                ("Commit Id", s => s.id),
+                ("Version Id", s => s.id),
                 ("Author Name", s => s.authorName),
-                ("Created At", s => s.createdAt.ToString()),
+                ("Created At", s => s.createdAt.ToString(CultureInfo.InvariantCulture)),
                 ("Source Application", s => s.sourceApplication),
                 ("Reference Object Id", s => s.referencedObject),
             };
@@ -108,9 +113,9 @@ namespace Speckle.ConnectorUnity.Wrappers.Selection.Editor
 
         protected (string, Func<TOption, string>)[] details = { };
 
-        private string[] GetFormattedOptions(TOption[] options)
+        private string[] GetFormattedOptions(IReadOnlyList<TOption> options)
         {
-            int optionsCount = options.Length;
+            int optionsCount = options.Count;
             string[] choices = new string[optionsCount];
             for (int i = 0; i < optionsCount; i++)
             {
@@ -182,10 +187,10 @@ namespace Speckle.ConnectorUnity.Wrappers.Selection.Editor
                     var provider = ScriptableObject.CreateInstance<StringListSearchProvider>();
                     provider.Title = typeof(TOption).Name;
                     provider.listItems = GetFormattedOptions(t.Options);
-                    ;
+
                     provider.onSetIndexCallback = o =>
                     {
-                        t.SelectedIndex = o;
+                        t.Selected = t.Options[o];
                     };
                     SearchWindow.Open(new SearchWindowContext(windowPos), provider);
                 }
@@ -260,7 +265,7 @@ namespace Speckle.ConnectorUnity.Wrappers.Selection.Editor
         public List<SearchTreeEntry> CreateSearchTree(SearchWindowContext context)
         {
             List<SearchTreeEntry> searchList =
-                new(listItems.Length + 1) { new SearchTreeGroupEntry(new GUIContent(Title), 0) };
+                new(listItems.Length + 1) { new SearchTreeGroupEntry(new GUIContent(Title)) };
 
             for (int i = 0; i < listItems.Length; i++)
             {
@@ -275,9 +280,9 @@ namespace Speckle.ConnectorUnity.Wrappers.Selection.Editor
             return searchList;
         }
 
-        public bool OnSelectEntry(SearchTreeEntry SearchTreeEntry, SearchWindowContext context)
+        public bool OnSelectEntry(SearchTreeEntry searchTreeEntry, SearchWindowContext context)
         {
-            onSetIndexCallback?.Invoke((int)SearchTreeEntry.userData);
+            onSetIndexCallback?.Invoke((int)searchTreeEntry.userData);
 
             return true;
         }

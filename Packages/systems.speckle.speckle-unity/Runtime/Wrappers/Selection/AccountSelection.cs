@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using Speckle.Core.Api;
 using Speckle.Core.Credentials;
+using Speckle.Core.Helpers;
 using UnityEngine;
 
 #nullable enable
@@ -24,7 +25,13 @@ namespace Speckle.ConnectorUnity.Wrappers.Selection
             }
         }
 
-        protected override string? KeyFunction(Account? value) => value?.id;
+        protected override string? KeyFunction(Account? value)
+        {
+            if (value is null)
+                return null;
+
+            return value.id + Crypt.Md5(value.serverInfo.url ?? "", "X2");
+        }
 
         public override void RefreshOptions()
         {

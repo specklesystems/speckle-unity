@@ -1,4 +1,3 @@
-#nullable enable
 using System;
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
@@ -13,7 +12,13 @@ namespace Speckle.ConnectorUnity.Components.Editor
     [CustomEditor(typeof(SpeckleReceiver))]
     public class SpeckleReceiverEditor : UnityEditor.Editor
     {
-        private static bool _generateAssets = false;
+        private SerializedProperty _accountSelection;
+        private SerializedProperty _streamSelection;
+        private SerializedProperty _branchSelection;
+        private SerializedProperty _commitSelection;
+
+#nullable enable
+        private static bool _generateAssets;
         private bool _foldOutStatus = true;
         private Texture2D? _previewImage;
 
@@ -21,7 +26,11 @@ namespace Speckle.ConnectorUnity.Components.Editor
         {
             var speckleReceiver = (SpeckleReceiver)target;
 
-            DrawDefaultInspector();
+            //Selection
+            EditorGUILayout.PropertyField(_accountSelection);
+            EditorGUILayout.PropertyField(_streamSelection, new GUIContent("Project"));
+            EditorGUILayout.PropertyField(_branchSelection, new GUIContent("Model"));
+            EditorGUILayout.PropertyField(_commitSelection, new GUIContent("Version"));
 
             //Preview image
             {
@@ -64,8 +73,8 @@ namespace Speckle.ConnectorUnity.Components.Editor
                 else if (userRequestedReceive)
                 {
                     var id = Progress.Start(
-                        "Receiving Speckle data",
-                        "Fetching commit data",
+                        "Receiving Speckle Model",
+                        "Fetching data from Speckle",
                         Progress.Options.Sticky
                     );
                     Progress.ShowDetails();
@@ -96,6 +105,19 @@ namespace Speckle.ConnectorUnity.Components.Editor
         public void OnEnable()
         {
             Init();
+
+            _accountSelection = serializedObject.FindProperty(
+                $"<{nameof(SpeckleReceiver.Account)}>k__BackingField"
+            );
+            _streamSelection = serializedObject.FindProperty(
+                $"<{nameof(SpeckleReceiver.Stream)}>k__BackingField"
+            );
+            _branchSelection = serializedObject.FindProperty(
+                $"<{nameof(SpeckleReceiver.Branch)}>k__BackingField"
+            );
+            _commitSelection = serializedObject.FindProperty(
+                $"<{nameof(SpeckleReceiver.Commit)}>k__BackingField"
+            );
         }
 
         public void Reset()
@@ -163,7 +185,7 @@ namespace Speckle.ConnectorUnity.Components.Editor
 
             bool BeforeConvert(TraversalContext context)
             {
-                Base b = context.current;
+                Base b = context.Current;
 
                 //NOTE: progress wont reach 100% because not all objects are convertable
                 float progress = (childrenConverted + childrenFailed) / totalChildrenFloat;

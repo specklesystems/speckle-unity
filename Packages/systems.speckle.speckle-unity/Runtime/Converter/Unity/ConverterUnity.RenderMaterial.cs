@@ -8,7 +8,6 @@ using UnityEngine;
 using Material = UnityEngine.Material;
 using SMesh = Objects.Geometry.Mesh;
 using SColor = System.Drawing.Color;
-using STransform = Objects.Other.Transform;
 
 namespace Objects.Converter.Unity
 {
@@ -76,7 +75,7 @@ namespace Objects.Converter.Unity
             // 3. Otherwise, convert fresh!
             string name = CoreUtils.GenerateObjectName(renderMaterial);
             Color diffuse = renderMaterial.diffuse.ToUnityColor();
-            bool isOpaque = Math.Abs(renderMaterial.opacity - 1d) < Constants.Eps;
+            bool isOpaque = Math.Abs(renderMaterial.opacity - 1d) < Constants.EPS;
             Color color = new(diffuse.r, diffuse.g, diffuse.b, (float)renderMaterial.opacity);
             float metalic = (float)renderMaterial.metalness;
             float gloss = 1f - (float)renderMaterial.roughness;

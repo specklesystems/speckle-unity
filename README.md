@@ -1,6 +1,4 @@
 
-## Installation
-
 
 # Connector Unity
 
@@ -47,7 +45,6 @@ git clone https://github.com/specklesystems/speckle-unity.git
 
 ## Installation (Package)
 
-
 To install the connector into your own Unity project (rather than using the sample project), open the Package Manager (`Windows -> Package Manager`)
 and select **Add Package from git URL**. (requires [git](https://git-scm.com/downloads) installed)
 
@@ -55,5 +52,32 @@ and select **Add Package from git URL**. (requires [git](https://git-scm.com/dow
 
 Paste in the following URL
 ```
-https://github.com/constructobot/speckle-unity.git?path=/Packages/systems.speckle.speckle-unity
+https://github.com/specklesystems/speckle-unity.git?path=/Packages/systems.speckle.speckle-unity
 ```
+
+Checkout [our docs for getting started instructions](https://speckle.guide/user/unity.html#getting-started)
+---
+
+We encourage everyone interested to hack / contribute / debug / give feedback to this project.
+
+
+### Requirements
+
+- Unity 2021 or greater
+- Have created an account on [app.speckle.systems](https://app.speckle.systems) (or your own server)
+- Installed [Speckle Manager](https://speckle.guide/user/manager.html) (recommended, otherwise you'll need to implement your own authentication system in Unity)
+
+### Dependencies
+
+All dependencies to Speckle Core have been included; compiled in `systems.speckle.speckle-unity` package.
+
+
+## Contributing
+
+Please make sure you read the [contribution guidelines](https://github.com/specklesystems/speckle-sharp/blob/main/.github/CONTRIBUTING.md) for an overview of the best practices we try to follow.
+
+
+## License
+
+Unless otherwise described, the code in this repository is licensed under the Apache-2.0 License. Please note that some modules, extensions or code herein might be otherwise licensed. This is indicated either in the root of the containing folder under a different license file, or in the respective file's header. If you have any questions, don't hesitate to get in touch with us via [email](mailto:hello@speckle.systems).
+

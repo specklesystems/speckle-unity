@@ -92,7 +92,7 @@ namespace Speckle.ConnectorUnity.Components
 
         public bool WasSuccessful() => this.exception == null;
 
-        public Base SpeckleObject => traversalContext.current;
+        public Base SpeckleObject => traversalContext.Current;
     }
 
     public partial class RecursiveConverter
@@ -143,7 +143,7 @@ namespace Speckle.ConnectorUnity.Components
 
             var objectsToConvert = traversalFunc
                 .Traverse(rootObject)
-                .Where(x => ConverterInstance.CanConvertToNative(x.current))
+                .Where(x => ConverterInstance.CanConvertToNative(x.Current))
                 .Where(x => userPredicate(x));
 
             Dictionary<Base, GameObject?> created = new();
@@ -186,9 +186,9 @@ namespace Speckle.ConnectorUnity.Components
                 {
                     Transform? currentParent = GetParent(tc, outCreatedObjects) ?? parent;
 
-                    var converted = ConvertToNative(tc.current, currentParent);
+                    var converted = ConvertToNative(tc.Current, currentParent);
                     result = new ConversionResult(tc, converted);
-                    outCreatedObjects.TryAdd(tc.current, result.converted);
+                    outCreatedObjects.TryAdd(tc.Current, result.converted);
                 }
                 catch (Exception ex)
                 {
@@ -209,11 +209,11 @@ namespace Speckle.ConnectorUnity.Components
             if (tc == null)
                 return null; //We've reached the root object, and still not found a converted parent
 
-            if (createdObjects.TryGetValue(tc.current, out GameObject? p) && p != null)
+            if (createdObjects.TryGetValue(tc.Current, out GameObject? p) && p != null)
                 return p.transform;
 
             //Go one level up, and repeat!
-            return GetParent(tc.parent, createdObjects);
+            return GetParent(tc.Parent, createdObjects);
         }
 
         protected GameObject ConvertToNative(Base speckleObject, Transform? parentTransform)
@@ -327,7 +327,18 @@ namespace Speckle.ConnectorUnity.Components
         {
             object? converted = null;
             if (predicate(baseObject))
-                converted = ConverterInstance.ConvertToNative(baseObject);
+            {
+                try
+                {
+                    converted = ConverterInstance.ConvertToNative(baseObject);
+                }
+                catch (Exception ex) when (!ex.IsFatal())
+                {
+                    Debug.LogWarning(
+                        $"Failed to convert {baseObject.speckle_type} - {baseObject.id}\n{ex}"
+                    );
+                }
+            }
 
             // Handle new GameObjects
             Transform? nextParent = parent;

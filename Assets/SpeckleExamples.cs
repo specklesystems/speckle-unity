@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using Speckle.Core.Credentials;
 using System.Linq;
-using UnityEngine.Events;
 using UnityEngine.UI;
 using Stream = Speckle.Core.Api.Stream;
 

@@ -36,6 +36,7 @@ namespace Speckle.ConnectorUnity.Components
         [HideInInspector]
         public BranchSelectionEvent OnBranchSelectionChange;
 
+        [Obsolete("No longer used")]
         [HideInInspector]
         public ErrorActionEvent OnErrorAction;
 
@@ -61,40 +62,44 @@ namespace Speckle.ConnectorUnity.Components
             )
                 throw new SpeckleException(error);
 
-            ServerTransport transport = new ServerTransport(client.Account, stream.id);
+            using ServerTransport transport = new(client.Account, stream.id);
             transport.CancellationToken = CancellationTokenSource.Token;
 
             return await SendDataAsync(
-                CancellationTokenSource.Token,
                 remoteTransport: transport,
-                data: data,
-                client: client,
-                branchName: branch.name,
-                createCommit: createCommit,
-                onProgressAction: dict => OnSendProgressAction.Invoke(dict),
-                onErrorAction: (m, e) => OnErrorAction.Invoke(m, e)
+                data,
+                client,
+                branch.id,
+                createCommit,
+                dict => OnSendProgressAction.Invoke(dict),
+                CancellationTokenSource.Token
             );
         }
 
+        /// <param name="remoteTransport">The transport to send to</param>
+        /// <param name="data">The data to send</param>
+        /// <param name="client">An authenticated Speckle Client</param>
+        /// <param name="branchId">The branch name or id</param>
+        /// <param name="createCommit">when <see langword="true"/> will call <see cref="Client.CommitCreate"/>, otherwise only the object data is sent</param>
+        /// <param name="onProgressAction">Called every progress tick of the <see cref="Operations.Send"/></param>
+        /// <param name="cancellationToken">Optional cancellation token</param>
+        /// <returns>The id (hash) of the object sent</returns>
         public static async Task<string> SendDataAsync(
-            CancellationToken cancellationToken,
             ServerTransport remoteTransport,
             Base data,
             Client client,
-            string branchName,
+            string branchId,
             bool createCommit,
             Action<ConcurrentDictionary<string, int>>? onProgressAction = null,
-            Action<string, Exception>? onErrorAction = null
+            CancellationToken cancellationToken = default
         )
         {
             string res = await Operations.Send(
                 data,
-                cancellationToken: cancellationToken,
-                new List<ITransport> { remoteTransport },
-                useDefaultCache: true,
-                disposeTransports: true,
-                onProgressAction: onProgressAction,
-                onErrorAction: onErrorAction
+                remoteTransport,
+                true,
+                onProgressAction,
+                cancellationToken
             );
 
             Analytics.TrackEvent(
@@ -115,15 +120,26 @@ namespace Speckle.ConnectorUnity.Components
                 string commitMessage = $"Sent {data.totalChildrenCount} objects from {unityVer}";
 
                 string commitId = await CreateCommit(
-                    cancellationToken,
                     data,
                     client,
                     streamId,
-                    branchName,
+                    branchId,
                     res,
-                    commitMessage
+                    commitMessage,
+                    cancellationToken
                 );
-                string url = $"{client.ServerUrl}/streams/{streamId}/commits/{commitId}";
+
+                StreamWrapper sw =
+                    new()
+                    {
+                        ServerUrl = client.ServerUrl,
+                        StreamId = streamId,
+                        BranchName = branchId,
+                        CommitId = commitId,
+                    };
+                sw.SetAccount(client.Account);
+
+                string url = sw.ToServerUri().GetLeftPart(UriPartial.Path);
                 Debug.Log($"Data successfully sent to <a href=\"{url}\">{url}</a>");
             }
 
@@ -131,17 +147,16 @@ namespace Speckle.ConnectorUnity.Components
         }
 
         public static async Task<string> CreateCommit(
-            CancellationToken cancellationToken,
             Base data,
             Client client,
             string streamId,
             string branchName,
             string objectId,
-            string message
+            string message,
+            CancellationToken cancellationToken
         )
         {
             string commitId = await client.CommitCreate(
-                cancellationToken,
                 new CommitCreateInput
                 {
                     streamId = streamId,
@@ -152,7 +167,8 @@ namespace Speckle.ConnectorUnity.Components
                         CoreUtils.GetHostAppVersion()
                     ),
                     totalChildrenCount = (int)data.totalChildrenCount,
-                }
+                },
+                cancellationToken
             );
 
             return commitId;
@@ -230,7 +246,7 @@ namespace Speckle.ConnectorUnity.Components
             Stream.Initialise();
             Branch.Initialise();
             Branch.OnSelectionChange = () => OnBranchSelectionChange?.Invoke(Branch.Selected);
-            if (Account.Options is not { Length: > 0 } || forceRefresh)
+            if (Account.Options is not { Count: > 0 } || forceRefresh)
                 Account.RefreshOptions();
         }
 
@@ -248,6 +264,29 @@ namespace Speckle.ConnectorUnity.Components
         public void OnAfterDeserialize()
         {
             Initialise();
+        }
+
+        [Obsolete("use other overload")]
+        public static async Task<string> SendDataAsync(
+            CancellationToken cancellationToken,
+            ServerTransport remoteTransport,
+            Base data,
+            Client client,
+            string branchName,
+            bool createCommit,
+            Action<ConcurrentDictionary<string, int>>? onProgressAction = null,
+            Action<string, Exception>? onErrorAction = null
+        )
+        {
+            return await SendDataAsync(
+                remoteTransport,
+                data,
+                client,
+                branchName,
+                createCommit,
+                onProgressAction,
+                cancellationToken
+            );
         }
     }
 }
