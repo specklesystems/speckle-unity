@@ -1552,6 +1552,16 @@
             Event triggered by the Mapping Tool
             </summary>
         </member>
+        <member name="F:Speckle.Core.Logging.Analytics.Events.ConvertToSpeckle">
+            <summary>
+            Event triggered when user selects object to convert to Speckle on Send
+            </summary>
+        </member>
+        <member name="F:Speckle.Core.Logging.Analytics.Events.ConvertToNative">
+            <summary>
+            Event triggered when user selects object to convert to Native on Receive
+            </summary>
+        </member>
         <member name="P:Speckle.Core.Logging.Analytics.LastEmail">
             <summary>
             Cached email
