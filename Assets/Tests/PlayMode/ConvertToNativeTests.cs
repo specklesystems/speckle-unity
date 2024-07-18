@@ -15,7 +15,7 @@ namespace Speckle.ConnectorUnity.Tests
     {
         private static IEnumerable<string> TestCases()
         {
-            yield return @"https://latest.speckle.dev/streams/c1faab5c62/commits/704984e22d";
+            yield return @"https://latest.speckle.systems/streams/c1faab5c62/commits/704984e22d";
         }
 
         private static Base Receive(string stream)
