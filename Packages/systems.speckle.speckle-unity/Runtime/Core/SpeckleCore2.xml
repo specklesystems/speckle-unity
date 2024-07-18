@@ -804,9 +804,9 @@
                 Uri localIdentifier = GetLocalIdentifier();
                 Console.WriteLine(localIdentifier);
               </code>
-              For a fictional `User ID: 123` and `Server: https://speckle.xyz`, the output might look like this:
+              For a fictional `User ID: 123` and `Server: https://app.speckle.systems`, the output might look like this:
               <code>
-                https://speckle.xyz?id=123
+                https://app.speckle.systems?id=123
               </code>
             </example>
         </member>
