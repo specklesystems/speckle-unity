@@ -21,6 +21,16 @@
             <param name="componentPropertiesList"></param>
             <returns></returns>
         </member>
+        <member name="T:Objects.BuiltElements.Archicad.ElementShape.PolylineSegment">
+            <remarks>
+            This class is only used for Archicad interop
+            </remarks>
+        </member>
+        <member name="T:Objects.BuiltElements.Archicad.ElementShape.Polyline">
+            <remarks>
+            This class is only used for Archicad interop
+            </remarks>
+        </member>
         <member name="M:Objects.BuiltElements.Archicad.Property.ToBase(System.Collections.Generic.List{Objects.BuiltElements.Archicad.Property})">
             <summary>
             Turns a List of Property into a Base so that it can be used with the Speckle properties prop
@@ -40,9 +50,39 @@
             SchemaBuilder constructor for an Area
             </summary>
         </member>
+        <member name="P:Objects.BuiltElements.Baseline.name">
+            <summary>
+            The name of this baseline
+            </summary>
+        </member>
+        <member name="P:Objects.BuiltElements.Baseline.alignment">
+            <summary>
+            The horizontal component of this baseline
+            </summary>
+        </member>
+        <member name="P:Objects.BuiltElements.Baseline.profile">
+            <summary>
+            The vertical component of this baseline
+            </summary>
+        </member>
+        <member name="T:Objects.BuiltElements.Baseline`2">
+            <summary>
+            Generic instance class
+            </summary>
+        </member>
         <member name="P:Objects.BuiltElements.Civil.CivilAlignment.parent">
             <summary>
             Name of parent alignment if this is an offset alignment
+            </summary>
+        </member>
+        <member name="P:Objects.BuiltElements.Civil.CivilBaselineRegion.name">
+            <summary>
+            The name of the region
+            </summary>
+        </member>
+        <member name="P:Objects.BuiltElements.Civil.CivilBaselineRegion.assemblyId">
+            <summary>
+            The id of the assembly of the region
             </summary>
         </member>
         <member name="P:Objects.BuiltElements.Civil.CivilProfile.pvis">
@@ -288,73 +328,6 @@
             True = Type Parameter, False = Instance Parameter
             </summary>
         </member>
-        <member name="M:Objects.BuiltElements.Revit.RevitColumn.#ctor(System.String,System.String,Objects.ICurve,Objects.BuiltElements.Level,Objects.BuiltElements.Level,System.Double,System.Double,System.Boolean,System.Double,System.Collections.Generic.List{Objects.BuiltElements.Revit.Parameter})">
-            <summary>
-            SchemaBuilder constructor for a Revit column
-            </summary>
-            <param name="family"></param>
-            <param name="type"></param>
-            <param name="baseLine"></param>
-            <param name="level"></param>
-            <param name="topLevel"></param>
-            <param name="baseOffset"></param>
-            <param name="topOffset"></param>
-            <param name="structural"></param>
-            <param name="rotation"></param>
-            <param name="parameters"></param>
-            <remarks>Assign units when using this constructor due to <paramref name="baseOffset"/> and <paramref name="topOffset"/> params</remarks>
-        </member>
-        <member name="M:Objects.BuiltElements.Revit.RevitDuct.#ctor(System.String,System.String,Objects.Geometry.Line,System.String,System.String,Objects.BuiltElements.Level,System.Double,System.Double,System.Double,System.Double,System.Collections.Generic.List{Objects.BuiltElements.Revit.Parameter})">
-            <summary>
-            SchemaBuilder constructor for a Revit duct (deprecated)
-            </summary>
-            <param name="family"></param>
-            <param name="type"></param>
-            <param name="baseLine"></param>
-            <param name="systemName"></param>
-            <param name="systemType"></param>
-            <param name="level"></param>
-            <param name="width"></param>
-            <param name="height"></param>
-            <param name="diameter"></param>
-            <param name="velocity"></param>
-            <param name="parameters"></param>
-            <remarks>Assign units when using this constructor due to <paramref name="width"/>, <paramref name="height"/>, and <paramref name="diameter"/> params</remarks>
-        </member>
-        <member name="M:Objects.BuiltElements.Revit.RevitDuct.#ctor(System.String,System.String,Objects.ICurve,System.String,System.String,Objects.BuiltElements.Level,System.Double,System.Double,System.Double,System.Double,System.Collections.Generic.List{Objects.BuiltElements.Revit.Parameter})">
-            <summary>
-            SchemaBuilder constructor for a Revit duct
-            </summary>
-            <param name="family"></param>
-            <param name="type"></param>
-            <param name="baseCurve"></param>
-            <param name="systemName"></param>
-            <param name="systemType"></param>
-            <param name="level"></param>
-            <param name="width"></param>
-            <param name="height"></param>
-            <param name="diameter"></param>
-            <param name="velocity"></param>
-            <param name="parameters"></param>
-            <remarks>Assign units when using this constructor due to <paramref name="width"/>, <paramref name="height"/>, and <paramref name="diameter"/> params</remarks>
-        </member>
-        <member name="M:Objects.BuiltElements.Revit.RevitFlexDuct.#ctor(System.String,System.String,Objects.ICurve,System.String,System.String,Objects.BuiltElements.Level,System.Double,System.Double,System.Double,Objects.Geometry.Vector,Objects.Geometry.Vector,System.Double,System.Collections.Generic.List{Objects.BuiltElements.Revit.Parameter})">
-            <summary>
-            SchemaBuilder constructor for a Revit flex duct
-            </summary>
-            <param name="family"></param>
-            <param name="type"></param>
-            <param name="baseCurve"></param>
-            <param name="systemName"></param>
-            <param name="systemType"></param>
-            <param name="level"></param>
-            <param name="width"></param>
-            <param name="height"></param>
-            <param name="diameter"></param>
-            <param name="velocity"></param>
-            <param name="parameters"></param>
-            <remarks>Assign units when using this constructor due to <paramref name="width"/>, <paramref name="height"/>, and <paramref name="diameter"/> params</remarks>
-        </member>
         <member name="T:Objects.BuiltElements.Revit.RevitElement">
             <summary>
             A generic Revit element for which we don't have direct conversions
@@ -459,40 +432,6 @@
             <param name="parameters"></param>
             <remarks>Assign units when using this constructor due to <paramref name="start"/> and <paramref name="end"/> params</remarks>
         </member>
-        <member name="M:Objects.BuiltElements.Revit.RevitWall.#ctor(System.String,System.String,Objects.ICurve,Objects.BuiltElements.Level,Objects.BuiltElements.Level,System.Double,System.Double,System.Boolean,System.Boolean,System.Collections.Generic.List{Speckle.Core.Models.Base},System.Collections.Generic.List{Objects.BuiltElements.Revit.Parameter})">
-            <summary>
-            SchemaBuilder constructor for a Revit wall
-            </summary>
-            <param name="family"></param>
-            <param name="type"></param>
-            <param name="baseLine"></param>
-            <param name="level"></param>
-            <param name="topLevel"></param>
-            <param name="baseOffset"></param>
-            <param name="topOffset"></param>
-            <param name="flipped"></param>
-            <param name="structural"></param>
-            <param name="elements"></param>
-            <param name="parameters"></param>
-            <remarks>Assign units when using this constructor due to <paramref name="baseOffset"/> and <paramref name="topOffset"/> params</remarks>
-        </member>
-        <member name="M:Objects.BuiltElements.Revit.RevitWall.#ctor(System.String,System.String,Objects.ICurve,Objects.BuiltElements.Level,System.Double,System.Double,System.Double,System.Boolean,System.Boolean,System.Collections.Generic.List{Speckle.Core.Models.Base},System.Collections.Generic.List{Objects.BuiltElements.Revit.Parameter})">
-            <summary>
-            SchemaBuilder constructor for a Revit wall
-            </summary>
-            <param name="family"></param>
-            <param name="type"></param>
-            <param name="baseLine"></param>
-            <param name="level"></param>
-            <param name="height"></param>
-            <param name="baseOffset"></param>
-            <param name="topOffset"></param>
-            <param name="flipped"></param>
-            <param name="structural"></param>
-            <param name="elements"></param>
-            <param name="parameters"></param>
-            <remarks>Assign units when using this constructor due to <paramref name="height"/>, <paramref name="baseOffset"/>, and <paramref name="topOffset"/> params</remarks>
-        </member>
         <member name="M:Objects.BuiltElements.Room.#ctor(System.String,System.String,Objects.BuiltElements.Level,Objects.Geometry.Point)">
             <summary>
             SchemaBuilder constructor for a Room
@@ -504,15 +443,6 @@
             SchemaBuilder constructor for a Room
             </summary>
             <remarks>Assign units when using this constructor due to <see cref="P:Objects.BuiltElements.Room.height"/> prop</remarks>
-        </member>
-        <member name="M:Objects.BuiltElements.Wall.#ctor(System.Double,Objects.ICurve,System.Collections.Generic.List{Speckle.Core.Models.Base})">
-            <summary>
-            SchemaBuilder constructor for a Speckle wall
-            </summary>
-            <param name="height"></param>
-            <param name="baseLine"></param>
-            <param name="elements"></param>
-            <remarks>Assign units when using this constructor due to <paramref name="height"/> param</remarks>
         </member>
         <member name="T:Objects.Geometry.Arc">
             <summary>
@@ -1978,6 +1908,16 @@
             if a native displayable object cannot be converted.
             </summary>
         </member>
+        <member name="T:Objects.ICivilCalculatedObject">
+            <summary>
+            Represents a calculated object for civil disciplines
+            </summary>
+        </member>
+        <member name="P:Objects.ICivilCalculatedObject.codes">
+            <summary>
+            <see cref="P:Objects.ICivilCalculatedObject.codes"/> for this calculated object.
+            </summary>
+        </member>
         <member name="T:Objects.ObjectsKit">
             <summary>
             The default Speckle Kit
@@ -2087,6 +2027,16 @@
             Returns the translation transform of the base point to the internal origin [0,0,0]
             </summary>
             <returns></returns>
+        </member>
+        <member name="P:Objects.Other.Civil.CivilDataField.context">
+            <summary>
+            The context type of the Civil3D part
+            </summary>
+        </member>
+        <member name="T:Objects.Other.DataField">
+            <summary>
+            Generic class for a data field
+            </summary>
         </member>
         <member name="T:Objects.Other.Dimension">
             <summary>
@@ -2443,35 +2393,6 @@
             <param name="localAxis"></param>
         </member>
         <member name="M:Objects.Structural.CSI.Geometry.CSIElement1D.#ctor(Objects.Geometry.Line,Objects.Structural.Properties.Property1D,Objects.Structural.Geometry.ElementType1D,System.String,Objects.Structural.Geometry.Restraint,Objects.Structural.Geometry.Restraint,Objects.Geometry.Vector,Objects.Geometry.Vector,Objects.Structural.Geometry.Node,System.Double,Objects.Structural.CSI.Properties.CSILinearSpring,System.Double[],Objects.Structural.CSI.Properties.DesignProcedure)">
-            <summary>
-            SchemaBuilder constructor for structural 1D element (based on orientation node and angle)
-            </summary>
-            <param name="baseLine"></param>
-            <param name="property"></param>
-            <param name="type"></param>
-            <param name="name"></param>
-            <param name="end1Releases"></param>
-            <param name="end2Releases"></param>
-            <param name="end1Offset"></param>
-            <param name="end2Offset"></param>
-            <param name="orientationNode"></param>
-            <param name="orientationAngle"></param>
-        </member>
-        <member name="M:Objects.Structural.Geometry.Element1D.#ctor(Objects.Geometry.Line,Objects.Structural.Properties.Property1D,Objects.Structural.Geometry.ElementType1D,System.String,Objects.Structural.Geometry.Restraint,Objects.Structural.Geometry.Restraint,Objects.Geometry.Vector,Objects.Geometry.Vector,Objects.Geometry.Plane)">
-            <summary>
-            SchemaBuilder constructor for structural 1D element (based on local axis)
-            </summary>
-            <param name="baseLine"></param>
-            <param name="property"></param>
-            <param name="type"></param>
-            <param name="name"></param>
-            <param name="end1Releases"></param>
-            <param name="end2Releases"></param>
-            <param name="end1Offset"></param>
-            <param name="end2Offset"></param>
-            <param name="localAxis"></param>
-        </member>
-        <member name="M:Objects.Structural.Geometry.Element1D.#ctor(Objects.Geometry.Line,Objects.Structural.Properties.Property1D,Objects.Structural.Geometry.ElementType1D,System.String,Objects.Structural.Geometry.Restraint,Objects.Structural.Geometry.Restraint,Objects.Geometry.Vector,Objects.Geometry.Vector,Objects.Structural.Geometry.Node,System.Double)">
             <summary>
             SchemaBuilder constructor for structural 1D element (based on orientation node and angle)
             </summary>
