@@ -1,9 +1,4 @@
-﻿using Speckle.Core.Api;
-using Speckle.Core.Api.SubscriptionModels;
-using Speckle.Core.Credentials;
-using Speckle.Core.Logging;
-using Speckle.Core.Transports;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +6,12 @@ using System.Threading.Tasks;
 using Sentry;
 using Speckle.ConnectorUnity.Components;
 using Speckle.ConnectorUnity.Utils;
+using Speckle.Core.Api;
+using Speckle.Core.Api.SubscriptionModels;
+using Speckle.Core.Credentials;
 using Speckle.Core.Kits;
+using Speckle.Core.Logging;
+using Speckle.Core.Transports;
 using UnityEngine;
 
 namespace Speckle.ConnectorUnity
@@ -91,23 +91,16 @@ namespace Speckle.ConnectorUnity
 
             Task.Run(async () =>
             {
-                try
-                {
-                    var mainBranch = await Client.BranchGet(StreamId, BranchName, 1);
-                    if (!mainBranch.commits.items.Any())
-                        throw new Exception("This branch has no commits");
-                    var commit = mainBranch.commits.items[0];
-                    GetAndConvertObject(
-                        commit.referencedObject,
-                        commit.id,
-                        commit.sourceApplication,
-                        commit.authorId
-                    );
-                }
-                catch (Exception e)
-                {
-                    throw new SpeckleException(e.Message, e, true, SentryLevel.Error);
-                }
+                var mainBranch = await Client.BranchGet(StreamId, BranchName, 1);
+                if (!mainBranch.commits.items.Any())
+                    throw new Exception("This branch has no commits");
+                var commit = mainBranch.commits.items[0];
+                GetAndConvertObject(
+                    commit.referencedObject,
+                    commit.id,
+                    commit.sourceApplication,
+                    commit.authorId
+                );
             });
         }
 
@@ -135,56 +128,46 @@ namespace Speckle.ConnectorUnity
             string authorId
         )
         {
-            try
-            {
-                var transport = new ServerTransport(Client.Account, StreamId);
-                var @base = await Operations.Receive(
-                    objectId,
-                    remoteTransport: transport,
-                    onErrorAction: OnErrorAction,
-                    onProgressAction: OnProgressAction,
-                    onTotalChildrenCountKnown: OnTotalChildrenCountKnown,
-                    disposeTransports: true
-                );
+            var transport = new ServerTransport(Client.Account, StreamId);
+            var @base = await Operations.Receive(
+                objectId,
+                remoteTransport: transport,
+                onErrorAction: OnErrorAction,
+                onProgressAction: OnProgressAction,
+                onTotalChildrenCountKnown: OnTotalChildrenCountKnown,
+                disposeTransports: true
+            );
 
-                Analytics.TrackEvent(
-                    Client.Account,
-                    Analytics.Events.Receive,
-                    new Dictionary<string, object>()
+            Analytics.TrackEvent(
+                Client.Account,
+                Analytics.Events.Receive,
+                new Dictionary<string, object>()
+                {
+                    { "mode", nameof(Receiver) },
                     {
-                        { "mode", nameof(Receiver) },
-                        {
-                            "sourceHostApp",
-                            HostApplications.GetHostAppFromString(sourceApplication).Slug
-                        },
-                        { "sourceHostAppVersion", sourceApplication ?? "" },
-                        { "hostPlatform", Application.platform.ToString() },
-                        {
-                            "isMultiplayer",
-                            authorId != null && authorId != Client.Account.userInfo.id
-                        },
-                    }
-                );
+                        "sourceHostApp",
+                        HostApplications.GetHostAppFromString(sourceApplication).Slug
+                    },
+                    { "sourceHostAppVersion", sourceApplication ?? "" },
+                    { "hostPlatform", Application.platform.ToString() },
+                    { "isMultiplayer", authorId != null && authorId != Client.Account.userInfo.id },
+                }
+            );
 
-                Dispatcher
-                    .Instance()
-                    .Enqueue(() =>
-                    {
-                        var root = new GameObject() { name = commitId, };
+            Dispatcher
+                .Instance()
+                .Enqueue(() =>
+                {
+                    var root = new GameObject() { name = commitId, };
 
-                        var rc = GetComponent<RecursiveConverter>();
-                        var go = rc.RecursivelyConvertToNative(@base, root.transform);
-                        //remove previously received object
-                        if (DeleteOld && ReceivedData != null)
-                            Destroy(ReceivedData);
-                        ReceivedData = root;
-                        OnDataReceivedAction?.Invoke(root);
-                    });
-            }
-            catch (Exception e)
-            {
-                throw new SpeckleException(e.Message, e, true, SentryLevel.Error);
-            }
+                    var rc = GetComponent<RecursiveConverter>();
+                    var go = rc.RecursivelyConvertToNative(@base, root.transform);
+                    //remove previously received object
+                    if (DeleteOld && ReceivedData != null)
+                        Destroy(ReceivedData);
+                    ReceivedData = root;
+                    OnDataReceivedAction?.Invoke(root);
+                });
 
             try
             {

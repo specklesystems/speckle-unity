@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Speckle.ConnectorUnity;
 using Speckle.ConnectorUnity.Components;
 using Speckle.Core.Api;
+using Speckle.Core.Api.GraphQL.Models;
 using Speckle.Core.Credentials;
 using Speckle.Core.Models;
 using Speckle.Core.Transports;

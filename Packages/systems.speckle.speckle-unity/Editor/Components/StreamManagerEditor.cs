@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Sentry;
 using Speckle.Core.Api;
 using Speckle.Core.Credentials;
 using Speckle.Core.Kits;
@@ -234,17 +233,14 @@ namespace Speckle.ConnectorUnity.Components.Editor
                     new CommitReceivedInput
                     {
                         streamId = SelectedStream.id,
-                        commitId = Branches[SelectedBranchIndex].commits.items[
-                            SelectedCommitIndex
-                        ].id,
+                        commitId = Branches[SelectedBranchIndex]
+                            .commits
+                            .items[SelectedCommitIndex]
+                            .id,
                         message = $"received commit from {HostApplications.Unity.Name} Editor",
                         sourceApplication = HostApplications.Unity.Name
                     }
                 );
-            }
-            catch (Exception e)
-            {
-                throw new SpeckleException(e.Message, e, true, SentryLevel.Error);
             }
             finally
             {
@@ -384,8 +380,8 @@ namespace Speckle.ConnectorUnity.Components.Editor
             SelectedCommitIndex = EditorGUILayout.Popup(
                 "Commits",
                 SelectedCommitIndex,
-                Branches[SelectedBranchIndex].commits.items
-                    .Select(x => $"{x.message} - {x.id}")
+                Branches[SelectedBranchIndex]
+                    .commits.items.Select(x => $"{x.message} - {x.id}")
                     .ToArray(),
                 GUILayout.Height(20),
                 GUILayout.ExpandWidth(true)

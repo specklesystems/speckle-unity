@@ -1,16 +1,16 @@
-﻿using Speckle.Core.Api;
-using Speckle.Core.Credentials;
-using Speckle.Core.Logging;
-using Speckle.Core.Models;
-using Speckle.Core.Transports;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Sentry;
 using Speckle.ConnectorUnity.Components;
+using Speckle.Core.Api;
+using Speckle.Core.Credentials;
 using Speckle.Core.Kits;
+using Speckle.Core.Logging;
+using Speckle.Core.Models;
+using Speckle.Core.Transports;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -46,7 +46,6 @@ namespace Speckle.ConnectorUnity
         /// <param name="onDataSentAction">Action to run after the data has been sent</param>
         /// <param name="onProgressAction">Action to run when there is download/conversion progress</param>
         /// <param name="onErrorAction">Action to run on error</param>
-        /// <exception cref="SpeckleException"></exception>
         public void Send(
             string streamId,
             ISet<GameObject> gameObjects,
@@ -58,39 +57,32 @@ namespace Speckle.ConnectorUnity
             Action<string, Exception>? onErrorAction = null
         )
         {
-            try
-            {
-                CancelOperations();
+            CancelOperations();
 
-                cancellationTokenSource = new CancellationTokenSource();
+            cancellationTokenSource = new CancellationTokenSource();
 
-                var client = new Client(account ?? AccountManager.GetDefaultAccount()!);
-                transport = new ServerTransport(client.Account, streamId);
-                transport.CancellationToken = cancellationTokenSource.Token;
+            var client = new Client(account ?? AccountManager.GetDefaultAccount()!);
+            transport = new ServerTransport(client.Account, streamId);
+            transport.CancellationToken = cancellationTokenSource.Token;
 
-                var rootObjects = SceneManager.GetActiveScene().GetRootGameObjects();
+            var rootObjects = SceneManager.GetActiveScene().GetRootGameObjects();
 
-                var data = converter.RecursivelyConvertToSpeckle(
-                    rootObjects,
-                    o => gameObjects.Contains(o)
-                );
+            var data = converter.RecursivelyConvertToSpeckle(
+                rootObjects,
+                o => gameObjects.Contains(o)
+            );
 
-                SendData(
-                    transport,
-                    data,
-                    client,
-                    branchName,
-                    createCommit,
-                    cancellationTokenSource.Token,
-                    onDataSentAction,
-                    onProgressAction,
-                    onErrorAction
-                );
-            }
-            catch (Exception e)
-            {
-                throw new SpeckleException(e.ToString(), e, true, SentryLevel.Error);
-            }
+            SendData(
+                transport,
+                data,
+                client,
+                branchName,
+                createCommit,
+                cancellationTokenSource.Token,
+                onDataSentAction,
+                onProgressAction,
+                onErrorAction
+            );
         }
 
         public static void SendData(
@@ -125,7 +117,6 @@ namespace Speckle.ConnectorUnity
                         long count = data.GetTotalChildrenCount();
 
                         await client.CommitCreate(
-                            cancellationToken,
                             new CommitCreateInput
                             {
                                 streamId = remoteTransport.StreamId,
@@ -134,7 +125,8 @@ namespace Speckle.ConnectorUnity
                                 message = $"Sent {count} objects from Unity",
                                 sourceApplication = HostApplications.Unity.Name,
                                 totalChildrenCount = (int)count,
-                            }
+                            },
+                            cancellationToken
                         );
                     }
 
