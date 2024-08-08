@@ -9,17 +9,22 @@
             Base class for GraphQL API exceptions
             </summary>
         </member>
-        <member name="T:Speckle.Core.Api.SpeckleGraphQLForbiddenException`1">
+        <member name="T:Speckle.Core.Api.SpeckleGraphQLForbiddenException">
             <summary>
             Represents a "FORBIDDEN" on "UNAUTHORIZED" GraphQL error as an exception.
             https://www.apollographql.com/docs/apollo-server/v2/data/errors/#unauthenticated
             https://www.apollographql.com/docs/apollo-server/v2/data/errors/#forbidden
             </summary>
         </member>
+        <member name="M:Speckle.Core.Api.Client.#ctor(Speckle.Core.Credentials.Account)">
+            <param name="account"></param>
+            <exception cref="T:System.ArgumentException"><paramref name="account"/> was null</exception>
+        </member>
         <member name="M:Speckle.Core.Api.Client.ExecuteGraphQLRequest``1(GraphQL.GraphQLRequest,System.Threading.CancellationToken)">
-            <exception cref="T:Speckle.Core.Api.SpeckleGraphQLForbiddenException`1">"FORBIDDEN" on "UNAUTHORIZED" response from server</exception>
-            <exception cref="T:Speckle.Core.Api.SpeckleGraphQLException`1">All other request errors</exception>
-            <exception cref="T:System.OperationCanceledException">The <paramref name="cancellationToken"/> requested a cancel</exception>
+            <inheritdoc/>
+        </member>
+        <member name="M:Speckle.Core.Api.Client.SubscribeTo``1(GraphQL.GraphQLRequest,System.Action{System.Object,``0})">
+            <inheritdoc cref="M:Speckle.Core.Api.GraphQL.ISpeckleGraphQLClient.SubscribeTo``1(GraphQL.GraphQLRequest,System.Action{System.Object,``0})"/>
         </member>
         <member name="M:Speckle.Core.Api.Client.StreamGetActivity(System.String,System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.String,System.Int32,System.Threading.CancellationToken)">
             <summary>
@@ -42,6 +47,8 @@
             <param name="streamId">Id of the stream to get the branches from</param>
             <param name="commitsLimit">Max number of commits to retrieve</param>
             <returns></returns>
+            <seealso cref="M:Speckle.Core.Api.GraphQL.Resources.ProjectResource.GetWithModels(System.String,System.Int32,System.String,Speckle.Core.Api.GraphQL.Inputs.ProjectModelsFilter,System.Threading.CancellationToken)"/>
+            <seealso cref="M:Speckle.Core.Api.GraphQL.Resources.ModelResource.GetModels(System.String,System.Int32,System.String,Speckle.Core.Api.GraphQL.Inputs.ProjectModelsFilter,System.Threading.CancellationToken)"/>
         </member>
         <member name="M:Speckle.Core.Api.Client.StreamGetBranches(System.String,System.Int32,System.Int32,System.Threading.CancellationToken)">
             <summary>
@@ -52,6 +59,8 @@
             <param name="commitsLimit">Max number of commits to retrieve</param>
             <param name="cancellationToken"></param>
             <returns></returns>
+            <seealso cref="M:Speckle.Core.Api.GraphQL.Resources.ProjectResource.GetWithModels(System.String,System.Int32,System.String,Speckle.Core.Api.GraphQL.Inputs.ProjectModelsFilter,System.Threading.CancellationToken)"/>
+            <seealso cref="M:Speckle.Core.Api.GraphQL.Resources.ModelResource.GetModels(System.String,System.Int32,System.String,Speckle.Core.Api.GraphQL.Inputs.ProjectModelsFilter,System.Threading.CancellationToken)"/>
         </member>
         <member name="M:Speckle.Core.Api.Client.BranchCreate(Speckle.Core.Api.BranchCreateInput,System.Threading.CancellationToken)">
             <summary>
@@ -60,6 +69,7 @@
             <param name="branchInput"></param>
             <param name="cancellationToken"></param>
             <returns>The branch id.</returns>
+            <seealso cref="M:Speckle.Core.Api.GraphQL.Resources.ModelResource.Create(Speckle.Core.Api.GraphQL.Inputs.CreateModelInput,System.Threading.CancellationToken)"/>
         </member>
         <member name="M:Speckle.Core.Api.Client.BranchGet(System.String,System.String,System.Int32,System.Threading.CancellationToken)">
             <summary>
@@ -69,6 +79,9 @@
             <param name="branchName">Name of the branch to get</param>
             <param name="cancellationToken"></param>
             <returns>The requested branch</returns>
+            <remarks>Updated to Model.GetWithVersions</remarks>
+            <seealso cref="M:Speckle.Core.Api.GraphQL.Resources.ModelResource.Get(System.String,System.String,System.Threading.CancellationToken)"/>
+            <seealso cref="M:Speckle.Core.Api.GraphQL.Resources.ModelResource.GetWithVersions(System.String,System.String,System.Int32,System.String,Speckle.Core.Api.GraphQL.Inputs.ModelVersionsFilter,System.Threading.CancellationToken)"/>
         </member>
         <member name="M:Speckle.Core.Api.Client.ModelGet(System.String,System.String,System.Threading.CancellationToken)">
             <summary>
@@ -78,6 +91,7 @@
             <param name="projectId">Id of the project to get the model from</param>
             <param name="modelId">Id of the model</param>
             <returns></returns>
+            <seealso cref="M:Speckle.Core.Api.GraphQL.Resources.ModelResource.Get(System.String,System.String,System.Threading.CancellationToken)"/>
         </member>
         <member name="M:Speckle.Core.Api.Client.BranchUpdate(Speckle.Core.Api.BranchUpdateInput,System.Threading.CancellationToken)">
             <summary>
@@ -85,6 +99,7 @@
             </summary>
             <param name="branchInput"></param>
             <returns>The stream's id.</returns>
+            <seealso cref="M:Speckle.Core.Api.GraphQL.Resources.ModelResource.Update(Speckle.Core.Api.GraphQL.Inputs.UpdateModelInput,System.Threading.CancellationToken)"/>
         </member>
         <member name="M:Speckle.Core.Api.Client.BranchDelete(Speckle.Core.Api.BranchDeleteInput,System.Threading.CancellationToken)">
             <summary>
@@ -93,6 +108,7 @@
             <param name="branchInput"></param>
             <param name="cancellationToken"></param>
             <returns></returns>
+            <seealso cref="M:Speckle.Core.Api.GraphQL.Resources.ModelResource.Delete(Speckle.Core.Api.GraphQL.Inputs.DeleteModelInput,System.Threading.CancellationToken)"/>
         </member>
         <member name="M:Speckle.Core.Api.Client.StreamGetComments(System.String,System.Int32,System.String,System.Threading.CancellationToken)">
             <summary>
@@ -103,6 +119,7 @@
             <param name="cursor">Time to filter the comments with</param>
             <param name="cancellationToken"></param>
             <returns></returns>
+            <seealso cref="M:Speckle.Core.Api.GraphQL.Resources.CommentResource.GetProjectComments(System.String,System.Int32,System.String,Speckle.Core.Api.GraphQL.Inputs.ProjectCommentsFilter,System.Int32,System.String,System.Threading.CancellationToken)"/>
         </member>
         <member name="M:Speckle.Core.Api.Client.StreamGetCommentScreenshot(System.String,System.String,System.Threading.CancellationToken)">
             <summary>
@@ -112,6 +129,7 @@
             <param name="streamId">Id of the stream to get the comment from</param>
             <param name="cancellationToken"></param>
             <returns></returns>
+            <seealso cref="M:Speckle.Core.Api.GraphQL.Resources.CommentResource.GetProjectComments(System.String,System.Int32,System.String,Speckle.Core.Api.GraphQL.Inputs.ProjectCommentsFilter,System.Int32,System.String,System.Threading.CancellationToken)"/>
         </member>
         <member name="M:Speckle.Core.Api.Client.CommitGet(System.String,System.String,System.Threading.CancellationToken)">
             <summary>
@@ -121,6 +139,7 @@
             <param name="commitId">Id of the commit to get</param>
             <param name="cancellationToken"></param>
             <returns></returns>
+            <seealso cref="M:Speckle.Core.Api.GraphQL.Resources.VersionResource.Get(System.String,System.String,System.String,System.Threading.CancellationToken)"/>
         </member>
         <member name="M:Speckle.Core.Api.Client.StreamGetCommits(System.String,System.Int32,System.Threading.CancellationToken)">
             <summary>
@@ -130,6 +149,7 @@
             <param name="limit">Max number of commits to get</param>
             <param name="cancellationToken"></param>
             <returns>The requested commits</returns>
+            <seealso cref="M:Speckle.Core.Api.GraphQL.Resources.VersionResource.GetVersions(System.String,System.String,System.Int32,System.String,Speckle.Core.Api.GraphQL.Inputs.ModelVersionsFilter,System.Threading.CancellationToken)"/>
         </member>
         <member name="M:Speckle.Core.Api.Client.CommitCreate(Speckle.Core.Api.CommitCreateInput,System.Threading.CancellationToken)">
             <summary>
@@ -137,6 +157,7 @@
             </summary>
             <param name="commitInput"></param>
             <returns>The commit id.</returns>
+            <seealso cref="M:Speckle.Core.Api.GraphQL.Resources.VersionResource.Create(Speckle.Core.Api.CommitCreateInput,System.Threading.CancellationToken)"/>
         </member>
         <member name="M:Speckle.Core.Api.Client.CommitUpdate(Speckle.Core.Api.CommitUpdateInput,System.Threading.CancellationToken)">
             <summary>
@@ -145,6 +166,7 @@
             <param name="commitInput"></param>
             <param name="cancellationToken"></param>
             <returns>The stream's id.</returns>
+            <seealso cref="M:Speckle.Core.Api.GraphQL.Resources.VersionResource.Update(Speckle.Core.Api.GraphQL.Inputs.UpdateVersionInput,System.Threading.CancellationToken)"/>
         </member>
         <member name="M:Speckle.Core.Api.Client.CommitDelete(Speckle.Core.Api.CommitDeleteInput,System.Threading.CancellationToken)">
             <summary>
@@ -153,6 +175,7 @@
             <param name="commitInput"></param>
             <param name="cancellationToken"></param>
             <returns></returns>
+            <seealso cref="M:Speckle.Core.Api.GraphQL.Resources.VersionResource.Delete(Speckle.Core.Api.GraphQL.Inputs.DeleteVersionsInput,System.Threading.CancellationToken)"/>
         </member>
         <member name="M:Speckle.Core.Api.Client.CommitReceived(Speckle.Core.Api.CommitReceivedInput,System.Threading.CancellationToken)">
             <summary>
@@ -162,6 +185,7 @@
             <param name="commitReceivedInput"></param>
             <param name="cancellationToken"></param>
             <returns></returns>
+            <seealso cref="M:Speckle.Core.Api.GraphQL.Resources.VersionResource.Received(Speckle.Core.Api.CommitReceivedInput,System.Threading.CancellationToken)"/>
         </member>
         <member name="M:Speckle.Core.Api.Client.ObjectGet(System.String,System.String,System.Threading.CancellationToken)">
             <summary>
@@ -181,27 +205,12 @@
             <param name="cancellationToken"></param>
             <returns></returns>
         </member>
-        <member name="M:Speckle.Core.Api.Client.StreamGrantPermission(Speckle.Core.Api.StreamPermissionInput)">
-            <summary>
-            Grants permissions to a user on a given stream.
-            </summary>
-            <param name="permissionInput"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Speckle.Core.Api.Client.StreamGrantPermission(System.Threading.CancellationToken,Speckle.Core.Api.StreamPermissionInput)">
-            <summary>
-            Grants permissions to a user on a given stream.
-            </summary>
-            <param name="cancellationToken"></param>
-            <param name="permissionInput"></param>
-            <returns></returns>
-        </member>
         <member name="M:Speckle.Core.Api.Client.GetServerVersion(System.Threading.CancellationToken)">
             <summary>
             Gets the version of the current server. Useful for guarding against unsupported api calls on newer or older servers.
             </summary>
             <param name="cancellationToken">[Optional] defaults to an empty cancellation token</param>
-            <returns><see cref="T:Speckle.Core.Api.Version"/> object excluding any strings (eg "2.7.2-alpha.6995" becomes "2.7.2.6995")</returns>
+            <returns><see cref="P:Speckle.Core.Api.Client.Version"/> object excluding any strings (eg "2.7.2-alpha.6995" becomes "2.7.2.6995")</returns>
             <exception cref="T:Speckle.Core.Logging.SpeckleException"></exception>
         </member>
         <member name="M:Speckle.Core.Api.Client.IsStreamAccessible(System.String,System.Threading.CancellationToken)">
@@ -221,6 +230,8 @@
             <param name="branchesLimit">Max number of branches to retrieve</param>
             <param name="cancellationToken"></param>
             <returns></returns>
+            <seealso cref="M:Speckle.Core.Api.GraphQL.Resources.ProjectResource.Get(System.String,System.Threading.CancellationToken)"/>
+            <seealso cref="M:Speckle.Core.Api.GraphQL.Resources.ProjectResource.GetWithModels(System.String,System.Int32,System.String,Speckle.Core.Api.GraphQL.Inputs.ProjectModelsFilter,System.Threading.CancellationToken)"/>
         </member>
         <member name="M:Speckle.Core.Api.Client.StreamsGet(System.Int32,System.Threading.CancellationToken)">
             <summary>
@@ -229,6 +240,7 @@
             <param name="limit">Max number of streams to return</param>
             <param name="cancellationToken"></param>
             <returns></returns>
+            <seealso cref="M:Speckle.Core.Api.GraphQL.Resources.ActiveUserResource.GetProjects(System.Int32,System.String,Speckle.Core.Api.GraphQL.Inputs.UserProjectsFilter,System.Threading.CancellationToken)"/>
         </member>
         <member name="M:Speckle.Core.Api.Client.FavoriteStreamsGet(System.Int32,System.Threading.CancellationToken)">
             <summary>
@@ -246,6 +258,7 @@
             <param name="limit">Max number of streams to return</param>
             <param name="cancellationToken"></param>
             <returns></returns>
+            <seealso cref="M:Speckle.Core.Api.GraphQL.Resources.ActiveUserResource.GetProjects(System.Int32,System.String,Speckle.Core.Api.GraphQL.Inputs.UserProjectsFilter,System.Threading.CancellationToken)"/>
         </member>
         <member name="M:Speckle.Core.Api.Client.StreamCreate(Speckle.Core.Api.StreamCreateInput,System.Threading.CancellationToken)">
             <summary>
@@ -254,6 +267,7 @@
             <param name="streamInput"></param>
             <param name="cancellationToken"></param>
             <returns>The stream's id.</returns>
+            <seealso cref="M:Speckle.Core.Api.GraphQL.Resources.ProjectResource.Create(Speckle.Core.Api.GraphQL.Inputs.ProjectCreateInput,System.Threading.CancellationToken)"/>
         </member>
         <member name="M:Speckle.Core.Api.Client.StreamUpdate(Speckle.Core.Api.StreamUpdateInput,System.Threading.CancellationToken)">
             <summary>
@@ -262,6 +276,7 @@
             <param name="streamInput">Note: the id field needs to be a valid stream id.</param>
             <param name="cancellationToken"></param>
             <returns>The stream's id.</returns>
+            <seealso cref="M:Speckle.Core.Api.GraphQL.Resources.ProjectResource.Update(Speckle.Core.Api.GraphQL.Inputs.ProjectUpdateInput,System.Threading.CancellationToken)"/>
         </member>
         <member name="M:Speckle.Core.Api.Client.StreamDelete(System.String,System.Threading.CancellationToken)">
             <summary>
@@ -270,6 +285,7 @@
             <param name="id">Id of the stream to be deleted</param>
             <param name="cancellationToken"></param>
             <returns></returns>
+            <seealso cref="M:Speckle.Core.Api.GraphQL.Resources.ProjectResource.Delete(System.String,System.Threading.CancellationToken)"/>
         </member>
         <member name="M:Speckle.Core.Api.Client.StreamRevokePermission(Speckle.Core.Api.StreamRevokePermissionInput,System.Threading.CancellationToken)">
             <summary>
@@ -287,6 +303,7 @@
             <param name="cancellationToken"></param>
             <returns></returns>
             <exception cref="T:Speckle.Core.Logging.SpeckleException"></exception>
+            <seealso cref="M:Speckle.Core.Api.GraphQL.Resources.ProjectResource.UpdateRole(Speckle.Core.Api.GraphQL.Inputs.ProjectUpdateRoleInput,System.Threading.CancellationToken)"/>
         </member>
         <member name="M:Speckle.Core.Api.Client.StreamGetPendingCollaborators(System.String,System.Threading.CancellationToken)">
             <summary>
@@ -296,6 +313,7 @@
             <param name="streamId"></param>
             <param name="cancellationToken"></param>
             <returns></returns>
+            <seealso cref="M:Speckle.Core.Api.GraphQL.Resources.ProjectResource.GetWithTeam(System.String,System.Threading.CancellationToken)"/>
         </member>
         <member name="M:Speckle.Core.Api.Client.StreamInviteCreate(Speckle.Core.Api.StreamInviteCreateInput,System.Threading.CancellationToken)">
             <summary>
@@ -304,6 +322,7 @@
             <param name="inviteCreateInput"></param>
             <param name="cancellationToken"></param>
             <returns></returns>
+            <seealso cref="M:Speckle.Core.Api.GraphQL.Resources.ProjectInviteResource.Create(System.String,Speckle.Core.Api.GraphQL.Inputs.ProjectInviteCreateInput,System.Threading.CancellationToken)"/>
         </member>
         <member name="M:Speckle.Core.Api.Client.StreamInviteCancel(System.String,System.String,System.Threading.CancellationToken)">
             <summary>
@@ -313,6 +332,7 @@
             <param name="inviteId">Id of the invite to cancel</param>
             <param name="cancellationToken"></param>
             <returns></returns>
+            <seealso cref="M:Speckle.Core.Api.GraphQL.Resources.ProjectInviteResource.Cancel(System.String,System.String,System.Threading.CancellationToken)"/>
         </member>
         <member name="M:Speckle.Core.Api.Client.StreamInviteUse(System.String,System.String,System.Boolean,System.Threading.CancellationToken)">
             <summary>
@@ -324,6 +344,15 @@
             <param name="cancellationToken"></param>
             <returns></returns>
             <exception cref="T:Speckle.Core.Logging.SpeckleException"></exception>
+            <seealso cref="M:Speckle.Core.Api.GraphQL.Resources.ProjectInviteResource.Use(Speckle.Core.Api.GraphQL.Inputs.ProjectInviteUseInput,System.Threading.CancellationToken)"/>
+        </member>
+        <member name="M:Speckle.Core.Api.Client.GetAllPendingInvites(System.Threading.CancellationToken)">
+             <summary>
+            
+             </summary>
+             <param name="cancellationToken"></param>
+             <returns></returns>
+             <seealso cref="M:Speckle.Core.Api.GraphQL.Resources.ProjectInviteResource.Use(Speckle.Core.Api.GraphQL.Inputs.ProjectInviteUseInput,System.Threading.CancellationToken)"/>
         </member>
         <member name="M:Speckle.Core.Api.Client.ActiveUserGet(System.Threading.CancellationToken)">
             <summary>
@@ -331,6 +360,7 @@
             </summary>
             <param name="cancellationToken"></param>
             <returns></returns>
+            <seealso cref="M:Speckle.Core.Api.GraphQL.Resources.ActiveUserResource.Get(System.Threading.CancellationToken)"/>
         </member>
         <member name="M:Speckle.Core.Api.Client.OtherUserGet(System.String,System.Threading.CancellationToken)">
             <summary>
@@ -339,6 +369,7 @@
             <param name="id">Id of the user you are looking for</param>
             <param name="cancellationToken"></param>
             <returns></returns>
+            <seealso cref="M:Speckle.Core.Api.GraphQL.Resources.OtherUserResource.Get(System.String,System.Threading.CancellationToken)"/>
         </member>
         <member name="M:Speckle.Core.Api.Client.UserSearch(System.String,System.Int32,System.Threading.CancellationToken)">
             <summary>
@@ -347,6 +378,7 @@
             <param name="query">String to search for. Must be at least 3 characters</param>
             <param name="limit">Max number of users to return</param>
             <returns></returns>
+            <seealso cref="M:Speckle.Core.Api.GraphQL.Resources.OtherUserResource.Get(System.String,System.Threading.CancellationToken)"/>
         </member>
         <member name="M:Speckle.Core.Api.Client.SubscribeBranchCreated(System.String)">
             <summary>
@@ -412,8 +444,349 @@
             Gets the version of the current server. Useful for guarding against unsupported api calls on newer or older servers.
             </summary>
             <param name="cancellationToken">[Optional] defaults to an empty cancellation token</param>
-            <returns><see cref="T:Speckle.Core.Api.Version"/> object excluding any strings (eg "2.7.2-alpha.6995" becomes "2.7.2.6995")</returns>
-            <exception cref="T:Speckle.Core.Api.SpeckleGraphQLException"></exception>
+            <returns><see cref="T:Speckle.Core.Api.GraphQL.Models.Version"/> object excluding any strings (eg "2.7.2-alpha.6995" becomes "2.7.2.6995")</returns>
+            <exception cref="T:Speckle.Core.Api.SpeckleGraphQLException`1"></exception>
+        </member>
+        <member name="M:Speckle.Core.Api.GraphQL.ISpeckleGraphQLClient.ExecuteGraphQLRequest``1(GraphQL.GraphQLRequest,System.Threading.CancellationToken)">
+            <exception cref="T:Speckle.Core.Api.SpeckleGraphQLForbiddenException">"FORBIDDEN" on "UNAUTHORIZED" response from server</exception>
+            <exception cref="T:Speckle.Core.Api.SpeckleGraphQLException">All other request errors</exception>
+            <exception cref="T:System.OperationCanceledException">The <paramref name="cancellationToken"/> requested a cancel</exception>
+            <exception cref="T:System.ObjectDisposedException">This <see cref="T:Speckle.Core.Api.Client"/> already been disposed</exception>
+        </member>
+        <member name="M:Speckle.Core.Api.GraphQL.ISpeckleGraphQLClient.SubscribeTo``1(GraphQL.GraphQLRequest,System.Action{System.Object,``0})">
+            <exception cref="T:Speckle.Core.Api.SpeckleGraphQLForbiddenException">"FORBIDDEN" on "UNAUTHORIZED" response from server</exception>
+            <exception cref="T:Speckle.Core.Api.SpeckleGraphQLException">All other request errors</exception>
+            <exception cref="T:System.ObjectDisposedException">This <see cref="T:Speckle.Core.Api.Client"/> already been disposed</exception>
+        </member>
+        <member name="T:Speckle.Core.Api.GraphQL.Os">
+            <summary>
+            OS
+            NOTE: do not edit order and only append new items as they are serialized to ints
+            </summary>
+        </member>
+        <member name="T:Speckle.Core.Api.GraphQL.Architecture">
+            <summary>
+            Architecture
+            NOTE: do not edit order and only append new items as they are serialized to ints
+            </summary>
+        </member>
+        <member name="P:Speckle.Core.Api.GraphQL.Models.ServerInfo.frontend2">
+            <remarks>
+            This field is not returned from the GQL API,
+            it should be populated after construction from the response headers.
+            see <see cref="T:Speckle.Core.Credentials.AccountManager"/>
+            </remarks>
+        </member>
+        <member name="P:Speckle.Core.Api.GraphQL.Models.ServerInfo.url">
+            <remarks>
+            This field is not returned from the GQL API,
+            it should be populated after construction.
+            see <see cref="T:Speckle.Core.Credentials.AccountManager"/>
+            </remarks>
+        </member>
+        <member name="P:Speckle.Core.Api.GraphQL.Models.ServerMigration.movedTo">
+            <summary>
+            New URI where this server is now deployed
+            </summary>
+        </member>
+        <member name="P:Speckle.Core.Api.GraphQL.Models.ServerMigration.movedFrom">
+            <summary>
+            Previous URI where this server used to be deployed
+            </summary>
+        </member>
+        <member name="M:Speckle.Core.Api.GraphQL.Resources.ActiveUserResource.Get(System.Threading.CancellationToken)">
+            <summary>
+            Gets the currently active user profile.
+            </summary>
+            <param name="cancellationToken"></param>
+            <returns></returns>
+            <returns>the requested user, or null if the user does not exist (i.e. <see cref="T:Speckle.Core.Api.Client"/> was initialised with an unauthenticated account)</returns>
+            <inheritdoc cref="M:Speckle.Core.Api.GraphQL.ISpeckleGraphQLClient.ExecuteGraphQLRequest``1(GraphQL.GraphQLRequest,System.Threading.CancellationToken)"/>
+        </member>
+        <member name="M:Speckle.Core.Api.GraphQL.Resources.ActiveUserResource.GetProjects(System.Int32,System.String,Speckle.Core.Api.GraphQL.Inputs.UserProjectsFilter,System.Threading.CancellationToken)">
+            <param name="limit">Max number of projects to fetch</param>
+            <param name="cursor">Optional cursor for pagination</param>
+            <param name="filter">Optional filter</param>
+            <param name="cancellationToken"></param>
+            <returns></returns>
+            <inheritdoc cref="M:Speckle.Core.Api.GraphQL.ISpeckleGraphQLClient.ExecuteGraphQLRequest``1(GraphQL.GraphQLRequest,System.Threading.CancellationToken)"/>
+        </member>
+        <member name="M:Speckle.Core.Api.GraphQL.Resources.ActiveUserResource.ProjectInvites(System.Threading.CancellationToken)">
+            <param name="cancellationToken"></param>
+            <returns></returns>
+            <inheritdoc cref="M:Speckle.Core.Api.GraphQL.ISpeckleGraphQLClient.ExecuteGraphQLRequest``1(GraphQL.GraphQLRequest,System.Threading.CancellationToken)"/>
+        </member>
+        <member name="M:Speckle.Core.Api.GraphQL.Resources.CommentResource.GetProjectComments(System.String,System.Int32,System.String,Speckle.Core.Api.GraphQL.Inputs.ProjectCommentsFilter,System.Int32,System.String,System.Threading.CancellationToken)">
+            <param name="projectId"></param>
+            <param name="limit">Max number of comments to fetch</param>
+            <param name="cursor">Optional cursor for pagination</param>
+            <param name="filter">Optional filter</param>
+            <param name="repliesLimit">Max number of comment replies to fetch</param>
+            <param name="repliesCursor">Optional cursor for pagination</param>
+            <param name="cancellationToken"></param>
+            <returns></returns>
+            <inheritdoc cref="M:Speckle.Core.Api.GraphQL.ISpeckleGraphQLClient.ExecuteGraphQLRequest``1(GraphQL.GraphQLRequest,System.Threading.CancellationToken)"/>
+        </member>
+        <member name="M:Speckle.Core.Api.GraphQL.Resources.CommentResource.Create(Speckle.Core.Api.GraphQL.Inputs.CreateCommentInput,System.Threading.CancellationToken)">
+            <remarks>
+            This function only exists here to be able to integration tests the queries.
+            The process of creating a comment is more complex and javascript specific than we can expose to our SDKs at this time.
+            </remarks>
+            <param name="input"></param>
+            <param name="cancellationToken"></param>
+            <returns></returns>
+            <inheritdoc cref="M:Speckle.Core.Api.GraphQL.ISpeckleGraphQLClient.ExecuteGraphQLRequest``1(GraphQL.GraphQLRequest,System.Threading.CancellationToken)"/>
+        </member>
+        <member name="M:Speckle.Core.Api.GraphQL.Resources.CommentResource.Edit(Speckle.Core.Api.GraphQL.Inputs.EditCommentInput,System.Threading.CancellationToken)">
+            <remarks><inheritdoc cref="M:Speckle.Core.Api.GraphQL.Resources.CommentResource.Create(Speckle.Core.Api.GraphQL.Inputs.CreateCommentInput,System.Threading.CancellationToken)"/></remarks>
+            <param name="input"></param>
+            <param name="cancellationToken"></param>
+            <returns></returns>
+            <inheritdoc cref="M:Speckle.Core.Api.GraphQL.ISpeckleGraphQLClient.ExecuteGraphQLRequest``1(GraphQL.GraphQLRequest,System.Threading.CancellationToken)"/>
+        </member>
+        <member name="M:Speckle.Core.Api.GraphQL.Resources.CommentResource.Archive(System.String,System.Boolean,System.Threading.CancellationToken)">
+            <param name="commentId"></param>
+            <param name="archive"></param>
+            <param name="cancellationToken"></param>
+            <returns></returns>
+            <inheritdoc cref="M:Speckle.Core.Api.GraphQL.ISpeckleGraphQLClient.ExecuteGraphQLRequest``1(GraphQL.GraphQLRequest,System.Threading.CancellationToken)"/>
+        </member>
+        <member name="M:Speckle.Core.Api.GraphQL.Resources.CommentResource.MarkViewed(System.String,System.Threading.CancellationToken)">
+            <param name="commentId"></param>
+            <param name="cancellationToken"></param>
+            <returns></returns>
+            <inheritdoc cref="M:Speckle.Core.Api.GraphQL.ISpeckleGraphQLClient.ExecuteGraphQLRequest``1(GraphQL.GraphQLRequest,System.Threading.CancellationToken)"/>
+        </member>
+        <member name="M:Speckle.Core.Api.GraphQL.Resources.CommentResource.Reply(Speckle.Core.Api.GraphQL.Inputs.CreateCommentReplyInput,System.Threading.CancellationToken)">
+            <remarks><inheritdoc cref="M:Speckle.Core.Api.GraphQL.Resources.CommentResource.Create(Speckle.Core.Api.GraphQL.Inputs.CreateCommentInput,System.Threading.CancellationToken)"/></remarks>
+            <param name="input"></param>
+            <param name="cancellationToken"></param>
+            <returns></returns>
+            <inheritdoc cref="M:Speckle.Core.Api.GraphQL.ISpeckleGraphQLClient.ExecuteGraphQLRequest``1(GraphQL.GraphQLRequest,System.Threading.CancellationToken)"/>
+        </member>
+        <member name="M:Speckle.Core.Api.GraphQL.Resources.ModelResource.Get(System.String,System.String,System.Threading.CancellationToken)">
+            <param name="modelId"></param>
+            <param name="projectId"></param>
+            <param name="cancellationToken"></param>
+            <returns></returns>
+            <inheritdoc cref="M:Speckle.Core.Api.GraphQL.ISpeckleGraphQLClient.ExecuteGraphQLRequest``1(GraphQL.GraphQLRequest,System.Threading.CancellationToken)"/>
+            <seealso cref="M:Speckle.Core.Api.GraphQL.Resources.ModelResource.GetWithVersions(System.String,System.String,System.Int32,System.String,Speckle.Core.Api.GraphQL.Inputs.ModelVersionsFilter,System.Threading.CancellationToken)"/>
+        </member>
+        <member name="M:Speckle.Core.Api.GraphQL.Resources.ModelResource.GetWithVersions(System.String,System.String,System.Int32,System.String,Speckle.Core.Api.GraphQL.Inputs.ModelVersionsFilter,System.Threading.CancellationToken)">
+            <param name="projectId"></param>
+            <param name="modelId"></param>
+            <param name="versionsLimit">Max number of versions to fetch</param>
+            <param name="versionsCursor">Optional cursor for pagination</param>
+            <param name="versionsFilter">Optional versions filter</param>
+            <param name="cancellationToken"></param>
+            <returns></returns>
+            <inheritdoc cref="M:Speckle.Core.Api.GraphQL.ISpeckleGraphQLClient.ExecuteGraphQLRequest``1(GraphQL.GraphQLRequest,System.Threading.CancellationToken)"/>
+            <see cref="M:Speckle.Core.Api.GraphQL.Resources.ModelResource.Get(System.String,System.String,System.Threading.CancellationToken)"/>
+        </member>
+        <member name="M:Speckle.Core.Api.GraphQL.Resources.ModelResource.GetModels(System.String,System.Int32,System.String,Speckle.Core.Api.GraphQL.Inputs.ProjectModelsFilter,System.Threading.CancellationToken)">
+            <param name="projectId"></param>
+            <param name="modelsLimit">Max number of models to fetch</param>
+            <param name="modelsCursor">Optional cursor for pagination</param>
+            <param name="modelsFilter">Optional models filter</param>
+            <param name="cancellationToken"></param>
+            <returns></returns>
+            <inheritdoc cref="M:Speckle.Core.Api.GraphQL.ISpeckleGraphQLClient.ExecuteGraphQLRequest``1(GraphQL.GraphQLRequest,System.Threading.CancellationToken)"/>
+        </member>
+        <member name="M:Speckle.Core.Api.GraphQL.Resources.ModelResource.Create(Speckle.Core.Api.GraphQL.Inputs.CreateModelInput,System.Threading.CancellationToken)">
+            <param name="input"></param>
+            <param name="cancellationToken"></param>
+            <returns></returns>
+            <inheritdoc cref="M:Speckle.Core.Api.GraphQL.ISpeckleGraphQLClient.ExecuteGraphQLRequest``1(GraphQL.GraphQLRequest,System.Threading.CancellationToken)"/>
+        </member>
+        <member name="M:Speckle.Core.Api.GraphQL.Resources.ModelResource.Delete(Speckle.Core.Api.GraphQL.Inputs.DeleteModelInput,System.Threading.CancellationToken)">
+            <param name="input"></param>
+            <param name="cancellationToken"></param>
+            <returns></returns>
+            <inheritdoc cref="M:Speckle.Core.Api.GraphQL.ISpeckleGraphQLClient.ExecuteGraphQLRequest``1(GraphQL.GraphQLRequest,System.Threading.CancellationToken)"/>
+        </member>
+        <member name="M:Speckle.Core.Api.GraphQL.Resources.ModelResource.Update(Speckle.Core.Api.GraphQL.Inputs.UpdateModelInput,System.Threading.CancellationToken)">
+            <param name="input"></param>
+            <param name="cancellationToken"></param>
+            <returns></returns>
+            <inheritdoc cref="M:Speckle.Core.Api.GraphQL.ISpeckleGraphQLClient.ExecuteGraphQLRequest``1(GraphQL.GraphQLRequest,System.Threading.CancellationToken)"/>
+        </member>
+        <member name="M:Speckle.Core.Api.GraphQL.Resources.OtherUserResource.Get(System.String,System.Threading.CancellationToken)">
+             <summary>
+            
+             </summary>
+             <param name="id"></param>
+             <param name="cancellationToken"></param>
+             <returns>the requested user, or null if the user does not exist</returns>
+             <inheritdoc cref="M:Speckle.Core.Api.GraphQL.ISpeckleGraphQLClient.ExecuteGraphQLRequest``1(GraphQL.GraphQLRequest,System.Threading.CancellationToken)"/>
+        </member>
+        <member name="M:Speckle.Core.Api.GraphQL.Resources.OtherUserResource.UserSearch(System.String,System.Int32,System.String,System.Boolean,System.Boolean,System.Threading.CancellationToken)">
+            <summary>
+            Searches for a user on the server.
+            </summary>
+            <param name="query">String to search for. Must be at least 3 characters</param>
+            <param name="limit">Max number of users to fetch</param>
+            <param name="cursor">Optional cursor for pagination</param>
+            <param name="archived"></param>
+            <param name="emailOnly"></param>
+            <param name="cancellationToken"></param>
+            <returns></returns>
+            <inheritdoc cref="M:Speckle.Core.Api.GraphQL.ISpeckleGraphQLClient.ExecuteGraphQLRequest``1(GraphQL.GraphQLRequest,System.Threading.CancellationToken)"/>
+        </member>
+        <member name="M:Speckle.Core.Api.GraphQL.Resources.ProjectInviteResource.Create(System.String,Speckle.Core.Api.GraphQL.Inputs.ProjectInviteCreateInput,System.Threading.CancellationToken)">
+            <param name="projectId"></param>
+            <param name="input"></param>
+            <param name="cancellationToken"></param>
+            <returns></returns>
+            <inheritdoc cref="M:Speckle.Core.Api.GraphQL.ISpeckleGraphQLClient.ExecuteGraphQLRequest``1(GraphQL.GraphQLRequest,System.Threading.CancellationToken)"/>
+        </member>
+        <member name="M:Speckle.Core.Api.GraphQL.Resources.ProjectInviteResource.Use(Speckle.Core.Api.GraphQL.Inputs.ProjectInviteUseInput,System.Threading.CancellationToken)">
+            <param name="input"></param>
+            <param name="cancellationToken"></param>
+            <returns></returns>
+            <inheritdoc cref="M:Speckle.Core.Api.GraphQL.ISpeckleGraphQLClient.ExecuteGraphQLRequest``1(GraphQL.GraphQLRequest,System.Threading.CancellationToken)"/>
+        </member>
+        <member name="M:Speckle.Core.Api.GraphQL.Resources.ProjectInviteResource.Get(System.String,System.String,System.Threading.CancellationToken)">
+            <param name="projectId"></param>
+            <param name="token"></param>
+            <param name="cancellationToken"></param>
+            <returns>The invite, or null if no invite exists</returns>
+            <inheritdoc cref="M:Speckle.Core.Api.GraphQL.ISpeckleGraphQLClient.ExecuteGraphQLRequest``1(GraphQL.GraphQLRequest,System.Threading.CancellationToken)"/>
+        </member>
+        <member name="M:Speckle.Core.Api.GraphQL.Resources.ProjectInviteResource.Cancel(System.String,System.String,System.Threading.CancellationToken)">
+            <param name="projectId"></param>
+            <param name="inviteId"></param>
+            <param name="cancellationToken"></param>
+            <returns></returns>
+            <inheritdoc cref="M:Speckle.Core.Api.GraphQL.ISpeckleGraphQLClient.ExecuteGraphQLRequest``1(GraphQL.GraphQLRequest,System.Threading.CancellationToken)"/>
+        </member>
+        <member name="M:Speckle.Core.Api.GraphQL.Resources.ProjectResource.Get(System.String,System.Threading.CancellationToken)">
+            <param name="projectId"></param>
+            <param name="cancellationToken"></param>
+            <returns></returns>
+            <inheritdoc cref="M:Speckle.Core.Api.GraphQL.ISpeckleGraphQLClient.ExecuteGraphQLRequest``1(GraphQL.GraphQLRequest,System.Threading.CancellationToken)"/>
+            <seealso cref="M:Speckle.Core.Api.GraphQL.Resources.ProjectResource.GetWithModels(System.String,System.Int32,System.String,Speckle.Core.Api.GraphQL.Inputs.ProjectModelsFilter,System.Threading.CancellationToken)"/>
+            <seealso cref="M:Speckle.Core.Api.GraphQL.Resources.ProjectResource.GetWithTeam(System.String,System.Threading.CancellationToken)"/>
+        </member>
+        <member name="M:Speckle.Core.Api.GraphQL.Resources.ProjectResource.GetWithModels(System.String,System.Int32,System.String,Speckle.Core.Api.GraphQL.Inputs.ProjectModelsFilter,System.Threading.CancellationToken)">
+            <param name="projectId"></param>
+            <param name="modelsLimit">Max number of models to fetch</param>
+            <param name="modelsCursor">Optional cursor for pagination</param>
+            <param name="modelsFilter">Optional models filter</param>
+            <param name="cancellationToken"></param>
+            <returns></returns>
+            <inheritdoc cref="M:Speckle.Core.Api.GraphQL.ISpeckleGraphQLClient.ExecuteGraphQLRequest``1(GraphQL.GraphQLRequest,System.Threading.CancellationToken)"/>
+            <seealso cref="M:Speckle.Core.Api.GraphQL.Resources.ProjectResource.Get(System.String,System.Threading.CancellationToken)"/>
+            <seealso cref="M:Speckle.Core.Api.GraphQL.Resources.ProjectResource.GetWithTeam(System.String,System.Threading.CancellationToken)"/>
+        </member>
+        <member name="M:Speckle.Core.Api.GraphQL.Resources.ProjectResource.GetWithTeam(System.String,System.Threading.CancellationToken)">
+            <param name="projectId"></param>
+            <param name="cancellationToken"></param>
+            <returns></returns>
+            <inheritdoc cref="M:Speckle.Core.Api.GraphQL.ISpeckleGraphQLClient.ExecuteGraphQLRequest``1(GraphQL.GraphQLRequest,System.Threading.CancellationToken)"/>
+            <seealso cref="M:Speckle.Core.Api.GraphQL.Resources.ProjectResource.Get(System.String,System.Threading.CancellationToken)"/>
+            <seealso cref="M:Speckle.Core.Api.GraphQL.Resources.ProjectResource.GetWithModels(System.String,System.Int32,System.String,Speckle.Core.Api.GraphQL.Inputs.ProjectModelsFilter,System.Threading.CancellationToken)"/>
+        </member>
+        <member name="M:Speckle.Core.Api.GraphQL.Resources.ProjectResource.Create(Speckle.Core.Api.GraphQL.Inputs.ProjectCreateInput,System.Threading.CancellationToken)">
+            <param name="input"></param>
+            <param name="cancellationToken"></param>
+            <returns></returns>
+            <inheritdoc cref="M:Speckle.Core.Api.GraphQL.ISpeckleGraphQLClient.ExecuteGraphQLRequest``1(GraphQL.GraphQLRequest,System.Threading.CancellationToken)"/>
+        </member>
+        <member name="M:Speckle.Core.Api.GraphQL.Resources.ProjectResource.Update(Speckle.Core.Api.GraphQL.Inputs.ProjectUpdateInput,System.Threading.CancellationToken)">
+            <param name="input"></param>
+            <param name="cancellationToken"></param>
+            <returns></returns>
+            <inheritdoc cref="M:Speckle.Core.Api.GraphQL.ISpeckleGraphQLClient.ExecuteGraphQLRequest``1(GraphQL.GraphQLRequest,System.Threading.CancellationToken)"/>
+        </member>
+        <member name="M:Speckle.Core.Api.GraphQL.Resources.ProjectResource.Delete(System.String,System.Threading.CancellationToken)">
+            <param name="projectId">The id of the Project to delete</param>
+            <param name="cancellationToken"></param>
+            <returns></returns>
+            <inheritdoc cref="M:Speckle.Core.Api.GraphQL.ISpeckleGraphQLClient.ExecuteGraphQLRequest``1(GraphQL.GraphQLRequest,System.Threading.CancellationToken)"/>
+        </member>
+        <member name="M:Speckle.Core.Api.GraphQL.Resources.ProjectResource.UpdateRole(Speckle.Core.Api.GraphQL.Inputs.ProjectUpdateRoleInput,System.Threading.CancellationToken)">
+            <param name="input"></param>
+            <param name="cancellationToken"></param>
+            <inheritdoc cref="M:Speckle.Core.Api.GraphQL.ISpeckleGraphQLClient.ExecuteGraphQLRequest``1(GraphQL.GraphQLRequest,System.Threading.CancellationToken)"/>
+        </member>
+        <member name="M:Speckle.Core.Api.GraphQL.Resources.SubscriptionResource.CreateUserProjectsUpdatedSubscription">
+            <summary>Track newly added or deleted projects owned by the active user</summary>
+            <remarks>
+            You should add event listeners to the returned <see cref="T:Speckle.Core.Api.GraphQL.Resources.Subscription`1"/> object.<br/>
+            You can add multiple listeners to a <see cref="T:Speckle.Core.Api.GraphQL.Resources.Subscription`1"/>, and this should be preferred over creating many subscriptions.<br/>
+            You should ensure proper disposal of the <see cref="T:Speckle.Core.Api.GraphQL.Resources.Subscription`1"/> when you're done (see <see cref="T:System.IDisposable"/>)<br/>
+            Disposing of the <see cref="T:Speckle.Core.Api.Client"/> or <see cref="T:Speckle.Core.Api.GraphQL.Resources.SubscriptionResource"/> will also dispose any <see cref="T:Speckle.Core.Api.GraphQL.Resources.Subscription`1"/>s it created.
+            </remarks>
+            <inheritdoc cref="M:Speckle.Core.Api.GraphQL.ISpeckleGraphQLClient.SubscribeTo``1(GraphQL.GraphQLRequest,System.Action{System.Object,``0})"/>
+        </member>
+        <member name="M:Speckle.Core.Api.GraphQL.Resources.SubscriptionResource.CreateProjectCommentsUpdatedSubscription(Speckle.Core.Api.GraphQL.Inputs.ViewerUpdateTrackingTarget)">
+            <summary>Subscribe to updates to resource comments/threads. Optionally specify resource ID string to only receive updates regarding comments for those resources</summary>
+            <remarks><inheritdoc cref="M:Speckle.Core.Api.GraphQL.Resources.SubscriptionResource.CreateUserProjectsUpdatedSubscription"/></remarks>
+            <inheritdoc cref="M:Speckle.Core.Api.GraphQL.ISpeckleGraphQLClient.SubscribeTo``1(GraphQL.GraphQLRequest,System.Action{System.Object,``0})"/>
+        </member>
+        <member name="M:Speckle.Core.Api.GraphQL.Resources.SubscriptionResource.CreateProjectModelsUpdatedSubscription(System.String,System.Collections.Generic.IReadOnlyList{System.String})">
+            <summary>Subscribe to changes to a project's models. Optionally specify <paramref name="modelIds"/> to track</summary>
+            <remarks><inheritdoc cref="M:Speckle.Core.Api.GraphQL.Resources.SubscriptionResource.CreateUserProjectsUpdatedSubscription"/></remarks>
+            <inheritdoc cref="M:Speckle.Core.Api.GraphQL.ISpeckleGraphQLClient.SubscribeTo``1(GraphQL.GraphQLRequest,System.Action{System.Object,``0})"/>
+        </member>
+        <member name="M:Speckle.Core.Api.GraphQL.Resources.SubscriptionResource.CreateProjectUpdatedSubscription(System.String)">
+            <summary>Track updates to a specific project</summary>
+            <remarks><inheritdoc cref="M:Speckle.Core.Api.GraphQL.Resources.SubscriptionResource.CreateUserProjectsUpdatedSubscription"/></remarks>
+            <inheritdoc cref="M:Speckle.Core.Api.GraphQL.ISpeckleGraphQLClient.SubscribeTo``1(GraphQL.GraphQLRequest,System.Action{System.Object,``0})"/>
+        </member>
+        <member name="M:Speckle.Core.Api.GraphQL.Resources.SubscriptionResource.CreateProjectVersionsUpdatedSubscription(System.String)">
+            <summary>Subscribe to changes to a project's versions.</summary>
+            <remarks><inheritdoc cref="M:Speckle.Core.Api.GraphQL.Resources.SubscriptionResource.CreateUserProjectsUpdatedSubscription"/></remarks>
+            <inheritdoc cref="M:Speckle.Core.Api.GraphQL.ISpeckleGraphQLClient.SubscribeTo``1(GraphQL.GraphQLRequest,System.Action{System.Object,``0})"/>
+        </member>
+        <member name="M:Speckle.Core.Api.GraphQL.Resources.VersionResource.Get(System.String,System.String,System.String,System.Threading.CancellationToken)">
+            <param name="projectId"></param>
+            <param name="modelId"></param>
+            <param name="versionId"></param>
+            <param name="cancellationToken"></param>
+            <returns></returns>
+            <inheritdoc cref="M:Speckle.Core.Api.GraphQL.ISpeckleGraphQLClient.ExecuteGraphQLRequest``1(GraphQL.GraphQLRequest,System.Threading.CancellationToken)"/>
+        </member>
+        <member name="M:Speckle.Core.Api.GraphQL.Resources.VersionResource.GetVersions(System.String,System.String,System.Int32,System.String,Speckle.Core.Api.GraphQL.Inputs.ModelVersionsFilter,System.Threading.CancellationToken)">
+            <param name="projectId"></param>
+            <param name="modelId"></param>
+            <param name="limit">Max number of versions to fetch</param>
+            <param name="cursor">Optional cursor for pagination</param>
+            <param name="filter">Optional filter</param>
+            <param name="cancellationToken"></param>
+            <inheritdoc cref="M:Speckle.Core.Api.GraphQL.ISpeckleGraphQLClient.ExecuteGraphQLRequest``1(GraphQL.GraphQLRequest,System.Threading.CancellationToken)"/>
+        </member>
+        <member name="M:Speckle.Core.Api.GraphQL.Resources.VersionResource.Create(Speckle.Core.Api.CommitCreateInput,System.Threading.CancellationToken)">
+            <param name="cancellationToken"></param>
+            <returns></returns>
+            <inheritdoc cref="M:Speckle.Core.Api.GraphQL.ISpeckleGraphQLClient.ExecuteGraphQLRequest``1(GraphQL.GraphQLRequest,System.Threading.CancellationToken)"/>
+        </member>
+        <member name="M:Speckle.Core.Api.GraphQL.Resources.VersionResource.Update(Speckle.Core.Api.GraphQL.Inputs.UpdateVersionInput,System.Threading.CancellationToken)">
+            <param name="input"></param>
+            <param name="cancellationToken"></param>
+            <inheritdoc cref="M:Speckle.Core.Api.GraphQL.ISpeckleGraphQLClient.ExecuteGraphQLRequest``1(GraphQL.GraphQLRequest,System.Threading.CancellationToken)"/>
+        </member>
+        <member name="M:Speckle.Core.Api.GraphQL.Resources.VersionResource.MoveToModel(Speckle.Core.Api.GraphQL.Inputs.MoveVersionsInput,System.Threading.CancellationToken)">
+            <param name="input"></param>
+            <param name="cancellationToken"></param>
+            <returns></returns>
+            <inheritdoc cref="M:Speckle.Core.Api.GraphQL.ISpeckleGraphQLClient.ExecuteGraphQLRequest``1(GraphQL.GraphQLRequest,System.Threading.CancellationToken)"/>
+        </member>
+        <member name="M:Speckle.Core.Api.GraphQL.Resources.VersionResource.Delete(Speckle.Core.Api.GraphQL.Inputs.DeleteVersionsInput,System.Threading.CancellationToken)">
+            <param name="cancellationToken"></param>
+            <returns></returns>
+            <inheritdoc cref="M:Speckle.Core.Api.GraphQL.ISpeckleGraphQLClient.ExecuteGraphQLRequest``1(GraphQL.GraphQLRequest,System.Threading.CancellationToken)"/>
+        </member>
+        <member name="M:Speckle.Core.Api.GraphQL.Resources.VersionResource.Received(Speckle.Core.Api.CommitReceivedInput,System.Threading.CancellationToken)">
+            <param name="commitReceivedInput"></param>
+            <param name="cancellationToken"></param>
+            <returns></returns>
+            <inheritdoc cref="M:Speckle.Core.Api.GraphQL.ISpeckleGraphQLClient.ExecuteGraphQLRequest``1(GraphQL.GraphQLRequest,System.Threading.CancellationToken)"/>
+        </member>
+        <member name="T:Speckle.Core.Api.GraphQL.StreamRoles">
+            <summary>
+            These are the default roles used by the server
+            </summary>
         </member>
         <member name="P:Speckle.Core.Api.Stream.branch">
             <summary>
@@ -428,62 +801,6 @@
         <member name="P:Speckle.Core.Api.Stream.commits">
             <summary>
             Set only in the case that you've requested this through <see cref="M:Speckle.Core.Api.Client.StreamGetCommits(System.String,System.Int32,System.Threading.CancellationToken)"/>
-            </summary>
-        </member>
-        <member name="T:Speckle.Core.Api.ActiveUserData">
-            <summary>
-            GraphQL DTO model for active user data
-            </summary>
-        </member>
-        <member name="P:Speckle.Core.Api.ActiveUserData.activeUser">
-            <summary>
-             User profile of the active user.
-            </summary>
-        </member>
-        <member name="T:Speckle.Core.Api.LimitedUserData">
-            <summary>
-            GraphQL DTO model for limited user data. Mostly referring to other user's profile.
-            </summary>
-        </member>
-        <member name="P:Speckle.Core.Api.LimitedUserData.otherUser">
-            <summary>
-            The limited user profile of another (non active user)
-            </summary>
-        </member>
-        <member name="P:Speckle.Core.Api.ServerInfo.frontend2">
-            <remarks>
-            This field is not returned from the GQL API,
-            it should populated on construction from the response headers.
-            see <see cref="T:Speckle.Core.Credentials.AccountManager"/>
-            </remarks>
-        </member>
-        <member name="P:Speckle.Core.Api.ServerInfo.url">
-            <remarks>
-            This field is not returned from the GQL API,
-            it should populated on construction.
-            see <see cref="T:Speckle.Core.Credentials.AccountManager"/>
-            </remarks>
-        </member>
-        <member name="P:Speckle.Core.Api.ServerMigration.movedTo">
-            <summary>
-            New URI where this server is now deployed
-            </summary>
-        </member>
-        <member name="P:Speckle.Core.Api.ServerMigration.movedFrom">
-            <summary>
-            Previous URI where this server used to be deployed
-            </summary>
-        </member>
-        <member name="T:Speckle.Core.Api.Os">
-            <summary>
-            OS
-            NOTE: do not edit order and only append new items as they are serialized to ints
-            </summary>
-        </member>
-        <member name="T:Speckle.Core.Api.Architecture">
-            <summary>
-            Architecture
-            NOTE: do not edit order and only append new items as they are serialized to ints
             </summary>
         </member>
         <member name="M:Speckle.Core.Api.Helpers.Receive(System.String,Speckle.Core.Credentials.Account,System.Action{System.Collections.Concurrent.ConcurrentDictionary{System.String,System.Int32}},System.Action{System.Int32})">
@@ -784,6 +1101,15 @@
             ⚠️ Not all limits are reflected here!
             </remarks>
         </member>
+        <member name="F:Speckle.Core.Api.ServerLimits.DEFAULT_PAGINATION_REQUEST">
+            <summary>the default `limit` argument value for paginated requests</summary>
+        </member>
+        <member name="P:Speckle.Core.Credentials.Account.id">
+            <remarks>
+            The account id is unique to user and server url.
+            </remarks>
+            <exception cref="T:System.InvalidOperationException">Account object invalid: missing required info</exception>
+        </member>
         <member name="M:Speckle.Core.Credentials.Account.GetLocalIdentifier">
             <summary>
             Retrieves the local identifier for the current user.
@@ -842,6 +1168,11 @@
             <summary>
             The Default Server URL for authentication, can be overridden by placing a file with the alternatrive url in the Speckle folder or with an ENV_VAR
             </summary>
+        </member>
+        <member name="M:Speckle.Core.Credentials.AccountManager.GetAccount(System.String)">
+            <param name="id">The Id of the account to fetch</param>
+            <returns></returns>
+            <exception cref="T:Speckle.Core.Credentials.SpeckleAccountManagerException">Account with <paramref name="id"/> was not found</exception>
         </member>
         <member name="M:Speckle.Core.Credentials.AccountManager.UpgradeAccount(System.String)">
             <summary>
@@ -994,7 +1325,7 @@
             Verifies that the state of the stream wrapper represents a valid Speckle resource e.g. points to a valid stream/branch etc.
             </summary>
             <param name="acc">The account to use to verify the current state of the stream wrapper</param>
-            <exception cref="T:System.ArgumentException">The <see cref="T:Speckle.Core.Api.ServerInfo"/> of the provided <paramref name="acc"/> is invalid or does not match the <see cref="T:Speckle.Core.Credentials.StreamWrapper"/>'s <see cref="P:Speckle.Core.Credentials.StreamWrapper.ServerUrl"/></exception>
+            <exception cref="T:System.ArgumentException">The <see cref="T:Speckle.Core.Api.GraphQL.Models.ServerInfo"/> of the provided <paramref name="acc"/> is invalid or does not match the <see cref="T:Speckle.Core.Credentials.StreamWrapper"/>'s <see cref="P:Speckle.Core.Credentials.StreamWrapper.ServerUrl"/></exception>
             <exception cref="T:System.Net.Http.HttpRequestException">You are not connected to the internet</exception>
             <exception cref="T:Speckle.Core.Logging.SpeckleException">Verification of the current state of the stream wrapper with provided <paramref name="acc"/> was unsuccessful. The <paramref name="acc"/> could be invalid, or lack permissions for the <see cref="P:Speckle.Core.Credentials.StreamWrapper.StreamId"/>, or the <see cref="P:Speckle.Core.Credentials.StreamWrapper.StreamId"/> or <see cref="P:Speckle.Core.Credentials.StreamWrapper.BranchName"/> are invalid</exception>
         </member>
@@ -2181,6 +2512,13 @@
             <param name="speckleObject">The Base object to check.</param>
             <returns>True if the object is displayable, false otherwise.</returns>
         </member>
+        <member name="M:Speckle.Core.Models.Extensions.BaseExtensions.TraverseWithPath(Speckle.Core.Models.Base,Speckle.Core.Models.Extensions.BaseExtensions.BaseRecursionBreaker)">
+            <summary>
+            A variation of the OG Traversal extension from Alan, but with tracking the object path as well.
+            </summary>
+            <param name="recursionBreaker"> Delegate condition to stop traverse.</param>
+            <returns>List of base objects with their collection path.</returns>
+        </member>
         <member name="T:Speckle.Core.Models.Abstract">
             <summary>
             Wrapper around other, third party, classes that are not coming from a speckle kit.
@@ -2234,13 +2572,20 @@
             </remarks>
         </member>
         <member name="M:Speckle.Core.Models.GraphTraversal.DefaultTraversal.CreateTraverseFunc(Speckle.Core.Kits.ISpeckleConverter)">
+            <summary><inheritdoc cref="M:Speckle.Core.Models.GraphTraversal.DefaultTraversal.CreateLegacyTraverseFunc(System.Func{Speckle.Core.Models.Base,System.Boolean})"/></summary>
+            <remarks><inheritdoc cref="M:Speckle.Core.Models.GraphTraversal.DefaultTraversal.CreateLegacyTraverseFunc(System.Func{Speckle.Core.Models.Base,System.Boolean})"/></remarks>
+            <param name="converter"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Speckle.Core.Models.GraphTraversal.DefaultTraversal.CreateLegacyTraverseFunc(System.Func{Speckle.Core.Models.Base,System.Boolean})">
             <summary>
-            Default traversal rule that ideally should be used by all connectors
+            Legacy traversal rule that was dependent on the converter
             </summary>
             <remarks>
             Treats convertable objects <see cref="M:Speckle.Core.Kits.ISpeckleConverter.CanConvertToNative(Speckle.Core.Models.Base)"/> and objects with displayValues as "convertable" such that only elements and dynamic props will be traversed
+            New code should use <see cref="M:Speckle.Core.Models.GraphTraversal.DefaultTraversal.CreateTraversalFunc"/> instead.
             </remarks>
-            <param name="converter"></param>
+            <param name="canConvertToNative"></param>
             <returns></returns>
         </member>
         <member name="M:Speckle.Core.Models.GraphTraversal.DefaultTraversal.CreateRevitTraversalFunc(Speckle.Core.Kits.ISpeckleConverter)">
@@ -2248,9 +2593,10 @@
             Traverses until finds a convertable object then HALTS deeper traversal
             </summary>
             <remarks>
-            Current Revit connector does traversal,
+            The DUI2 Revit connector does traversal,
             so this traversal is a shallow traversal for directly convertable objects,
             and a deep traversal for all other types
+            New code should use <see cref="M:Speckle.Core.Models.GraphTraversal.DefaultTraversal.CreateTraversalFunc"/> instead.
             </remarks>
             <param name="converter"></param>
             <returns></returns>
@@ -2259,6 +2605,9 @@
             <summary>
             Traverses until finds a convertable object (or fallback) then traverses members
             </summary>
+            <remarks>
+            New code should use <see cref="M:Speckle.Core.Models.GraphTraversal.DefaultTraversal.CreateTraversalFunc"/> instead.
+            </remarks>
             <param name="converter"></param>
             <returns></returns>
         </member>
@@ -2293,6 +2642,18 @@
             <param name="o"></param>
             <returns></returns>
         </member>
+        <member name="P:Speckle.Core.Models.GraphTraversal.ITraversalRule.ShouldReturn">
+            <summary>
+            When <see langword="false"/>,
+            <see cref="T:Speckle.Core.Models.Base"/> objects for which this rule applies,
+            will be filtered out from the traversal output
+            (but still traversed normally, as per the <see cref="M:Speckle.Core.Models.GraphTraversal.ITraversalRule.MembersToTraverse(Speckle.Core.Models.Base)"/>)
+            </summary>
+            <remarks>
+            This property was added to allow for easier filtering of the return of <see cref="M:Speckle.Core.Models.GraphTraversal.GraphTraversal`1.Traverse(Speckle.Core.Models.Base)"/>.
+            Without the option to set some rules as false, it was necessary to duplicate part of the rules in a <see cref="M:System.Linq.Enumerable.Where``1(System.Collections.Generic.IEnumerable{``0},System.Func{``0,System.Boolean})"/>
+            </remarks>
+        </member>
         <member name="T:Speckle.Core.Models.GraphTraversal.DefaultRule">
             <summary>
             The "traverse none" rule that always holds true
@@ -2310,7 +2671,7 @@
         </member>
         <member name="T:Speckle.Core.Models.GraphTraversal.ITraversalBuilderWhen">
             <summary>
-            Interface for traversal rule in a building (unusable) state
+            Builder Pattern Interface for a traversal rule in a partially built (unusable state)
             </summary>
         </member>
         <member name="M:Speckle.Core.Models.GraphTraversal.ITraversalBuilderWhen.When(Speckle.Core.Models.GraphTraversal.WhenCondition)">
@@ -2327,13 +2688,39 @@
         </member>
         <member name="T:Speckle.Core.Models.GraphTraversal.ITraversalBuilderTraverse">
             <summary>
-            Interface for traversal rule in a building (unusable) state
+            Builder Pattern Interface for a traversal rule in a partially built (unusable state)
             </summary>
         </member>
         <member name="M:Speckle.Core.Models.GraphTraversal.ITraversalBuilderTraverse.ContinueTraversing(Speckle.Core.Models.GraphTraversal.SelectMembers)">
             <seealso cref="M:Speckle.Core.Models.GraphTraversal.ITraversalRule.MembersToTraverse(Speckle.Core.Models.Base)"/>
             <param name="membersToTraverse">Function returning the members that should be traversed for objects where this rule holds <see langword = "true"/></param>
             <returns>Traversal rule in a usable state</returns>
+        </member>
+        <member name="T:Speckle.Core.Models.GraphTraversal.ITraversalBuilderReturn">
+            <summary>
+            Builder Pattern Interface for a traversal rule in a usable state, with an (optional) final step to set the value of <see cref="P:Speckle.Core.Models.GraphTraversal.ITraversalRule.ShouldReturn"/>
+            </summary>
+        </member>
+        <member name="M:Speckle.Core.Models.GraphTraversal.ITraversalBuilderReturn.ShouldReturnToOutput(System.Boolean)">
+            <seealso cref="M:Speckle.Core.Models.GraphTraversal.ITraversalRule.MembersToTraverse(Speckle.Core.Models.Base)"/>
+            <param name="shouldReturn">value to set <see cref="P:Speckle.Core.Models.GraphTraversal.ITraversalRule.ShouldReturn"/></param>
+            <returns>Traversal rule in a usable state</returns>
+        </member>
+        <member name="M:Speckle.Core.Models.GraphTraversal.TraversalContextExtensions.GetPropertyPath(Speckle.Core.Models.GraphTraversal.TraversalContext)">
+            <summary>
+            Walks up the tree, returning <see cref="P:Speckle.Core.Models.GraphTraversal.TraversalContext.PropName"/> values, starting with <paramref name="context"/>,
+            walking up <see cref="P:Speckle.Core.Models.GraphTraversal.TraversalContext.Parent"/> nodes
+            </summary>
+            <param name="context"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Speckle.Core.Models.GraphTraversal.TraversalContextExtensions.GetAscendantOfType``1(Speckle.Core.Models.GraphTraversal.TraversalContext)">
+            <summary>
+            Walks up the tree, returning all <typeparamref name="T"/> typed ascendant, starting the <typeparamref name="T"/> closest <paramref name="context"/>,
+            walking up <see cref="P:Speckle.Core.Models.GraphTraversal.TraversalContext.Parent"/> nodes
+            </summary>
+            <param name="context"></param>
+            <returns></returns>
         </member>
         <member name="T:Speckle.Core.Models.NestingInstructions">
             <summary>
@@ -2459,6 +2846,13 @@
             <summary>
             Flushes kit's (discriminator, type) cache. Useful if you're dynamically loading more kits at runtime, that provide better coverage of what you're deserialising, and it's now somehow poisoned because the higher level types were not originally available.
             </summary>
+        </member>
+        <member name="M:Speckle.Core.Serialisation.SerializationUtilities.ValueConverter.IsGenericList(System.Type)">
+            <summary>
+            Tests that the given <paramref name="type"/> is assignable from a generic type def <see cref="T:System.Collections.Generic.List`1"/>
+            </summary>
+            <param name="type"></param>
+            <returns></returns>
         </member>
         <member name="T:Speckle.Core.Transports.ITransport">
             <summary>
